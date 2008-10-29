@@ -1,0 +1,10 @@
+#!/bin/sh
+
+PKG_NAME="indicator-applet"
+
+which gnome-autogen.sh || {
+	echo "You need gnome-common from GNOME SVN"
+	exit 1
+}
+
+. gnome-autogen.sh
