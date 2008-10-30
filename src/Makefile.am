@@ -9,3 +9,5 @@ indicator_applet_CFLAGS = \
 indicator_applet_SOURCES = \
 	applet-main.c
 
+indicator_applet_LDADD = \
+	$(APPLET_LIBS)
