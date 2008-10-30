@@ -30,6 +30,19 @@ PKG_CHECK_MODULES(APPLET, gtk+-2.0 >= $GTK_REQUIRED_VERSION
 AC_SUBST(APPLET_CFLAGS)
 AC_SUBST(APPLET_LIBS)
 
+AC_PATH_PROG(GCONFTOOL, gconftool-2)
+AM_GCONF_SOURCE_2
+
+###########################
+# Internationalization
+###########################
+
+GETTEXT_PACKAGE=indicator-applet
+AC_SUBST(GETTEXT_PACKAGE)
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE", [Name of the default gettext domain])
+
+AM_GLIB_GNU_GETTEXT
+
 ###########################
 # Files
 ###########################
@@ -37,6 +50,7 @@ AC_SUBST(APPLET_LIBS)
 AC_OUTPUT([
 Makefile
 src/Makefile
+data/Makefile
 po/Makefile.in
 ])
 
