@@ -1,0 +1,9 @@
+compile
+config.status.lineno
+m4
+data/GNOME_IndicatorApplet.server
+data/GNOME_IndicatorApplet.server.in
+data/indicator-applet.schemas
+po/@GETTEXT_PACKAGE@.pot
+po/indicator-applet.pot
+src/indicator-applet
