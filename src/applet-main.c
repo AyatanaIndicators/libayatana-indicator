@@ -30,5 +30,6 @@ applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 	gtk_container_add(GTK_CONTAINER(applet), hbox);
 	gtk_widget_show(hbox);
 
+	gtk_widget_show(GTK_WIDGET(applet));
 	return TRUE;
 }
