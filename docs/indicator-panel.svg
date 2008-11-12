@@ -25,9 +25,9 @@
      objecttolerance="10"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.59580248"
-     inkscape:cx="630.79271"
-     inkscape:cy="526.18109"
+     inkscape:zoom="0.60598682"
+     inkscape:cx="464.35397"
+     inkscape:cy="598.25624"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -36,7 +36,8 @@
      inkscape:window-width="1440"
      inkscape:window-height="852"
      inkscape:window-x="0"
-     inkscape:window-y="25" />
+     inkscape:window-y="25"
+     showborder="false" />
   <defs
      id="defs4">
     <inkscape:path-effect
@@ -450,6 +451,95 @@
          d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
          id="path6310" />
     </marker>
+    <inkscape:perspective
+       id="perspective2822"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <marker
+       style="overflow:visible"
+       id="Arrow1Mstartm-1"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Mstartm">
+      <path
+         transform="matrix(0.4,0,0,0.4,4,0)"
+         style="fill:#717171;fill-rule:evenodd;stroke:#717171;stroke-width:1pt;marker-start:none"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path6304-5" />
+    </marker>
+    <inkscape:path-effect
+       id="path-effect4180-8-9"
+       effect="spiro"
+       is_visible="true"
+       deactivate_knotholder="false" />
+    <marker
+       style="overflow:visible"
+       id="Arrow1MstartA-4"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MstartA">
+      <path
+         transform="matrix(0.4,0,0,0.4,4,0)"
+         style="fill:#717171;fill-rule:evenodd;stroke:#717171;stroke-width:1pt;marker-start:none"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path6307-9" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1Mendq-0"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Mendq">
+      <path
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#717171;fill-rule:evenodd;stroke:#717171;stroke-width:1pt;marker-start:none"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path6310-9" />
+    </marker>
+    <inkscape:path-effect
+       deactivate_knotholder="false"
+       is_visible="true"
+       id="path-effect4180-1"
+       effect="spiro" />
+    <inkscape:path-effect
+       deactivate_knotholder="false"
+       is_visible="true"
+       id="path-effect4152-7"
+       effect="spiro" />
+    <inkscape:perspective
+       id="perspective4357"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4381"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4405"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4435"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
   </defs>
   <metadata
      id="metadata7">
@@ -1169,5 +1259,68 @@
            height="107.38783"
            width="143.84921"
            id="rect6113-5" /></flowRegion><flowPara
-         id="flowPara6119-1">Many of these are DBus but others are less specified.  They can be system specific.</flowPara></flowRoot>  </g>
+         id="flowPara6119-1">Many of these are DBus but others are less specified.  They can be system specific.</flowPara></flowRoot>    <path
+       inkscape:original-d="m -267.21886,225.10594 252.82436,0"
+       inkscape:path-effect="#path-effect4152-7"
+       id="path4150-1"
+       d="m -267.21886,225.10594 252.82436,0"
+       style="fill:none;stroke:#000000;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       inkscape:original-d="m -59.89781,628.78169 0,-351.35151"
+       inkscape:path-effect="#path-effect4180-1"
+       id="path4178-1"
+       d="m -59.89781,628.78169 0,-351.35151"
+       style="fill:none;stroke:#717171;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:none;marker-mid:none;marker-end:url(#Arrow1Mendq)" />
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:original-d="m -59.89781,162.78169 0,-131.351507"
+       inkscape:path-effect="#path-effect4180-8-9"
+       id="path4178-2-5"
+       d="m -59.89781,162.78169 0,-131.351507"
+       style="fill:none;stroke:#717171;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#Arrow1Mstartm);marker-mid:none;marker-end:none" />
+    <text
+       id="text6029-2"
+       y="198.33095"
+       x="-346.05609"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"><tspan
+         y="198.33095"
+         x="-346.05609"
+         id="tspan6031-4"
+         sodipodi:role="line">User Side</tspan></text>
+    <text
+       id="text6029-2-6"
+       y="282.89386"
+       x="-346.05609"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"><tspan
+         y="282.89386"
+         x="-346.05609"
+         id="tspan6031-4-0"
+         sodipodi:role="line">Service Side</tspan></text>
+    <flowRoot
+       transform="translate(-1185.1789,-772.6624)"
+       style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       id="flowRoot6033-6-6"
+       xml:space="preserve"><flowRegion
+         id="flowRegion6035-6-1"><rect
+           style="font-size:12px"
+           y="823.70483"
+           x="879.30829"
+           height="115.25817"
+           width="150.57921"
+           id="rect6037-8-87" /></flowRegion><flowPara
+         id="flowPara6039-9-0">This is the amount of code that actually interacts with the user and handles user input but also displaying information to the user.</flowPara></flowRoot>    <flowRoot
+       transform="translate(-1185.1789,-514.6624)"
+       style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       id="flowRoot6033-6-6-9"
+       xml:space="preserve"><flowRegion
+         id="flowRegion6035-6-1-1"><rect
+           style="font-size:12px"
+           y="823.70483"
+           x="879.30829"
+           height="133.95276"
+           width="154.54472"
+           id="rect6037-8-87-7" /></flowRegion><flowPara
+         id="flowPara6039-9-0-7">These are the different components that gather information and bubbling it up to the level of the user.  They can do this with the interfaces on the other side of the diagram.</flowPara></flowRoot>  </g>
 </svg>
