@@ -21,14 +21,14 @@ PANEL_APPLET_BONOBO_FACTORY ("OAFIID:GNOME_IndicatorApplet_Factory",
 static gboolean
 applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 {
-	GtkWidget * hbox = gtk_hbox_new(FALSE, 3);
+	GtkWidget * menubar = gtk_menu_bar_new();
+	gtk_widget_set_name (menubar, "indicator-applet-menubar");
+	gtk_container_add(GTK_CONTAINER(applet), menubar);
+	gtk_widget_show(menubar);
 
-	GtkWidget * label = gtk_label_new("Test");
-	gtk_box_pack_end(GTK_BOX(hbox), label, TRUE, TRUE, 0);
-	gtk_widget_show(label);
-
-	gtk_container_add(GTK_CONTAINER(applet), hbox);
-	gtk_widget_show(hbox);
+	GtkWidget * item = gtk_menu_item_new_with_label("Test");
+	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), item);
+	gtk_widget_show(item);
 
 	gtk_widget_show(GTK_WIDGET(applet));
 	return TRUE;
