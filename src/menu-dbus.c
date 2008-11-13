@@ -4,6 +4,30 @@
 GtkWidget *
 _dbus_menu_make_menuitem_val (DBusGProxy * proxy, guint id)
 {
+	GError * error = NULL;
+	gboolean proxyret;
+
+	gchar * label;
+	gchar * tooltip;
+	gchar * icon;
+	gchar * indicator;
+	guint submenu;
+
+	/* TODO: switch to begin_call */
+	proxyret = dbus_g_proxy_call (proxy, "GetItem", &error,
+	                              G_TYPE_UINT, id,
+	                              G_TYPE_INVALID,
+	                              G_TYPE_STRING, &label,
+	                              G_TYPE_STRING, &tooltip,
+	                              G_TYPE_STRING, &icon,
+	                              G_TYPE_STRING, &indicator,
+	                              G_TYPE_UINT,   &submenu,
+	                              G_TYPE_INVALID);
+
+	if (!proxyret) {
+		/* TODO: clear error */
+		return NULL;
+	}
 
 
 
