@@ -1,0 +1,5 @@
+indicator-applet (0.1~ppa1) intrepid; urgency=low
+
+  * Initial release.
+
+ -- Ted Gould <ted@ubuntu.com>  Tue, 18 Nov 2008 13:54:43 -0600
