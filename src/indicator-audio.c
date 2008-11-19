@@ -10,9 +10,33 @@ create_output_menu_item (void)
 	GtkWidget * label_hbox = gtk_hbox_new(FALSE, 12);
 
 	GtkWidget * label = gtk_label_new("Volume:");
-	gtk_box_pack_end(GTK_BOX(label_hbox), label, TRUE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(label_hbox), label, TRUE, FALSE, 0);
 	gtk_widget_show(label);
 
+	GtkWidget * slider_hbox = gtk_hbox_new(FALSE, 3);
+
+	GtkWidget * mute_button = gtk_button_new();
+	GtkWidget * mute_icon = gtk_image_new_from_icon_name("audio-volume-low", GTK_ICON_SIZE_MENU);
+	gtk_container_add(GTK_CONTAINER(mute_button), mute_icon);
+	gtk_widget_show(mute_icon);
+	gtk_box_pack_start(GTK_BOX(slider_hbox), mute_button, FALSE, FALSE, 3);
+	gtk_widget_show(mute_button);
+
+	GtkWidget * scale = gtk_hscale_new_with_range(0.0, 1.0, 0.1);
+	gtk_scale_set_digits(GTK_SCALE(scale), 2);
+	gtk_scale_set_draw_value(GTK_SCALE(scale), FALSE);
+	gtk_box_pack_start(GTK_BOX(slider_hbox), scale, TRUE, TRUE, 3);
+	gtk_widget_show(scale);
+
+	GtkWidget * max_button = gtk_button_new();
+	GtkWidget * max_icon = gtk_image_new_from_icon_name("audio-volume-high", GTK_ICON_SIZE_MENU);
+	gtk_container_add(GTK_CONTAINER(max_button), max_icon);
+	gtk_widget_show(max_icon);
+	gtk_box_pack_start(GTK_BOX(slider_hbox), max_button, FALSE, FALSE, 3);
+	gtk_widget_show(max_button);
+
+	gtk_box_pack_start(GTK_BOX(label_hbox), slider_hbox, TRUE, TRUE, 0);
+	gtk_widget_show(slider_hbox);
 
 	gtk_container_add(GTK_CONTAINER(menuitem), label_hbox);
 	gtk_widget_show(label_hbox);
