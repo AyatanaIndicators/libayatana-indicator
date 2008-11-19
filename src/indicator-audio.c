@@ -2,10 +2,20 @@
 #include <gtk/gtk.h>
 #include "indicator-audio.h"
 
+void
+block_prelight (GtkWidget * widget, GtkStateType prev, gpointer data)
+{
+	if (GTK_WIDGET_STATE(widget) == GTK_STATE_PRELIGHT) {
+		gtk_widget_set_state(widget, prev);
+	}
+	return;
+}
+
 GtkWidget *
 create_output_menu_item (void)
 {
 	GtkWidget * menuitem = gtk_menu_item_new();
+	g_signal_connect(G_OBJECT(menuitem), "state-changed", G_CALLBACK(block_prelight), NULL);
 
 	GtkWidget * label_hbox = gtk_hbox_new(FALSE, 12);
 
