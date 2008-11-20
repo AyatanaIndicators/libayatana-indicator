@@ -19,7 +19,9 @@ indicator_applet_SOURCES = 			\
 	indicator-system.c				\
 	indicator-system.h				\
 	menu-dbus.c						\
-	menu-dbus.h
+	menu-dbus.h						\
+	slidermenuitem.c				\
+	slidermenuitem.h
 
 indicator_applet_LDADD = \
 	$(APPLET_LIBS)
