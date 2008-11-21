@@ -20,7 +20,7 @@ enum {
 
 static guint slider_menu_item_signals[LAST_SIGNAL] = {0};
 
-G_DEFINE_TYPE (SliderMenuItem, slider_menu_item, TYPE_SLIDER_MENU_ITEM)
+G_DEFINE_TYPE (SliderMenuItem, slider_menu_item, GTK_TYPE_MENU_ITEM)
 
 void
 slider_menu_item_init (SliderMenuItem * smi)
