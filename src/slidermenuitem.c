@@ -32,6 +32,10 @@ slider_menu_item_init (SliderMenuItem * smi)
 static void
 slider_menu_item_class_init (SliderMenuItemClass * klass)
 {
+	GtkMenuItemClass * mic = GTK_MENU_ITEM_CLASS(klass);
+
+	mic->hide_on_activate = FALSE;
+	mic->activate = NULL;
 
 	return;
 }
