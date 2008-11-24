@@ -8,6 +8,16 @@ typedef struct  {
 	char * time;
 } menuitem_t;
 
+static void
+block_prelight (GtkWidget * widget, GtkStateType prev, gpointer data)
+{
+	if (GTK_WIDGET_STATE(widget) == GTK_STATE_PRELIGHT) {
+		gtk_widget_set_state(widget, prev);
+	}
+	return;
+}
+
+
 #define MENU_ITEM_CNT 3
 menuitem_t menuitems[MENU_ITEM_CNT] = {
 	{"Main", "audio-volume-low", "(1:34 left)"},
@@ -27,6 +37,7 @@ power_menu (void)
 	int i;
 	for (i = 0 ; i < MENU_ITEM_CNT; i++) {
 		GtkWidget * item = gtk_menu_item_new ();
+		g_signal_connect(G_OBJECT(item), "state-changed", G_CALLBACK(block_prelight), NULL);
 
 		GtkWidget * hbox = gtk_hbox_new (FALSE, 3);
 
