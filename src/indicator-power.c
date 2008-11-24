@@ -32,17 +32,20 @@ power_menu (void)
 
 		GtkWidget * icon = gtk_image_new_from_icon_name(menuitems[i].icon, GTK_ICON_SIZE_MENU);
 		gtk_size_group_add_widget(icons, icon);
+		gtk_misc_set_alignment(GTK_MISC(icon), 0.0, 0.5);
 		gtk_box_pack_start(GTK_BOX(hbox), icon, FALSE, FALSE, 0);
 		gtk_widget_show(icon);
 
 		GtkWidget * label = gtk_label_new(menuitems[i].label);
 		gtk_size_group_add_widget(labels, label);
-		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+		gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 3);
 		gtk_widget_show(label);
 
 		GtkWidget * time = gtk_label_new(menuitems[i].time);
 		gtk_size_group_add_widget(times, time);
-		gtk_box_pack_start(GTK_BOX(hbox), time, FALSE, FALSE, 0);
+		gtk_misc_set_alignment(GTK_MISC(time), 0.0, 0.5);
+		gtk_box_pack_start(GTK_BOX(hbox), time, FALSE, FALSE, 8);
 		gtk_widget_show(time);
 
 		gtk_container_add(GTK_CONTAINER(item), hbox);
