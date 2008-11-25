@@ -43,10 +43,6 @@ applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 	gtk_container_add(GTK_CONTAINER(applet), menubar);
 	gtk_widget_show(menubar);
 
-	GtkWidget * item = gtk_menu_item_new_with_label("Test");
-	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), item);
-	gtk_widget_show(item);
-
 	for (i = 0; indicators[i] != NULL; i++) {
 		GtkWidget * item = indicators[i]();
 		if (item == NULL) continue;
