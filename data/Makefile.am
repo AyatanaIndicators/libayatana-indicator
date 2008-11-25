@@ -1,5 +1,7 @@
 # This file will be processed with automake to create Makefile.in
 
+SUBDIRS = icons
+
 ##############################
 # Bonobo .server
 ##############################
