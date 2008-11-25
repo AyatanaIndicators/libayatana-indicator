@@ -1,5 +1,6 @@
 
 #include <gtk/gtk.h>
+#include <glib/gi18n.h>
 #include "indicator-power.h"
 
 typedef struct  {
@@ -65,6 +66,14 @@ power_menu (void)
 		gtk_menu_append(menu, item);
 		gtk_widget_show(item);
 	}
+
+	GtkWidget * sep = gtk_separator_menu_item_new();
+	gtk_menu_append(menu, sep);
+	gtk_widget_show(sep);
+
+	GtkWidget * prefs = gtk_menu_item_new_with_label(_("Power Settings..."));
+	gtk_menu_append(menu, prefs);
+	gtk_widget_show(prefs);
 
 	return GTK_WIDGET(menu);
 }
