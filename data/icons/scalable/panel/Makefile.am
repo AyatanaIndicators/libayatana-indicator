@@ -1,5 +1,5 @@
 
-iconsdir = $(pkgdatadir)/icons/hicolor/scalable/status
+iconsdir = $(pkgdatadir)/icons/hicolor/scalable/panel
 
 icons_DATA =  \
 	panel-dummy.svg

@@ -9,7 +9,7 @@ indicator_audio_menuitem (void)
 {
 	GtkWidget * mainmenu = gtk_menu_item_new();
 
-	GtkWidget * icon = gtk_image_new_from_icon_name("audio-volume-muted",
+	GtkWidget * icon = gtk_image_new_from_icon_name("panel-light-audio-volume-low",
 	                                                GTK_ICON_SIZE_MENU);
 
 	gtk_container_add(GTK_CONTAINER(mainmenu), icon);

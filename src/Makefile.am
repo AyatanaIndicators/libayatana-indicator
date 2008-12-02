@@ -4,6 +4,7 @@ libexec_PROGRAMS = \
 
 indicator_applet_CFLAGS = \
 	-DG_LOG_DOMAIN=\""Indicator-Applet"\" \
+	-DDATADIR=\""$(datadir)"\" \
 	$(APPLET_CFLAGS)
 
 indicator_applet_SOURCES = 			\

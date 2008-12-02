@@ -7,6 +7,8 @@
 #include "indicator-power.h"
 #include "indicator-system.h"
 
+#define ICONS_DIR  (DATADIR G_DIR_SEPARATOR_S "indicator-applet" G_DIR_SEPARATOR_S "icons")
+
 static gboolean     applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data);
 
 
@@ -37,6 +39,9 @@ menuitem_func indicators[] = {
 static gboolean
 applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 {
+	gtk_icon_theme_append_search_path(gtk_icon_theme_get_default(),
+	                                  ICONS_DIR);
+
 	int i;
 	GtkWidget * menubar = gtk_menu_bar_new();
 	gtk_widget_set_name (menubar, "indicator-applet-menubar");

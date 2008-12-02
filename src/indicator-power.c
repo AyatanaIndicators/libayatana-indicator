@@ -21,9 +21,9 @@ block_prelight (GtkWidget * widget, GtkStateType prev, gpointer data)
 
 #define MENU_ITEM_CNT 3
 menuitem_t menuitems[MENU_ITEM_CNT] = {
-	{"Main", "audio-volume-low", "(1:34 left)"},
-	{"Mouse", "audio-volume-med", "(0:40 left)"},
-	{"Phone", "audio-volume-high", "(10:40 left)"}
+	{"Main", "panel-light-power-battery-medium", "(1:34 left)"},
+	{"Mouse", "panel-light-power-mouse-verylow", "(0:40 left)"},
+	{"Phone", "panel-light-power-battery-verylow", "(10:40 left)"}
 };
 
 GtkWidget *
@@ -85,7 +85,7 @@ indicator_power_menuitem (void)
 
 	GtkWidget * hbox = gtk_hbox_new(FALSE, 0);
 
-	GtkWidget * icon = gtk_image_new_from_icon_name("audio-volume-high",
+	GtkWidget * icon = gtk_image_new_from_icon_name("panel-light-power-battery-plugged",
 	                                                GTK_ICON_SIZE_MENU);
 	gtk_box_pack_start(GTK_BOX(hbox), icon, FALSE, FALSE, 0);
 	gtk_widget_show(icon);
