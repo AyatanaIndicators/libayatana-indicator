@@ -1,11 +1,4 @@
 [encoding: UTF-8]
 data/GNOME_IndicatorApplet.server.in.in
 data/indicator-applet.schemas.in
-src/indicator-messages.c
-src/indicator-system.c
-src/indicator-power.c
-src/indicator-network.c
-src/slidermenuitem.c
-src/indicator-audio.c
-src/menu-dbus.c
 src/applet-main.c
