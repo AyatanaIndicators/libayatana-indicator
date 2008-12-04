@@ -1,11 +1,7 @@
 
 #include <panel-applet.h>
 
-#include "indicator-audio.h"
 #include "indicator-messages.h"
-#include "indicator-network.h"
-#include "indicator-power.h"
-#include "indicator-system.h"
 
 #define ICONS_DIR  (DATADIR G_DIR_SEPARATOR_S "indicator-applet" G_DIR_SEPARATOR_S "icons")
 
@@ -24,11 +20,7 @@ PANEL_APPLET_BONOBO_FACTORY ("OAFIID:GNOME_IndicatorApplet_Factory",
 typedef GtkWidget * (*menuitem_func) (void);
 
 menuitem_func indicators[] = {
-	indicator_audio_menuitem,
 	indicator_messages_menuitem,
-	indicator_network_menuitem,
-	indicator_power_menuitem,
-	indicator_system_menuitem,
 	NULL
 };
 
