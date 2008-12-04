@@ -1,3 +1,9 @@
+indicator-applet (0.1~ppa6) intrepid; urgency=low
+
+  * Making the applet very light.
+
+ -- Ted Gould <ted@ubuntu.com>  Wed, 03 Dec 2008 23:23:15 -0800
+
 indicator-applet (0.1~ppa2) intrepid; urgency=low
 
   * Adding a depend for dbus-glib
