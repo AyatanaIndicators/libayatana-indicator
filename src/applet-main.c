@@ -19,6 +19,12 @@ PANEL_APPLET_BONOBO_FACTORY ("OAFIID:GNOME_IndicatorApplet_Factory",
 /*************
  * init function
  * ***********/
+static gboolean
+load_module (const gchar * name)
+{
+
+	return FALSE;
+}
 
 static gboolean
 applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
@@ -35,6 +41,15 @@ applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 	int indicators_loaded = 0;
 
 	/* load 'em */
+	if (g_file_test(INDICATOR_DIR, (G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR))) {
+		GDir * dir = g_dir_open(INDICATOR_DIR, 0, NULL);
+
+		const gchar * name;
+		while ((name = g_dir_read_name(dir)) != NULL) {
+			if (load_module(name))
+				indicators_loaded++;
+		}
+	}
 
 	if (indicators_loaded == 0) {
 		GtkWidget * item = gtk_menu_item_new_with_label("No Indicators");
