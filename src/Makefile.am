@@ -8,9 +8,7 @@ indicator_applet_CFLAGS = \
 	$(APPLET_CFLAGS)
 
 indicator_applet_SOURCES = 			\
-	applet-main.c					\
-	indicator-messages.c			\
-	indicator-messages.h
+	applet-main.c
 
 indicator_applet_LDADD = \
 	$(APPLET_LIBS)

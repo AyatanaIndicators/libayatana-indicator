@@ -1,8 +1,7 @@
 
 #include <panel-applet.h>
 
-#include "indicator-messages.h"
-
+#define SYMBOL_NAME  "get_menu_item"
 #define ICONS_DIR  (DATADIR G_DIR_SEPARATOR_S "indicator-applet" G_DIR_SEPARATOR_S "icons")
 
 static gboolean     applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data);
@@ -16,13 +15,6 @@ PANEL_APPLET_BONOBO_FACTORY ("OAFIID:GNOME_IndicatorApplet_Factory",
                PANEL_TYPE_APPLET,
                "indicator-applet", "0",
                applet_fill_cb, NULL);
-
-typedef GtkWidget * (*menuitem_func) (void);
-
-menuitem_func indicators[] = {
-	indicator_messages_menuitem,
-	NULL
-};
 
 /*************
  * init function
@@ -40,9 +32,13 @@ applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 	gtk_container_add(GTK_CONTAINER(applet), menubar);
 	gtk_widget_show(menubar);
 
-	for (i = 0; indicators[i] != NULL; i++) {
-		GtkWidget * item = indicators[i]();
-		if (item == NULL) continue;
+	int indicators_loaded = 0;
+
+	/* load 'em */
+
+	if (indicators_loaded == 0) {
+		GtkWidget * item = gtk_menu_item_new_with_label("No Indicators");
+		gtk_widget_set_sensitive(item, FALSE);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menubar), item);
 		gtk_widget_show(item);
 	}
