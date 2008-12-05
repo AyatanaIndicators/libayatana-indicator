@@ -1,3 +1,9 @@
+indicator-applet (0.1~ppa7) intrepid; urgency=low
+
+  * Put in the kickarse loader code.  Happy, happy.
+
+ -- Ted Gould <ted@ubuntu.com>  Thu, 04 Dec 2008 22:39:41 -0800
+
 indicator-applet (0.1~ppa6) intrepid; urgency=low
 
   * Making the applet very light.
