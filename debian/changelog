@@ -1,3 +1,9 @@
+indicator-applet (0.1~ppa8) intrepid; urgency=low
+
+  * Moving the indicator directory cross-packages.
+
+ -- Ted Gould <ted@ubuntu.com>  Thu, 04 Dec 2008 22:56:40 -0800
+
 indicator-applet (0.1~ppa7) intrepid; urgency=low
 
   * Put in the kickarse loader code.  Happy, happy.
