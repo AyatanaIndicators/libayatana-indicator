@@ -20,10 +20,39 @@ PANEL_APPLET_BONOBO_FACTORY ("OAFIID:GNOME_IndicatorApplet_Factory",
  * init function
  * ***********/
 static gboolean
-load_module (const gchar * name)
+load_module (const gchar * name, GtkWidget * menu)
 {
+	g_debug("Looking at Module: %s", name);
+	g_return_val_if_fail(name != NULL, FALSE);
 
-	return FALSE;
+	guint suffix_len = strlen(G_MODULE_SUFFIX);
+	guint name_len = strlen(name);
+
+	g_return_val_if_fail(name_len > suffix_len, FALSE);
+
+	int i;
+	for (i = 0; i < suffix_len; i++) {
+		if (name[(name_len - suffix_len) + i] != (G_MODULE_SUFFIX)[i])
+			return FALSE;
+	}
+	g_debug("Loading Module: %s", name);
+
+	gchar * fullpath = g_build_filename(INDICATOR_DIR, name, NULL);
+	GModule * module = g_module_open(fullpath,
+                                     G_MODULE_BIND_LAZY | G_MODULE_BIND_LOCAL);
+	g_free(fullpath);
+	g_return_val_if_fail(module != NULL, FALSE);
+
+	GtkWidget * (*make_item)(void);
+	g_return_val_if_fail(g_module_symbol(module, SYMBOL_NAME, (gpointer *)(&make_item)), FALSE);
+	g_return_val_if_fail(make_item != NULL, FALSE);
+
+	GtkWidget * menuitem = make_item();
+	g_return_val_if_fail(GTK_MENU_ITEM(menuitem), FALSE);
+
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+
+	return TRUE;
 }
 
 static gboolean
@@ -46,7 +75,7 @@ applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 
 		const gchar * name;
 		while ((name = g_dir_read_name(dir)) != NULL) {
-			if (load_module(name))
+			if (load_module(name, menubar))
 				indicators_loaded++;
 		}
 	}
