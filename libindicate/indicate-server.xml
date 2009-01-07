@@ -1,4 +1,4 @@
-<?xml version="1.0" encodeing="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <node name="/">
 	<interface name="org.freedesktop.indicator">
 
@@ -41,20 +41,20 @@
 
 <!-- Signals -->
 		<signal name="IndicatorAdded">
-			<arg type="u" name="id" type="out" />
-			<arg type="s" name="type" type="out" />
+			<arg type="u" name="id" direction="out" />
+			<arg type="s" name="type" direction="out" />
 		</signal>
 		<signal name="IndicatorRemoved">
-			<arg type="u" name="id" type="out" />
-			<arg type="s" name="type" type="out" />
+			<arg type="u" name="id" direction="out" />
+			<arg type="s" name="type" direction="out" />
 		</signal>
 		<signal name="IndicatorModified">
-			<arg type="u" name="id" type="out" />
-			<arg type="s" name="property" type="out" />
+			<arg type="u" name="id" direction="out" />
+			<arg type="s" name="property" direction="out" />
 		</signal>
 
 
 <!-- End of interesting stuff -->
 
-	</interace>
+	</interface>
 </node>
