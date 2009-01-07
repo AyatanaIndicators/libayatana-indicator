@@ -6,6 +6,9 @@
 #define INDICATE_TYPE_INDICATOR (indicate_indicator_get_type ())
 #define INDICATE_INDICATOR(object) (G_TYPE_CHECK_INSTANCE_CAST ((object), INDICATE_TYPE_INDICATOR, IndicateIndicator))
 #define INDICATE_IS_INDICATOR(object) (G_TYPE_CHECK_INSTANCE_TYPE((object), INDICATE_TYPE_INDICATOR))
+#define INDICATE_INDICATOR_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST((klass), INDICATE_TYPE_INDICATOR, IndicateIndicatorClass))
+#define INDICATE_IS_INDICATOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), INDICATE_TYPE_INDICATOR))
+#define INDICATE_INDICATOR_GET_CLASS(object) (G_TYPE_INSTANCE_GET_CLASS((object), INDICATE_TYPE_INDICATOR, IndicateIndicatorCLass))
 
 /* This is a signal that signals to the indicator that the user
  * has done an action where they'd like this indicator to be
@@ -13,6 +16,20 @@
 #define INDICATE_INDICATOR_SIGNAL_DISPLAY  "user-display"
 
 typedef struct _IndicateIndicator IndicateIndicator;
+struct _IndicateIndicator {
+	GObject parent;
+
+	guint id;
+};
+
+typedef struct _IndicateIndicatorClass IndicateIndicatorClass;
+struct _IndicateIndicatorClass {
+	GObjectClass parent_class;
+
+	void (*user_display) (IndicateIndicator * indicator, gpointer data);
+
+	gchar * (*get_type) (IndicateIndicator * indicator);
+};
 
 IndicateIndicator * indicate_indicator_new (void);
 
