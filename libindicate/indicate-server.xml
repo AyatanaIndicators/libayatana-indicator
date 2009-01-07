@@ -1,0 +1,60 @@
+<?xml version="1.0" encodeing="UTF-8" ?>
+<node name="/">
+	<interface name="org.freedesktop.indicator">
+
+<!-- Functions -->
+		<method name="GetDesktop">
+			<arg type="s" name="desktop_file_uri" direction="out" />
+		</method>
+		<method name="GetIndicatorCount">
+			<arg type="u" name="indicator_count" direction="out" />
+		</method>
+		<method name="GetIndicatorCountByType">
+			<arg type="s" name="type" direction="in" />
+			<arg type="u" name="indicator_count" direction="out" />
+		</method>
+		<method name="GetIndicatorList">
+			<arg type="ai" name="indicators" direction="out" />
+		</method>
+		<method name="GetIndicatorListByType">
+			<arg type="s" name="type" direction="in" />
+			<arg type="ai" name="indicators" direction="out" />
+		</method>
+		<method name="GetIndicatorProperty">
+			<arg type="u" name="id" direction="in" />
+			<arg type="s" name="property" direction="in" />
+			<arg type="s" name="value" direction="out" />
+		</method>
+		<method name="GetIndicatorPropertyGroup">
+			<arg type="u" name="id" direction="in" />
+			<arg type="as" name="properties" direction="in" />
+			<arg type="as" name="values" direction="out" />
+		</method>
+		<method name="GetIndicatorProperties">
+			<arg type="u" name="id" direction="in" />
+			<arg type="as" name="properties" direction="out" />
+		</method>
+		<method name="ShowIndicatorToUser">
+			<arg type="u" name="id" direction="in" />
+		</method>
+
+
+<!-- Signals -->
+		<signal name="IndicatorAdded">
+			<arg type="u" name="id" type="out" />
+			<arg type="s" name="type" type="out" />
+		</signal>
+		<signal name="IndicatorRemoved">
+			<arg type="u" name="id" type="out" />
+			<arg type="s" name="type" type="out" />
+		</signal>
+		<signal name="IndicatorModified">
+			<arg type="u" name="id" type="out" />
+			<arg type="s" name="property" type="out" />
+		</signal>
+
+
+<!-- End of interesting stuff -->
+
+	</interace>
+</node>
