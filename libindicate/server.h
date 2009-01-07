@@ -4,10 +4,23 @@
 
 /* Boilerplate */
 #define INDICATE_TYPE_SERVER (indicate_server_get_type ())
-#define INDICATE_SERVER(object) (G_TYPE_CHECK_INSTANCE_CAST ((object), INDICATE_TYPE_SERVER, IndicateIndicator))
+#define INDICATE_SERVER(object) (G_TYPE_CHECK_INSTANCE_CAST ((object), INDICATE_TYPE_SERVER, IndicateServer))
 #define INDICATE_IS_SERVER(object) (G_TYPE_CHECK_INSTANCE_TYPE((object), INDICATE_TYPE_SERVER))
+#define INDICATE_SERVER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST((klass), INDICATE_TYPE_SERVER, IndicateServerClass))
+#define INDICATE_IS_SERVER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), INDICATE_TYPE_SERVER))
+#define INDICATE_SERVER_GET_CLASS(object) (G_TYPE_INSTANCE_GET_CLASS((object), INDICATE_TYPE_SERVER, IndicateServerClass))
 
 typedef struct _IndicateServer IndicateServer;
+struct _IndicateServer {
+	GObject parent;
+
+};
+
+typedef struct _IndicateServerClass IndicateServerClass;
+struct _IndicateServerClass {
+	GObjectClass parent;
+
+};
 
 /* Create a new server */
 IndicateServer * indicate_server_new (void);
