@@ -23,6 +23,15 @@ typedef struct _IndicateServerClass IndicateServerClass;
 struct _IndicateServerClass {
 	GObjectClass parent;
 
+	gboolean (*get_desktop) (IndicateServer * server, gchar ** desktop_path, GError **error);
+	gboolean (*get_indicator_count) (IndicateServer * server, guint * count, GError **error);
+	gboolean (*get_indicator_count_by_type) (IndicateServer * server, gchar * type, guint * count, GError **error);
+	gboolean (*get_indicator_list) (IndicateServer * server, guint ** indicators, GError ** error);
+	gboolean (*get_indicator_list_by_type) (IndicateServer * server, gchar * type, guint ** indicators, GError ** error);
+	gboolean (*get_indicator_property) (IndicateServer * server, guint id, gchar * property, gchar ** value, GError **error);
+	gboolean (*get_indicator_property_group) (IndicateServer * server, guint id, gchar ** properties, gchar *** value, GError **error);
+	gboolean (*get_indicator_properties) (IndicateServer * server, guint id, gchar *** properties, GError **error);
+	gboolean (*show_indicator_to_user) (IndicateServer * server, guint id, GError ** error);
 };
 
 /* Create a new server */
