@@ -8,7 +8,7 @@ enum {
 	LAST_SIGNAL
 };
 
-guint signals[LAST_SIGNAL] = { 0 };
+static guint signals[LAST_SIGNAL] = { 0 };
 
 G_DEFINE_TYPE (IndicateIndicator, indicate_indicator, G_TYPE_OBJECT);
 
