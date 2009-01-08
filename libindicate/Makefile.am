@@ -1,9 +1,12 @@
 
 INCLUDES= \
-	-DG_LOG_DOMAIN=\"indicate\"
+	-DG_LOG_DOMAIN=\"libindicate\"
 
 EXTRA_DIST = \
 	indicate-server.xml
+
+lib_LTLIBRARIES = \
+	libindicate.la
 
 libindicateincludedir=$(includedir)/libindicate-1.0/libindicate
 
@@ -14,16 +17,21 @@ indicate_headers = \
 libindicateinclude_HEADERS = \
 	$(indicate_headers)
 
-libindicate_SOURCES = \
+libindicate_la_SOURCES = \
 	$(indicate_headers) \
-	dbus-indicate-server.h
+	dbus-indicate-server.h \
 	server.c \
 	indicator.c
 
-libindicate_LDFLAGS = \
-	-version-info 0:0:1 \
+libindicate_la_LDFLAGS = \
 	-no-undefined \
 	-export-symbols-regex "^[^_].*"
+
+libindicate_la_CFLAGS = \
+	$(LIBINDICATE_CFLAGS)
+
+libindicate_la_LIBADD = \
+	$(LIBINDICATE_LIBS)
 
 dbus-indicate-server.h: indicate-server.xml
 	libtool --mode=execute dbus-binding-tool \

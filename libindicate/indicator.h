@@ -2,6 +2,9 @@
 #ifndef INDICATE_INDICATOR_H_INCLUDED__
 #define INDICATE_INDICATOR_H_INCLUDED__ 1
 
+#include <glib.h>
+#include <glib-object.h>
+
 /* Boilerplate */
 #define INDICATE_TYPE_INDICATOR (indicate_indicator_get_type ())
 #define INDICATE_INDICATOR(object) (G_TYPE_CHECK_INSTANCE_CAST ((object), INDICATE_TYPE_INDICATOR, IndicateIndicator))
