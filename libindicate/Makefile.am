@@ -1,4 +1,7 @@
 
+SUBDIRS = \
+	tests
+
 INCLUDES= \
 	-DG_LOG_DOMAIN=\"libindicate\"
 

@@ -69,6 +69,7 @@ AC_OUTPUT([
 Makefile
 src/Makefile
 libindicate/Makefile
+libindicate/tests/Makefile
 data/Makefile
 data/icons/Makefile
 data/icons/16x16/Makefile
