@@ -19,6 +19,18 @@ AC_SUBST(VERSION)
 AC_CONFIG_MACRO_DIR([m4])
 
 ###########################
+# Libindicate versioning 
+###########################
+
+LIBINDICATE_CURRENT=0
+LIBINDICATE_REVISION=1
+LIBINDICATE_AGE=0
+
+AC_SUBST(LIBINDICATE_CURRENT)
+AC_SUBST(LIBINDICATE_REVISION)
+AC_SUBST(LIBINDICATE_AGE)
+
+###########################
 # Dependencies 
 ###########################
 

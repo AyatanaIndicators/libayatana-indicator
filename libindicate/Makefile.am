@@ -27,6 +27,7 @@ libindicate_la_SOURCES = \
 	indicator.c
 
 libindicate_la_LDFLAGS = \
+	-version-info $(LIBINDICATE_CURRENT):$(LIBINDICATE_REVISION):$(LIBINDICATE_AGE) \
 	-no-undefined \
 	-export-symbols-regex "^[^_].*"
 
