@@ -42,10 +42,16 @@ void indicate_server_set_desktop_file (const gchar * path);
 void indicate_server_show (IndicateServer * server);
 void indicate_server_hide (IndicateServer * server);
 
-/* The functions to count indicators for simpler displays of the
- * indicators in the application */
-guint indicate_server_indicator_count (IndicateServer * server);
-guint indicate_server_indicator_count_by_type (IndicateServer * server, const gchar * type);
+/* DBus API */
+gboolean indicate_server_get_desktop (IndicateServer * server, gchar ** desktop_path, GError **error);
+gboolean indicate_server_get_indicator_count (IndicateServer * server, guint * count, GError **error);
+gboolean indicate_server_get_indicator_count_by_type (IndicateServer * server, gchar * type, guint * count, GError **error);
+gboolean indicate_server_get_indicator_list (IndicateServer * server, guint ** indicators, GError ** error);
+gboolean indicate_server_get_indicator_list_by_type (IndicateServer * server, gchar * type, guint ** indicators, GError ** error);
+gboolean indicate_server_get_indicator_property (IndicateServer * server, guint id, gchar * property, gchar ** value, GError **error);
+gboolean indicate_server_get_indicator_property_group (IndicateServer * server, guint id, gchar ** properties, gchar *** value, GError **error);
+gboolean indicate_server_get_indicator_properties (IndicateServer * server, guint id, gchar *** properties, GError **error);
+gboolean indicate_server_show_indicator_to_user (IndicateServer * server, guint id, GError ** error);
 
 
 #endif /* INDICATE_INDICATOR_H_INCLUDED__ */

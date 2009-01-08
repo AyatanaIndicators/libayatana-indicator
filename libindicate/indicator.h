@@ -48,7 +48,7 @@ guint indicate_indicator_get_id (IndicateIndicator * indicator);
 
 /* Every entry has a type.  This should be created by the
  * subclass and exported through this pretty function */
-const gchar * indicate_indicator_get_type (IndicateIndicator * indicator);
+const gchar * indicate_indicator_get_indicator_type (IndicateIndicator * indicator);
 
 
 #endif /* INDICATE_INDICATOR_H_INCLUDED__ */

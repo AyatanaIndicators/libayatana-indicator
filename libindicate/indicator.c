@@ -1,7 +1,6 @@
 
 #include "glib.h"
 #include "indicator.h"
-#include "indicate.h"
 
 /* Signals */
 enum {
@@ -39,7 +38,7 @@ indicate_indicator_class_init (IndicateIndicatorClass * class)
 static void
 indicate_indicator_init (IndicateIndicator * indicator)
 {
-	id = 0;
+	indicator->id = 0;
 
 	/* TODO: Need to connect to a server here */
 
