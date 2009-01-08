@@ -5,6 +5,9 @@ INCLUDES= \
 EXTRA_DIST = \
 	indicate-server.xml
 
+BUILT_SOURCES = \
+	dbus-indicate-server.h
+
 lib_LTLIBRARIES = \
 	libindicate.la
 
