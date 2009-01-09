@@ -56,8 +56,8 @@ void indicate_server_set_desktop_file (const gchar * path);
 void indicate_server_show (IndicateServer * server);
 void indicate_server_hide (IndicateServer * server);
 
-void indicator_server_add_indicator (IndicateServer * server, IndicateIndicator * indicator);
-void indicator_server_remove_indicator (IndicateServer * server, IndicateIndicator * indicator);
+void indicate_server_add_indicator (IndicateServer * server, IndicateIndicator * indicator);
+void indicate_server_remove_indicator (IndicateServer * server, IndicateIndicator * indicator);
 
 IndicateServer * indicate_server_ref_default (void);
 void indicate_server_set_default (IndicateServer * server);

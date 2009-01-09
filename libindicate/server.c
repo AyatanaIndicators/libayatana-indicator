@@ -103,7 +103,7 @@ indicate_server_show (IndicateServer * server)
 }
 
 void
-indicator_server_add_indicator (IndicateServer * server, IndicateIndicator * indicator)
+indicate_server_add_indicator (IndicateServer * server, IndicateIndicator * indicator)
 {
 	g_object_ref(indicator);
 	server->indicators = g_slist_prepend(server->indicators, indicator);
@@ -111,7 +111,7 @@ indicator_server_add_indicator (IndicateServer * server, IndicateIndicator * ind
 }
 
 void
-indicator_server_remove_indicator (IndicateServer * server, IndicateIndicator * indicator)
+indicate_server_remove_indicator (IndicateServer * server, IndicateIndicator * indicator)
 {
 	server->indicators = g_slist_remove(server->indicators, indicator);
 	g_object_unref(indicator);

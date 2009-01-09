@@ -7,6 +7,9 @@ gboolean crashfunc (gpointer data) { *(int *)data = 5; }
 int
 main (int argc, char ** argv)
 {
+	g_type_init();
+
+	IndicateIndicator * indicator = indicate_indicator_new();
 
 	g_timeout_add_seconds(15, crashfunc, NULL);
 
