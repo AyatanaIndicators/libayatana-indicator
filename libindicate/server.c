@@ -105,15 +105,49 @@ indicate_server_show (IndicateServer * server)
 void
 indicator_server_add_indicator (IndicateServer * server, IndicateIndicator * indicator)
 {
-
-
+	g_object_ref(indicator);
+	server->indicators = g_slist_prepend(server->indicators, indicator);
+	return;
 }
 
 void
 indicator_server_remove_indicator (IndicateServer * server, IndicateIndicator * indicator)
 {
+	server->indicators = g_slist_remove(server->indicators, indicator);
+	g_object_unref(indicator);
+	return;
+}
 
+static IndicateServer * default_indicate_server = NULL;
 
+IndicateServer *
+indicate_server_ref_default (void)
+{
+	if (default_indicate_server != NULL) {
+		g_object_ref(default_indicate_server);
+	} else {
+		default_indicate_server = g_object_new(INDICATE_TYPE_SERVER, NULL);
+		g_object_add_weak_pointer(G_OBJECT(default_indicate_server),
+		                          (gpointer *)&default_indicate_server);
+	}
+
+	return default_indicate_server;
+}
+
+void
+indicate_server_set_default (IndicateServer * server)
+{
+	if (default_indicate_server != NULL) {
+		g_warning("Setting a default Indicator Server when one has already been created.  I'm not going to destroy that one, but let it live.  This may create some odd results if you don't know what you're doing.");
+	}
+
+	if (server != NULL) {
+		default_indicate_server = server;
+		g_object_add_weak_pointer(G_OBJECT(default_indicate_server),
+		                          (gpointer *)&default_indicate_server);
+	}
+
+	return;
 }
 
 /* Virtual Functions */

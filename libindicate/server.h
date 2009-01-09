@@ -58,6 +58,9 @@ void indicate_server_hide (IndicateServer * server);
 void indicator_server_add_indicator (IndicateServer * server, IndicateIndicator * indicator);
 void indicator_server_remove_indicator (IndicateServer * server, IndicateIndicator * indicator);
 
+IndicateServer * indicate_server_ref_default (void);
+void indicate_server_set_default (IndicateServer * server);
+
 /* DBus API */
 gboolean indicate_server_get_desktop (IndicateServer * server, gchar ** desktop_path, GError **error);
 gboolean indicate_server_get_indicator_count (IndicateServer * server, guint * count, GError **error);
