@@ -19,13 +19,17 @@
 #define INDICATE_INDICATOR_SIGNAL_DISPLAY  "user-display"
 
 typedef struct _IndicateIndicator IndicateIndicator;
+typedef struct _IndicateIndicatorClass IndicateIndicatorClass;
+
+#include "server.h"
+
 struct _IndicateIndicator {
 	GObject parent;
 
 	guint id;
+	IndicateServer * server;
 };
 
-typedef struct _IndicateIndicatorClass IndicateIndicatorClass;
 struct _IndicateIndicatorClass {
 	GObjectClass parent_class;
 

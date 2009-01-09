@@ -5,8 +5,6 @@
 #include <glib.h>
 #include <glib-object.h>
 
-#include "indicator.h"
-
 /* Boilerplate */
 #define INDICATE_TYPE_SERVER (indicate_server_get_type ())
 #define INDICATE_SERVER(object) (G_TYPE_CHECK_INSTANCE_CAST ((object), INDICATE_TYPE_SERVER, IndicateServer))
@@ -16,6 +14,9 @@
 #define INDICATE_SERVER_GET_CLASS(object) (G_TYPE_INSTANCE_GET_CLASS((object), INDICATE_TYPE_SERVER, IndicateServerClass))
 
 typedef struct _IndicateServer IndicateServer;
+
+#include "indicator.h"
+
 struct _IndicateServer {
 	GObject parent;
 

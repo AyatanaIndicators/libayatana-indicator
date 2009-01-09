@@ -40,7 +40,8 @@ indicate_indicator_init (IndicateIndicator * indicator)
 {
 	indicator->id = 0;
 
-	/* TODO: Need to connect to a server here */
+	indicator->server = indicate_server_ref_default();
+	indicate_server_add_indicator(indicator->server, indicator);
 
 	return;
 }
@@ -48,8 +49,19 @@ indicate_indicator_init (IndicateIndicator * indicator)
 static void
 indicate_indicator_finalize (GObject * obj)
 {
-	/* TODO: Need to disconnect from server here */
+	IndicateIndicator * indicator = INDICATE_INDICATOR(obj);
+
+	indicate_server_remove_indicator(indicator->server, indicator);
+	g_object_unref(indicator->server);
+	indicator->server = NULL;
 
 	return;
+}
+
+IndicateIndicator *
+indicate_indicator_new (void)
+{
+	IndicateIndicator * indicator = g_object_new(INDICATE_TYPE_INDICATOR, NULL);
+	return indicator;
 }
 
