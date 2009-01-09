@@ -5,6 +5,8 @@
 #include <glib.h>
 #include <glib-object.h>
 
+#include "indicator.h"
+
 /* Boilerplate */
 #define INDICATE_TYPE_SERVER (indicate_server_get_type ())
 #define INDICATE_SERVER(object) (G_TYPE_CHECK_INSTANCE_CAST ((object), INDICATE_TYPE_SERVER, IndicateServer))
@@ -17,6 +19,8 @@ typedef struct _IndicateServer IndicateServer;
 struct _IndicateServer {
 	GObject parent;
 
+	gchar * path;
+	GSList * indicators;
 };
 
 typedef struct _IndicateServerClass IndicateServerClass;
@@ -50,6 +54,9 @@ void indicate_server_set_desktop_file (const gchar * path);
  * sure fire way to do so.  No idea why, but I'm sure I'll learn. */
 void indicate_server_show (IndicateServer * server);
 void indicate_server_hide (IndicateServer * server);
+
+void indicator_server_add_indicator (IndicateServer * server, IndicateIndicator * indicator);
+void indicator_server_remove_indicator (IndicateServer * server, IndicateIndicator * indicator);
 
 /* DBus API */
 gboolean indicate_server_get_desktop (IndicateServer * server, gchar ** desktop_path, GError **error);

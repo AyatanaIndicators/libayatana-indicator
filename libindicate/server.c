@@ -40,6 +40,18 @@ indicate_server_class_init (IndicateServerClass * class)
 
 	gobj->finalize = indicate_server_finalize;
 
+	dbus_g_object_type_install_info(INDICATE_TYPE_SERVER,
+	                                &dbus_glib_indicate_server_object_info);
+
+	class->get_desktop = NULL;
+	class->get_indicator_count = NULL;
+	class->get_indicator_count_by_type = NULL;
+	class->get_indicator_list = NULL;
+	class->get_indicator_list_by_type = NULL;
+	class->get_indicator_property = NULL;
+	class->get_indicator_property_group = NULL;
+	class->get_indicator_properties = NULL;
+	class->show_indicator_to_user = NULL;
 
 	return;
 }
@@ -47,7 +59,8 @@ indicate_server_class_init (IndicateServerClass * class)
 static void
 indicate_server_init (IndicateServer * server)
 {
-
+	server->path = g_strdup("/org/freedesktop/indicate");
+	server->indicators = NULL;
 
 	return;
 }
@@ -55,7 +68,11 @@ indicate_server_init (IndicateServer * server)
 static void
 indicate_server_finalize (GObject * obj)
 {
+	IndicateServer * server = INDICATE_SERVER(obj);
 
+	if (server->path) {
+		g_free(server->path);
+	}
 
 	return;
 }
@@ -68,6 +85,35 @@ indicate_server_error_quark (void)
 		quark = g_quark_from_static_string (G_LOG_DOMAIN);
 	}
 	return quark;
+}
+
+
+void
+indicate_server_show (IndicateServer * server)
+{
+	DBusGConnection * connection;
+
+	connection = dbus_g_bus_get(DBUS_BUS_SESSION, NULL);
+
+	dbus_g_connection_register_g_object(connection,
+	                                    server->path,
+	                                    G_OBJECT(server));
+	
+	return;
+}
+
+void
+indicator_server_add_indicator (IndicateServer * server, IndicateIndicator * indicator)
+{
+
+
+}
+
+void
+indicator_server_remove_indicator (IndicateServer * server, IndicateIndicator * indicator)
+{
+
+
 }
 
 /* Virtual Functions */
