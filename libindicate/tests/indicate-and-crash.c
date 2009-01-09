@@ -10,6 +10,7 @@ main (int argc, char ** argv)
 	g_type_init();
 
 	IndicateIndicator * indicator = indicate_indicator_new();
+	indicate_server_show(indicator->server);
 
 	g_timeout_add_seconds(15, crashfunc, NULL);
 
