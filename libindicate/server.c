@@ -30,6 +30,15 @@ G_DEFINE_TYPE (IndicateServer, indicate_server, G_TYPE_OBJECT);
 
 /* Prototypes */
 static void indicate_server_finalize (GObject * obj);
+static gboolean get_desktop (IndicateServer * server, gchar ** desktop_path, GError **error);
+static gboolean get_indicator_count (IndicateServer * server, guint * count, GError **error);
+static gboolean get_indicator_count_by_type (IndicateServer * server, gchar * type, guint * count, GError **error);
+static gboolean get_indicator_list (IndicateServer * server, guint ** indicators, GError ** error);
+static gboolean get_indicator_list_by_type (IndicateServer * server, gchar * type, guint ** indicators, GError ** error);
+static gboolean get_indicator_property (IndicateServer * server, guint id, gchar * property, gchar ** value, GError **error);
+static gboolean get_indicator_property_group (IndicateServer * server, guint id, gchar ** properties, gchar *** value, GError **error);
+static gboolean get_indicator_properties (IndicateServer * server, guint id, gchar *** properties, GError **error);
+static gboolean show_indicator_to_user (IndicateServer * server, guint id, GError ** error);
 
 /* Code */
 static void
@@ -65,15 +74,15 @@ indicate_server_class_init (IndicateServerClass * class)
 	dbus_g_object_type_install_info(INDICATE_TYPE_SERVER,
 	                                &dbus_glib_indicate_server_object_info);
 
-	class->get_desktop = NULL;
-	class->get_indicator_count = NULL;
-	class->get_indicator_count_by_type = NULL;
-	class->get_indicator_list = NULL;
-	class->get_indicator_list_by_type = NULL;
-	class->get_indicator_property = NULL;
-	class->get_indicator_property_group = NULL;
-	class->get_indicator_properties = NULL;
-	class->show_indicator_to_user = NULL;
+	class->get_desktop = get_desktop;
+	class->get_indicator_count = get_indicator_count;
+	class->get_indicator_count_by_type = get_indicator_count_by_type;
+	class->get_indicator_list = get_indicator_list;
+	class->get_indicator_list_by_type = get_indicator_list_by_type;
+	class->get_indicator_property = get_indicator_property;
+	class->get_indicator_property_group = get_indicator_property_group;
+	class->get_indicator_properties = get_indicator_properties;
+	class->show_indicator_to_user = show_indicator_to_user;
 
 	return;
 }
@@ -171,6 +180,70 @@ indicate_server_set_default (IndicateServer * server)
 
 	return;
 }
+
+static gboolean
+get_desktop (IndicateServer * server, gchar ** desktop_path, GError **error)
+{
+
+	return TRUE;
+}
+
+static gboolean
+get_indicator_count (IndicateServer * server, guint * count, GError **error)
+{
+
+	return TRUE;
+}
+
+static gboolean
+get_indicator_count_by_type (IndicateServer * server, gchar * type, guint * count, GError **error)
+{
+
+	return TRUE;
+}
+
+static gboolean
+get_indicator_list (IndicateServer * server, guint ** indicators, GError ** error)
+{
+
+	return TRUE;
+}
+
+static gboolean
+get_indicator_list_by_type (IndicateServer * server, gchar * type, guint ** indicators, GError ** error)
+{
+
+	return TRUE;
+}
+
+static gboolean
+get_indicator_property (IndicateServer * server, guint id, gchar * property, gchar ** value, GError **error)
+{
+
+	return TRUE;
+}
+
+static gboolean
+get_indicator_property_group (IndicateServer * server, guint id, gchar ** properties, gchar *** value, GError **error)
+{
+
+	return TRUE;
+}
+
+static gboolean
+get_indicator_properties (IndicateServer * server, guint id, gchar *** properties, GError **error)
+{
+
+	return TRUE;
+}
+
+static gboolean
+show_indicator_to_user (IndicateServer * server, guint id, GError ** error)
+{
+
+	return TRUE;
+}
+
 
 /* Virtual Functions */
 gboolean 
