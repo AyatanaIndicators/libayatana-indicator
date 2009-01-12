@@ -1,5 +1,6 @@
 
 #include "glib.h"
+#include "glib/gmessages.h"
 #include "indicator.h"
 
 /* Signals */
@@ -59,6 +60,7 @@ indicate_indicator_init (IndicateIndicator * indicator)
 	g_debug("Indicator Object Initialized.");
 
 	indicator->id = 0;
+	indicator->is_visible = FALSE;
 
 	indicator->server = indicate_server_ref_default();
 	indicate_server_add_indicator(indicator->server, indicator);
@@ -88,16 +90,53 @@ indicate_indicator_new (void)
 void
 indicate_indicator_show (IndicateIndicator * indicator)
 {
+	if (indicator->is_visible) {
+		return;
+	}
+
 	if (indicator->server) {
 		indicate_server_show(indicator->server);
 	}
 
+	indicator->is_visible = TRUE;
 	g_signal_emit(indicator, signals[SHOW], 0, TRUE);
 }
 
 void
 indicate_indicator_hide (IndicateIndicator * indicator)
 {
+	if (!indicator->is_visible) {
+		return;
+	}
+
+	indicator->is_visible = FALSE;
 	g_signal_emit(indicator, signals[HIDE], 0, TRUE);
 }
+
+gboolean
+indicate_indicator_is_visible (IndicateIndicator * indicator)
+{
+	return indicator->is_visible;
+}
+
+guint
+indicate_indicator_get_id (IndicateIndicator * indicator)
+{
+	g_return_val_if_fail(INDICATE_IS_INDICATOR(indicator), 0);
+	return indicator->id;
+}
+
+const gchar *
+indicate_indicator_get_indicator_type (IndicateIndicator * indicator)
+{
+	g_return_val_if_fail(INDICATE_IS_INDICATOR(indicator), NULL);
+	IndicateIndicatorClass * class = INDICATE_INDICATOR_GET_CLASS(indicator);
+
+	if (class->get_type != NULL) {
+		return INDICATE_INDICATOR_GET_CLASS(indicator)->get_type(indicator);
+	}
+
+	return NULL;
+}
+
 
