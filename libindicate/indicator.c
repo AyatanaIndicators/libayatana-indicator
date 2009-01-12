@@ -33,6 +33,20 @@ indicate_indicator_class_init (IndicateIndicatorClass * class)
 	                                     NULL, NULL,
 	                                     g_cclosure_marshal_VOID__VOID,
 	                                     G_TYPE_NONE, 0);
+	signals[HIDE] = g_signal_new(INDICATE_INDICATOR_SIGNAL_HIDE,
+	                                     G_TYPE_FROM_CLASS(class),
+	                                     G_SIGNAL_RUN_LAST,
+	                                     G_STRUCT_OFFSET(IndicateIndicatorClass, hide),
+	                                     NULL, NULL,
+	                                     g_cclosure_marshal_VOID__VOID,
+	                                     G_TYPE_NONE, 0);
+	signals[SHOW] = g_signal_new(INDICATE_INDICATOR_SIGNAL_SHOW,
+	                                     G_TYPE_FROM_CLASS(class),
+	                                     G_SIGNAL_RUN_LAST,
+	                                     G_STRUCT_OFFSET(IndicateIndicatorClass, show),
+	                                     NULL, NULL,
+	                                     g_cclosure_marshal_VOID__VOID,
+	                                     G_TYPE_NONE, 0);
 
 	return;
 }
@@ -70,14 +84,16 @@ indicate_indicator_new (void)
 void
 indicate_indicator_show (IndicateIndicator * indicator)
 {
+	if (indicator->server) {
+		indicate_server_show(indicator->server);
+	}
 
-
+	g_signal_emit(indicator, signals[SHOW], NULL, G_TYPE_NONE);
 }
 
 void
 indicate_indicator_hide (IndicateIndicator * indicator)
 {
-
-
+	g_signal_emit(indicator, signals[HIDE], NULL, G_TYPE_NONE);
 }
 

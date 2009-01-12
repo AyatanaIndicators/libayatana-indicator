@@ -16,6 +16,8 @@
 /* This is a signal that signals to the indicator that the user
  * has done an action where they'd like this indicator to be
  * displayed. */
+#define INDICATE_INDICATOR_SIGNAL_HIDE  "hide"
+#define INDICATE_INDICATOR_SIGNAL_SHOW  "show"
 #define INDICATE_INDICATOR_SIGNAL_DISPLAY  "user-display"
 
 typedef struct _IndicateIndicator IndicateIndicator;
