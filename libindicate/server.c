@@ -44,6 +44,7 @@ static gboolean show_indicator_to_user (IndicateServer * server, guint id, GErro
 static void
 indicate_server_class_init (IndicateServerClass * class)
 {
+	g_debug("Server Class Initialized");
 	GObjectClass * gobj;
 	gobj = G_OBJECT_CLASS(class);
 
@@ -90,6 +91,8 @@ indicate_server_class_init (IndicateServerClass * class)
 static void
 indicate_server_init (IndicateServer * server)
 {
+	g_debug("Server Object Initialized");
+
 	server->path = g_strdup("/org/freedesktop/indicate");
 	server->indicators = NULL;
 

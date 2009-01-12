@@ -21,6 +21,8 @@ static void indicate_indicator_finalize (GObject * object);
 static void
 indicate_indicator_class_init (IndicateIndicatorClass * class)
 {
+	g_debug("Indicator Class Initialized.");
+
 	GObjectClass * gobj;
 	gobj = G_OBJECT_CLASS(class);
 
@@ -54,6 +56,8 @@ indicate_indicator_class_init (IndicateIndicatorClass * class)
 static void
 indicate_indicator_init (IndicateIndicator * indicator)
 {
+	g_debug("Indicator Object Initialized.");
+
 	indicator->id = 0;
 
 	indicator->server = indicate_server_ref_default();
@@ -88,12 +92,12 @@ indicate_indicator_show (IndicateIndicator * indicator)
 		indicate_server_show(indicator->server);
 	}
 
-	g_signal_emit(indicator, signals[SHOW], NULL, G_TYPE_NONE);
+	g_signal_emit(indicator, signals[SHOW], 0, TRUE);
 }
 
 void
 indicate_indicator_hide (IndicateIndicator * indicator)
 {
-	g_signal_emit(indicator, signals[HIDE], NULL, G_TYPE_NONE);
+	g_signal_emit(indicator, signals[HIDE], 0, TRUE);
 }
 
