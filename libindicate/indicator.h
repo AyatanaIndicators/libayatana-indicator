@@ -33,6 +33,8 @@ struct _IndicateIndicator {
 struct _IndicateIndicatorClass {
 	GObjectClass parent_class;
 
+	void (*hide) (IndicateIndicator * indicator, gpointer data);
+	void (*show) (IndicateIndicator * indicator, gpointer data);
 	void (*user_display) (IndicateIndicator * indicator, gpointer data);
 
 	gchar * (*get_type) (IndicateIndicator * indicator);

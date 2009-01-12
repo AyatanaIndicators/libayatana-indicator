@@ -4,6 +4,8 @@
 
 /* Signals */
 enum {
+	HIDE,
+	SHOW,
 	USER_DISPLAY,
 	LAST_SIGNAL
 };
@@ -63,5 +65,19 @@ indicate_indicator_new (void)
 {
 	IndicateIndicator * indicator = g_object_new(INDICATE_TYPE_INDICATOR, NULL);
 	return indicator;
+}
+
+void
+indicate_indicator_show (IndicateIndicator * indicator)
+{
+
+
+}
+
+void
+indicate_indicator_hide (IndicateIndicator * indicator)
+{
+
+
 }
 
