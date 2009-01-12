@@ -230,6 +230,11 @@ get_desktop (IndicateServer * server, gchar ** desktop_path, GError **error)
 static gboolean
 get_indicator_count (IndicateServer * server, guint * count, GError **error)
 {
+	guint lstcnt = g_slist_length(server->indicators);
+
+	g_return_val_if_fail(server->num_hidden < lstcnt, TRUE);
+	
+	*count = lstcnt - server->num_hidden;
 
 	return TRUE;
 }
