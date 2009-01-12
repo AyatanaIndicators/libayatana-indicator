@@ -40,6 +40,28 @@ indicate_server_class_init (IndicateServerClass * class)
 
 	gobj->finalize = indicate_server_finalize;
 
+	signals[INDICATOR_ADDED] = g_signal_new("indicator-added",
+	                                        G_TYPE_FROM_CLASS (class),
+	                                        G_SIGNAL_RUN_LAST,
+	                                        G_STRUCT_OFFSET (IndicateServerClass, indicator_added),
+	                                        NULL, NULL,
+	                                        g_cclosure_marshal_VOID__UINT_POINTER,
+	                                        G_TYPE_NONE, 2, G_TYPE_UINT, G_TYPE_STRING);
+	signals[INDICATOR_REMOVED] = g_signal_new("indicator-removed",
+	                                        G_TYPE_FROM_CLASS (class),
+	                                        G_SIGNAL_RUN_LAST,
+	                                        G_STRUCT_OFFSET (IndicateServerClass, indicator_removed),
+	                                        NULL, NULL,
+	                                        g_cclosure_marshal_VOID__UINT_POINTER,
+	                                        G_TYPE_NONE, 2, G_TYPE_UINT, G_TYPE_STRING);
+	signals[INDICATOR_MODIFIED] = g_signal_new("indicator-modified",
+	                                        G_TYPE_FROM_CLASS (class),
+	                                        G_SIGNAL_RUN_LAST,
+	                                        G_STRUCT_OFFSET (IndicateServerClass, indicator_modified),
+	                                        NULL, NULL,
+	                                        g_cclosure_marshal_VOID__UINT_POINTER,
+	                                        G_TYPE_NONE, 2, G_TYPE_UINT, G_TYPE_STRING);
+
 	dbus_g_object_type_install_info(INDICATE_TYPE_SERVER,
 	                                &dbus_glib_indicate_server_object_info);
 

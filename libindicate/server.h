@@ -28,6 +28,12 @@ typedef struct _IndicateServerClass IndicateServerClass;
 struct _IndicateServerClass {
 	GObjectClass parent;
 
+	/* Signals */
+	void (* indicator_added) (IndicateServer * server, guint id, gchar * type);
+	void (* indicator_removed) (IndicateServer * server, guint id, gchar * type);
+	void (* indicator_modified) (IndicateServer * server, guint id, gchar * property);
+
+	/* Virtual Functions */
 	gboolean (*get_desktop) (IndicateServer * server, gchar ** desktop_path, GError **error);
 	gboolean (*get_indicator_count) (IndicateServer * server, guint * count, GError **error);
 	gboolean (*get_indicator_count_by_type) (IndicateServer * server, gchar * type, guint * count, GError **error);
