@@ -99,6 +99,8 @@ indicate_indicator_show (IndicateIndicator * indicator)
 
 	indicator->is_visible = TRUE;
 	g_signal_emit(indicator, signals[SHOW], 0, TRUE);
+
+	return;
 }
 
 void
@@ -110,6 +112,8 @@ indicate_indicator_hide (IndicateIndicator * indicator)
 
 	indicator->is_visible = FALSE;
 	g_signal_emit(indicator, signals[HIDE], 0, TRUE);
+
+	return;
 }
 
 gboolean

@@ -268,11 +268,12 @@ static void
 count_by_type (IndicateIndicator * indicator, count_by_t * cbt)
 {
 	g_return_if_fail(INDICATE_IS_INDICATOR(indicator));
-	if (indicate_indicator_is_visible(indicator)) {
+	if (!indicate_indicator_is_visible(indicator)) {
 		return;
 	}
 
 	const gchar * type = indicate_indicator_get_indicator_type(indicator);
+	/* g_debug("Looking for indicator of type '%s' and have type '%s'", cbt->type, type); */
 
 	if (type == NULL && cbt->type == NULL) {
 		cbt->count++;
@@ -287,6 +288,7 @@ count_by_type (IndicateIndicator * indicator, count_by_t * cbt)
 static gboolean
 get_indicator_count_by_type (IndicateServer * server, gchar * type, guint * count, GError **error)
 {
+	/* g_debug("get_indicator_count_by_type: '%s'", type); */
 	count_by_t cbt;
 	cbt.type = type;
 	cbt.count = 0;
