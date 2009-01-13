@@ -44,6 +44,7 @@ static gboolean show_indicator_to_user (IndicateServer * server, guint id, GErro
 static void
 indicate_server_class_init (IndicateServerClass * class)
 {
+	g_debug("Server Class Initialized");
 	GObjectClass * gobj;
 	gobj = G_OBJECT_CLASS(class);
 
@@ -90,8 +91,11 @@ indicate_server_class_init (IndicateServerClass * class)
 static void
 indicate_server_init (IndicateServer * server)
 {
+	g_debug("Server Object Initialized");
+
 	server->path = g_strdup("/org/freedesktop/indicate");
 	server->indicators = NULL;
+	server->num_hidden = 0;
 
 	return;
 }
@@ -133,11 +137,37 @@ indicate_server_show (IndicateServer * server)
 	return;
 }
 
+static void
+indicator_show_cb (IndicateIndicator * indicator, IndicateServer * server)
+{
+	server->num_hidden--;
+	g_signal_emit(server, signals[INDICATOR_ADDED], 0, indicate_indicator_get_id(indicator), indicate_indicator_get_indicator_type(indicator), TRUE);
+	return;
+}
+
+static void
+indicator_hide_cb (IndicateIndicator * indicator, IndicateServer * server)
+{
+	server->num_hidden++;
+	g_signal_emit(server, signals[INDICATOR_REMOVED], 0, indicate_indicator_get_id(indicator), indicate_indicator_get_indicator_type(indicator), TRUE);
+	return;
+}
+
 void
 indicate_server_add_indicator (IndicateServer * server, IndicateIndicator * indicator)
 {
 	g_object_ref(indicator);
 	server->indicators = g_slist_prepend(server->indicators, indicator);
+
+	if (!indicate_indicator_is_visible(indicator)) {
+		server->num_hidden++;
+	} else {
+		g_signal_emit(server, signals[INDICATOR_ADDED], 0, indicate_indicator_get_id(indicator), indicate_indicator_get_indicator_type(indicator), TRUE);
+	}
+
+	g_signal_connect(indicator, INDICATE_INDICATOR_SIGNAL_SHOW, indicator_show_cb, server);
+	g_signal_connect(indicator, INDICATE_INDICATOR_SIGNAL_HIDE, indicator_hide_cb, server);
+
 	return;
 }
 
@@ -145,6 +175,15 @@ void
 indicate_server_remove_indicator (IndicateServer * server, IndicateIndicator * indicator)
 {
 	server->indicators = g_slist_remove(server->indicators, indicator);
+	if (indicate_indicator_is_visible(indicator)) {
+		g_signal_emit(server, signals[INDICATOR_REMOVED], 0, indicate_indicator_get_id(indicator), indicate_indicator_get_indicator_type(indicator), TRUE);
+	} else {
+		server->num_hidden--;
+	}
+
+	g_signal_handlers_disconnect_by_func(indicator, indicator_show_cb, server);
+	g_signal_handlers_disconnect_by_func(indicator, indicator_hide_cb, server);
+
 	g_object_unref(indicator);
 	return;
 }
@@ -191,6 +230,11 @@ get_desktop (IndicateServer * server, gchar ** desktop_path, GError **error)
 static gboolean
 get_indicator_count (IndicateServer * server, guint * count, GError **error)
 {
+	guint lstcnt = g_slist_length(server->indicators);
+
+	g_return_val_if_fail(server->num_hidden < lstcnt, TRUE);
+	
+	*count = lstcnt - server->num_hidden;
 
 	return TRUE;
 }
