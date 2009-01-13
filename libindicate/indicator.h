@@ -65,6 +65,8 @@ guint indicate_indicator_get_id (IndicateIndicator * indicator);
  * subclass and exported through this pretty function */
 const gchar * indicate_indicator_get_indicator_type (IndicateIndicator * indicator);
 
+void indicate_indicator_user_display (IndicateIndicator * indicator);
+
 G_END_DECLS
 
 #endif /* INDICATE_INDICATOR_H_INCLUDED__ */

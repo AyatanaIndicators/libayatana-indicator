@@ -13,6 +13,7 @@ enum {
 	NO_GET_INDICATOR_PROPERTY_GROUP,
 	NO_GET_INDICATOR_PROPERTIES,
 	NO_SHOW_INDICATOR_TO_USER,
+	INVALID_INDICATOR_ID,
 	LAST_ERROR
 };
 
@@ -331,6 +332,35 @@ get_indicator_list (IndicateServer * server, GArray ** indicators, GError ** err
 static gboolean
 get_indicator_list_by_type (IndicateServer * server, gchar * type, guint ** indicators, GError ** error)
 {
+	g_return_val_if_fail(INDICATE_IS_SERVER(server), TRUE);
+
+	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
+	g_return_val_if_fail(class->get_indicator_count != NULL, TRUE);
+
+	if (type != NULL && type[0] == '\0') {
+		type = NULL;
+	}
+
+	/* Can't be larger than this and it's not worth the reallocation
+	   for the small number we have.  The memory isn't worth the time. */
+	*indicators = g_array_sized_new(FALSE, FALSE, sizeof(guint), g_slist_length(server->indicators) - server->num_hidden);
+
+	GSList * iter;
+	int i;
+	for (iter = server->indicators, i = 0; iter != NULL; iter = iter->next) {
+		IndicateIndicator * indicator = INDICATE_INDICATOR(iter->data);
+		if (indicate_indicator_is_visible(indicator)) {
+			const gchar * itype = indicate_indicator_get_indicator_type(indicator);
+			guint id = indicate_indicator_get_id(indicator);
+
+			if (type == NULL && itype == NULL) {
+				g_array_insert_val(*indicators, i++, id);
+			} else if (type == NULL || itype == NULL) {
+			} else if (!strcmp(type, itype)) {
+				g_array_insert_val(*indicators, i++, id);
+			}
+		}
+	}
 
 	return TRUE;
 }
@@ -359,8 +389,25 @@ get_indicator_properties (IndicateServer * server, guint id, gchar *** propertie
 static gboolean
 show_indicator_to_user (IndicateServer * server, guint id, GError ** error)
 {
+	g_return_val_if_fail(INDICATE_IS_SERVER(server), TRUE);
 
-	return TRUE;
+	GSList * iter;
+	for (iter = server->indicators; iter != NULL; iter = iter->next) {
+		IndicateIndicator * indicator = INDICATE_INDICATOR(iter->data);
+		if (indicate_indicator_get_id(indicator) == id) {
+			indicate_indicator_user_display(indicator);
+			return TRUE;
+		}
+	}
+
+	if (error) {
+		g_set_error(error,
+		            indicate_server_error_quark(),
+		            INVALID_INDICATOR_ID,
+		            "show_indicator_id can't be done on and invalid ID: %d",
+		            id);
+	}
+	return FALSE;
 }
 
 

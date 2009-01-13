@@ -142,4 +142,13 @@ indicate_indicator_get_indicator_type (IndicateIndicator * indicator)
 	return NULL;
 }
 
+void
+indicate_indicator_user_display (IndicateIndicator * indicator)
+{
+	if (!indicator->is_visible) {
+		return;
+	}
 
+	g_signal_emit(indicator, signals[USER_DISPLAY], 0, TRUE);
+	return;
+}
