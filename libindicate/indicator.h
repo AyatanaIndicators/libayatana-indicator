@@ -5,6 +5,8 @@
 #include <glib.h>
 #include <glib-object.h>
 
+G_BEGIN_DECLS
+
 /* Boilerplate */
 #define INDICATE_TYPE_INDICATOR (indicate_indicator_get_type ())
 #define INDICATE_INDICATOR(object) (G_TYPE_CHECK_INSTANCE_CAST ((object), INDICATE_TYPE_INDICATOR, IndicateIndicator))
@@ -43,6 +45,8 @@ struct _IndicateIndicatorClass {
 	const gchar * (*get_type) (IndicateIndicator * indicator);
 };
 
+GType indicate_indicator_get_type(void) G_GNUC_CONST;
+
 IndicateIndicator * indicate_indicator_new (void);
 
 /* Should these just be GObject properties? */
@@ -61,6 +65,7 @@ guint indicate_indicator_get_id (IndicateIndicator * indicator);
  * subclass and exported through this pretty function */
 const gchar * indicate_indicator_get_indicator_type (IndicateIndicator * indicator);
 
+G_END_DECLS
 
 #endif /* INDICATE_INDICATOR_H_INCLUDED__ */
 

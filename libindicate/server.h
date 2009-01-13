@@ -5,6 +5,8 @@
 #include <glib.h>
 #include <glib-object.h>
 
+G_BEGIN_DECLS
+
 /* Boilerplate */
 #define INDICATE_TYPE_SERVER (indicate_server_get_type ())
 #define INDICATE_SERVER(object) (G_TYPE_CHECK_INSTANCE_CAST ((object), INDICATE_TYPE_SERVER, IndicateServer))
@@ -48,6 +50,8 @@ struct _IndicateServerClass {
 	gboolean (*show_indicator_to_user) (IndicateServer * server, guint id, GError ** error);
 };
 
+GType indicate_server_get_type (void) G_GNUC_CONST;
+
 /* Create a new server */
 IndicateServer * indicate_server_new (void);
 
@@ -82,6 +86,7 @@ gboolean indicate_server_get_indicator_property_group (IndicateServer * server, 
 gboolean indicate_server_get_indicator_properties (IndicateServer * server, guint id, gchar *** properties, GError **error);
 gboolean indicate_server_show_indicator_to_user (IndicateServer * server, guint id, GError ** error);
 
+G_END_DECLS
 
 #endif /* INDICATE_INDICATOR_H_INCLUDED__ */
 
