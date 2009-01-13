@@ -33,7 +33,7 @@ static void indicate_server_finalize (GObject * obj);
 static gboolean get_desktop (IndicateServer * server, gchar ** desktop_path, GError **error);
 static gboolean get_indicator_count (IndicateServer * server, guint * count, GError **error);
 static gboolean get_indicator_count_by_type (IndicateServer * server, gchar * type, guint * count, GError **error);
-static gboolean get_indicator_list (IndicateServer * server, guint ** indicators, GError ** error);
+static gboolean get_indicator_list (IndicateServer * server, GArray ** indicators, GError ** error);
 static gboolean get_indicator_list_by_type (IndicateServer * server, gchar * type, guint ** indicators, GError ** error);
 static gboolean get_indicator_property (IndicateServer * server, guint id, gchar * property, gchar ** value, GError **error);
 static gboolean get_indicator_property_group (IndicateServer * server, guint id, gchar ** properties, gchar *** value, GError **error);
@@ -223,7 +223,10 @@ indicate_server_set_default (IndicateServer * server)
 static gboolean
 get_desktop (IndicateServer * server, gchar ** desktop_path, GError **error)
 {
-
+	if (server->path != NULL) {
+		// TODO: This might be a memory leak, check into that.
+		*desktop_path = g_strdup(server->path);
+	}
 	return TRUE;
 }
 
@@ -239,16 +242,69 @@ get_indicator_count (IndicateServer * server, guint * count, GError **error)
 	return TRUE;
 }
 
+typedef struct {
+	gchar * type;
+	guint count;
+} count_by_t;
+
+static void
+count_by_type (IndicateIndicator * indicator, count_by_t * cbt)
+{
+	g_return_if_fail(INDICATE_IS_INDICATOR(indicator));
+	if (indicate_indicator_is_visible(indicator)) {
+		return;
+	}
+
+	const gchar * type = indicate_indicator_get_indicator_type(indicator);
+
+	if (type == NULL && cbt->type == NULL) {
+		cbt->count++;
+	} else if (type == NULL || cbt->type == NULL) {
+	} else if (!strcmp(type, cbt->type)) {
+		cbt->count++;
+	}
+
+	return;
+}
+
 static gboolean
 get_indicator_count_by_type (IndicateServer * server, gchar * type, guint * count, GError **error)
 {
+	count_by_t cbt;
+	cbt.type = type;
+	cbt.count = 0;
+
+	/* Handle the NULL string case as NULL itself, we're a big
+	   boy language; we have pointers. */
+	if (cbt.type != NULL && cbt.type[0] == '\0') {
+		cbt.type = NULL;
+	}
+
+	g_slist_foreach(server->indicators, count_by_type, &cbt);
+	*count = cbt.count;
 
 	return TRUE;
 }
 
 static gboolean
-get_indicator_list (IndicateServer * server, guint ** indicators, GError ** error)
+get_indicator_list (IndicateServer * server, GArray ** indicators, GError ** error)
 {
+	g_return_val_if_fail(INDICATE_IS_SERVER(server), TRUE);
+
+	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
+	g_return_val_if_fail(class->get_indicator_count != NULL, TRUE);
+
+	*indicators = g_array_sized_new(FALSE, FALSE, sizeof(guint), g_slist_length(server->indicators) - server->num_hidden);
+
+	GSList * iter;
+	int i;
+	for (iter = server->indicators, i = 0; iter != NULL; iter = iter->next, i++) {
+		IndicateIndicator * indicator = INDICATE_INDICATOR(iter->data);
+		if (indicate_indicator_is_visible(indicator)) {
+			guint id = indicate_indicator_get_id(indicator);
+			g_array_insert_val(*indicators, i, id);
+		}
+	}
 
 	return TRUE;
 }
@@ -305,6 +361,7 @@ indicate_server_get_desktop (IndicateServer * server, gchar ** desktop_path, GEr
 		            NO_GET_DESKTOP,
 		            "get_desktop function doesn't exist for this server class: %s",
 		            G_OBJECT_TYPE_NAME(server));
+		return FALSE;
 	}
 
 	return TRUE;
@@ -325,6 +382,7 @@ indicate_server_get_indicator_count (IndicateServer * server, guint * count, GEr
 		            NO_GET_INDICATOR_COUNT,
 		            "get_indicator_count function doesn't exist for this server class: %s",
 		            G_OBJECT_TYPE_NAME(server));
+		return FALSE;
 	}
 
 	return TRUE;
@@ -345,13 +403,14 @@ indicate_server_get_indicator_count_by_type (IndicateServer * server, gchar * ty
 		            NO_GET_INDICATOR_COUNT_BY_TYPE,
 		            "get_indicator_count_by_type function doesn't exist for this server class: %s",
 		            G_OBJECT_TYPE_NAME(server));
+		return FALSE;
 	}
 
 	return TRUE;
 }
 
 gboolean 
-indicate_server_get_indicator_list (IndicateServer * server, guint ** indicators, GError ** error)
+indicate_server_get_indicator_list (IndicateServer * server, GArray ** indicators, GError ** error)
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
@@ -365,6 +424,7 @@ indicate_server_get_indicator_list (IndicateServer * server, guint ** indicators
 		            NO_GET_INDICATOR_LIST,
 		            "get_indicator_list function doesn't exist for this server class: %s",
 		            G_OBJECT_TYPE_NAME(server));
+		return FALSE;
 	}
 
 	return TRUE;
@@ -385,6 +445,7 @@ indicate_server_get_indicator_list_by_type (IndicateServer * server, gchar * typ
 		            NO_GET_INDICATOR_LIST_BY_TYPE,
 		            "get_indicator_list_by_type function doesn't exist for this server class: %s",
 		            G_OBJECT_TYPE_NAME(server));
+		return FALSE;
 	}
 
 	return TRUE;
@@ -405,6 +466,7 @@ indicate_server_get_indicator_property (IndicateServer * server, guint id, gchar
 		            NO_GET_INDICATOR_PROPERTY,
 		            "get_indicator_property function doesn't exist for this server class: %s",
 		            G_OBJECT_TYPE_NAME(server));
+		return FALSE;
 	}
 
 	return TRUE;
@@ -425,6 +487,7 @@ indicate_server_get_indicator_property_group (IndicateServer * server, guint id,
 		            NO_GET_INDICATOR_PROPERTY_GROUP,
 		            "get_indicator_property_group function doesn't exist for this server class: %s",
 		            G_OBJECT_TYPE_NAME(server));
+		return FALSE;
 	}
 
 	return TRUE;
@@ -445,6 +508,7 @@ indicate_server_get_indicator_properties (IndicateServer * server, guint id, gch
 		            NO_GET_INDICATOR_PROPERTIES,
 		            "get_indicator_properties function doesn't exist for this server class: %s",
 		            G_OBJECT_TYPE_NAME(server));
+		return FALSE;
 	}
 
 	return TRUE;
@@ -465,6 +529,7 @@ indicate_server_show_indicator_to_user (IndicateServer * server, guint id, GErro
 		            NO_SHOW_INDICATOR_TO_USER,
 		            "show_indicator_to_user function doesn't exist for this server class: %s",
 		            G_OBJECT_TYPE_NAME(server));
+		return FALSE;
 	}
 
 	return TRUE;

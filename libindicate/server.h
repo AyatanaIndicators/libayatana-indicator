@@ -40,7 +40,7 @@ struct _IndicateServerClass {
 	gboolean (*get_desktop) (IndicateServer * server, gchar ** desktop_path, GError **error);
 	gboolean (*get_indicator_count) (IndicateServer * server, guint * count, GError **error);
 	gboolean (*get_indicator_count_by_type) (IndicateServer * server, gchar * type, guint * count, GError **error);
-	gboolean (*get_indicator_list) (IndicateServer * server, guint ** indicators, GError ** error);
+	gboolean (*get_indicator_list) (IndicateServer * server, GArray ** indicators, GError ** error);
 	gboolean (*get_indicator_list_by_type) (IndicateServer * server, gchar * type, guint ** indicators, GError ** error);
 	gboolean (*get_indicator_property) (IndicateServer * server, guint id, gchar * property, gchar ** value, GError **error);
 	gboolean (*get_indicator_property_group) (IndicateServer * server, guint id, gchar ** properties, gchar *** value, GError **error);
@@ -75,7 +75,7 @@ void indicate_server_set_default (IndicateServer * server);
 gboolean indicate_server_get_desktop (IndicateServer * server, gchar ** desktop_path, GError **error);
 gboolean indicate_server_get_indicator_count (IndicateServer * server, guint * count, GError **error);
 gboolean indicate_server_get_indicator_count_by_type (IndicateServer * server, gchar * type, guint * count, GError **error);
-gboolean indicate_server_get_indicator_list (IndicateServer * server, guint ** indicators, GError ** error);
+gboolean indicate_server_get_indicator_list (IndicateServer * server, GArray ** indicators, GError ** error);
 gboolean indicate_server_get_indicator_list_by_type (IndicateServer * server, gchar * type, guint ** indicators, GError ** error);
 gboolean indicate_server_get_indicator_property (IndicateServer * server, guint id, gchar * property, gchar ** value, GError **error);
 gboolean indicate_server_get_indicator_property_group (IndicateServer * server, guint id, gchar ** properties, gchar *** value, GError **error);
