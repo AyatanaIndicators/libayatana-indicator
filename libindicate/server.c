@@ -39,6 +39,7 @@ static gboolean get_indicator_property (IndicateServer * server, guint id, gchar
 static gboolean get_indicator_property_group (IndicateServer * server, guint id, gchar ** properties, gchar *** value, GError **error);
 static gboolean get_indicator_properties (IndicateServer * server, guint id, gchar *** properties, GError **error);
 static gboolean show_indicator_to_user (IndicateServer * server, guint id, GError ** error);
+static guint get_next_id (IndicateServer * server);
 
 /* Code */
 static void
@@ -84,6 +85,7 @@ indicate_server_class_init (IndicateServerClass * class)
 	class->get_indicator_property_group = get_indicator_property_group;
 	class->get_indicator_properties = get_indicator_properties;
 	class->show_indicator_to_user = show_indicator_to_user;
+	class->get_next_id = get_next_id;
 
 	return;
 }
@@ -97,6 +99,7 @@ indicate_server_init (IndicateServer * server)
 	server->indicators = NULL;
 	server->num_hidden = 0;
 	server->visible = FALSE;
+	server->current_id = 0;
 
 	return;
 }
@@ -142,6 +145,13 @@ indicate_server_show (IndicateServer * server)
 	server->visible = TRUE;
 	
 	return;
+}
+
+static guint
+get_next_id (IndicateServer * server)
+{
+	server->current_id++;
+	return server->current_id;
 }
 
 static void
@@ -540,5 +550,17 @@ indicate_server_show_indicator_to_user (IndicateServer * server, guint id, GErro
 	}
 
 	return TRUE;
+}
+
+guint 
+indicate_server_get_next_id (IndicateServer * server)
+{
+	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
+
+	if (class != NULL) {
+		return class->get_next_id (server);
+	}
+
+	return 0;
 }
 

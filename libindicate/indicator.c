@@ -59,10 +59,9 @@ indicate_indicator_init (IndicateIndicator * indicator)
 {
 	g_debug("Indicator Object Initialized.");
 
-	indicator->id = 0;
 	indicator->is_visible = FALSE;
-
 	indicator->server = indicate_server_ref_default();
+	indicator->id = indicate_server_get_next_id(indicator->server);
 	indicate_server_add_indicator(indicator->server, indicator);
 
 	return;
