@@ -96,6 +96,7 @@ indicate_server_init (IndicateServer * server)
 	server->path = g_strdup("/org/freedesktop/indicate");
 	server->indicators = NULL;
 	server->num_hidden = 0;
+	server->visible = FALSE;
 
 	return;
 }
@@ -126,6 +127,11 @@ indicate_server_error_quark (void)
 void
 indicate_server_show (IndicateServer * server)
 {
+	g_return_if_fail(INDICATE_IS_SERVER(server));
+
+	if (server->visible)
+		return;
+
 	DBusGConnection * connection;
 
 	connection = dbus_g_bus_get(DBUS_BUS_SESSION, NULL);
@@ -133,6 +139,7 @@ indicate_server_show (IndicateServer * server)
 	dbus_g_connection_register_g_object(connection,
 	                                    server->path,
 	                                    G_OBJECT(server));
+	server->visible = TRUE;
 	
 	return;
 }

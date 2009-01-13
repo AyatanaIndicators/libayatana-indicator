@@ -24,6 +24,7 @@ struct _IndicateServer {
 
 	gchar * path;
 	GSList * indicators;
+	gboolean visible;
 
 	// TODO: Should have a more robust way to track this, but this'll work for now
 	guint num_hidden;
