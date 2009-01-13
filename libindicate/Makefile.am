@@ -1,6 +1,5 @@
 
-SUBDIRS = \
-	tests
+SUBDIRS = tests
 
 INCLUDES= \
 	-DG_LOG_DOMAIN=\"libindicate\"
@@ -46,3 +45,6 @@ dbus-indicate-server.h: indicate-server.xml
 		--mode=glib-server \
 		--output=dbus-indicate-server.h \
 		$(srcdir)/indicate-server.xml
+
+pkgconfig_DATA = indicate.pc
+pkgconfigdir = $(libdir)/pkgconfig
