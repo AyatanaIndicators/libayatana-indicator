@@ -37,8 +37,8 @@ static gboolean get_indicator_count_by_type (IndicateServer * server, gchar * ty
 static gboolean get_indicator_list (IndicateServer * server, GArray ** indicators, GError ** error);
 static gboolean get_indicator_list_by_type (IndicateServer * server, gchar * type, guint ** indicators, GError ** error);
 static gboolean get_indicator_property (IndicateServer * server, guint id, gchar * property, gchar ** value, GError **error);
-static gboolean get_indicator_property_group (IndicateServer * server, guint id, gchar ** properties, gchar *** value, GError **error);
-static gboolean get_indicator_properties (IndicateServer * server, guint id, gchar *** properties, GError **error);
+static gboolean get_indicator_property_group (IndicateServer * server, guint id, GPtrArray * properties, GPtrArray ** value, GError **error);
+static gboolean get_indicator_properties (IndicateServer * server, guint id, GPtrArray ** properties, GError **error);
 static gboolean show_indicator_to_user (IndicateServer * server, guint id, GError ** error);
 static guint get_next_id (IndicateServer * server);
 
@@ -401,13 +401,13 @@ get_indicator_property (IndicateServer * server, guint id, gchar * property, gch
 }
 
 static gboolean
-get_indicator_property_group (IndicateServer * server, guint id, gchar ** properties, gchar *** value, GError **error)
+get_indicator_property_group (IndicateServer * server, guint id, GPtrArray * properties, GPtrArray ** value, GError **error)
 {
 
 }
 
 static gboolean
-get_indicator_properties (IndicateServer * server, guint id, gchar *** properties, GError **error)
+get_indicator_properties (IndicateServer * server, guint id, GPtrArray ** properties, GError **error)
 {
 
 }
@@ -553,7 +553,7 @@ indicate_server_get_indicator_property (IndicateServer * server, guint id, gchar
 }
 
 gboolean 
-indicate_server_get_indicator_property_group (IndicateServer * server, guint id, gchar ** properties, gchar *** value, GError **error)
+indicate_server_get_indicator_property_group (IndicateServer * server, guint id, GPtrArray * properties, GPtrArray ** value, GError **error)
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
@@ -574,7 +574,7 @@ indicate_server_get_indicator_property_group (IndicateServer * server, guint id,
 }
 
 gboolean 
-indicate_server_get_indicator_properties (IndicateServer * server, guint id, gchar *** properties, GError **error)
+indicate_server_get_indicator_properties (IndicateServer * server, guint id, GPtrArray ** properties, GError **error)
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
