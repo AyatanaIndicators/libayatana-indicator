@@ -365,29 +365,8 @@ get_indicator_list_by_type (IndicateServer * server, gchar * type, guint ** indi
 	return TRUE;
 }
 
-static gboolean
-get_indicator_property (IndicateServer * server, guint id, gchar * property, gchar ** value, GError **error)
-{
-
-	return TRUE;
-}
-
-static gboolean
-get_indicator_property_group (IndicateServer * server, guint id, gchar ** properties, gchar *** value, GError **error)
-{
-
-	return TRUE;
-}
-
-static gboolean
-get_indicator_properties (IndicateServer * server, guint id, gchar *** properties, GError **error)
-{
-
-	return TRUE;
-}
-
-static gboolean
-show_indicator_to_user (IndicateServer * server, guint id, GError ** error)
+static IndicateIndicator *
+get_indicator (IndicateServer * server, guint id, GError **error)
 {
 	g_return_val_if_fail(INDICATE_IS_SERVER(server), TRUE);
 
@@ -395,8 +374,7 @@ show_indicator_to_user (IndicateServer * server, guint id, GError ** error)
 	for (iter = server->indicators; iter != NULL; iter = iter->next) {
 		IndicateIndicator * indicator = INDICATE_INDICATOR(iter->data);
 		if (indicate_indicator_get_id(indicator) == id) {
-			indicate_indicator_user_display(indicator);
-			return TRUE;
+			return indicator;
 		}
 	}
 
@@ -404,10 +382,46 @@ show_indicator_to_user (IndicateServer * server, guint id, GError ** error)
 		g_set_error(error,
 		            indicate_server_error_quark(),
 		            INVALID_INDICATOR_ID,
-		            "show_indicator_id can't be done on and invalid ID: %d",
+		            "Invalid Indicator ID: %d",
 		            id);
 	}
-	return FALSE;
+	return NULL;
+}
+
+static gboolean
+get_indicator_property (IndicateServer * server, guint id, gchar * property, gchar ** value, GError **error)
+{
+	IndicateIndicator * indicator = get_indicator(server, id, error);
+	if (indicator == NULL) {
+		return FALSE;
+	}
+
+	*value = indicate_indicator_get_property(indicator, property);
+	return TRUE;
+}
+
+static gboolean
+get_indicator_property_group (IndicateServer * server, guint id, gchar ** properties, gchar *** value, GError **error)
+{
+
+}
+
+static gboolean
+get_indicator_properties (IndicateServer * server, guint id, gchar *** properties, GError **error)
+{
+
+}
+
+static gboolean
+show_indicator_to_user (IndicateServer * server, guint id, GError ** error)
+{
+	IndicateIndicator * indicator = get_indicator(server, id, error);
+	if (indicator == NULL) {
+		return FALSE;
+	}
+
+	indicate_indicator_user_display(indicator);
+	return TRUE;
 }
 
 
