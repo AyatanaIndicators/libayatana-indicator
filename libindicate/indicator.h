@@ -33,6 +33,7 @@ struct _IndicateIndicator {
 	guint id;
 	gboolean is_visible;
 	IndicateServer * server;
+	GHashTable * properties;
 };
 
 struct _IndicateIndicatorClass {
@@ -43,6 +44,9 @@ struct _IndicateIndicatorClass {
 	void (*user_display) (IndicateIndicator * indicator, gpointer data);
 
 	const gchar * (*get_type) (IndicateIndicator * indicator);
+	void (*set_property) (IndicateIndicator * indicator, const gchar * key, const gchar * data);
+	const gchar * (*get_property) (IndicateIndicator * indicator, const gchar * key);
+	GPtrArray * (*list_properties) (IndicateIndicator * indicator);
 };
 
 GType indicate_indicator_get_type(void) G_GNUC_CONST;
@@ -64,6 +68,13 @@ guint indicate_indicator_get_id (IndicateIndicator * indicator);
 /* Every entry has a type.  This should be created by the
  * subclass and exported through this pretty function */
 const gchar * indicate_indicator_get_indicator_type (IndicateIndicator * indicator);
+
+void indicate_indicator_user_display (IndicateIndicator * indicator);
+
+/* Properties handling */
+void indicate_indicator_set_property (IndicateIndicator * indicator, const gchar * key, const gchar * data);
+const gchar * indicate_indicator_get_property (IndicateIndicator * indicator, const gchar * key);
+GPtrArray * indicate_indicator_list_properties (IndicateIndicator * indicator);
 
 G_END_DECLS
 

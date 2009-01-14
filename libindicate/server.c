@@ -13,6 +13,7 @@ enum {
 	NO_GET_INDICATOR_PROPERTY_GROUP,
 	NO_GET_INDICATOR_PROPERTIES,
 	NO_SHOW_INDICATOR_TO_USER,
+	INVALID_INDICATOR_ID,
 	LAST_ERROR
 };
 
@@ -33,12 +34,13 @@ static void indicate_server_finalize (GObject * obj);
 static gboolean get_desktop (IndicateServer * server, gchar ** desktop_path, GError **error);
 static gboolean get_indicator_count (IndicateServer * server, guint * count, GError **error);
 static gboolean get_indicator_count_by_type (IndicateServer * server, gchar * type, guint * count, GError **error);
-static gboolean get_indicator_list (IndicateServer * server, guint ** indicators, GError ** error);
+static gboolean get_indicator_list (IndicateServer * server, GArray ** indicators, GError ** error);
 static gboolean get_indicator_list_by_type (IndicateServer * server, gchar * type, guint ** indicators, GError ** error);
 static gboolean get_indicator_property (IndicateServer * server, guint id, gchar * property, gchar ** value, GError **error);
-static gboolean get_indicator_property_group (IndicateServer * server, guint id, gchar ** properties, gchar *** value, GError **error);
-static gboolean get_indicator_properties (IndicateServer * server, guint id, gchar *** properties, GError **error);
+static gboolean get_indicator_property_group (IndicateServer * server, guint id, GPtrArray * properties, GPtrArray ** value, GError **error);
+static gboolean get_indicator_properties (IndicateServer * server, guint id, GPtrArray ** properties, GError **error);
 static gboolean show_indicator_to_user (IndicateServer * server, guint id, GError ** error);
+static guint get_next_id (IndicateServer * server);
 
 /* Code */
 static void
@@ -84,6 +86,7 @@ indicate_server_class_init (IndicateServerClass * class)
 	class->get_indicator_property_group = get_indicator_property_group;
 	class->get_indicator_properties = get_indicator_properties;
 	class->show_indicator_to_user = show_indicator_to_user;
+	class->get_next_id = get_next_id;
 
 	return;
 }
@@ -96,6 +99,8 @@ indicate_server_init (IndicateServer * server)
 	server->path = g_strdup("/org/freedesktop/indicate");
 	server->indicators = NULL;
 	server->num_hidden = 0;
+	server->visible = FALSE;
+	server->current_id = 0;
 
 	return;
 }
@@ -126,6 +131,11 @@ indicate_server_error_quark (void)
 void
 indicate_server_show (IndicateServer * server)
 {
+	g_return_if_fail(INDICATE_IS_SERVER(server));
+
+	if (server->visible)
+		return;
+
 	DBusGConnection * connection;
 
 	connection = dbus_g_bus_get(DBUS_BUS_SESSION, NULL);
@@ -133,8 +143,16 @@ indicate_server_show (IndicateServer * server)
 	dbus_g_connection_register_g_object(connection,
 	                                    server->path,
 	                                    G_OBJECT(server));
+	server->visible = TRUE;
 	
 	return;
+}
+
+static guint
+get_next_id (IndicateServer * server)
+{
+	server->current_id++;
+	return server->current_id;
 }
 
 static void
@@ -223,7 +241,10 @@ indicate_server_set_default (IndicateServer * server)
 static gboolean
 get_desktop (IndicateServer * server, gchar ** desktop_path, GError **error)
 {
-
+	if (server->path != NULL) {
+		// TODO: This might be a memory leak, check into that.
+		*desktop_path = g_strdup(server->path);
+	}
 	return TRUE;
 }
 
@@ -239,16 +260,71 @@ get_indicator_count (IndicateServer * server, guint * count, GError **error)
 	return TRUE;
 }
 
+typedef struct {
+	gchar * type;
+	guint count;
+} count_by_t;
+
+static void
+count_by_type (IndicateIndicator * indicator, count_by_t * cbt)
+{
+	g_return_if_fail(INDICATE_IS_INDICATOR(indicator));
+	if (!indicate_indicator_is_visible(indicator)) {
+		return;
+	}
+
+	const gchar * type = indicate_indicator_get_indicator_type(indicator);
+	/* g_debug("Looking for indicator of type '%s' and have type '%s'", cbt->type, type); */
+
+	if (type == NULL && cbt->type == NULL) {
+		cbt->count++;
+	} else if (type == NULL || cbt->type == NULL) {
+	} else if (!strcmp(type, cbt->type)) {
+		cbt->count++;
+	}
+
+	return;
+}
+
 static gboolean
 get_indicator_count_by_type (IndicateServer * server, gchar * type, guint * count, GError **error)
 {
+	/* g_debug("get_indicator_count_by_type: '%s'", type); */
+	count_by_t cbt;
+	cbt.type = type;
+	cbt.count = 0;
+
+	/* Handle the NULL string case as NULL itself, we're a big
+	   boy language; we have pointers. */
+	if (cbt.type != NULL && cbt.type[0] == '\0') {
+		cbt.type = NULL;
+	}
+
+	g_slist_foreach(server->indicators, count_by_type, &cbt);
+	*count = cbt.count;
 
 	return TRUE;
 }
 
 static gboolean
-get_indicator_list (IndicateServer * server, guint ** indicators, GError ** error)
+get_indicator_list (IndicateServer * server, GArray ** indicators, GError ** error)
 {
+	g_return_val_if_fail(INDICATE_IS_SERVER(server), TRUE);
+
+	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
+	g_return_val_if_fail(class->get_indicator_count != NULL, TRUE);
+
+	*indicators = g_array_sized_new(FALSE, FALSE, sizeof(guint), g_slist_length(server->indicators) - server->num_hidden);
+
+	GSList * iter;
+	int i;
+	for (iter = server->indicators, i = 0; iter != NULL; iter = iter->next, i++) {
+		IndicateIndicator * indicator = INDICATE_INDICATOR(iter->data);
+		if (indicate_indicator_is_visible(indicator)) {
+			guint id = indicate_indicator_get_id(indicator);
+			g_array_insert_val(*indicators, i, id);
+		}
+	}
 
 	return TRUE;
 }
@@ -256,35 +332,95 @@ get_indicator_list (IndicateServer * server, guint ** indicators, GError ** erro
 static gboolean
 get_indicator_list_by_type (IndicateServer * server, gchar * type, guint ** indicators, GError ** error)
 {
+	g_return_val_if_fail(INDICATE_IS_SERVER(server), TRUE);
+
+	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
+	g_return_val_if_fail(class->get_indicator_count != NULL, TRUE);
+
+	if (type != NULL && type[0] == '\0') {
+		type = NULL;
+	}
+
+	/* Can't be larger than this and it's not worth the reallocation
+	   for the small number we have.  The memory isn't worth the time. */
+	*indicators = g_array_sized_new(FALSE, FALSE, sizeof(guint), g_slist_length(server->indicators) - server->num_hidden);
+
+	GSList * iter;
+	int i;
+	for (iter = server->indicators, i = 0; iter != NULL; iter = iter->next) {
+		IndicateIndicator * indicator = INDICATE_INDICATOR(iter->data);
+		if (indicate_indicator_is_visible(indicator)) {
+			const gchar * itype = indicate_indicator_get_indicator_type(indicator);
+			guint id = indicate_indicator_get_id(indicator);
+
+			if (type == NULL && itype == NULL) {
+				g_array_insert_val(*indicators, i++, id);
+			} else if (type == NULL || itype == NULL) {
+			} else if (!strcmp(type, itype)) {
+				g_array_insert_val(*indicators, i++, id);
+			}
+		}
+	}
 
 	return TRUE;
+}
+
+static IndicateIndicator *
+get_indicator (IndicateServer * server, guint id, GError **error)
+{
+	g_return_val_if_fail(INDICATE_IS_SERVER(server), TRUE);
+
+	GSList * iter;
+	for (iter = server->indicators; iter != NULL; iter = iter->next) {
+		IndicateIndicator * indicator = INDICATE_INDICATOR(iter->data);
+		if (indicate_indicator_get_id(indicator) == id) {
+			return indicator;
+		}
+	}
+
+	if (error) {
+		g_set_error(error,
+		            indicate_server_error_quark(),
+		            INVALID_INDICATOR_ID,
+		            "Invalid Indicator ID: %d",
+		            id);
+	}
+	return NULL;
 }
 
 static gboolean
 get_indicator_property (IndicateServer * server, guint id, gchar * property, gchar ** value, GError **error)
 {
+	IndicateIndicator * indicator = get_indicator(server, id, error);
+	if (indicator == NULL) {
+		return FALSE;
+	}
 
+	*value = indicate_indicator_get_property(indicator, property);
 	return TRUE;
 }
 
 static gboolean
-get_indicator_property_group (IndicateServer * server, guint id, gchar ** properties, gchar *** value, GError **error)
+get_indicator_property_group (IndicateServer * server, guint id, GPtrArray * properties, GPtrArray ** value, GError **error)
 {
 
-	return TRUE;
 }
 
 static gboolean
-get_indicator_properties (IndicateServer * server, guint id, gchar *** properties, GError **error)
+get_indicator_properties (IndicateServer * server, guint id, GPtrArray ** properties, GError **error)
 {
 
-	return TRUE;
 }
 
 static gboolean
 show_indicator_to_user (IndicateServer * server, guint id, GError ** error)
 {
+	IndicateIndicator * indicator = get_indicator(server, id, error);
+	if (indicator == NULL) {
+		return FALSE;
+	}
 
+	indicate_indicator_user_display(indicator);
 	return TRUE;
 }
 
@@ -305,6 +441,7 @@ indicate_server_get_desktop (IndicateServer * server, gchar ** desktop_path, GEr
 		            NO_GET_DESKTOP,
 		            "get_desktop function doesn't exist for this server class: %s",
 		            G_OBJECT_TYPE_NAME(server));
+		return FALSE;
 	}
 
 	return TRUE;
@@ -325,6 +462,7 @@ indicate_server_get_indicator_count (IndicateServer * server, guint * count, GEr
 		            NO_GET_INDICATOR_COUNT,
 		            "get_indicator_count function doesn't exist for this server class: %s",
 		            G_OBJECT_TYPE_NAME(server));
+		return FALSE;
 	}
 
 	return TRUE;
@@ -345,13 +483,14 @@ indicate_server_get_indicator_count_by_type (IndicateServer * server, gchar * ty
 		            NO_GET_INDICATOR_COUNT_BY_TYPE,
 		            "get_indicator_count_by_type function doesn't exist for this server class: %s",
 		            G_OBJECT_TYPE_NAME(server));
+		return FALSE;
 	}
 
 	return TRUE;
 }
 
 gboolean 
-indicate_server_get_indicator_list (IndicateServer * server, guint ** indicators, GError ** error)
+indicate_server_get_indicator_list (IndicateServer * server, GArray ** indicators, GError ** error)
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
@@ -365,6 +504,7 @@ indicate_server_get_indicator_list (IndicateServer * server, guint ** indicators
 		            NO_GET_INDICATOR_LIST,
 		            "get_indicator_list function doesn't exist for this server class: %s",
 		            G_OBJECT_TYPE_NAME(server));
+		return FALSE;
 	}
 
 	return TRUE;
@@ -385,6 +525,7 @@ indicate_server_get_indicator_list_by_type (IndicateServer * server, gchar * typ
 		            NO_GET_INDICATOR_LIST_BY_TYPE,
 		            "get_indicator_list_by_type function doesn't exist for this server class: %s",
 		            G_OBJECT_TYPE_NAME(server));
+		return FALSE;
 	}
 
 	return TRUE;
@@ -405,13 +546,14 @@ indicate_server_get_indicator_property (IndicateServer * server, guint id, gchar
 		            NO_GET_INDICATOR_PROPERTY,
 		            "get_indicator_property function doesn't exist for this server class: %s",
 		            G_OBJECT_TYPE_NAME(server));
+		return FALSE;
 	}
 
 	return TRUE;
 }
 
 gboolean 
-indicate_server_get_indicator_property_group (IndicateServer * server, guint id, gchar ** properties, gchar *** value, GError **error)
+indicate_server_get_indicator_property_group (IndicateServer * server, guint id, GPtrArray * properties, GPtrArray ** value, GError **error)
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
@@ -425,13 +567,14 @@ indicate_server_get_indicator_property_group (IndicateServer * server, guint id,
 		            NO_GET_INDICATOR_PROPERTY_GROUP,
 		            "get_indicator_property_group function doesn't exist for this server class: %s",
 		            G_OBJECT_TYPE_NAME(server));
+		return FALSE;
 	}
 
 	return TRUE;
 }
 
 gboolean 
-indicate_server_get_indicator_properties (IndicateServer * server, guint id, gchar *** properties, GError **error)
+indicate_server_get_indicator_properties (IndicateServer * server, guint id, GPtrArray ** properties, GError **error)
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
@@ -445,6 +588,7 @@ indicate_server_get_indicator_properties (IndicateServer * server, guint id, gch
 		            NO_GET_INDICATOR_PROPERTIES,
 		            "get_indicator_properties function doesn't exist for this server class: %s",
 		            G_OBJECT_TYPE_NAME(server));
+		return FALSE;
 	}
 
 	return TRUE;
@@ -465,8 +609,21 @@ indicate_server_show_indicator_to_user (IndicateServer * server, guint id, GErro
 		            NO_SHOW_INDICATOR_TO_USER,
 		            "show_indicator_to_user function doesn't exist for this server class: %s",
 		            G_OBJECT_TYPE_NAME(server));
+		return FALSE;
 	}
 
 	return TRUE;
+}
+
+guint 
+indicate_server_get_next_id (IndicateServer * server)
+{
+	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
+
+	if (class != NULL) {
+		return class->get_next_id (server);
+	}
+
+	return 0;
 }
 
