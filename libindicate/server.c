@@ -403,13 +403,41 @@ get_indicator_property (IndicateServer * server, guint id, gchar * property, gch
 static gboolean
 get_indicator_property_group (IndicateServer * server, guint id, GPtrArray * properties, GPtrArray ** value, GError **error)
 {
+	IndicateIndicator * indicator = get_indicator(server, id, error);
+	if (indicator == NULL) {
+		return FALSE;
+	}
 
+	GPtrArray * array = g_ptr_array_new();
+	int i;
+	for (i = 0; i < properties->len; i++) {
+		const gchar * val = indicate_indicator_get_property(indicator, g_ptr_array_index(properties, i));
+		if (val != NULL) {
+			g_ptr_array_add(array, g_strdup(val));
+		} else {
+			g_ptr_array_add(array, g_strdup(""));
+		}
+	}
+	g_ptr_array_add(array, NULL);
+	*value = (GPtrArray *)g_ptr_array_free(array, FALSE);
+
+	return TRUE;
 }
 
 static gboolean
 get_indicator_properties (IndicateServer * server, guint id, GPtrArray ** properties, GError **error)
 {
+	IndicateIndicator * indicator = get_indicator(server, id, error);
+	if (indicator == NULL) {
+		return FALSE;
+	}
 
+	GPtrArray * array = indicate_indicator_list_properties(indicator);
+	g_ptr_array_add(array, NULL);
+
+	*properties = (gchar **)g_ptr_array_free(array, FALSE);
+
+	return TRUE;
 }
 
 static gboolean
