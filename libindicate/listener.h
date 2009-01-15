@@ -5,6 +5,8 @@
 #include <glib.h>
 #include <glib-object.h>
 
+#include <dbus/dbus-glib.h>
+
 #include "indicator.h"
 #include "server.h"
 
@@ -22,6 +24,16 @@ typedef struct _IndicateListener IndicateListener;
 struct _IndicateListener {
 	GObject parent;
 
+	DBusGConnection * session_bus;
+	DBusGConnection * system_bus;
+
+	DBusGProxy * dbus_proxy_session;
+	DBusGProxy * dbus_proxy_system;
+
+	GHashTable * proxies_session;
+	GHashTable * proxies_system;
+
+	GArray * proxy_todo;
 };
 
 typedef struct _IndicateListenerClass IndicateListenerClass;
