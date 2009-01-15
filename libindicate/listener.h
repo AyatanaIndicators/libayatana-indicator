@@ -13,7 +13,7 @@
 G_BEGIN_DECLS
 
 /* Boilerplate */
-#define INDICATE_TYPE_LISTENER (indicate_server_get_type ())
+#define INDICATE_TYPE_LISTENER (indicate_listener_get_type ())
 #define INDICATE_LISTENER(object) (G_TYPE_CHECK_INSTANCE_CAST ((object), INDICATE_TYPE_LISTENER, IndicateListener))
 #define INDICATE_IS_LISTENER(object) (G_TYPE_CHECK_INSTANCE_TYPE((object), INDICATE_TYPE_LISTENER))
 #define INDICATE_LISTENER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST((klass), INDICATE_TYPE_LISTENER, IndicateListenerClass))
