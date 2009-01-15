@@ -1,7 +1,8 @@
 
 noinst_PROGRAMS = \
 	indicate-and-crash \
-	indicate-alot
+	indicate-alot \
+	listen-and-print
 
 indicate_and_crash_SOURCES = \
 	indicate-and-crash.c
@@ -22,5 +23,16 @@ indicate_alot_CFLAGS = \
 	$(LIBINDICATE_CFLAGS)
 
 indicate_alot_LDADD = \
+	../libindicate.la \
+	$(LIBINDICATE_LIBS)
+
+listen_and_print_SOURCES = \
+	listen-and-print.c
+
+listen_and_print_CFLAGS = \
+	-I $(srcdir)/../.. \
+	$(LIBINDICATE_CFLAGS)
+
+listen_and_print_LDADD = \
 	../libindicate.la \
 	$(LIBINDICATE_LIBS)
