@@ -157,6 +157,14 @@ indicate_listener_finalize (GObject * obj)
 	return;
 }
 
+IndicateListener *
+indicate_listener_new (void)
+{
+	IndicateListener * listener;
+	listener = g_object_new(INDICATE_TYPE_LISTENER, NULL);
+	return listener;
+}
+
 static void
 dbus_owner_change (DBusGProxy * proxy, const gchar * name, const gchar * prev, const gchar * new, IndicateListener * listener)
 {
@@ -207,7 +215,7 @@ build_todo_list_cb (DBusGProxy * proxy, char ** names, GError * error, void * da
 static void
 todo_list_add (const gchar * name, DBusGProxy * proxy, IndicateListener * listener)
 {
-	g_debug ("Adding %s");
+	g_debug ("Adding %s", name);
 
 	return;
 }

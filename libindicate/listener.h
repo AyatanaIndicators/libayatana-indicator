@@ -52,7 +52,7 @@ struct _IndicateListenerClass {
 
 GType indicate_listener_get_type (void) G_GNUC_CONST;
 
-/* Create a new server */
+/* Create a new listener */
 IndicateListener * indicate_listener_new (void);
 
 
