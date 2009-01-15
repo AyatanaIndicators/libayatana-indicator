@@ -5,10 +5,11 @@ INCLUDES= \
 	-DG_LOG_DOMAIN=\"libindicate\"
 
 EXTRA_DIST = \
-	indicate-server.xml
+	indicate-interface.xml
 
 BUILT_SOURCES = \
-	dbus-indicate-server.h
+	dbus-indicate-server.h \
+	dbus-indicate-client.h
 
 lib_LTLIBRARIES = \
 	libindicate.la
@@ -26,6 +27,7 @@ libindicateinclude_HEADERS = \
 libindicate_la_SOURCES = \
 	$(indicate_headers) \
 	dbus-indicate-server.h \
+	dbus-indicate-client.h \
 	server.c \
 	listener.c \
 	indicator.c
@@ -41,12 +43,19 @@ libindicate_la_CFLAGS = \
 libindicate_la_LIBADD = \
 	$(LIBINDICATE_LIBS)
 
-dbus-indicate-server.h: indicate-server.xml
+dbus-indicate-server.h: indicate-interface.xml
 	libtool --mode=execute dbus-binding-tool \
 		--prefix=indicate_server \
 		--mode=glib-server \
 		--output=dbus-indicate-server.h \
-		$(srcdir)/indicate-server.xml
+		$(srcdir)/indicate-interface.xml
+
+dbus-indicate-client.h: indicate-interface.xml
+	libtool --mode=execute dbus-binding-tool \
+		--prefix=indicate_client \
+		--mode=glib-client \
+		--output=dbus-indicate-client.h \
+		$(srcdir)/indicate-interface.xml
 
 pkgconfig_DATA = indicate.pc
 pkgconfigdir = $(libdir)/pkgconfig
