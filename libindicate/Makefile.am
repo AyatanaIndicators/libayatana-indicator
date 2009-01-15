@@ -17,6 +17,7 @@ libindicateincludedir=$(includedir)/libindicate-1.0/libindicate
 
 indicate_headers = \
 	indicator.h \
+	listener.h \
 	server.h
 
 libindicateinclude_HEADERS = \
@@ -26,6 +27,7 @@ libindicate_la_SOURCES = \
 	$(indicate_headers) \
 	dbus-indicate-server.h \
 	server.c \
+	listener.c \
 	indicator.c
 
 libindicate_la_LDFLAGS = \
