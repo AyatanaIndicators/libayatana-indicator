@@ -1,6 +1,7 @@
 
 #include "listener.h"
 #include <dbus/dbus-glib-bindings.h>
+#include "dbus-indicate-client.h"
 
 /* Errors */
 enum {
@@ -22,9 +23,11 @@ static guint signals[LAST_SIGNAL] = { 0 };
 typedef struct {
 	DBusGProxy * proxy;
 	gchar * name;
+	IndicateListener * listener;
 } proxy_t;
 
 typedef struct {
+	DBusGConnection * bus;
 	gchar * name;
 } proxy_todo_t;
 
@@ -36,6 +39,8 @@ static void dbus_owner_change (DBusGProxy * proxy, const gchar * name, const gch
 static void proxy_struct_destroy (gpointer data);
 static void build_todo_list_cb (DBusGProxy * proxy, char ** names, GError * error, void * data);
 static void todo_list_add (const gchar * name, DBusGProxy * proxy, IndicateListener * listener);
+static gboolean todo_idle (gpointer data);
+static void proxy_indicator_added (DBusGProxy * proxy, guint id, const gchar * type, proxy_t * proxyt);
 
 /* Code */
 static void
@@ -137,6 +142,7 @@ indicate_listener_init (IndicateListener * listener)
 	                                                  g_free, proxy_struct_destroy);
 	/* TODO: Look at some common scenarios and find out how to make this sized */
 	listener->proxy_todo = g_array_new(FALSE, TRUE, sizeof(proxy_todo_t));
+	listener->todo_idle = 0;
 
 	/*            WARNING              */
 	/* Starting massive asynchronisity */
@@ -180,6 +186,10 @@ dbus_owner_change (DBusGProxy * proxy, const gchar * name, const gchar * prev, c
 
 	g_debug("Name change on %s bus: '%s' from '%s' to '%s'", bus_name, name, prev, new);
 
+	if (prev != NULL && prev[0] == '\0') {
+		todo_list_add(name, proxy, listener);
+	}
+
 	return;
 }
 
@@ -215,8 +225,74 @@ build_todo_list_cb (DBusGProxy * proxy, char ** names, GError * error, void * da
 static void
 todo_list_add (const gchar * name, DBusGProxy * proxy, IndicateListener * listener)
 {
-	g_debug ("Adding %s", name);
+	DBusGConnection * bus;
+	gchar * bus_name;
+	if (proxy == listener->dbus_proxy_system) {
+		bus = listener->system_bus;
+		bus_name = "system";
+	} else {
+		bus = listener->session_bus;
+		bus_name = "session";
+	}
+	g_debug ("Adding on %s bus: %s", bus_name, name);
+
+	proxy_todo_t todo;
+	todo.name = g_strdup(name);
+	todo.bus  = bus;
+
+	g_array_append_val(listener->proxy_todo, todo);
+
+	if (listener->todo_idle == 0) {
+		listener->todo_idle = g_idle_add(todo_idle, listener);
+	}
 
 	return;
 }
 
+gboolean
+todo_idle (gpointer data)
+{
+	IndicateListener * listener = INDICATE_LISTENER(data);
+	if (listener == NULL) {
+		g_error("Listener got lost in todo_idle");
+		return FALSE;
+	}
+
+	if (listener->proxy_todo->len == 0) {
+		/* Basically if we have no todo, we need to stop running.  This
+		 * is done this way to make the function error handling simpler
+		 * and results in an extra run */
+		return FALSE;
+	}
+
+	proxy_todo_t * todo = &g_array_index(listener->proxy_todo, proxy_todo_t, listener->proxy_todo->len - 1);
+
+	proxy_t * proxyt = g_new(proxy_t, 1);
+	proxyt->name = todo->name;
+	proxyt->proxy = dbus_g_proxy_new_for_name(todo->bus,
+	                                          proxyt->name,
+	                                          "/org/freedesktop/indicate",
+	                                          "org.freedesktop.indicator");
+	proxyt->listener = listener;
+
+	listener->proxy_todo = g_array_remove_index(listener->proxy_todo, listener->proxy_todo->len - 1);
+
+	if (proxyt->proxy == NULL) {
+		g_warning("Unable to create proxy for %s", proxyt->name);
+		return TRUE;
+	}
+
+	dbus_g_proxy_add_signal(proxyt->proxy, "IndicatorAdded",
+	                        G_TYPE_UINT, G_TYPE_STRING, G_TYPE_INVALID);
+	dbus_g_proxy_connect_signal(proxyt->proxy, "IndicatorAdded",
+	                            G_CALLBACK(proxy_indicator_added), proxyt, NULL);
+
+	return TRUE;
+}
+
+static void
+proxy_indicator_added (DBusGProxy * proxy, guint id, const gchar * type, proxy_t * proxyt)
+{
+	g_debug("Interface %s has an indicator %d", proxyt->name, id);
+	return;
+}

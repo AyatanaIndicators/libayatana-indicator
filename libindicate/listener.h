@@ -34,6 +34,7 @@ struct _IndicateListener {
 	GHashTable * proxies_system;
 
 	GArray * proxy_todo;
+	guint todo_idle;
 };
 
 typedef struct _IndicateListenerClass IndicateListenerClass;
