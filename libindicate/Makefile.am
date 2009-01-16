@@ -9,7 +9,9 @@ EXTRA_DIST = \
 
 BUILT_SOURCES = \
 	dbus-indicate-server.h \
-	dbus-indicate-client.h
+	dbus-indicate-client.h \
+	listener-marshal.c \
+	listener-marshal.h
 
 lib_LTLIBRARIES = \
 	libindicate.la
@@ -30,6 +32,8 @@ libindicate_la_SOURCES = \
 	dbus-indicate-client.h \
 	server.c \
 	listener.c \
+	listener-marshal.c \
+	listener-marshal.h \
 	indicator.c
 
 libindicate_la_LDFLAGS = \
@@ -56,6 +60,16 @@ dbus-indicate-client.h: indicate-interface.xml
 		--mode=glib-client \
 		--output=dbus-indicate-client.h \
 		$(srcdir)/indicate-interface.xml
+
+listener-marshal.h: listener-marshal.list
+	libtool --mode=execute glib-genmarshal --header \
+		--prefix=indicate_listener_marshal $(srcdir)/listener-marshal.list \
+		> listener-marshal.h
+
+listener-marshal.c: listener-marshal.list
+	libtool --mode=execute glib-genmarshal --body \
+		--prefix=indicate_listener_marshal $(srcdir)/listener-marshal.list \
+		> listener-marshal.c
 
 pkgconfig_DATA = indicate.pc
 pkgconfigdir = $(libdir)/pkgconfig

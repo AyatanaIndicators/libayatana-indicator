@@ -1,5 +1,6 @@
 
 #include "listener.h"
+#include "listener-marshal.h"
 #include <dbus/dbus-glib-bindings.h>
 #include "dbus-indicate-client.h"
 
@@ -75,6 +76,12 @@ indicate_listener_class_init (IndicateListenerClass * class)
 	                                        g_cclosure_marshal_VOID__UINT_POINTER,
 	                                        G_TYPE_NONE, 2, G_TYPE_UINT, G_TYPE_STRING);
 */
+
+	dbus_g_object_register_marshaller(indicate_listener_marshal_VOID__UINT_STRING,
+	                                  G_TYPE_NONE,
+	                                  G_TYPE_UINT,
+	                                  G_TYPE_STRING,
+	                                  G_TYPE_INVALID);
 
 	return;
 }
@@ -255,6 +262,7 @@ todo_idle (gpointer data)
 	IndicateListener * listener = INDICATE_LISTENER(data);
 	if (listener == NULL) {
 		g_error("Listener got lost in todo_idle");
+		listener->todo_idle = 0;
 		return FALSE;
 	}
 
@@ -262,6 +270,7 @@ todo_idle (gpointer data)
 		/* Basically if we have no todo, we need to stop running.  This
 		 * is done this way to make the function error handling simpler
 		 * and results in an extra run */
+		listener->todo_idle = 0;
 		return FALSE;
 	}
 

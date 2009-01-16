@@ -1,0 +1,2 @@
+# IndicatorAdded, IndicatorRemoved, IndicatorModified
+VOID:UINT,STRING
