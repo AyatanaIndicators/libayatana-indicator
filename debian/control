@@ -9,6 +9,7 @@ Build-Depends: debhelper (>= 5.0),
                libdbus-glib-1-dev,
                gnome-doc-utils,
                scrollkeeper,
+               libtool,
                intltool
 Standards-Version: 3.8.0
 
