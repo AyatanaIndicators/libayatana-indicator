@@ -42,6 +42,7 @@ static void build_todo_list_cb (DBusGProxy * proxy, char ** names, GError * erro
 static void todo_list_add (const gchar * name, DBusGProxy * proxy, IndicateListener * listener);
 static gboolean todo_idle (gpointer data);
 static void proxy_indicator_added (DBusGProxy * proxy, guint id, const gchar * type, proxy_t * proxyt);
+static void proxy_get_indicator_list (DBusGProxy * proxy, GArray * indicators, GError * error, gpointer data);
 
 /* Code */
 static void
@@ -296,7 +297,25 @@ todo_idle (gpointer data)
 	dbus_g_proxy_connect_signal(proxyt->proxy, "IndicatorAdded",
 	                            G_CALLBACK(proxy_indicator_added), proxyt, NULL);
 
+	org_freedesktop_indicator_get_indicator_list_async(proxyt->proxy, proxy_get_indicator_list, proxyt);
 	return TRUE;
+}
+
+static void
+proxy_get_indicator_list (DBusGProxy * proxy, GArray * indicators, GError * error, gpointer data)
+{
+	if (error != NULL) {
+		return;
+	}
+
+	proxy_t * proxyt = (proxy_t *)data;
+
+	int i;
+	for (i = 0; i < indicators->len; i++) {
+		g_debug("Interface %s has an indicator %d", proxyt->name, g_array_index(indicators, guint, i));
+	}
+
+	return;
 }
 
 static void
