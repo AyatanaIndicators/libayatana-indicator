@@ -1,3 +1,10 @@
+indicator-applet (0.1~ppa12) intrepid; urgency=low
+
+  * Removing the gir file from the applet so that it's only
+    with the library so that we can install all of them.
+
+ -- Ted Gould <ted@ubuntu.com>  Fri, 16 Jan 2009 17:11:43 -0600
+
 indicator-applet (0.1~ppa11) intrepid; urgency=low
 
   * Adding the GObject Introspection files into the build and the
