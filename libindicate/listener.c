@@ -53,7 +53,7 @@ static void proxy_indicators_free (gpointer data);
 static void
 indicate_listener_class_init (IndicateListenerClass * class)
 {
-	g_debug("Listener Class Initialized");
+	/* g_debug("Listener Class Initialized"); */
 	GObjectClass * gobj;
 	gobj = G_OBJECT_CLASS(class);
 
@@ -107,7 +107,7 @@ indicate_listener_class_init (IndicateListenerClass * class)
 static void
 indicate_listener_init (IndicateListener * listener)
 {
-	g_debug("Listener Object Initialized");
+	/* g_debug("Listener Object Initialized"); */
 	GError *error = NULL;
 
 	/* Get the buses */
@@ -208,7 +208,7 @@ dbus_owner_change (DBusGProxy * proxy, const gchar * name, const gchar * prev, c
 		bus_name = "session";
 	}
 
-	g_debug("Name change on %s bus: '%s' from '%s' to '%s'", bus_name, name, prev, new);
+	/* g_debug("Name change on %s bus: '%s' from '%s' to '%s'", bus_name, name, prev, new); */
 
 	if (prev != NULL && prev[0] == '\0') {
 		todo_list_add(name, proxy, listener);
@@ -261,7 +261,7 @@ todo_list_add (const gchar * name, DBusGProxy * proxy, IndicateListener * listen
 		bus = listener->session_bus;
 		bus_name = "session";
 	}
-	g_debug ("Adding on %s bus: %s", bus_name, name);
+	/* g_debug ("Adding on %s bus: %s", bus_name, name); */
 
 	proxy_todo_t todo;
 	todo.name = g_strdup(name);
@@ -370,7 +370,7 @@ proxy_get_indicator_type (DBusGProxy * proxy, gchar * type, GError * error, gpoi
 static void
 proxy_indicator_added (DBusGProxy * proxy, guint id, const gchar * type, proxy_t * proxyt)
 {
-	g_debug("Interface %s has an indicator %d of type %s", proxyt->name, id, type);
+	/* g_debug("Interface %s has an indicator %d of type %s", proxyt->name, id, type); */
 
 	if (proxyt->indicators == NULL) {
 		proxyt->indicators = g_hash_table_new_full(g_str_hash, g_str_equal,
