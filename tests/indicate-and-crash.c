@@ -2,7 +2,7 @@
 #include <glib.h>
 #include "libindicate/indicator.h"
 
-gboolean crashfunc (gpointer data) { *(int *)data = 5; }
+gboolean crashfunc (gpointer data) { *(int *)data = 5; return FALSE;}
 
 int
 main (int argc, char ** argv)
