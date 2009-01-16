@@ -46,28 +46,55 @@ libindicate_la_LIBADD = \
 	$(LIBINDICATE_LIBS)
 
 dbus-indicate-server.h: indicate-interface.xml
-	libtool --mode=execute dbus-binding-tool \
+	dbus-binding-tool \
 		--prefix=indicate_server \
 		--mode=glib-server \
 		--output=dbus-indicate-server.h \
 		$(srcdir)/indicate-interface.xml
 
 dbus-indicate-client.h: indicate-interface.xml
-	libtool --mode=execute dbus-binding-tool \
+	dbus-binding-tool \
 		--prefix=indicate_client \
 		--mode=glib-client \
 		--output=dbus-indicate-client.h \
 		$(srcdir)/indicate-interface.xml
 
 listener-marshal.h: listener-marshal.list
-	libtool --mode=execute glib-genmarshal --header \
+	glib-genmarshal --header \
 		--prefix=indicate_listener_marshal $(srcdir)/listener-marshal.list \
 		> listener-marshal.h
 
 listener-marshal.c: listener-marshal.list
-	libtool --mode=execute glib-genmarshal --body \
+	glib-genmarshal --body \
 		--prefix=indicate_listener_marshal $(srcdir)/listener-marshal.list \
 		> listener-marshal.c
 
 pkgconfig_DATA = indicate.pc
 pkgconfigdir = $(libdir)/pkgconfig
+
+gobjectintrospection_gir_DATA = \
+	Indicate-0.1.gir
+gobjectintrospection_girdir = $(datadir)/gir
+
+gobjectintrospection_type_DATA = \
+	Indicate-0.1.typelib
+gobjectintrospection_typedir = $(libdir)/girepository
+
+irscanner_headers = $(patsubst %,$(srcdir)/%,$(indicate_headers))
+Indicate-0.1.gir: $(irscanner_headers)
+	$(G_IR_SCANNER) \
+		-v --namespace Indicate \
+		--nsversion=0.1 \
+		--add-include-path=$(srcdir) \
+		--include=GObject-2.0 \
+		--include=GLib-2.0 \
+		--include=DBus-1.0 \
+		--include=DBusGLib-1.0 \
+		--library=indicate --pkg indicate \
+		--output Indicate-0.1.gir $(irscanner_headers)
+
+Indicate-0.1.typelib: Indicate-0.1.gir
+	$(G_IR_COMPILER) \
+		--includedir=$(srcdir) Indicate-0.1.gir \
+		-o Indicate-0.1.typelib
+
