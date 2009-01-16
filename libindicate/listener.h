@@ -30,8 +30,8 @@ struct _IndicateListener {
 	DBusGProxy * dbus_proxy_session;
 	DBusGProxy * dbus_proxy_system;
 
-	GHashTable * proxies_session;
-	GHashTable * proxies_system;
+	GHashTable * proxies_working;
+	GHashTable * proxies_possible;
 
 	GArray * proxy_todo;
 	guint todo_idle;
