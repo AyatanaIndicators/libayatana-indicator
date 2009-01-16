@@ -213,7 +213,39 @@ dbus_owner_change (DBusGProxy * proxy, const gchar * name, const gchar * prev, c
 	if (prev != NULL && prev[0] == '\0') {
 		todo_list_add(name, proxy, listener);
 	}
+	if (new != NULL && new[0] == '\0') {
+		proxy_t * proxyt;
+		proxyt = g_hash_table_lookup(listener->proxies_working, name);
+		if (proxyt != NULL) {
+			g_hash_table_remove(listener->proxies_working, name);
+			proxy_struct_destroy(proxyt);
+		}
+		proxyt = g_hash_table_lookup(listener->proxies_possible, name);
+		if (proxyt != NULL) {
+			g_hash_table_remove(listener->proxies_possible, name);
+			proxy_struct_destroy(proxyt);
+		}
+	}
 
+	return;
+}
+
+static void
+proxy_struct_destroy_indicators (gpointer key, gpointer value, gpointer data)
+{
+	gchar * type = (gchar *)key;
+	GHashTable * indicators = (GHashTable *)value;
+	proxy_t * proxy_data = data;
+
+	GList * keys = g_hash_table_get_keys(indicators);
+	GList * indicator;
+	for (indicator = keys; indicator != NULL; indicator = indicator->next) {
+		guint id = (guint)indicator->data;
+		g_signal_emit(proxy_data->listener, signals[INDICATOR_REMOVED], 0, proxy_data->name, id, type, TRUE);
+	}
+	g_list_free(keys);
+
+	g_hash_table_remove_all(indicators);
 	return;
 }
 
@@ -222,11 +254,19 @@ proxy_struct_destroy (gpointer data)
 {
 	proxy_t * proxy_data = data;
 
-	g_object_unref(proxy_data->proxy);
-	g_free(proxy_data->name);
-
 	/* TODO: Clear the indicators by signaling */
-	/* TODO: Remove from the appropriate listener hash */
+	if (proxy_data->indicators != NULL) {
+		g_hash_table_foreach(proxy_data->indicators,
+							 proxy_struct_destroy_indicators,
+							 proxy_data);
+		g_hash_table_remove_all(proxy_data->indicators);
+
+		g_signal_emit(proxy_data->listener, signals[SERVER_REMOVED], 0, proxy_data->name, TRUE);
+		proxy_data->indicators = NULL;
+	}
+
+	g_free(proxy_data->name);
+	g_free(proxy_data);
 
 	return;
 }
