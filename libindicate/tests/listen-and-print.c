@@ -5,19 +5,19 @@
 static void
 indicator_added (IndicateListener * listener, IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * type, gpointer data)
 {
-	g_debug("Indicator Added:          %s %d %s", (gchar *)server, (guint)*indicator, type);
+	g_debug("Indicator Added:          %s %d %s", (gchar *)server, (guint)indicator, type);
 }
 
 static void
 indicator_removed (IndicateListener * listener, IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * type, gpointer data)
 {
-	g_debug("Indicator Removed:        %s %d %s", (gchar *)server, (guint)*indicator, type);
+	g_debug("Indicator Removed:        %s %d %s", (gchar *)server, (guint)indicator, type);
 }
 
 static void
 indicator_modified (IndicateListener * listener, IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * type, gchar * property, gpointer data)
 {
-	g_debug("Indicator Modified:       %s %d %s %s", (gchar *)server, (guint)*indicator, type, property);
+	g_debug("Indicator Modified:       %s %d %s %s", (gchar *)server, (guint)indicator, type, property);
 }
 
 static void

@@ -398,7 +398,7 @@ proxy_indicator_added (DBusGProxy * proxy, guint id, const gchar * type, proxy_t
 		g_hash_table_insert(proxyt->indicators, g_strdup(type), indicators);
 	}
 
-	if (g_hash_table_lookup(indicators, (gpointer)id)) {
+	if (!g_hash_table_lookup(indicators, (gpointer)id)) {
 		g_hash_table_insert(indicators, (gpointer)id, (gpointer)TRUE);
 		g_signal_emit(proxyt->listener, signals[INDICATOR_ADDED], 0, proxyt->name, id, type, TRUE);
 	}
