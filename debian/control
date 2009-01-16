@@ -13,7 +13,7 @@ Build-Depends: debhelper (>= 5.0),
 Standards-Version: 3.8.0
 
 Package: indicator-applet
-Architecture: all
+Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
          gnome-panel
@@ -22,14 +22,14 @@ Description: Applet for the GNOME panel providing various indicators for
 
 Package: libindicate
 Section: libs
-Architecture: all
+Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends}
 Description: A library used to indicate.
 
 Package: libindicate-dev
 Section: libdevel
-Architecture: all
+Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
          libindicate (= ${binary:Version}),
