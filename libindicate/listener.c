@@ -59,29 +59,41 @@ indicate_listener_class_init (IndicateListenerClass * class)
 
 	gobj->finalize = indicate_listener_finalize;
 
-/* TODO, I need new marshallers here, bah humbug
 	signals[INDICATOR_ADDED] = g_signal_new("indicator-added",
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateListenerClass, indicator_added),
 	                                        NULL, NULL,
-	                                        g_cclosure_marshal_VOID__POINTER_POINTER_POINTER,
-	                                        G_TYPE_NONE, 2, G_TYPE_OBJECT, G_TYPE_OBJECT, G_TYPE_STRING);
+	                                        indicate_listener_marshal_VOID__POINTER_POINTER_STRING,
+	                                        G_TYPE_NONE, 3, G_TYPE_POINTER, G_TYPE_POINTER, G_TYPE_STRING);
 	signals[INDICATOR_REMOVED] = g_signal_new("indicator-removed",
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
-	                                        G_STRUCT_OFFSET (IndicateServerClass, indicator_removed),
+	                                        G_STRUCT_OFFSET (IndicateListenerClass, indicator_removed),
 	                                        NULL, NULL,
-	                                        g_cclosure_marshal_VOID__UINT_POINTER,
-	                                        G_TYPE_NONE, 2, G_TYPE_UINT, G_TYPE_STRING);
+	                                        indicate_listener_marshal_VOID__POINTER_POINTER_STRING,
+	                                        G_TYPE_NONE, 3, G_TYPE_POINTER, G_TYPE_POINTER, G_TYPE_STRING);
 	signals[INDICATOR_MODIFIED] = g_signal_new("indicator-modified",
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
-	                                        G_STRUCT_OFFSET (IndicateServerClass, indicator_modified),
+	                                        G_STRUCT_OFFSET (IndicateListenerClass, indicator_modified),
 	                                        NULL, NULL,
-	                                        g_cclosure_marshal_VOID__UINT_POINTER,
-	                                        G_TYPE_NONE, 2, G_TYPE_UINT, G_TYPE_STRING);
-*/
+	                                        indicate_listener_marshal_VOID__POINTER_POINTER_STRING_STRING,
+	                                        G_TYPE_NONE, 4, G_TYPE_POINTER, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING);
+	signals[SERVER_ADDED] = g_signal_new("server-added",
+	                                        G_TYPE_FROM_CLASS (class),
+	                                        G_SIGNAL_RUN_LAST,
+	                                        G_STRUCT_OFFSET (IndicateListenerClass, server_added),
+	                                        NULL, NULL,
+	                                        g_cclosure_marshal_VOID__POINTER,
+	                                        G_TYPE_NONE, 1, G_TYPE_POINTER);
+	signals[SERVER_REMOVED] = g_signal_new("server-removed",
+	                                        G_TYPE_FROM_CLASS (class),
+	                                        G_SIGNAL_RUN_LAST,
+	                                        G_STRUCT_OFFSET (IndicateListenerClass, server_removed),
+	                                        NULL, NULL,
+	                                        g_cclosure_marshal_VOID__POINTER,
+	                                        G_TYPE_NONE, 1, G_TYPE_POINTER);
 
 	dbus_g_object_register_marshaller(indicate_listener_marshal_VOID__UINT_STRING,
 	                                  G_TYPE_NONE,
@@ -376,7 +388,7 @@ proxy_indicator_added (DBusGProxy * proxy, guint id, const gchar * type, proxy_t
 		dbus_g_proxy_connect_signal(proxyt->proxy, "IndicatorModified",
 									G_CALLBACK(proxy_indicator_modified), proxyt, NULL);
 
-		/* TODO: Send signal */
+		g_signal_emit(proxyt->listener, signals[SERVER_ADDED], 0, proxyt->name, TRUE);
 	}
 
 	GHashTable * indicators = g_hash_table_lookup(proxyt->indicators, type);
@@ -387,8 +399,8 @@ proxy_indicator_added (DBusGProxy * proxy, guint id, const gchar * type, proxy_t
 	}
 
 	if (g_hash_table_lookup(indicators, (gpointer)id)) {
-		g_hash_table_insert(indicators, (gpointer)id, TRUE);
-		/* TODO: Send signal */
+		g_hash_table_insert(indicators, (gpointer)id, (gpointer)TRUE);
+		g_signal_emit(proxyt->listener, signals[INDICATOR_ADDED], 0, proxyt->name, id, type, TRUE);
 	}
 
 	return;
@@ -414,8 +426,7 @@ proxy_indicator_removed (DBusGProxy * proxy, guint id, const gchar * type, proxy
 	}
 
 	g_hash_table_remove(indicators, (gpointer)id);
-
-	/* TODO: Signal here */
+	g_signal_emit(proxyt->listener, signals[INDICATOR_REMOVED], 0, proxyt->name, id, type, TRUE);
 
 	return;
 }
@@ -428,6 +439,7 @@ proxy_indicator_modified (DBusGProxy * proxy, guint id, const gchar * type, prox
 		return;
 	}
 
+	// TODO: Search for the ID to discover the type
 	GHashTable * indicators = g_hash_table_lookup(proxyt->indicators, type);
 	if (indicators == NULL) {
 		g_warning("Can not modify indicator %d of type '%s' as there are no indicators of that type on %s.", id, type, proxyt->name);
@@ -439,7 +451,7 @@ proxy_indicator_modified (DBusGProxy * proxy, guint id, const gchar * type, prox
 		return;
 	}
 
-	/* TODO: Signal here */
+	g_signal_emit(proxyt->listener, signals[INDICATOR_MODIFIED], 0, proxyt->name, id, type, type, TRUE);
 
 	return;
 }

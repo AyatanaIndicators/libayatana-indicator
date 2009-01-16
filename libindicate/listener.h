@@ -20,6 +20,9 @@ G_BEGIN_DECLS
 #define INDICATE_IS_LISTENER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), INDICATE_TYPE_LISTENER))
 #define INDICATE_LISTENER_GET_CLASS(object) (G_TYPE_INSTANCE_GET_CLASS((object), INDICATE_TYPE_LISTENER, IndicateListenerClass))
 
+typedef gchar IndicateListenerServer;
+typedef guint IndicateListenerIndicator;
+
 typedef struct _IndicateListener IndicateListener;
 struct _IndicateListener {
 	GObject parent;
@@ -42,13 +45,12 @@ struct _IndicateListenerClass {
 	GObjectClass parent;
 
 	/* Signals */
-	void (* indicator_added) (IndicateServer * server, IndicateIndicator * indicator, gchar * type);
-	void (* indicator_removed) (IndicateServer * server, IndicateIndicator * indicator, gchar * type);
-	void (* indicator_modified) (IndicateServer * server, IndicateIndicator * indicator, gchar * property);
+	void (* indicator_added) (IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * type);
+	void (* indicator_removed) (IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * type);
+	void (* indicator_modified) (IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * type, gchar * property);
 
-	void (* server_added) (IndicateServer * server);
-	void (* server_removed) (IndicateServer * server);
-
+	void (* server_added) (IndicateListenerServer * server);
+	void (* server_removed) (IndicateListenerServer * server);
 };
 
 GType indicate_listener_get_type (void) G_GNUC_CONST;
