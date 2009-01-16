@@ -43,6 +43,7 @@ static void todo_list_add (const gchar * name, DBusGProxy * proxy, IndicateListe
 static gboolean todo_idle (gpointer data);
 static void proxy_indicator_added (DBusGProxy * proxy, guint id, const gchar * type, proxy_t * proxyt);
 static void proxy_get_indicator_list (DBusGProxy * proxy, GArray * indicators, GError * error, gpointer data);
+static void proxy_get_indicator_type (DBusGProxy * proxy, gchar * type, GError * error, gpointer data);
 
 /* Code */
 static void
@@ -301,6 +302,11 @@ todo_idle (gpointer data)
 	return TRUE;
 }
 
+typedef struct {
+	guint id;
+	proxy_t * proxyt;
+} indicator_type_t;
+
 static void
 proxy_get_indicator_list (DBusGProxy * proxy, GArray * indicators, GError * error, gpointer data)
 {
@@ -312,15 +318,36 @@ proxy_get_indicator_list (DBusGProxy * proxy, GArray * indicators, GError * erro
 
 	int i;
 	for (i = 0; i < indicators->len; i++) {
-		g_debug("Interface %s has an indicator %d", proxyt->name, g_array_index(indicators, guint, i));
+		indicator_type_t * itt = g_new(indicator_type_t, 1);
+		itt->id = g_array_index(indicators, guint, i);
+		itt->proxyt = proxyt;
+
+		org_freedesktop_indicator_get_indicator_property_async(proxyt->proxy, itt->id, "type", proxy_get_indicator_type, itt);
 	}
 
 	return;
 }
 
 static void
+proxy_get_indicator_type (DBusGProxy * proxy, gchar * type, GError * error, gpointer data)
+{
+	if (error != NULL) {
+		g_warning("Get Indicator Type returned error: %s", error->message);
+		return;
+	}
+
+	indicator_type_t * itt = (indicator_type_t *)data;
+	guint id = itt->id;
+	proxy_t * proxyt = itt->proxyt;
+
+	g_free(itt);
+
+	return proxy_indicator_added(proxy, id, type, proxyt);
+}
+
+static void
 proxy_indicator_added (DBusGProxy * proxy, guint id, const gchar * type, proxy_t * proxyt)
 {
-	g_debug("Interface %s has an indicator %d", proxyt->name, id);
+	g_debug("Interface %s has an indicator %d of type %s", proxyt->name, id, type);
 	return;
 }
