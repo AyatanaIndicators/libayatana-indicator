@@ -1,0 +1,6 @@
+# IndicatorAdded, IndicatorRemoved, IndicatorModified
+VOID:UINT,STRING
+# Local indicator_added, indicator_removed
+VOID:POINTER,POINTER,STRING
+# Local indicator_modified
+VOID:POINTER,POINTER,STRING,STRING

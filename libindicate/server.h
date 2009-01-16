@@ -92,5 +92,5 @@ gboolean indicate_server_show_indicator_to_user (IndicateServer * server, guint 
 
 G_END_DECLS
 
-#endif /* INDICATE_INDICATOR_H_INCLUDED__ */
+#endif /* INDICATE_SERVER_H_INCLUDED__ */
 
