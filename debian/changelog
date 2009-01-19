@@ -1,3 +1,9 @@
+indicator-applet (0.1~ppa13) intrepid; urgency=low
+
+  * Wrong indicate include directory in package config files
+
+ -- Ted Gould <ted@ubuntu.com>  Mon, 19 Jan 2009 12:21:45 -0600
+
 indicator-applet (0.1~ppa12) intrepid; urgency=low
 
   * Removing the gir file from the applet so that it's only
