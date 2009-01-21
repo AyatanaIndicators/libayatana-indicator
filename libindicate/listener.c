@@ -508,3 +508,56 @@ proxy_indicators_free (gpointer data)
 	g_hash_table_unref(table);
 	return;
 }
+
+typedef struct _get_property_t get_property_t;
+struct _get_property_t {
+	indicate_listener_get_property_cb cb;
+	gpointer data;
+	IndicateListener * listener;
+	IndicateListenerServer * server;
+	IndicateListenerIndicator * indicator;
+	gchar * property;
+};
+
+static void
+get_property_cb (DBusGProxy *proxy, char * OUT_value, GError *error, gpointer userdata)
+{
+	get_property_t * get_property_data = (get_property_t *)userdata;
+
+	if (error != NULL) {
+		g_warning("Unable to get property data: %s", error->message);
+		g_error_free(error);
+		return;
+	}
+
+	get_property_data->cb(get_property_data->listener, get_property_data->server, get_property_data->indicator, get_property_data->property, OUT_value, get_property_data->data);
+
+	g_free(get_property_data->property);
+	g_free(get_property_data);
+
+	return;
+};
+
+void
+indicate_listener_get_property (IndicateListener * listener, IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * property, indicate_listener_get_property_cb callback, gpointer data)
+{
+	/* TODO: Do we need to somehow refcount the server/indicator while we're waiting on this? */
+
+	proxy_t * proxyt = g_hash_table_lookup(listener->proxies_working, server);
+	if (proxyt == NULL) {
+		g_error("Trying to get property '%s' on server '%s' that currently isn't set to working.", property, (gchar *)server);
+		return;
+	}
+
+	get_property_t * get_property_data = g_new(get_property_t, 1);
+	get_property_data->cb = callback;
+	get_property_data->data = data;
+	get_property_data->listener = listener;
+	get_property_data->server = server;
+	get_property_data->indicator = indicator;
+	get_property_data->property = g_strdup(property);
+	
+	org_freedesktop_indicator_get_indicator_property_async (proxyt->proxy , (guint)indicator, property, get_property_cb, get_property_data);
+	return;
+}
+
