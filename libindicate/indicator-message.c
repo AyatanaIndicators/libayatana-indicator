@@ -60,3 +60,9 @@ get_indicator_type (IndicateIndicator * indicator)
 {
 	return "message";
 }
+
+IndicateIndicatorMessage *
+indicate_indicator_message_new (void)
+{
+	return g_object_new(INDICATE_TYPE_INDICATOR_MESSAGE, NULL);
+}

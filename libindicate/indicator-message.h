@@ -8,7 +8,7 @@
 
 G_BEGIN_DECLS
 
-#define INDICATE_TYPE_INDICATOR_MESSAGE            (indicator_message_get_type ())
+#define INDICATE_TYPE_INDICATOR_MESSAGE            (indicate_indicator_message_get_type ())
 #define INDICATE_INDICATOR_MESSAGE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), INDICATE_TYPE_INDICATOR_MESSAGE, IndicateIndicatorMessage))
 #define INDICATE_INDICATOR_MESSAGE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), INDICATE_TYPE_INDICATOR_MESSAGE, IndicateIndicatorMessageClass))
 #define INDICATE_IS_INDICATOR_MESSAGE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), INDICATE_TYPE_INDICATOR_MESSAGE))
@@ -29,6 +29,7 @@ IndicateIndicator parent;
 };
 
 GType indicate_indicator_message_get_type (void);
+IndicateIndicatorMessage * indicate_indicator_message_new (void);
 
 G_END_DECLS
 

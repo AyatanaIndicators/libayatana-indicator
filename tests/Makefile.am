@@ -2,7 +2,8 @@
 noinst_PROGRAMS = \
 	indicate-and-crash \
 	indicate-alot \
-	listen-and-print
+	listen-and-print \
+	im-client
 
 indicate_and_crash_SOURCES = \
 	indicate-and-crash.c
@@ -36,3 +37,15 @@ listen_and_print_CFLAGS = \
 listen_and_print_LDADD = \
 	../libindicate/libindicate.la \
 	$(LIBINDICATE_LIBS)
+
+im_client_SOURCES = \
+	im-client.c
+
+im_client_CFLAGS = \
+	-I $(srcdir)/.. \
+	$(LIBINDICATE_CFLAGS)
+
+im_client_LDADD = \
+	../libindicate/libindicate.la \
+	$(LIBINDICATE_LIBS)
+
