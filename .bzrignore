@@ -7,3 +7,7 @@ data/indicator-applet.schemas
 po/@GETTEXT_PACKAGE@.pot
 po/indicator-applet.pot
 src/indicator-applet
+dbus-indicate-client.h
+dbus-indicate-server.h
+listener-marshal.c
+listener-marshal.h
