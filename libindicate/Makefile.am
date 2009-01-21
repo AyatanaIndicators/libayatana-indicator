@@ -18,6 +18,7 @@ libindicateincludedir=$(includedir)/libindicate-1.0/libindicate
 
 indicate_headers = \
 	indicator.h \
+	indicator-message.h \
 	listener.h \
 	server.h
 
@@ -32,7 +33,8 @@ libindicate_la_SOURCES = \
 	listener.c \
 	listener-marshal.c \
 	listener-marshal.h \
-	indicator.c
+	indicator.c \
+	indicator-message.c
 
 libindicate_la_LDFLAGS = \
 	-version-info $(LIBINDICATE_CURRENT):$(LIBINDICATE_REVISION):$(LIBINDICATE_AGE) \
