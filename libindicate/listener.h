@@ -55,8 +55,16 @@ struct _IndicateListenerClass {
 
 GType indicate_listener_get_type (void) G_GNUC_CONST;
 
+typedef void (*indicate_listener_get_property_cb) (IndicateListener * listener, IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * property, gchar * propertydata, gpointer data);
+
 /* Create a new listener */
-IndicateListener * indicate_listener_new (void);
+IndicateListener *    indicate_listener_new            (void);
+void                  indicate_listener_get_property   (IndicateListener * listener,
+                                                        IndicateListenerServer * server,
+                                                        IndicateListenerIndicator * indicator,
+                                                        gchar * property,
+                                                        indicate_listener_get_property_cb callback,
+                                                        gpointer data);
 
 
 
