@@ -1,3 +1,9 @@
+indicator-applet (0.1~ppa16) intrepid; urgency=low
+
+  * Forgot to run autogen.sh before last package :(
+
+ -- Ted Gould <ted@ubuntu.com>  Thu, 22 Jan 2009 15:39:19 -0600
+
 indicator-applet (0.1~ppa15) intrepid; urgency=low
 
   * Update API slightly and some fixes.
