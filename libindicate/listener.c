@@ -292,6 +292,10 @@ build_todo_list_cb (DBusGProxy * proxy, char ** names, GError * error, void * da
 static void
 todo_list_add (const gchar * name, DBusGProxy * proxy, IndicateListener * listener)
 {
+	if (name == NULL || name[0] != ':') {
+		return;
+	}
+
 	DBusGConnection * bus;
 	gchar * bus_name;
 	if (proxy == listener->dbus_proxy_system) {
