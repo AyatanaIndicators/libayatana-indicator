@@ -90,8 +90,6 @@ Indicate-0.1.gir: $(irscanner_headers)
 		--add-include-path=$(srcdir) \
 		--include=GObject-2.0 \
 		--include=GLib-2.0 \
-		--include=DBus-1.0 \
-		--include=DBusGLib-1.0 \
 		--library=indicate --pkg indicate \
 		--output Indicate-0.1.gir $(irscanner_headers)
 
