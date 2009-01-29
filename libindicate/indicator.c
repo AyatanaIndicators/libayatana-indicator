@@ -9,6 +9,7 @@ enum {
 	HIDE,
 	SHOW,
 	USER_DISPLAY,
+	MODIFIED,
 	LAST_SIGNAL
 };
 
@@ -68,6 +69,13 @@ indicate_indicator_class_init (IndicateIndicatorClass * class)
 	                                     NULL, NULL,
 	                                     g_cclosure_marshal_VOID__VOID,
 	                                     G_TYPE_NONE, 0);
+	signals[MODIFIED] = g_signal_new(INDICATE_INDICATOR_SIGNAL_MODIFIED,
+	                                     G_TYPE_FROM_CLASS(class),
+	                                     G_SIGNAL_RUN_LAST,
+	                                     G_STRUCT_OFFSET(IndicateIndicatorClass, modified),
+	                                     NULL, NULL,
+	                                     g_cclosure_marshal_VOID__STRING,
+	                                     G_TYPE_NONE, 1, G_TYPE_STRING);
 
 	class->get_type = NULL;
 	class->set_property = set_property;
@@ -235,8 +243,14 @@ set_property (IndicateIndicator * indicator, const gchar * key, const gchar * da
 
 	IndicateIndicatorPrivate * priv = INDICATE_INDICATOR_GET_PRIVATE(indicator);
 
-	g_hash_table_insert(priv->properties, g_strdup(key), g_strdup(data));
-	// TODO: Signal
+	gchar * current = g_hash_table_lookup(priv->properties, key);
+	if (current == NULL || strcmp(current, data)) {
+		/* If the value has changed or there is no value */
+		gchar * newkey = g_strdup(key);
+		g_hash_table_insert(priv->properties, newkey, g_strdup(data));
+		g_signal_emit(indicator, signals[MODIFIED], 0, newkey, TRUE);
+	}
+
 	return;
 }
 
