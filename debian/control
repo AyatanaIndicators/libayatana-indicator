@@ -13,7 +13,6 @@ Build-Depends: debhelper (>= 5.0),
                intltool,
                gobject-introspection (>= 0.6),
                gobject-introspection-glib-2.0 (>= 0.6),
-               gobject-introspection-repository (>= 0.6),
                libgirepository-dev (>= 0.6)
 Standards-Version: 3.8.0
 
