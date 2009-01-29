@@ -21,19 +21,13 @@ G_BEGIN_DECLS
 #define INDICATE_INDICATOR_SIGNAL_HIDE  "hide"
 #define INDICATE_INDICATOR_SIGNAL_SHOW  "show"
 #define INDICATE_INDICATOR_SIGNAL_DISPLAY  "user-display"
+#define INDICATE_INDICATOR_SIGNAL_MODIFIED  "modified"
 
 typedef struct _IndicateIndicator IndicateIndicator;
 typedef struct _IndicateIndicatorClass IndicateIndicatorClass;
 
-#include "server.h"
-
 struct _IndicateIndicator {
 	GObject parent;
-
-	guint id;
-	gboolean is_visible;
-	IndicateServer * server;
-	GHashTable * properties;
 };
 
 struct _IndicateIndicatorClass {
@@ -42,6 +36,7 @@ struct _IndicateIndicatorClass {
 	void (*hide) (IndicateIndicator * indicator, gpointer data);
 	void (*show) (IndicateIndicator * indicator, gpointer data);
 	void (*user_display) (IndicateIndicator * indicator, gpointer data);
+	void (*modified) (IndicateIndicator * indicator, gchar * property, gpointer data);
 
 	const gchar * (*get_type) (IndicateIndicator * indicator);
 	void (*set_property) (IndicateIndicator * indicator, const gchar * key, const gchar * data);

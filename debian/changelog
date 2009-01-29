@@ -1,3 +1,12 @@
+indicator-applet (0.1~ppa17) intrepid; urgency=low
+
+  * Fixing the handling of named DBus connections
+  * Moving most of the data in the objects to private sections
+  * Making the signal names defines for easier usage
+  * Having property changes actually work now.
+
+ -- Ted Gould <ted@ubuntu.com>  Thu, 29 Jan 2009 13:38:16 -0600
+
 indicator-applet (0.1~ppa16) intrepid; urgency=low
 
   * Forgot to run autogen.sh before last package :(

@@ -5,8 +5,6 @@
 #include <glib.h>
 #include <glib-object.h>
 
-#include <dbus/dbus-glib.h>
-
 #include "indicator.h"
 #include "server.h"
 
@@ -20,24 +18,21 @@ G_BEGIN_DECLS
 #define INDICATE_IS_LISTENER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), INDICATE_TYPE_LISTENER))
 #define INDICATE_LISTENER_GET_CLASS(object) (G_TYPE_INSTANCE_GET_CLASS((object), INDICATE_TYPE_LISTENER, IndicateListenerClass))
 
+#define INDICATE_LISTENER_SIGNAL_INDICATOR_ADDED       "indicator-added"
+#define INDICATE_LISTENER_SIGNAL_INDICATOR_REMOVED     "indicator-removed"
+#define INDICATE_LISTENER_SIGNAL_INDICATOR_MODIFIED    "indicator-modified"
+#define INDICATE_LISTENER_SIGNAL_SERVER_ADDED          "server-added"
+#define INDICATE_LISTENER_SIGNAL_SERVER_REMOVED        "server-removed"
+
+#define INDICATE_LISTENER_SERVER_DBUS_NAME(server)   ((gchar *)server)
+#define INDICATE_LISTENER_INDICATOR_ID(indicator)    (GPOINTER_TO_UINT(indicator))
+
 typedef gchar IndicateListenerServer;
 typedef guint IndicateListenerIndicator;
 
 typedef struct _IndicateListener IndicateListener;
 struct _IndicateListener {
 	GObject parent;
-
-	DBusGConnection * session_bus;
-	DBusGConnection * system_bus;
-
-	DBusGProxy * dbus_proxy_session;
-	DBusGProxy * dbus_proxy_system;
-
-	GHashTable * proxies_working;
-	GHashTable * proxies_possible;
-
-	GArray * proxy_todo;
-	guint todo_idle;
 };
 
 typedef struct _IndicateListenerClass IndicateListenerClass;

@@ -2,16 +2,30 @@
 #include "glib.h"
 #include "glib/gmessages.h"
 #include "indicator.h"
+#include "server.h"
 
 /* Signals */
 enum {
 	HIDE,
 	SHOW,
 	USER_DISPLAY,
+	MODIFIED,
 	LAST_SIGNAL
 };
 
 static guint signals[LAST_SIGNAL] = { 0 };
+
+typedef struct _IndicateIndicatorPrivate IndicateIndicatorPrivate;
+struct _IndicateIndicatorPrivate
+{
+	guint id;
+	gboolean is_visible;
+	IndicateServer * server;
+	GHashTable * properties;
+};
+
+#define INDICATE_INDICATOR_GET_PRIVATE(o) \
+          (G_TYPE_INSTANCE_GET_PRIVATE ((o), INDICATE_TYPE_INDICATOR, IndicateIndicatorPrivate))
 
 G_DEFINE_TYPE (IndicateIndicator, indicate_indicator, G_TYPE_OBJECT);
 
@@ -29,6 +43,8 @@ indicate_indicator_class_init (IndicateIndicatorClass * class)
 
 	GObjectClass * gobj;
 	gobj = G_OBJECT_CLASS(class);
+
+	g_type_class_add_private (class, sizeof (IndicateIndicatorPrivate));
 
 	gobj->finalize = indicate_indicator_finalize;
 
@@ -53,6 +69,13 @@ indicate_indicator_class_init (IndicateIndicatorClass * class)
 	                                     NULL, NULL,
 	                                     g_cclosure_marshal_VOID__VOID,
 	                                     G_TYPE_NONE, 0);
+	signals[MODIFIED] = g_signal_new(INDICATE_INDICATOR_SIGNAL_MODIFIED,
+	                                     G_TYPE_FROM_CLASS(class),
+	                                     G_SIGNAL_RUN_LAST,
+	                                     G_STRUCT_OFFSET(IndicateIndicatorClass, modified),
+	                                     NULL, NULL,
+	                                     g_cclosure_marshal_VOID__STRING,
+	                                     G_TYPE_NONE, 1, G_TYPE_STRING);
 
 	class->get_type = NULL;
 	class->set_property = set_property;
@@ -66,15 +89,16 @@ static void
 indicate_indicator_init (IndicateIndicator * indicator)
 {
 	g_debug("Indicator Object Initialized.");
+	IndicateIndicatorPrivate * priv = INDICATE_INDICATOR_GET_PRIVATE(indicator);
 
-	indicator->is_visible = FALSE;
+	priv->is_visible = FALSE;
 
-	indicator->properties = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+	priv->properties = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 
+	priv->server = indicate_server_ref_default();
+	priv->id = indicate_server_get_next_id(priv->server);
 
-	indicator->server = indicate_server_ref_default();
-	indicator->id = indicate_server_get_next_id(indicator->server);
-	indicate_server_add_indicator(indicator->server, indicator);
+	indicate_server_add_indicator(priv->server, indicator);
 
 	return;
 }
@@ -83,10 +107,11 @@ static void
 indicate_indicator_finalize (GObject * obj)
 {
 	IndicateIndicator * indicator = INDICATE_INDICATOR(obj);
+	IndicateIndicatorPrivate * priv = INDICATE_INDICATOR_GET_PRIVATE(indicator);
 
-	indicate_server_remove_indicator(indicator->server, indicator);
-	g_object_unref(indicator->server);
-	indicator->server = NULL;
+	indicate_server_remove_indicator(priv->server, indicator);
+	g_object_unref(priv->server);
+	priv->server = NULL;
 
 	return;
 }
@@ -101,15 +126,17 @@ indicate_indicator_new (void)
 void
 indicate_indicator_show (IndicateIndicator * indicator)
 {
-	if (indicator->is_visible) {
+	IndicateIndicatorPrivate * priv = INDICATE_INDICATOR_GET_PRIVATE(indicator);
+
+	if (priv->is_visible) {
 		return;
 	}
 
-	if (indicator->server) {
-		indicate_server_show(indicator->server);
+	if (priv->server) {
+		indicate_server_show(priv->server);
 	}
 
-	indicator->is_visible = TRUE;
+	priv->is_visible = TRUE;
 	g_signal_emit(indicator, signals[SHOW], 0, TRUE);
 
 	return;
@@ -118,11 +145,13 @@ indicate_indicator_show (IndicateIndicator * indicator)
 void
 indicate_indicator_hide (IndicateIndicator * indicator)
 {
-	if (!indicator->is_visible) {
+	IndicateIndicatorPrivate * priv = INDICATE_INDICATOR_GET_PRIVATE(indicator);
+
+	if (!priv->is_visible) {
 		return;
 	}
 
-	indicator->is_visible = FALSE;
+	priv->is_visible = FALSE;
 	g_signal_emit(indicator, signals[HIDE], 0, TRUE);
 
 	return;
@@ -131,14 +160,17 @@ indicate_indicator_hide (IndicateIndicator * indicator)
 gboolean
 indicate_indicator_is_visible (IndicateIndicator * indicator)
 {
-	return indicator->is_visible;
+	g_return_val_if_fail(INDICATE_IS_INDICATOR(indicator), FALSE);
+	IndicateIndicatorPrivate * priv = INDICATE_INDICATOR_GET_PRIVATE(indicator);
+	return priv->is_visible;
 }
 
 guint
 indicate_indicator_get_id (IndicateIndicator * indicator)
 {
 	g_return_val_if_fail(INDICATE_IS_INDICATOR(indicator), 0);
-	return indicator->id;
+	IndicateIndicatorPrivate * priv = INDICATE_INDICATOR_GET_PRIVATE(indicator);
+	return priv->id;
 }
 
 const gchar *
@@ -157,7 +189,8 @@ indicate_indicator_get_indicator_type (IndicateIndicator * indicator)
 void
 indicate_indicator_user_display (IndicateIndicator * indicator)
 {
-	if (!indicator->is_visible) {
+	IndicateIndicatorPrivate * priv = INDICATE_INDICATOR_GET_PRIVATE(indicator);
+	if (!priv->is_visible) {
 		return;
 	}
 
@@ -208,8 +241,16 @@ set_property (IndicateIndicator * indicator, const gchar * key, const gchar * da
 		return;
 	}
 
-	g_hash_table_insert(indicator->properties, g_strdup(key), g_strdup(data));
-	// TODO: Signal
+	IndicateIndicatorPrivate * priv = INDICATE_INDICATOR_GET_PRIVATE(indicator);
+
+	gchar * current = g_hash_table_lookup(priv->properties, key);
+	if (current == NULL || strcmp(current, data)) {
+		/* If the value has changed or there is no value */
+		gchar * newkey = g_strdup(key);
+		g_hash_table_insert(priv->properties, newkey, g_strdup(data));
+		g_signal_emit(indicator, signals[MODIFIED], 0, newkey, TRUE);
+	}
+
 	return;
 }
 
@@ -222,16 +263,19 @@ get_property (IndicateIndicator * indicator, const gchar * key)
 		return indicate_indicator_get_indicator_type(indicator);
 	}
 
+	IndicateIndicatorPrivate * priv = INDICATE_INDICATOR_GET_PRIVATE(indicator);
+
 	// TODO: Think about whether we should be strdup'ing this.  Seems like overkill, but might not be.
-	return (const gchar *)g_hash_table_lookup(indicator->properties, key);
+	return (const gchar *)g_hash_table_lookup(priv->properties, key);
 }
 
 static GPtrArray *
 list_properties (IndicateIndicator * indicator)
 {
 	g_return_val_if_fail(INDICATE_IS_INDICATOR(indicator), g_ptr_array_new());
+	IndicateIndicatorPrivate * priv = INDICATE_INDICATOR_GET_PRIVATE(indicator);
 
-	GList * keys = g_hash_table_get_keys(indicator->properties);
+	GList * keys = g_hash_table_get_keys(priv->properties);
 	GPtrArray * properties = g_ptr_array_sized_new(g_list_length(keys) + 1);
 
 	g_ptr_array_add(properties, g_strdup("type"));

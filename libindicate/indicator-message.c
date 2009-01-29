@@ -8,6 +8,7 @@ typedef struct _IndicateIndicatorMessagePrivate IndicateIndicatorMessagePrivate;
 
 struct _IndicateIndicatorMessagePrivate
 {
+	gchar * subtype;
 };
 
 #define INDICATE_INDICATOR_MESSAGE_GET_PRIVATE(o) \

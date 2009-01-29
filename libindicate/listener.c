@@ -21,6 +21,25 @@ enum {
 
 static guint signals[LAST_SIGNAL] = { 0 };
 
+typedef struct _IndicateListenerPrivate IndicateListenerPrivate;
+struct _IndicateListenerPrivate
+{
+	DBusGConnection * session_bus;
+	DBusGConnection * system_bus;
+
+	DBusGProxy * dbus_proxy_session;
+	DBusGProxy * dbus_proxy_system;
+
+	GHashTable * proxies_working;
+	GHashTable * proxies_possible;
+
+	GArray * proxy_todo;
+	guint todo_idle;
+};
+
+#define INDICATE_LISTENER_GET_PRIVATE(o) \
+		(G_TYPE_INSTANCE_GET_PRIVATE ((o), INDICATE_TYPE_LISTENER, IndicateListenerPrivate))
+
 typedef struct {
 	DBusGProxy * proxy;
 	gchar * name;
@@ -57,37 +76,39 @@ indicate_listener_class_init (IndicateListenerClass * class)
 	GObjectClass * gobj;
 	gobj = G_OBJECT_CLASS(class);
 
+	g_type_class_add_private (class, sizeof (IndicateListenerPrivate));
+
 	gobj->finalize = indicate_listener_finalize;
 
-	signals[INDICATOR_ADDED] = g_signal_new("indicator-added",
+	signals[INDICATOR_ADDED] = g_signal_new(INDICATE_LISTENER_SIGNAL_INDICATOR_ADDED,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateListenerClass, indicator_added),
 	                                        NULL, NULL,
 	                                        indicate_listener_marshal_VOID__POINTER_POINTER_STRING,
 	                                        G_TYPE_NONE, 3, G_TYPE_POINTER, G_TYPE_POINTER, G_TYPE_STRING);
-	signals[INDICATOR_REMOVED] = g_signal_new("indicator-removed",
+	signals[INDICATOR_REMOVED] = g_signal_new(INDICATE_LISTENER_SIGNAL_INDICATOR_REMOVED,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateListenerClass, indicator_removed),
 	                                        NULL, NULL,
 	                                        indicate_listener_marshal_VOID__POINTER_POINTER_STRING,
 	                                        G_TYPE_NONE, 3, G_TYPE_POINTER, G_TYPE_POINTER, G_TYPE_STRING);
-	signals[INDICATOR_MODIFIED] = g_signal_new("indicator-modified",
+	signals[INDICATOR_MODIFIED] = g_signal_new(INDICATE_LISTENER_SIGNAL_INDICATOR_MODIFIED,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateListenerClass, indicator_modified),
 	                                        NULL, NULL,
 	                                        indicate_listener_marshal_VOID__POINTER_POINTER_STRING_STRING,
 	                                        G_TYPE_NONE, 4, G_TYPE_POINTER, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING);
-	signals[SERVER_ADDED] = g_signal_new("server-added",
+	signals[SERVER_ADDED] = g_signal_new(INDICATE_LISTENER_SIGNAL_SERVER_ADDED,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateListenerClass, server_added),
 	                                        NULL, NULL,
 	                                        g_cclosure_marshal_VOID__POINTER,
 	                                        G_TYPE_NONE, 1, G_TYPE_POINTER);
-	signals[SERVER_REMOVED] = g_signal_new("server-removed",
+	signals[SERVER_REMOVED] = g_signal_new(INDICATE_LISTENER_SIGNAL_SERVER_REMOVED,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateListenerClass, server_removed),
@@ -108,17 +129,18 @@ static void
 indicate_listener_init (IndicateListener * listener)
 {
 	/* g_debug("Listener Object Initialized"); */
+	IndicateListenerPrivate * priv = INDICATE_LISTENER_GET_PRIVATE(listener);
 	GError *error = NULL;
 
 	/* Get the buses */
-	listener->session_bus = dbus_g_bus_get(DBUS_BUS_SESSION, &error);
+	priv->session_bus = dbus_g_bus_get(DBUS_BUS_SESSION, &error);
 	if (error != NULL) {
 		g_error("Unable to get session bus: %s", error->message);
 		g_error_free(error);
 		return;
 	}
 
-	listener->system_bus = dbus_g_bus_get(DBUS_BUS_SYSTEM, &error);
+	priv->system_bus = dbus_g_bus_get(DBUS_BUS_SYSTEM, &error);
 	if (error != NULL) {
 		g_error("Unable to get system bus: %s", error->message);
 		g_error_free(error);
@@ -126,7 +148,7 @@ indicate_listener_init (IndicateListener * listener)
 	}
 
 	/* Set up the DBUS service proxies */
-	listener->dbus_proxy_session = dbus_g_proxy_new_for_name_owner (listener->session_bus,
+	priv->dbus_proxy_session = dbus_g_proxy_new_for_name_owner (priv->session_bus,
 	                                                                DBUS_SERVICE_DBUS,
 	                                                                DBUS_PATH_DBUS,
 	                                                                DBUS_INTERFACE_DBUS,
@@ -137,7 +159,7 @@ indicate_listener_init (IndicateListener * listener)
 		return;
 	}
 
-	listener->dbus_proxy_system = dbus_g_proxy_new_for_name_owner (listener->system_bus,
+	priv->dbus_proxy_system = dbus_g_proxy_new_for_name_owner (priv->system_bus,
 	                                                               DBUS_SERVICE_DBUS,
 	                                                               DBUS_PATH_DBUS,
 	                                                               DBUS_INTERFACE_DBUS,
@@ -149,32 +171,32 @@ indicate_listener_init (IndicateListener * listener)
 	}
 
 	/* Set up name change signals */
-	dbus_g_proxy_add_signal(listener->dbus_proxy_session, "NameOwnerChanged",
+	dbus_g_proxy_add_signal(priv->dbus_proxy_session, "NameOwnerChanged",
 	                        G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
 	                        G_TYPE_INVALID);
-	dbus_g_proxy_connect_signal(listener->dbus_proxy_session, "NameOwnerChanged",
+	dbus_g_proxy_connect_signal(priv->dbus_proxy_session, "NameOwnerChanged",
 	                            G_CALLBACK(dbus_owner_change), listener, NULL);
-	dbus_g_proxy_add_signal(listener->dbus_proxy_system, "NameOwnerChanged",
+	dbus_g_proxy_add_signal(priv->dbus_proxy_system, "NameOwnerChanged",
 	                        G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
 	                        G_TYPE_INVALID);
-	dbus_g_proxy_connect_signal(listener->dbus_proxy_system, "NameOwnerChanged",
+	dbus_g_proxy_connect_signal(priv->dbus_proxy_system, "NameOwnerChanged",
 	                            G_CALLBACK(dbus_owner_change), listener, NULL);
 
 	/* Initialize Data structures */
-	listener->proxies_working = g_hash_table_new(g_str_hash, g_str_equal);
-	listener->proxies_possible = g_hash_table_new(g_str_hash, g_str_equal);
+	priv->proxies_working = g_hash_table_new(g_str_hash, g_str_equal);
+	priv->proxies_possible = g_hash_table_new(g_str_hash, g_str_equal);
 
 	/* TODO: Look at some common scenarios and find out how to make this sized */
-	listener->proxy_todo = g_array_new(FALSE, TRUE, sizeof(proxy_todo_t));
-	listener->todo_idle = 0;
+	priv->proxy_todo = g_array_new(FALSE, TRUE, sizeof(proxy_todo_t));
+	priv->todo_idle = 0;
 
 	/*            WARNING              */
 	/* Starting massive asynchronisity */
 	/*                                 */
 
 	/* Build todo list */
-	org_freedesktop_DBus_list_names_async (listener->dbus_proxy_session, build_todo_list_cb, listener);
-	org_freedesktop_DBus_list_names_async (listener->dbus_proxy_system, build_todo_list_cb, listener);
+	org_freedesktop_DBus_list_names_async (priv->dbus_proxy_session, build_todo_list_cb, listener);
+	org_freedesktop_DBus_list_names_async (priv->dbus_proxy_system, build_todo_list_cb, listener);
 
 	return;
 }
@@ -198,13 +220,15 @@ indicate_listener_new (void)
 static void
 dbus_owner_change (DBusGProxy * proxy, const gchar * name, const gchar * prev, const gchar * new, IndicateListener * listener)
 {
+	IndicateListenerPrivate * priv = INDICATE_LISTENER_GET_PRIVATE(listener);
+
 	DBusGConnection * bus;
 	gchar * bus_name;
-	if (proxy == listener->dbus_proxy_system) {
-		bus = listener->system_bus;
+	if (proxy == priv->dbus_proxy_system) {
+		bus = priv->system_bus;
 		bus_name = "system";
 	} else {
-		bus = listener->session_bus;
+		bus = priv->session_bus;
 		bus_name = "session";
 	}
 
@@ -215,14 +239,14 @@ dbus_owner_change (DBusGProxy * proxy, const gchar * name, const gchar * prev, c
 	}
 	if (new != NULL && new[0] == '\0') {
 		proxy_t * proxyt;
-		proxyt = g_hash_table_lookup(listener->proxies_working, name);
+		proxyt = g_hash_table_lookup(priv->proxies_working, name);
 		if (proxyt != NULL) {
-			g_hash_table_remove(listener->proxies_working, name);
+			g_hash_table_remove(priv->proxies_working, name);
 			proxy_struct_destroy(proxyt);
 		}
-		proxyt = g_hash_table_lookup(listener->proxies_possible, name);
+		proxyt = g_hash_table_lookup(priv->proxies_possible, name);
 		if (proxyt != NULL) {
-			g_hash_table_remove(listener->proxies_possible, name);
+			g_hash_table_remove(priv->proxies_possible, name);
 			proxy_struct_destroy(proxyt);
 		}
 	}
@@ -292,13 +316,19 @@ build_todo_list_cb (DBusGProxy * proxy, char ** names, GError * error, void * da
 static void
 todo_list_add (const gchar * name, DBusGProxy * proxy, IndicateListener * listener)
 {
+	if (name == NULL || name[0] != ':') {
+		return;
+	}
+
+	IndicateListenerPrivate * priv = INDICATE_LISTENER_GET_PRIVATE(listener);
+
 	DBusGConnection * bus;
 	gchar * bus_name;
-	if (proxy == listener->dbus_proxy_system) {
-		bus = listener->system_bus;
+	if (proxy == priv->dbus_proxy_system) {
+		bus = priv->system_bus;
 		bus_name = "system";
 	} else {
-		bus = listener->session_bus;
+		bus = priv->session_bus;
 		bus_name = "session";
 	}
 	/* g_debug ("Adding on %s bus: %s", bus_name, name); */
@@ -307,10 +337,10 @@ todo_list_add (const gchar * name, DBusGProxy * proxy, IndicateListener * listen
 	todo.name = g_strdup(name);
 	todo.bus  = bus;
 
-	g_array_append_val(listener->proxy_todo, todo);
+	g_array_append_val(priv->proxy_todo, todo);
 
-	if (listener->todo_idle == 0) {
-		listener->todo_idle = g_idle_add(todo_idle, listener);
+	if (priv->todo_idle == 0) {
+		priv->todo_idle = g_idle_add(todo_idle, listener);
 	}
 
 	return;
@@ -322,19 +352,20 @@ todo_idle (gpointer data)
 	IndicateListener * listener = INDICATE_LISTENER(data);
 	if (listener == NULL) {
 		g_error("Listener got lost in todo_idle");
-		listener->todo_idle = 0;
 		return FALSE;
 	}
 
-	if (listener->proxy_todo->len == 0) {
+	IndicateListenerPrivate * priv = INDICATE_LISTENER_GET_PRIVATE(listener);
+
+	if (priv->proxy_todo->len == 0) {
 		/* Basically if we have no todo, we need to stop running.  This
 		 * is done this way to make the function error handling simpler
 		 * and results in an extra run */
-		listener->todo_idle = 0;
+		priv->todo_idle = 0;
 		return FALSE;
 	}
 
-	proxy_todo_t * todo = &g_array_index(listener->proxy_todo, proxy_todo_t, listener->proxy_todo->len - 1);
+	proxy_todo_t * todo = &g_array_index(priv->proxy_todo, proxy_todo_t, priv->proxy_todo->len - 1);
 
 	proxy_t * proxyt = g_new(proxy_t, 1);
 	proxyt->name = todo->name;
@@ -345,7 +376,7 @@ todo_idle (gpointer data)
 	proxyt->listener = listener;
 	proxyt->indicators = NULL;
 
-	listener->proxy_todo = g_array_remove_index(listener->proxy_todo, listener->proxy_todo->len - 1);
+	priv->proxy_todo = g_array_remove_index(priv->proxy_todo, priv->proxy_todo->len - 1);
 
 	if (proxyt->proxy == NULL) {
 		g_warning("Unable to create proxy for %s", proxyt->name);
@@ -359,7 +390,7 @@ todo_idle (gpointer data)
 
 	org_freedesktop_indicator_get_indicator_list_async(proxyt->proxy, proxy_get_indicator_list, proxyt);
 
-	g_hash_table_insert(listener->proxies_possible, proxyt->name, proxyt);
+	g_hash_table_insert(priv->proxies_possible, proxyt->name, proxyt);
 
 	return TRUE;
 }
@@ -416,8 +447,9 @@ proxy_indicator_added (DBusGProxy * proxy, guint id, const gchar * type, proxy_t
 		proxyt->indicators = g_hash_table_new_full(g_str_hash, g_str_equal,
 		                                           g_free, proxy_indicators_free);
 		/* Elevate to working */
-		g_hash_table_remove(proxyt->listener->proxies_possible, proxyt->name);
-		g_hash_table_insert(proxyt->listener->proxies_working, proxyt->name, proxyt);
+		IndicateListenerPrivate * priv = INDICATE_LISTENER_GET_PRIVATE(proxyt->listener);
+		g_hash_table_remove(priv->proxies_possible, proxyt->name);
+		g_hash_table_insert(priv->proxies_working, proxyt->name, proxyt);
 
 		dbus_g_proxy_add_signal(proxyt->proxy, "IndicatorRemoved",
 								G_TYPE_UINT, G_TYPE_STRING, G_TYPE_INVALID);
@@ -472,26 +504,34 @@ proxy_indicator_removed (DBusGProxy * proxy, guint id, const gchar * type, proxy
 }
 
 static void
-proxy_indicator_modified (DBusGProxy * proxy, guint id, const gchar * type, proxy_t * proxyt)
+proxy_indicator_modified (DBusGProxy * proxy, guint id, const gchar * property, proxy_t * proxyt)
 {
 	if (proxyt->indicators == NULL) {
 		g_warning("Oddly we had an indicator modified from an interface that we didn't think had indicators.");
 		return;
 	}
 
-	// TODO: Search for the ID to discover the type
-	GHashTable * indicators = g_hash_table_lookup(proxyt->indicators, type);
-	if (indicators == NULL) {
-		g_warning("Can not modify indicator %d of type '%s' as there are no indicators of that type on %s.", id, type, proxyt->name);
+	GList * keys = g_hash_table_get_keys(proxyt->indicators);
+	GList * inc = NULL;
+	gchar * type;
+
+	for (inc = g_list_first(keys); inc != NULL; inc = g_list_next(inc)) {
+		type = (gchar *)inc->data;
+
+		GHashTable * indicators = g_hash_table_lookup(proxyt->indicators, type);
+		if (indicators == NULL) continue; /* no indicators for this type?  Odd, but not an error */
+
+		if (g_hash_table_lookup(indicators, (gpointer)id)) {
+			break;
+		}
+	}
+
+	if (inc == NULL) {
+		g_warning("Can not modify indicator %d with property '%s' as there are no indicators with that id on %s.", id, property, proxyt->name);
 		return;
 	}
 
-	if (!g_hash_table_lookup(indicators, (gpointer)id)) {
-		g_warning("No indicator %d of type '%s' on '%s'.", id, type, proxyt->name);
-		return;
-	}
-
-	g_signal_emit(proxyt->listener, signals[INDICATOR_MODIFIED], 0, proxyt->name, id, type, type, TRUE);
+	g_signal_emit(proxyt->listener, signals[INDICATOR_MODIFIED], 0, proxyt->name, id, type, property, TRUE);
 
 	return;
 }
@@ -542,8 +582,9 @@ void
 indicate_listener_get_property (IndicateListener * listener, IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * property, indicate_listener_get_property_cb callback, gpointer data)
 {
 	/* TODO: Do we need to somehow refcount the server/indicator while we're waiting on this? */
+	IndicateListenerPrivate * priv = INDICATE_LISTENER_GET_PRIVATE(listener);
 
-	proxy_t * proxyt = g_hash_table_lookup(listener->proxies_working, server);
+	proxy_t * proxyt = g_hash_table_lookup(priv->proxies_working, server);
 	if (proxyt == NULL) {
 		g_error("Trying to get property '%s' on server '%s' that currently isn't set to working.", property, (gchar *)server);
 		return;

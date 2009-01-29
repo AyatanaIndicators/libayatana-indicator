@@ -27,6 +27,24 @@ enum {
 
 static guint signals[LAST_SIGNAL] = { 0 };
 
+/* Private area */
+typedef struct _IndicateServerPrivate IndicateServerPrivate;
+struct _IndicateServerPrivate
+{
+	gchar * path;
+	GSList * indicators;
+	gboolean visible;
+	guint current_id;
+
+	// TODO: Should have a more robust way to track this, but this'll work for now
+	guint num_hidden;
+};
+
+#define INDICATE_SERVER_GET_PRIVATE(o) \
+          (G_TYPE_INSTANCE_GET_PRIVATE ((o), INDICATE_TYPE_SERVER, IndicateServerPrivate))
+
+
+/* Define Type */
 G_DEFINE_TYPE (IndicateServer, indicate_server, G_TYPE_OBJECT);
 
 /* Prototypes */
@@ -49,6 +67,8 @@ indicate_server_class_init (IndicateServerClass * class)
 	g_debug("Server Class Initialized");
 	GObjectClass * gobj;
 	gobj = G_OBJECT_CLASS(class);
+
+	g_type_class_add_private (class, sizeof (IndicateServerPrivate));
 
 	gobj->finalize = indicate_server_finalize;
 
@@ -96,11 +116,13 @@ indicate_server_init (IndicateServer * server)
 {
 	g_debug("Server Object Initialized");
 
-	server->path = g_strdup("/org/freedesktop/indicate");
-	server->indicators = NULL;
-	server->num_hidden = 0;
-	server->visible = FALSE;
-	server->current_id = 0;
+	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
+
+	priv->path = g_strdup("/org/freedesktop/indicate");
+	priv->indicators = NULL;
+	priv->num_hidden = 0;
+	priv->visible = FALSE;
+	priv->current_id = 0;
 
 	return;
 }
@@ -109,9 +131,10 @@ static void
 indicate_server_finalize (GObject * obj)
 {
 	IndicateServer * server = INDICATE_SERVER(obj);
+	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
 
-	if (server->path) {
-		g_free(server->path);
+	if (priv->path) {
+		g_free(priv->path);
 	}
 
 	return;
@@ -132,8 +155,9 @@ void
 indicate_server_show (IndicateServer * server)
 {
 	g_return_if_fail(INDICATE_IS_SERVER(server));
+	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
 
-	if (server->visible)
+	if (priv->visible)
 		return;
 
 	DBusGConnection * connection;
@@ -141,9 +165,9 @@ indicate_server_show (IndicateServer * server)
 	connection = dbus_g_bus_get(DBUS_BUS_SESSION, NULL);
 
 	dbus_g_connection_register_g_object(connection,
-	                                    server->path,
+	                                    priv->path,
 	                                    G_OBJECT(server));
-	server->visible = TRUE;
+	priv->visible = TRUE;
 	
 	return;
 }
@@ -151,14 +175,16 @@ indicate_server_show (IndicateServer * server)
 static guint
 get_next_id (IndicateServer * server)
 {
-	server->current_id++;
-	return server->current_id;
+	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
+	priv->current_id++;
+	return priv->current_id;
 }
 
 static void
 indicator_show_cb (IndicateIndicator * indicator, IndicateServer * server)
 {
-	server->num_hidden--;
+	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
+	priv->num_hidden--;
 	g_signal_emit(server, signals[INDICATOR_ADDED], 0, indicate_indicator_get_id(indicator), indicate_indicator_get_indicator_type(indicator), TRUE);
 	return;
 }
@@ -166,25 +192,35 @@ indicator_show_cb (IndicateIndicator * indicator, IndicateServer * server)
 static void
 indicator_hide_cb (IndicateIndicator * indicator, IndicateServer * server)
 {
-	server->num_hidden++;
+	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
+	priv->num_hidden++;
 	g_signal_emit(server, signals[INDICATOR_REMOVED], 0, indicate_indicator_get_id(indicator), indicate_indicator_get_indicator_type(indicator), TRUE);
 	return;
+}
+
+static void
+indicator_modified_cb (IndicateIndicator * indicator, gchar * property, IndicateServer * server)
+{
+	g_signal_emit(server, signals[INDICATOR_MODIFIED], 0, indicate_indicator_get_id(indicator), property, TRUE);
 }
 
 void
 indicate_server_add_indicator (IndicateServer * server, IndicateIndicator * indicator)
 {
+	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
+
 	g_object_ref(indicator);
-	server->indicators = g_slist_prepend(server->indicators, indicator);
+	priv->indicators = g_slist_prepend(priv->indicators, indicator);
 
 	if (!indicate_indicator_is_visible(indicator)) {
-		server->num_hidden++;
+		priv->num_hidden++;
 	} else {
 		g_signal_emit(server, signals[INDICATOR_ADDED], 0, indicate_indicator_get_id(indicator), indicate_indicator_get_indicator_type(indicator), TRUE);
 	}
 
 	g_signal_connect(indicator, INDICATE_INDICATOR_SIGNAL_SHOW, G_CALLBACK(indicator_show_cb), server);
 	g_signal_connect(indicator, INDICATE_INDICATOR_SIGNAL_HIDE, G_CALLBACK(indicator_hide_cb), server);
+	g_signal_connect(indicator, INDICATE_INDICATOR_SIGNAL_MODIFIED, G_CALLBACK(indicator_modified_cb), server);
 
 	return;
 }
@@ -192,15 +228,18 @@ indicate_server_add_indicator (IndicateServer * server, IndicateIndicator * indi
 void
 indicate_server_remove_indicator (IndicateServer * server, IndicateIndicator * indicator)
 {
-	server->indicators = g_slist_remove(server->indicators, indicator);
+	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
+
+	priv->indicators = g_slist_remove(priv->indicators, indicator);
 	if (indicate_indicator_is_visible(indicator)) {
 		g_signal_emit(server, signals[INDICATOR_REMOVED], 0, indicate_indicator_get_id(indicator), indicate_indicator_get_indicator_type(indicator), TRUE);
 	} else {
-		server->num_hidden--;
+		priv->num_hidden--;
 	}
 
 	g_signal_handlers_disconnect_by_func(indicator, indicator_show_cb, server);
 	g_signal_handlers_disconnect_by_func(indicator, indicator_hide_cb, server);
+	g_signal_handlers_disconnect_by_func(indicator, indicator_modified_cb, server);
 
 	g_object_unref(indicator);
 	return;
@@ -241,9 +280,11 @@ indicate_server_set_default (IndicateServer * server)
 static gboolean
 get_desktop (IndicateServer * server, gchar ** desktop_path, GError **error)
 {
-	if (server->path != NULL) {
+	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
+
+	if (priv->path != NULL) {
 		// TODO: This might be a memory leak, check into that.
-		*desktop_path = g_strdup(server->path);
+		*desktop_path = g_strdup(priv->path);
 	}
 	return TRUE;
 }
@@ -251,11 +292,13 @@ get_desktop (IndicateServer * server, gchar ** desktop_path, GError **error)
 static gboolean
 get_indicator_count (IndicateServer * server, guint * count, GError **error)
 {
-	guint lstcnt = g_slist_length(server->indicators);
+	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
 
-	g_return_val_if_fail(server->num_hidden < lstcnt, TRUE);
+	guint lstcnt = g_slist_length(priv->indicators);
+
+	g_return_val_if_fail(priv->num_hidden < lstcnt, TRUE);
 	
-	*count = lstcnt - server->num_hidden;
+	*count = lstcnt - priv->num_hidden;
 
 	return TRUE;
 }
@@ -300,7 +343,9 @@ get_indicator_count_by_type (IndicateServer * server, gchar * type, guint * coun
 		cbt.type = NULL;
 	}
 
-	g_slist_foreach(server->indicators, (GFunc)count_by_type, &cbt);
+	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
+
+	g_slist_foreach(priv->indicators, (GFunc)count_by_type, &cbt);
 	*count = cbt.count;
 
 	return TRUE;
@@ -314,11 +359,13 @@ get_indicator_list (IndicateServer * server, GArray ** indicators, GError ** err
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 	g_return_val_if_fail(class->get_indicator_count != NULL, TRUE);
 
-	*indicators = g_array_sized_new(FALSE, FALSE, sizeof(guint), g_slist_length(server->indicators) - server->num_hidden);
+	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
+
+	*indicators = g_array_sized_new(FALSE, FALSE, sizeof(guint), g_slist_length(priv->indicators) - priv->num_hidden);
 
 	GSList * iter;
 	int i;
-	for (iter = server->indicators, i = 0; iter != NULL; iter = iter->next, i++) {
+	for (iter = priv->indicators, i = 0; iter != NULL; iter = iter->next, i++) {
 		IndicateIndicator * indicator = INDICATE_INDICATOR(iter->data);
 		if (indicate_indicator_is_visible(indicator)) {
 			guint id = indicate_indicator_get_id(indicator);
@@ -341,13 +388,15 @@ get_indicator_list_by_type (IndicateServer * server, gchar * type, guint ** indi
 		type = NULL;
 	}
 
+	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
+
 	/* Can't be larger than this and it's not worth the reallocation
 	   for the small number we have.  The memory isn't worth the time. */
-	*indicators = g_array_sized_new(FALSE, FALSE, sizeof(guint), g_slist_length(server->indicators) - server->num_hidden);
+	*indicators = g_array_sized_new(FALSE, FALSE, sizeof(guint), g_slist_length(priv->indicators) - priv->num_hidden);
 
 	GSList * iter;
 	int i;
-	for (iter = server->indicators, i = 0; iter != NULL; iter = iter->next) {
+	for (iter = priv->indicators, i = 0; iter != NULL; iter = iter->next) {
 		IndicateIndicator * indicator = INDICATE_INDICATOR(iter->data);
 		if (indicate_indicator_is_visible(indicator)) {
 			const gchar * itype = indicate_indicator_get_indicator_type(indicator);
@@ -369,9 +418,10 @@ static IndicateIndicator *
 get_indicator (IndicateServer * server, guint id, GError **error)
 {
 	g_return_val_if_fail(INDICATE_IS_SERVER(server), NULL);
+	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
 
 	GSList * iter;
-	for (iter = server->indicators; iter != NULL; iter = iter->next) {
+	for (iter = priv->indicators; iter != NULL; iter = iter->next) {
 		IndicateIndicator * indicator = INDICATE_INDICATOR(iter->data);
 		if (indicate_indicator_get_id(indicator) == id) {
 			return indicator;
