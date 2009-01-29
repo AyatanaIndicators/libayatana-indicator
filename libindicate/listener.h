@@ -35,18 +35,6 @@ typedef guint IndicateListenerIndicator;
 typedef struct _IndicateListener IndicateListener;
 struct _IndicateListener {
 	GObject parent;
-
-	DBusGConnection * session_bus;
-	DBusGConnection * system_bus;
-
-	DBusGProxy * dbus_proxy_session;
-	DBusGProxy * dbus_proxy_system;
-
-	GHashTable * proxies_working;
-	GHashTable * proxies_possible;
-
-	GArray * proxy_todo;
-	guint todo_idle;
 };
 
 typedef struct _IndicateListenerClass IndicateListenerClass;
