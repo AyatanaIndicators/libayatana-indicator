@@ -26,6 +26,9 @@ G_BEGIN_DECLS
 #define INDICATE_LISTENER_SIGNAL_SERVER_ADDED          "server-added"
 #define INDICATE_LISTENER_SIGNAL_SERVER_REMOVED        "server-removed"
 
+#define INDICATE_LISTENER_SERVER_DBUS_NAME(server)   ((gchar *)server)
+#define INDICATE_LISTENER_INDICATOR_ID(indicator)    (GPOINTER_TO_UINT(indicator))
+
 typedef gchar IndicateListenerServer;
 typedef guint IndicateListenerIndicator;
 
