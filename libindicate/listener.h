@@ -5,8 +5,6 @@
 #include <glib.h>
 #include <glib-object.h>
 
-#include <dbus/dbus-glib.h>
-
 #include "indicator.h"
 #include "server.h"
 
