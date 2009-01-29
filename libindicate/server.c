@@ -198,6 +198,12 @@ indicator_hide_cb (IndicateIndicator * indicator, IndicateServer * server)
 	return;
 }
 
+static void
+indicator_modified_cb (IndicateIndicator * indicator, gchar * property, IndicateServer * server)
+{
+	g_signal_emit(server, signals[INDICATOR_MODIFIED], 0, indicate_indicator_get_id(indicator), property, TRUE);
+}
+
 void
 indicate_server_add_indicator (IndicateServer * server, IndicateIndicator * indicator)
 {
@@ -214,6 +220,7 @@ indicate_server_add_indicator (IndicateServer * server, IndicateIndicator * indi
 
 	g_signal_connect(indicator, INDICATE_INDICATOR_SIGNAL_SHOW, G_CALLBACK(indicator_show_cb), server);
 	g_signal_connect(indicator, INDICATE_INDICATOR_SIGNAL_HIDE, G_CALLBACK(indicator_hide_cb), server);
+	g_signal_connect(indicator, INDICATE_INDICATOR_SIGNAL_MODIFIED, G_CALLBACK(indicator_modified_cb), server);
 
 	return;
 }
@@ -232,6 +239,7 @@ indicate_server_remove_indicator (IndicateServer * server, IndicateIndicator * i
 
 	g_signal_handlers_disconnect_by_func(indicator, indicator_show_cb, server);
 	g_signal_handlers_disconnect_by_func(indicator, indicator_hide_cb, server);
+	g_signal_handlers_disconnect_by_func(indicator, indicator_modified_cb, server);
 
 	g_object_unref(indicator);
 	return;
