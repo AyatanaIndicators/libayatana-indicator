@@ -25,15 +25,8 @@ G_BEGIN_DECLS
 typedef struct _IndicateIndicator IndicateIndicator;
 typedef struct _IndicateIndicatorClass IndicateIndicatorClass;
 
-#include "server.h"
-
 struct _IndicateIndicator {
 	GObject parent;
-
-	guint id;
-	gboolean is_visible;
-	IndicateServer * server;
-	GHashTable * properties;
 };
 
 struct _IndicateIndicatorClass {
