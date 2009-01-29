@@ -4,7 +4,7 @@ libdir=@libdir@
 bindir=@bindir@
 includedir=@includedir@
 
-Cflags: -I${includedir}/libindicate-1.0
+Cflags: -I${includedir}/libindicate-0.1
 Requires: gtk+-2.0 dbus-glib-1
 Libs: -L${libdir} -lindicate
 

@@ -14,7 +14,7 @@ BUILT_SOURCES = \
 lib_LTLIBRARIES = \
 	libindicate.la
 
-libindicateincludedir=$(includedir)/libindicate-1.0/libindicate
+libindicateincludedir=$(includedir)/libindicate-0.1/libindicate
 
 indicate_headers = \
 	indicator.h \
