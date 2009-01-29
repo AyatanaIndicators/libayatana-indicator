@@ -5,6 +5,8 @@
 #include <glib.h>
 #include <glib-object.h>
 
+#include "indicator.h"
+
 G_BEGIN_DECLS
 
 /* Boilerplate */
@@ -16,19 +18,8 @@ G_BEGIN_DECLS
 #define INDICATE_SERVER_GET_CLASS(object) (G_TYPE_INSTANCE_GET_CLASS((object), INDICATE_TYPE_SERVER, IndicateServerClass))
 
 typedef struct _IndicateServer IndicateServer;
-
-#include "indicator.h"
-
 struct _IndicateServer {
 	GObject parent;
-
-	gchar * path;
-	GSList * indicators;
-	gboolean visible;
-	guint current_id;
-
-	// TODO: Should have a more robust way to track this, but this'll work for now
-	guint num_hidden;
 };
 
 typedef struct _IndicateServerClass IndicateServerClass;
