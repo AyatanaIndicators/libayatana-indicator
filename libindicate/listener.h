@@ -20,6 +20,12 @@ G_BEGIN_DECLS
 #define INDICATE_IS_LISTENER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), INDICATE_TYPE_LISTENER))
 #define INDICATE_LISTENER_GET_CLASS(object) (G_TYPE_INSTANCE_GET_CLASS((object), INDICATE_TYPE_LISTENER, IndicateListenerClass))
 
+#define INDICATE_LISTENER_SIGNAL_INDICATOR_ADDED       "indicator-added"
+#define INDICATE_LISTENER_SIGNAL_INDICATOR_REMOVED     "indicator-removed"
+#define INDICATE_LISTENER_SIGNAL_INDICATOR_MODIFIED    "indicator-modified"
+#define INDICATE_LISTENER_SIGNAL_SERVER_ADDED          "server-added"
+#define INDICATE_LISTENER_SIGNAL_SERVER_REMOVED        "server-removed"
+
 typedef gchar IndicateListenerServer;
 typedef guint IndicateListenerIndicator;
 

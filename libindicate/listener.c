@@ -59,35 +59,35 @@ indicate_listener_class_init (IndicateListenerClass * class)
 
 	gobj->finalize = indicate_listener_finalize;
 
-	signals[INDICATOR_ADDED] = g_signal_new("indicator-added",
+	signals[INDICATOR_ADDED] = g_signal_new(INDICATE_LISTENER_SIGNAL_INDICATOR_ADDED,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateListenerClass, indicator_added),
 	                                        NULL, NULL,
 	                                        indicate_listener_marshal_VOID__POINTER_POINTER_STRING,
 	                                        G_TYPE_NONE, 3, G_TYPE_POINTER, G_TYPE_POINTER, G_TYPE_STRING);
-	signals[INDICATOR_REMOVED] = g_signal_new("indicator-removed",
+	signals[INDICATOR_REMOVED] = g_signal_new(INDICATE_LISTENER_SIGNAL_INDICATOR_REMOVED,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateListenerClass, indicator_removed),
 	                                        NULL, NULL,
 	                                        indicate_listener_marshal_VOID__POINTER_POINTER_STRING,
 	                                        G_TYPE_NONE, 3, G_TYPE_POINTER, G_TYPE_POINTER, G_TYPE_STRING);
-	signals[INDICATOR_MODIFIED] = g_signal_new("indicator-modified",
+	signals[INDICATOR_MODIFIED] = g_signal_new(INDICATE_LISTENER_SIGNAL_INDICATOR_MODIFIED,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateListenerClass, indicator_modified),
 	                                        NULL, NULL,
 	                                        indicate_listener_marshal_VOID__POINTER_POINTER_STRING_STRING,
 	                                        G_TYPE_NONE, 4, G_TYPE_POINTER, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING);
-	signals[SERVER_ADDED] = g_signal_new("server-added",
+	signals[SERVER_ADDED] = g_signal_new(INDICATE_LISTENER_SIGNAL_SERVER_ADDED,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateListenerClass, server_added),
 	                                        NULL, NULL,
 	                                        g_cclosure_marshal_VOID__POINTER,
 	                                        G_TYPE_NONE, 1, G_TYPE_POINTER);
-	signals[SERVER_REMOVED] = g_signal_new("server-removed",
+	signals[SERVER_REMOVED] = g_signal_new(INDICATE_LISTENER_SIGNAL_SERVER_REMOVED,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateListenerClass, server_removed),
