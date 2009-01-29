@@ -39,11 +39,11 @@ main (int argc, char ** argv)
 
 	IndicateListener * listener = indicate_listener_new();
 
-	g_signal_connect(listener, "indicator-added", G_CALLBACK(indicator_added), NULL);
-	g_signal_connect(listener, "indicator-removed", G_CALLBACK(indicator_removed), NULL);
-	g_signal_connect(listener, "indicator-modified", G_CALLBACK(indicator_modified), NULL);
-	g_signal_connect(listener, "server-added", G_CALLBACK(server_added), NULL);
-	g_signal_connect(listener, "server-removed", G_CALLBACK(server_removed), NULL);
+	g_signal_connect(listener, INDICATE_LISTENER_SIGNAL_INDICATOR_ADDED, G_CALLBACK(indicator_added), NULL);
+	g_signal_connect(listener, INDICATE_LISTENER_SIGNAL_INDICATOR_REMOVED, G_CALLBACK(indicator_removed), NULL);
+	g_signal_connect(listener, INDICATE_LISTENER_SIGNAL_INDICATOR_MODIFIED, G_CALLBACK(indicator_modified), NULL);
+	g_signal_connect(listener, INDICATE_LISTENER_SIGNAL_SERVER_ADDED, G_CALLBACK(server_added), NULL);
+	g_signal_connect(listener, INDICATE_LISTENER_SIGNAL_SERVER_REMOVED, G_CALLBACK(server_removed), NULL);
 
 	g_main_loop_run(g_main_loop_new(NULL, FALSE));
 
