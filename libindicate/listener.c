@@ -504,26 +504,34 @@ proxy_indicator_removed (DBusGProxy * proxy, guint id, const gchar * type, proxy
 }
 
 static void
-proxy_indicator_modified (DBusGProxy * proxy, guint id, const gchar * type, proxy_t * proxyt)
+proxy_indicator_modified (DBusGProxy * proxy, guint id, const gchar * property, proxy_t * proxyt)
 {
 	if (proxyt->indicators == NULL) {
 		g_warning("Oddly we had an indicator modified from an interface that we didn't think had indicators.");
 		return;
 	}
 
-	// TODO: Search for the ID to discover the type
-	GHashTable * indicators = g_hash_table_lookup(proxyt->indicators, type);
-	if (indicators == NULL) {
-		g_warning("Can not modify indicator %d of type '%s' as there are no indicators of that type on %s.", id, type, proxyt->name);
+	GList * keys = g_hash_table_get_keys(proxyt->indicators);
+	GList * inc = NULL;
+	gchar * type;
+
+	for (inc = g_list_first(keys); inc != NULL; inc = g_list_next(inc)) {
+		type = (gchar *)inc->data;
+
+		GHashTable * indicators = g_hash_table_lookup(proxyt->indicators, type);
+		if (indicators == NULL) continue; /* no indicators for this type?  Odd, but not an error */
+
+		if (g_hash_table_lookup(indicators, (gpointer)id)) {
+			break;
+		}
+	}
+
+	if (inc == NULL) {
+		g_warning("Can not modify indicator %d with property '%s' as there are no indicators with that id on %s.", id, property, proxyt->name);
 		return;
 	}
 
-	if (!g_hash_table_lookup(indicators, (gpointer)id)) {
-		g_warning("No indicator %d of type '%s' on '%s'.", id, type, proxyt->name);
-		return;
-	}
-
-	g_signal_emit(proxyt->listener, signals[INDICATOR_MODIFIED], 0, proxyt->name, id, type, type, TRUE);
+	g_signal_emit(proxyt->listener, signals[INDICATOR_MODIFIED], 0, proxyt->name, id, type, property, TRUE);
 
 	return;
 }
