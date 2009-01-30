@@ -598,7 +598,27 @@ indicate_listener_get_property (IndicateListener * listener, IndicateListenerSer
 	get_property_data->indicator = indicator;
 	get_property_data->property = g_strdup(property);
 	
-	org_freedesktop_indicator_get_indicator_property_async (proxyt->proxy , (guint)indicator, property, get_property_cb, get_property_data);
+	org_freedesktop_indicator_get_indicator_property_async (proxyt->proxy , INDICATE_LISTENER_INDICATOR_ID(indicator), property, get_property_cb, get_property_data);
 	return;
 }
 
+static void 
+listener_display_cb (DBusGProxy *proxy, GError *error, gpointer userdata)
+{
+	if (error != NULL) {
+		g_warning("Listener display caused an error: %s", error->message);
+	}
+	return;
+}
+
+void
+indicate_listener_display (IndicateListener * listener, IndicateListenerServer * server, IndicateListenerIndicator * indicator)
+{
+	IndicateListenerPrivate * priv = INDICATE_LISTENER_GET_PRIVATE(listener);
+
+	proxy_t * proxyt = g_hash_table_lookup(priv->proxies_working, server);
+
+	org_freedesktop_indicator_show_indicator_to_user_async (proxyt->proxy, INDICATE_LISTENER_INDICATOR_ID(indicator), listener_display_cb, NULL);
+
+	return;
+}

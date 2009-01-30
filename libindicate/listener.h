@@ -60,6 +60,9 @@ void                  indicate_listener_get_property   (IndicateListener * liste
                                                         gchar * property,
                                                         indicate_listener_get_property_cb callback,
                                                         gpointer data);
+void                  indicate_listener_display        (IndicateListener * listener,
+                                                        IndicateListenerServer * server,
+                                                        IndicateListenerIndicator * indicator);
 
 
 
