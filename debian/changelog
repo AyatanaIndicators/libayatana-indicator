@@ -1,3 +1,10 @@
+indicator-applet (0.1~ppa18) jaunty; urgency=low
+
+  * Adding interface for listener sending back a display
+    request.
+
+ -- Ted Gould <ted@ubuntu.com>  Fri, 30 Jan 2009 15:06:47 -0600
+
 indicator-applet (0.1~ppa17) intrepid; urgency=low
 
   * Fixing the handling of named DBus connections
