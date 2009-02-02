@@ -1,3 +1,9 @@
+indicator-applet (0.1~ppa19) intrepid; urgency=low
+
+  * Bump for PPA
+
+ -- Ted Gould <ted@ubuntu.com>  Mon, 02 Feb 2009 10:43:32 +0100
+
 indicator-applet (0.1~ppa18) intrepid; urgency=low
 
   * Adding interface for listener sending back a display
