@@ -1,4 +1,4 @@
-indicator-applet (0.1~ppa18) jaunty; urgency=low
+indicator-applet (0.1~ppa18) intrepid; urgency=low
 
   * Adding interface for listener sending back a display
     request.
