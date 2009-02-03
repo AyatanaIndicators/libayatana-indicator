@@ -1,1 +1,1 @@
-SUBS = reference
+SUBDIRS = reference
