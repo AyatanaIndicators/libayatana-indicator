@@ -112,6 +112,8 @@ data/icons/32x32/panel/Makefile
 data/icons/48x48/panel/Makefile
 data/icons/scalable/panel/Makefile
 po/Makefile.in
+docs/Makefile
+docs/reference/Makefile
 ])
 
 ###########################
