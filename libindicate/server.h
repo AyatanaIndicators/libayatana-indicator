@@ -81,6 +81,11 @@ gboolean indicate_server_get_indicator_property_group (IndicateServer * server, 
 gboolean indicate_server_get_indicator_properties (IndicateServer * server, guint id, gchar *** properties, GError **error);
 gboolean indicate_server_show_indicator_to_user (IndicateServer * server, guint id, GError ** error);
 
+/* Signal emission functions for sub-classes of the server */
+void indicate_server_emit_indicator_added (IndicateServer *server, guint id, const gchar *type);
+void indicate_server_emit_indicator_removed (IndicateServer *server, guint id, const gchar *type);
+void indicate_server_emit_indicator_modified (IndicateServer *server, guint id, const gchar *property);
+
 G_END_DECLS
 
 #endif /* INDICATE_SERVER_H_INCLUDED__ */
