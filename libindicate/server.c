@@ -705,3 +705,30 @@ indicate_server_get_next_id (IndicateServer * server)
 	return 0;
 }
 
+/* Signal emission functions for sub-classes of the server */
+void 
+indicate_server_emit_indicator_added (IndicateServer *server, guint id, const gchar *type)
+{
+  g_return_if_fail (INDICATE_IS_SERVER (server));
+  g_return_if_fail (type);
+
+  g_signal_emit(server, signals[INDICATOR_ADDED], 0, id, type);
+}
+
+void 
+indicate_server_emit_indicator_removed (IndicateServer *server, guint id, const gchar *type)
+{
+  g_return_if_fail (INDICATE_IS_SERVER (server));
+  g_return_if_fail (type);
+
+  g_signal_emit(server, signals[INDICATOR_REMOVED], 0, id, type);
+}
+
+void 
+indicate_server_emit_indicator_modified (IndicateServer *server, guint id, const gchar *property)
+{
+  g_return_if_fail (INDICATE_IS_SERVER (server));
+  g_return_if_fail (property);
+  
+  g_signal_emit(server, signals[INDICATOR_MODIFIED], 0, id, property);
+}

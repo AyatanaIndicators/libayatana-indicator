@@ -1,5 +1,4 @@
-debian/tmp/usr/include/ usr/
-debian/tmp/usr/lib/pkgconfig usr/lib/
-debian/tmp/usr/lib/libindicate.a usr/lib/
-debian/tmp/usr/lib/libindicate.la usr/lib/
-debian/tmp/usr/lib/libindicate.so usr/lib/
+debian/tmp/usr/include/
+debian/tmp/usr/lib/pkgconfig
+debian/tmp/usr/lib/libindicate.a
+debian/tmp/usr/lib/libindicate.so

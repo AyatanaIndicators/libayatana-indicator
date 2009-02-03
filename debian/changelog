@@ -1,3 +1,33 @@
+indicator-applet (0.1~ppa21) intrepid; urgency=low
+
+  * Adding in package fixes from seb128
+    * Removing scrollkeeper
+    * Changing libindicate to libindicate0
+    * Removing .la file
+    * Removing targets for files in libindcate-dev.install
+    * Removing pkg-create-dbgsym
+
+ -- Ted Gould <ted@ubuntu.com>  Tue, 03 Feb 2009 11:34:02 +0100
+
+indicator-applet (0.1~ppa20) intrepid; urgency=low
+
+  * Adding a build depend on pkg-create-dbgsym
+
+ -- Ted Gould <ted@ubuntu.com>  Mon, 02 Feb 2009 13:38:05 +0100
+
+indicator-applet (0.1~ppa19) intrepid; urgency=low
+
+  * Bump for PPA
+
+ -- Ted Gould <ted@ubuntu.com>  Mon, 02 Feb 2009 10:43:32 +0100
+
+indicator-applet (0.1~ppa18) intrepid; urgency=low
+
+  * Adding interface for listener sending back a display
+    request.
+
+ -- Ted Gould <ted@ubuntu.com>  Fri, 30 Jan 2009 15:06:47 -0600
+
 indicator-applet (0.1~ppa17) intrepid; urgency=low
 
   * Fixing the handling of named DBus connections
