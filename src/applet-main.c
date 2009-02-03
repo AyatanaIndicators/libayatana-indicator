@@ -7,6 +7,12 @@
 static gboolean     applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data);
 
 
+static void cw_panel_background_changed (PanelApplet               *applet,
+                                         PanelAppletBackgroundType  type,
+                        				         GdkColor                  *colour,
+                        				         GdkPixmap                 *pixmap,
+                                         GtkWidget                 *menubar);
+
 /*************
  * main
  * ***********/
@@ -58,16 +64,30 @@ load_module (const gchar * name, GtkWidget * menu)
 static gboolean
 applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 {
+	GtkWidget *menubar;
+	gint i;
+	gint indicators_loaded = 0;
+  
+	/* Set panel options */
+	gtk_container_set_border_width (GTK_CONTAINER (applet), 0);
+	panel_applet_set_flags (applet, PANEL_APPLET_EXPAND_MINOR);	
+  
+	/* Init some theme/icon stuff */
 	gtk_icon_theme_append_search_path(gtk_icon_theme_get_default(),
 	                                  ICONS_DIR);
-
-	int i;
-	GtkWidget * menubar = gtk_menu_bar_new();
-	gtk_widget_set_name (menubar, "indicator-applet-menubar");
+	gtk_rc_parse_string (
+		"style \"panel-menubar-style\"\n"
+		"{\n"
+		" GtkMenuBar::shadow-type = none\n"
+		" GtkMenuBar::internal-padding = 0\n"
+		"}\n"
+		"widget \"*indicator-applet-menubar*\" style : highest \"panel-menubar-style\""); 	
+  
+	/* Build menubar */
+	menubar = gtk_menu_bar_new();
+	gtk_widget_set_name(GTK_WIDGET (applet), "indicator-applet-menubar");//leave
 	gtk_container_add(GTK_CONTAINER(applet), menubar);
 	gtk_widget_show(menubar);
-
-	int indicators_loaded = 0;
 
 	/* load 'em */
 	if (g_file_test(INDICATOR_DIR, (G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR))) {
@@ -86,7 +106,52 @@ applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 		gtk_menu_shell_append(GTK_MENU_SHELL(menubar), item);
 		gtk_widget_show(item);
 	}
-
+  
+	/* Background of applet */
+	g_signal_connect (applet, "change-background",
+			  G_CALLBACK (cw_panel_background_changed), menubar);
+  
 	gtk_widget_show(GTK_WIDGET(applet));
+
 	return TRUE;
 }
+
+static void 
+cw_panel_background_changed (PanelApplet               *applet,
+                             PanelAppletBackgroundType  type,
+                             GdkColor                  *colour,
+                             GdkPixmap                 *pixmap,
+                             GtkWidget                 *menubar)
+{
+	GtkRcStyle *rc_style;
+	GtkStyle *style;
+
+	/* reset style */
+	gtk_widget_set_style (GTK_WIDGET (applet), NULL);
+ 	gtk_widget_set_style (menubar, NULL);
+	rc_style = gtk_rc_style_new ();
+	gtk_widget_modify_style (GTK_WIDGET (applet), rc_style);
+	gtk_widget_modify_style (menubar, rc_style);
+	gtk_rc_style_unref (rc_style);
+
+	switch (type) 
+	{
+		case PANEL_NO_BACKGROUND:
+			break;
+		case PANEL_COLOR_BACKGROUND:
+			gtk_widget_modify_bg (GTK_WIDGET (applet), GTK_STATE_NORMAL, colour);
+			gtk_widget_modify_bg (menubar, GTK_STATE_NORMAL, colour);
+			break;
+    
+		case PANEL_PIXMAP_BACKGROUND:
+			style = gtk_style_copy (GTK_WIDGET (applet)->style);
+			if (style->bg_pixmap[GTK_STATE_NORMAL])
+				g_object_unref (style->bg_pixmap[GTK_STATE_NORMAL]);
+			style->bg_pixmap[GTK_STATE_NORMAL] = g_object_ref (pixmap);
+			gtk_widget_set_style (GTK_WIDGET (applet), style);
+			gtk_widget_set_style (GTK_WIDGET (menubar), style);
+			g_object_unref (style);
+			break;
+  }
+}
+
