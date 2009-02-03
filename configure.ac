@@ -53,7 +53,9 @@ PKG_CHECK_MODULES(LIBINDICATE, glib-2.0 >= $GLIB_REQUIRED_VERSION
 AC_SUBST(LIBINDICATE_CFLAGS)
 AC_SUBST(LIBINDICATE_LIBS)
 
+###########################
 # GObject Introspection
+###########################
 
 PKG_CHECK_MODULES(GOBJECT_INTROSPECTION, [gobject-introspection-1.0 >= 0.6])
 
@@ -68,6 +70,12 @@ GIRDIR=`$PKG_CONFIG --variable=girdir gobject-introspection-1.0`
 AC_SUBST(GIRDIR)
 TYPELIBDIR="$($PKG_CONFIG --variable=typelibdir gobject-introspection-1.0)"
 AC_SUBST(TYPELIBDIR) 
+
+###########################
+# GTK Doc 
+###########################
+
+GTK_DOC_CHECK([1.4])
 
 ###########################
 # Internationalization
