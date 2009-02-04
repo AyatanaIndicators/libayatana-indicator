@@ -1,4 +1,3 @@
 debian/tmp/etc
 debian/tmp/usr/lib/bonobo
 debian/tmp/usr/lib/indicator-applet
-debian/tmp/usr/share/indicator-applet
