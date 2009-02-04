@@ -4,4 +4,5 @@ SUBDIRS = \
 	libindicate \
 	tests \
 	data \
-	po
+	po \
+	docs

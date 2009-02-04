@@ -53,7 +53,9 @@ PKG_CHECK_MODULES(LIBINDICATE, glib-2.0 >= $GLIB_REQUIRED_VERSION
 AC_SUBST(LIBINDICATE_CFLAGS)
 AC_SUBST(LIBINDICATE_LIBS)
 
+###########################
 # GObject Introspection
+###########################
 
 PKG_CHECK_MODULES(GOBJECT_INTROSPECTION, [gobject-introspection-1.0 >= 0.6])
 
@@ -68,6 +70,12 @@ GIRDIR=`$PKG_CONFIG --variable=girdir gobject-introspection-1.0`
 AC_SUBST(GIRDIR)
 TYPELIBDIR="$($PKG_CONFIG --variable=typelibdir gobject-introspection-1.0)"
 AC_SUBST(TYPELIBDIR) 
+
+###########################
+# GTK Doc 
+###########################
+
+GTK_DOC_CHECK([1.4])
 
 ###########################
 # Internationalization
@@ -90,20 +98,10 @@ libindicate/Makefile
 libindicate/indicate.pc
 tests/Makefile
 data/Makefile
-data/icons/Makefile
-data/icons/16x16/Makefile
-data/icons/22x22/Makefile
-data/icons/24x24/Makefile
-data/icons/32x32/Makefile
-data/icons/48x48/Makefile
-data/icons/scalable/Makefile
-data/icons/16x16/panel/Makefile
-data/icons/22x22/panel/Makefile
-data/icons/24x24/panel/Makefile
-data/icons/32x32/panel/Makefile
-data/icons/48x48/panel/Makefile
-data/icons/scalable/panel/Makefile
 po/Makefile.in
+docs/Makefile
+docs/reference/Makefile
+docs/reference/version.xml
 ])
 
 ###########################

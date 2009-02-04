@@ -1,0 +1,9 @@
+#include <libindicate/indicator.h>
+#include <libindicate/indicator-message.h>
+#include <libindicate/server.h>
+#include <libindicate/listener.h>
+
+indicate_indicator_get_type
+indicate_indicator_message_get_type
+indicate_server_get_type
+indicate_listener_get_type
