@@ -96,11 +96,11 @@ applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
         "    GtkWidget::focus-padding = 0\n"
         "}\n"
         "widget \"*.indicator-applet-menubar\" style \"indicator-applet-style\"");
-  
+	gtk_widget_set_name(GTK_WIDGET (applet), "indicator-applet-menubar");
+
 	/* Build menubar */
 	menubar = gtk_menu_bar_new();
 	GTK_WIDGET_SET_FLAGS (menubar, GTK_WIDGET_FLAGS(menubar) | GTK_CAN_FOCUS);
-	gtk_widget_set_name(GTK_WIDGET (menubar), "indicator-applet-menubar");
 	g_signal_connect_after(menubar, "expose-event", G_CALLBACK(menubar_on_expose), menubar);
 	gtk_container_set_border_width(GTK_CONTAINER(menubar), 0);
 
