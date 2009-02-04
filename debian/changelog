@@ -1,3 +1,9 @@
+indicator-applet (0.1~ppa24) intrepid; urgency=low
+
+  * Adding a conflicts and a replaces to get rid of errors.
+
+ -- Ted Gould <ted@ubuntu.com>  Wed, 04 Feb 2009 14:14:25 +0100
+
 indicator-applet (0.1~ppa23) intrepid; urgency=low
 
   * Removing border
