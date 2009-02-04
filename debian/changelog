@@ -1,3 +1,9 @@
+indicator-applet (0.1~ppa22) intrepid; urgency=low
+
+  * Add support for a transparent panel applet
+
+ -- Neil J. Patel <neil.patel@canonical.com>  Wed, 04 Feb 2009 12:44:56 +0100
+
 indicator-applet (0.1~ppa21) intrepid; urgency=low
 
   * Adding in package fixes from seb128
