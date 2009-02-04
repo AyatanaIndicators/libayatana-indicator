@@ -62,6 +62,18 @@ load_module (const gchar * name, GtkWidget * menu)
 }
 
 static gboolean
+menubar_on_expose (GtkWidget * widget,
+                    GdkEventExpose *event,
+                    GtkWidget * menubar)
+{
+	if (GTK_WIDGET_HAS_FOCUS(menubar))
+		gtk_paint_focus(widget->style, widget->window, GTK_WIDGET_STATE(menubar),
+		                NULL, widget, "menubar-applet", 0, 0, -1, -1);
+
+	return FALSE;
+}
+
+static gboolean
 applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 {
 	GtkWidget *menubar;
@@ -76,16 +88,22 @@ applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 	gtk_icon_theme_append_search_path(gtk_icon_theme_get_default(),
 	                                  ICONS_DIR);
 	gtk_rc_parse_string (
-		"style \"panel-menubar-style\"\n"
-		"{\n"
-		" GtkMenuBar::shadow-type = none\n"
-		" GtkMenuBar::internal-padding = 0\n"
-		"}\n"
-		"widget \"*indicator-applet-menubar*\" style : highest \"panel-menubar-style\""); 	
+	    "style \"indicator-applet-style\"\n"
+        "{\n"
+        "    GtkMenuBar::shadow-type = none\n"
+        "    GtkMenuBar::internal-padding = 0\n"
+        "    GtkWidget::focus-line-width = 0\n"
+        "    GtkWidget::focus-padding = 0\n"
+        "}\n"
+        "widget \"*.indicator-applet-menubar\" style \"indicator-applet-style\"");
   
 	/* Build menubar */
 	menubar = gtk_menu_bar_new();
-	gtk_widget_set_name(GTK_WIDGET (applet), "indicator-applet-menubar");//leave
+	GTK_WIDGET_SET_FLAGS (menubar, GTK_WIDGET_FLAGS(menubar) | GTK_CAN_FOCUS);
+	gtk_widget_set_name(GTK_WIDGET (menubar), "indicator-applet-menubar");
+	g_signal_connect_after(menubar, "expose-event", G_CALLBACK(menubar_on_expose), menubar);
+	gtk_container_set_border_width(GTK_CONTAINER(menubar), 0);
+
 	gtk_container_add(GTK_CONTAINER(applet), menubar);
 	gtk_widget_show(menubar);
 
