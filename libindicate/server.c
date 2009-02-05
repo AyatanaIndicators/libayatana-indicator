@@ -22,6 +22,8 @@ enum {
 	INDICATOR_ADDED,
 	INDICATOR_REMOVED,
 	INDICATOR_MODIFIED,
+	SERVER_SHOW,
+	SERVER_HIDE,
 	LAST_SIGNAL
 };
 
@@ -49,7 +51,6 @@ G_DEFINE_TYPE (IndicateServer, indicate_server, G_TYPE_OBJECT);
 
 /* Prototypes */
 static void indicate_server_finalize (GObject * obj);
-static gboolean get_desktop (IndicateServer * server, gchar ** desktop_path, GError **error);
 static gboolean get_indicator_count (IndicateServer * server, guint * count, GError **error);
 static gboolean get_indicator_count_by_type (IndicateServer * server, gchar * type, guint * count, GError **error);
 static gboolean get_indicator_list (IndicateServer * server, GArray ** indicators, GError ** error);
@@ -93,11 +94,24 @@ indicate_server_class_init (IndicateServerClass * class)
 	                                        NULL, NULL,
 	                                        g_cclosure_marshal_VOID__UINT_POINTER,
 	                                        G_TYPE_NONE, 2, G_TYPE_UINT, G_TYPE_STRING);
+	signals[SERVER_SHOW] = g_signal_new("server-show",
+	                                        G_TYPE_FROM_CLASS (class),
+	                                        G_SIGNAL_RUN_LAST,
+	                                        G_STRUCT_OFFSET (IndicateServerClass, server_show),
+	                                        NULL, NULL,
+	                                        g_cclosure_marshal_VOID__POINTER,
+	                                        G_TYPE_NONE, 1, G_TYPE_STRING);
+	signals[SERVER_HIDE] = g_signal_new("server-hide",
+	                                        G_TYPE_FROM_CLASS (class),
+	                                        G_SIGNAL_RUN_LAST,
+	                                        G_STRUCT_OFFSET (IndicateServerClass, server_hide),
+	                                        NULL, NULL,
+	                                        g_cclosure_marshal_VOID__POINTER,
+	                                        G_TYPE_NONE, 1, G_TYPE_STRING);
 
 	dbus_g_object_type_install_info(INDICATE_TYPE_SERVER,
 	                                &dbus_glib_indicate_server_object_info);
 
-	class->get_desktop = get_desktop;
 	class->get_indicator_count = get_indicator_count;
 	class->get_indicator_count_by_type = get_indicator_count_by_type;
 	class->get_indicator_list = get_indicator_list;
@@ -132,6 +146,9 @@ indicate_server_finalize (GObject * obj)
 {
 	IndicateServer * server = INDICATE_SERVER(obj);
 	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
+
+	/* TODO: This probably shouldn't be as far down as finalize, but it's fine here. */
+	g_signal_emit(server, signals[SERVER_HIDE], 0, "", TRUE);
 
 	if (priv->path) {
 		g_free(priv->path);
@@ -168,6 +185,8 @@ indicate_server_show (IndicateServer * server)
 	                                    priv->path,
 	                                    G_OBJECT(server));
 	priv->visible = TRUE;
+
+	g_signal_emit(server, signals[SERVER_SHOW], 0, "", TRUE);
 	
 	return;
 }
@@ -275,18 +294,6 @@ indicate_server_set_default (IndicateServer * server)
 	}
 
 	return;
-}
-
-static gboolean
-get_desktop (IndicateServer * server, gchar ** desktop_path, GError **error)
-{
-	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
-
-	if (priv->path != NULL) {
-		// TODO: This might be a memory leak, check into that.
-		*desktop_path = g_strdup(priv->path);
-	}
-	return TRUE;
 }
 
 static gboolean
@@ -504,27 +511,6 @@ show_indicator_to_user (IndicateServer * server, guint id, GError ** error)
 
 
 /* Virtual Functions */
-gboolean 
-indicate_server_get_desktop (IndicateServer * server, gchar ** desktop_path, GError **error)
-{
-	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
-
-	if (class != NULL) {
-		return class->get_desktop (server, desktop_path, error);
-	}
-
-	if (error) {
-		g_set_error(error,
-		            indicate_server_error_quark(),
-		            NO_GET_DESKTOP,
-		            "get_desktop function doesn't exist for this server class: %s",
-		            G_OBJECT_TYPE_NAME(server));
-		return FALSE;
-	}
-
-	return TRUE;
-}
-
 gboolean 
 indicate_server_get_indicator_count (IndicateServer * server, guint * count, GError **error)
 {
