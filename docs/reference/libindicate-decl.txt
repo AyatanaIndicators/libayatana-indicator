@@ -119,6 +119,11 @@ IndicateIndicator * indicator
 IndicateIndicator * indicator, const gchar * key, const gchar * data
 </FUNCTION>
 <FUNCTION>
+<NAME>indicate_indicator_set_property_icon</NAME>
+<RETURNS>void </RETURNS>
+IndicateIndicator * indicator, const gchar * key, const GdkPixbuf * data
+</FUNCTION>
+<FUNCTION>
 <NAME>indicate_indicator_get_property</NAME>
 <RETURNS>const gchar *</RETURNS>
 IndicateIndicator * indicator, const gchar * key

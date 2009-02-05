@@ -209,6 +209,13 @@ indicate_indicator_set_property (IndicateIndicator * indicator, const gchar * ke
 	return class->set_property(indicator, key, data);
 }
 
+void
+indicate_indicator_set_property_icon (IndicateIndicator * indicator, const gchar * key, const GdkPixbuf * data)
+{
+
+
+}
+
 const gchar *
 indicate_indicator_get_property (IndicateIndicator * indicator, const gchar * key)
 {
