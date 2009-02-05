@@ -27,6 +27,13 @@ enum {
 	LAST_SIGNAL
 };
 
+/* Properties */
+enum {
+	PROP_0,
+	PROP_DESKTOP,
+	PROP_TYPE
+};
+
 static guint signals[LAST_SIGNAL] = { 0 };
 
 /* Private area */
@@ -37,6 +44,9 @@ struct _IndicateServerPrivate
 	GSList * indicators;
 	gboolean visible;
 	guint current_id;
+
+	gchar * desktop;
+	gchar * type;
 
 	// TODO: Should have a more robust way to track this, but this'll work for now
 	guint num_hidden;
@@ -60,6 +70,8 @@ static gboolean get_indicator_property_group (IndicateServer * server, guint id,
 static gboolean get_indicator_properties (IndicateServer * server, guint id, gchar *** properties, GError **error);
 static gboolean show_indicator_to_user (IndicateServer * server, guint id, GError ** error);
 static guint get_next_id (IndicateServer * server);
+static void set_property (GObject * obj, guint id, const GValue * value, GParamSpec * pspec);
+static void get_property (GObject * obj, guint id, GValue * value, GParamSpec * pspec);
 
 /* Code */
 static void
@@ -72,6 +84,8 @@ indicate_server_class_init (IndicateServerClass * class)
 	g_type_class_add_private (class, sizeof (IndicateServerPrivate));
 
 	gobj->finalize = indicate_server_finalize;
+	gobj->set_property = set_property;
+	gobj->get_property = get_property;
 
 	signals[INDICATOR_ADDED] = g_signal_new("indicator-added",
 	                                        G_TYPE_FROM_CLASS (class),
@@ -109,6 +123,17 @@ indicate_server_class_init (IndicateServerClass * class)
 	                                        g_cclosure_marshal_VOID__POINTER,
 	                                        G_TYPE_NONE, 1, G_TYPE_STRING);
 
+	g_object_class_install_property (gobj, PROP_DESKTOP,
+	                                 g_param_spec_string("desktop", "Desktop File",
+	                                              "The desktop file representing this server",
+	                                              "",
+	                                              G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+	g_object_class_install_property (gobj, PROP_TYPE,
+	                                 g_param_spec_string("type", "Server Type",
+	                                              "The type of indicators that this server will provide",
+	                                              "",
+	                                              G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
 	dbus_g_object_type_install_info(INDICATE_TYPE_SERVER,
 	                                &dbus_glib_indicate_server_object_info);
 
@@ -137,6 +162,8 @@ indicate_server_init (IndicateServer * server)
 	priv->num_hidden = 0;
 	priv->visible = FALSE;
 	priv->current_id = 0;
+	priv->type = NULL;
+	priv->desktop = NULL;
 
 	return;
 }
@@ -152,6 +179,63 @@ indicate_server_finalize (GObject * obj)
 
 	if (priv->path) {
 		g_free(priv->path);
+	}
+	if (priv->desktop) {
+		g_free(priv->desktop);
+	}
+	if (priv->type) {
+		g_free(priv->type);
+	}
+
+	return;
+}
+
+static void
+set_property (GObject * obj, guint id, const GValue * value, GParamSpec * pspec)
+{
+	g_return_if_fail(G_VALUE_HOLDS_STRING(value));
+	g_return_if_fail(id == PROP_DESKTOP || id == PROP_TYPE);
+
+	gchar ** outstr;
+	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(obj);
+	switch (id) {
+	case PROP_DESKTOP:
+		outstr = &(priv->desktop);
+		break;
+	case PROP_TYPE:
+		outstr = &(priv->type);
+		break;
+	}
+
+	if (*outstr != NULL) {
+		g_free(*outstr);
+	}
+
+	*outstr = g_strdup(g_value_get_string(value));
+
+	return;
+}
+
+static void
+get_property (GObject * obj, guint id, GValue * value, GParamSpec * pspec)
+{
+	g_return_if_fail(id == PROP_DESKTOP || id == PROP_TYPE);
+
+	gchar * outstr;
+	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(obj);
+	switch (id) {
+	case PROP_DESKTOP:
+		outstr = priv->desktop;
+		break;
+	case PROP_TYPE:
+		outstr = priv->type;
+		break;
+	}
+
+	if (outstr != NULL) {
+		g_value_set_string(value, outstr);
+	} else {
+		g_value_set_static_string(value, "");
 	}
 
 	return;
