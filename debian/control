@@ -25,6 +25,8 @@ Description: Applet for the GNOME panel providing various indicators for
 
 Package: libindicate0
 Section: libs
+Conflicts: libindicate
+Replaces: libindicate
 Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends}
