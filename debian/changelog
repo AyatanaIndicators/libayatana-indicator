@@ -1,3 +1,9 @@
+indicator-applet (0.1~ppa23) intrepid; urgency=low
+
+  * Adding an API function for pixbufs
+
+ -- Ted Gould <ted@ubuntu.com>  Thu, 05 Feb 2009 14:42:46 +0100
+
 indicator-applet (0.1~ppa22) intrepid; urgency=low
 
   * Add support for a transparent panel applet
