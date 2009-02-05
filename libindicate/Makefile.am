@@ -90,6 +90,7 @@ Indicate-0.1.gir: $(irscanner_headers)
 		--add-include-path=$(srcdir) \
 		--include=GObject-2.0 \
 		--include=GLib-2.0 \
+		--include=GdkPixbuf-2.0 \
 		--library=indicate --pkg indicate \
 		--output Indicate-0.1.gir $(irscanner_headers)
 
