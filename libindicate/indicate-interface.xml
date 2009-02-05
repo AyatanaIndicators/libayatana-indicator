@@ -2,10 +2,11 @@
 <node name="/">
 	<interface name="org.freedesktop.indicator">
 
+<!-- Properties -->
+		<property name="desktop" type="s" access="read"/>
+		<property name="type" type="s" access="read"/>
+
 <!-- Functions -->
-		<method name="GetDesktop">
-			<arg type="s" name="desktop_file_uri" direction="out" />
-		</method>
 		<method name="GetIndicatorCount">
 			<arg type="u" name="indicator_count" direction="out" />
 		</method>
@@ -51,6 +52,12 @@
 		<signal name="IndicatorModified">
 			<arg type="u" name="id" direction="out" />
 			<arg type="s" name="property" direction="out" />
+		</signal>
+		<signal name="ServerShow">
+			<arg type="s" name="type" direction="out" />
+		</signal>
+		<signal name="ServerHide">
+			<arg type="s" name="type" direction="out" />
 		</signal>
 
 

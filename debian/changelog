@@ -1,3 +1,11 @@
+indicator-applet (0.1~ppa28) intrepid; urgency=low
+
+  * Updating the server interface to have signals for show and hide
+    on the server and having properties for the desktop and type
+    of the server.
+
+ -- Ted Gould <ted@ubuntu.com>  Thu, 05 Feb 2009 18:22:19 +0100
+
 indicator-applet (0.1~ppa27) intrepid; urgency=low
 
   * Adding an API function for pixbufs

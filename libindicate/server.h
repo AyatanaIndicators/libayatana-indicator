@@ -30,9 +30,10 @@ struct _IndicateServerClass {
 	void (* indicator_added) (IndicateServer * server, guint id, gchar * type);
 	void (* indicator_removed) (IndicateServer * server, guint id, gchar * type);
 	void (* indicator_modified) (IndicateServer * server, guint id, gchar * property);
+	void (* server_show) (IndicateServer * server, gchar * type);
+	void (* server_hide) (IndicateServer * server, gchar * type);
 
 	/* Virtual Functions */
-	gboolean (*get_desktop) (IndicateServer * server, gchar ** desktop_path, GError **error);
 	gboolean (*get_indicator_count) (IndicateServer * server, guint * count, GError **error);
 	gboolean (*get_indicator_count_by_type) (IndicateServer * server, gchar * type, guint * count, GError **error);
 	gboolean (*get_indicator_list) (IndicateServer * server, GArray ** indicators, GError ** error);
@@ -71,7 +72,6 @@ IndicateServer * indicate_server_ref_default (void);
 void indicate_server_set_default (IndicateServer * server);
 
 /* DBus API */
-gboolean indicate_server_get_desktop (IndicateServer * server, gchar ** desktop_path, GError **error);
 gboolean indicate_server_get_indicator_count (IndicateServer * server, guint * count, GError **error);
 gboolean indicate_server_get_indicator_count_by_type (IndicateServer * server, gchar * type, guint * count, GError **error);
 gboolean indicate_server_get_indicator_list (IndicateServer * server, GArray ** indicators, GError ** error);
