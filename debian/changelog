@@ -1,3 +1,9 @@
+indicator-applet (0.1~ppa29) intrepid; urgency=low
+
+  * Bumping for PPA as forgot to run autogen.sh
+
+ -- Ted Gould <ted@ubuntu.com>  Fri, 06 Feb 2009 00:29:11 +0100
+
 indicator-applet (0.1~ppa28) intrepid; urgency=low
 
   * Updating the server interface to have signals for show and hide
