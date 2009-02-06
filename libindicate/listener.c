@@ -458,7 +458,7 @@ proxy_server_added (DBusGProxy * proxy, const gchar * type, proxy_t * proxyt)
 		dbus_g_proxy_add_signal(proxyt->proxy, "IndicatorAdded",
 								G_TYPE_UINT, G_TYPE_STRING, G_TYPE_INVALID);
 		dbus_g_proxy_connect_signal(proxyt->proxy, "IndicatorAdded",
-									G_CALLBACK(proxy_indicator_removed), proxyt, NULL);
+									G_CALLBACK(proxy_indicator_added), proxyt, NULL);
 		dbus_g_proxy_add_signal(proxyt->proxy, "IndicatorRemoved",
 								G_TYPE_UINT, G_TYPE_STRING, G_TYPE_INVALID);
 		dbus_g_proxy_connect_signal(proxyt->proxy, "IndicatorRemoved",
