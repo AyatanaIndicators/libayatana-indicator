@@ -1,3 +1,9 @@
+indicator-applet (0.1~ppa32) intrepid; urgency=low
+
+  * Adding back in the package config data
+
+ -- Ted Gould <ted@ubuntu.com>  Fri, 06 Feb 2009 14:14:33 +0100
+
 indicator-applet (0.1~ppa31) intrepid; urgency=low
 
   * Ah, silly packaging stuff.  I hate packaging.

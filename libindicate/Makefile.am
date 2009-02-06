@@ -71,9 +71,9 @@ listener-marshal.c: listener-marshal.list
 		--prefix=indicate_listener_marshal $(srcdir)/listener-marshal.list \
 		> listener-marshal.c
 
-#pkgconfig_DATA = indicate.pc
-#pkgconfigdir = $(libdir)/pkgconfig
-#
+pkgconfig_DATA = indicate.pc
+pkgconfigdir = $(libdir)/pkgconfig
+
 #gobjectintrospection_gir_DATA = \
 #	Indicate-0.1.gir
 #gobjectintrospection_girdir = $(datadir)/gir
