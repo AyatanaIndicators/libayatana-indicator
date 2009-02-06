@@ -1,3 +1,9 @@
+indicator-applet (0.1~ppa31) intrepid; urgency=low
+
+  * Ah, silly packaging stuff.  I hate packaging.
+
+ -- Ted Gould <ted@ubuntu.com>  Fri, 06 Feb 2009 11:39:04 +0100
+
 indicator-applet (0.1~ppa30) intrepid; urgency=low
 
   * Removing GObject introspection, so that it will build in
