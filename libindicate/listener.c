@@ -43,6 +43,7 @@ struct _IndicateListenerPrivate
 typedef struct {
 	DBusGProxy * proxy;
 	gchar * name;
+	gchar * type;
 	IndicateListener * listener;
 	GHashTable * indicators;
 } proxy_t;
@@ -61,6 +62,7 @@ static void proxy_struct_destroy (gpointer data);
 static void build_todo_list_cb (DBusGProxy * proxy, char ** names, GError * error, void * data);
 static void todo_list_add (const gchar * name, DBusGProxy * proxy, IndicateListener * listener);
 static gboolean todo_idle (gpointer data);
+static void proxy_server_added (DBusGProxy * proxy, const gchar * type, proxy_t * proxyt);
 static void proxy_indicator_added (DBusGProxy * proxy, guint id, const gchar * type, proxy_t * proxyt);
 static void proxy_indicator_removed (DBusGProxy * proxy, guint id, const gchar * type, proxy_t * proxyt);
 static void proxy_indicator_modified (DBusGProxy * proxy, guint id, const gchar * type, proxy_t * proxyt);
@@ -106,15 +108,15 @@ indicate_listener_class_init (IndicateListenerClass * class)
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateListenerClass, server_added),
 	                                        NULL, NULL,
-	                                        g_cclosure_marshal_VOID__POINTER,
-	                                        G_TYPE_NONE, 1, G_TYPE_POINTER);
+	                                        indicate_listener_marshal_VOID__POINTER_STRING,
+	                                        G_TYPE_NONE, 2, G_TYPE_POINTER, G_TYPE_STRING);
 	signals[SERVER_REMOVED] = g_signal_new(INDICATE_LISTENER_SIGNAL_SERVER_REMOVED,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateListenerClass, server_removed),
 	                                        NULL, NULL,
-	                                        g_cclosure_marshal_VOID__POINTER,
-	                                        G_TYPE_NONE, 1, G_TYPE_POINTER);
+	                                        indicate_listener_marshal_VOID__POINTER_STRING,
+	                                        G_TYPE_NONE, 2, G_TYPE_POINTER, G_TYPE_STRING);
 
 	dbus_g_object_register_marshaller(indicate_listener_marshal_VOID__UINT_STRING,
 	                                  G_TYPE_NONE,
@@ -285,11 +287,14 @@ proxy_struct_destroy (gpointer data)
 							 proxy_data);
 		g_hash_table_remove_all(proxy_data->indicators);
 
-		g_signal_emit(proxy_data->listener, signals[SERVER_REMOVED], 0, proxy_data->name, TRUE);
+		g_signal_emit(proxy_data->listener, signals[SERVER_REMOVED], 0, proxy_data->name, proxy_data->type, TRUE);
 		proxy_data->indicators = NULL;
 	}
 
 	g_free(proxy_data->name);
+	if (proxy_data->type != NULL) {
+		g_free(proxy_data->type);
+	}
 	g_free(proxy_data);
 
 	return;
@@ -369,6 +374,7 @@ todo_idle (gpointer data)
 
 	proxy_t * proxyt = g_new(proxy_t, 1);
 	proxyt->name = todo->name;
+	proxyt->type = NULL;
 	proxyt->proxy = dbus_g_proxy_new_for_name(todo->bus,
 	                                          proxyt->name,
 	                                          "/org/freedesktop/indicate",
@@ -383,10 +389,10 @@ todo_idle (gpointer data)
 		return TRUE;
 	}
 
-	dbus_g_proxy_add_signal(proxyt->proxy, "IndicatorAdded",
-	                        G_TYPE_UINT, G_TYPE_STRING, G_TYPE_INVALID);
-	dbus_g_proxy_connect_signal(proxyt->proxy, "IndicatorAdded",
-	                            G_CALLBACK(proxy_indicator_added), proxyt, NULL);
+	dbus_g_proxy_add_signal(proxyt->proxy, "ServerShow",
+	                        G_TYPE_STRING, G_TYPE_INVALID);
+	dbus_g_proxy_connect_signal(proxyt->proxy, "ServerShow",
+	                            G_CALLBACK(proxy_server_added), proxyt, NULL);
 
 	org_freedesktop_indicator_get_indicator_list_async(proxyt->proxy, proxy_get_indicator_list, proxyt);
 
@@ -439,10 +445,8 @@ proxy_get_indicator_type (DBusGProxy * proxy, gchar * type, GError * error, gpoi
 }
 
 static void
-proxy_indicator_added (DBusGProxy * proxy, guint id, const gchar * type, proxy_t * proxyt)
+proxy_server_added (DBusGProxy * proxy, const gchar * type, proxy_t * proxyt)
 {
-	/* g_debug("Interface %s has an indicator %d of type %s", proxyt->name, id, type); */
-
 	if (proxyt->indicators == NULL) {
 		proxyt->indicators = g_hash_table_new_full(g_str_hash, g_str_equal,
 		                                           g_free, proxy_indicators_free);
@@ -451,6 +455,10 @@ proxy_indicator_added (DBusGProxy * proxy, guint id, const gchar * type, proxy_t
 		g_hash_table_remove(priv->proxies_possible, proxyt->name);
 		g_hash_table_insert(priv->proxies_working, proxyt->name, proxyt);
 
+		dbus_g_proxy_add_signal(proxyt->proxy, "IndicatorAdded",
+								G_TYPE_UINT, G_TYPE_STRING, G_TYPE_INVALID);
+		dbus_g_proxy_connect_signal(proxyt->proxy, "IndicatorAdded",
+									G_CALLBACK(proxy_indicator_added), proxyt, NULL);
 		dbus_g_proxy_add_signal(proxyt->proxy, "IndicatorRemoved",
 								G_TYPE_UINT, G_TYPE_STRING, G_TYPE_INVALID);
 		dbus_g_proxy_connect_signal(proxyt->proxy, "IndicatorRemoved",
@@ -460,7 +468,22 @@ proxy_indicator_added (DBusGProxy * proxy, guint id, const gchar * type, proxy_t
 		dbus_g_proxy_connect_signal(proxyt->proxy, "IndicatorModified",
 									G_CALLBACK(proxy_indicator_modified), proxyt, NULL);
 
-		g_signal_emit(proxyt->listener, signals[SERVER_ADDED], 0, proxyt->name, TRUE);
+		if (proxyt->type != NULL) {
+			g_free(proxyt->type);
+		}
+		proxyt->type = g_strdup(type);
+
+		g_signal_emit(proxyt->listener, signals[SERVER_ADDED], 0, proxyt->name, proxyt->type, TRUE);
+	}
+
+	return;
+}
+
+static void
+proxy_indicator_added (DBusGProxy * proxy, guint id, const gchar * type, proxy_t * proxyt)
+{
+	if (proxyt->indicators == NULL) {
+		proxy_server_added (proxy, type, proxyt);
 	}
 
 	GHashTable * indicators = g_hash_table_lookup(proxyt->indicators, type);

@@ -61,12 +61,12 @@ dbus-indicate-client.h: indicate-interface.xml
 		--output=dbus-indicate-client.h \
 		$(srcdir)/indicate-interface.xml
 
-listener-marshal.h: listener-marshal.list
+listener-marshal.h: $(srcdir)/listener-marshal.list
 	glib-genmarshal --header \
 		--prefix=indicate_listener_marshal $(srcdir)/listener-marshal.list \
 		> listener-marshal.h
 
-listener-marshal.c: listener-marshal.list
+listener-marshal.c: $(srcdir)/listener-marshal.list
 	glib-genmarshal --body \
 		--prefix=indicate_listener_marshal $(srcdir)/listener-marshal.list \
 		> listener-marshal.c

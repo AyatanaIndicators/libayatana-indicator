@@ -44,8 +44,8 @@ struct _IndicateListenerClass {
 	void (* indicator_removed) (IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * type);
 	void (* indicator_modified) (IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * type, gchar * property);
 
-	void (* server_added) (IndicateListenerServer * server);
-	void (* server_removed) (IndicateListenerServer * server);
+	void (* server_added) (IndicateListenerServer * server, gchar * type);
+	void (* server_removed) (IndicateListenerServer * server, gchar * type);
 };
 
 GType indicate_listener_get_type (void) G_GNUC_CONST;
