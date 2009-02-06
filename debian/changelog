@@ -1,3 +1,10 @@
+indicator-applet (0.1~ppa30) intrepid; urgency=low
+
+  * Removing GObject introspection, so that it will build in
+    the PPA.  Will put back later.
+
+ -- Ted Gould <ted@ubuntu.com>  Fri, 06 Feb 2009 10:39:59 +0100
+
 indicator-applet (0.1~ppa29) intrepid; urgency=low
 
   * Bumping for PPA as forgot to run autogen.sh
