@@ -1,3 +1,9 @@
+indicator-applet (0.1~ppa33) intrepid; urgency=low
+
+  * Version bump, autogen.sh
+
+ -- Ted Gould <ted@ubuntu.com>  Fri, 06 Feb 2009 14:35:38 +0100
+
 indicator-applet (0.1~ppa32) intrepid; urgency=low
 
   * Adding back in the package config data
