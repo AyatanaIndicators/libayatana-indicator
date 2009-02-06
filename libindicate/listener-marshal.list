@@ -4,3 +4,5 @@ VOID:UINT,STRING
 VOID:POINTER,POINTER,STRING
 # Local indicator_modified
 VOID:POINTER,POINTER,STRING,STRING
+# Local server_added and server_removed
+VOID:POINTER,STRING
