@@ -1,3 +1,10 @@
+indicator-applet (0.1~ppa34) intrepid; urgency=low
+
+  * Ah, listener fixes too.  Make everything get together and
+    use the new APIs.
+
+ -- Ted Gould <ted@ubuntu.com>  Fri, 06 Feb 2009 15:02:57 +0100
+
 indicator-applet (0.1~ppa33) intrepid; urgency=low
 
   * Version bump, autogen.sh
