@@ -175,7 +175,7 @@ indicate_server_finalize (GObject * obj)
 	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
 
 	/* TODO: This probably shouldn't be as far down as finalize, but it's fine here. */
-	g_signal_emit(server, signals[SERVER_HIDE], 0, "", TRUE);
+	g_signal_emit(server, signals[SERVER_HIDE], 0, priv->type ? priv->type : "", TRUE);
 
 	if (priv->path) {
 		g_free(priv->path);
@@ -270,7 +270,7 @@ indicate_server_show (IndicateServer * server)
 	                                    G_OBJECT(server));
 	priv->visible = TRUE;
 
-	g_signal_emit(server, signals[SERVER_SHOW], 0, "", TRUE);
+	g_signal_emit(server, signals[SERVER_SHOW], 0, priv->type ? priv->type : "", TRUE);
 	
 	return;
 }
