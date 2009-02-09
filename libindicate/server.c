@@ -40,6 +40,7 @@ static guint signals[LAST_SIGNAL] = { 0 };
 typedef struct _IndicateServerPrivate IndicateServerPrivate;
 struct _IndicateServerPrivate
 {
+  DBusGConnection *connection;
 	gchar * path;
 	GSList * indicators;
 	gboolean visible;
@@ -265,12 +266,33 @@ indicate_server_show (IndicateServer * server)
 
 	connection = dbus_g_bus_get(DBUS_BUS_SESSION, NULL);
 
+  priv->connection = connection;
+
 	dbus_g_connection_register_g_object(connection,
 	                                    priv->path,
 	                                    G_OBJECT(server));
 	priv->visible = TRUE;
 
 	g_signal_emit(server, signals[SERVER_SHOW], 0, "", TRUE);
+	
+	return;
+}
+
+void
+indicate_server_hide (IndicateServer * server)
+{
+	g_return_if_fail(INDICATE_IS_SERVER(server));
+	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
+
+	if (priv->visible)
+		return;
+
+  priv->visible = FALSE;
+
+	g_signal_emit(server, signals[SERVER_HIDE], 0, "", TRUE);
+
+	dbus_g_connection_unref (priv->connection);
+  priv->connection = NULL;
 	
 	return;
 }
