@@ -1,3 +1,12 @@
+indicator-applet (0.1~ppa35) intrepid; urgency=low
+
+  * Better use of type and sending it with signals.
+  * Making it so that the server hide function works better.
+  * Only sending property updates if the indicator is
+    visible.
+
+ -- Ted Gould <ted@ubuntu.com>  Mon, 09 Feb 2009 11:01:11 -0600
+
 indicator-applet (0.1~ppa34) intrepid; urgency=low
 
   * Ah, listener fixes too.  Make everything get together and
