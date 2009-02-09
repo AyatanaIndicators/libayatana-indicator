@@ -255,7 +255,9 @@ set_property (IndicateIndicator * indicator, const gchar * key, const gchar * da
 		/* If the value has changed or there is no value */
 		gchar * newkey = g_strdup(key);
 		g_hash_table_insert(priv->properties, newkey, g_strdup(data));
-		g_signal_emit(indicator, signals[MODIFIED], 0, newkey, TRUE);
+		if (indicate_indicator_is_visible(indicator)) {
+			g_signal_emit(indicator, signals[MODIFIED], 0, newkey, TRUE);
+		}
 	}
 
 	return;
