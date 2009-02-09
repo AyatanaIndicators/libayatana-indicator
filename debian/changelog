@@ -1,3 +1,58 @@
+indicator-applet (0.1~ppa35) intrepid; urgency=low
+
+  * Better use of type and sending it with signals.
+  * Making it so that the server hide function works better.
+  * Only sending property updates if the indicator is
+    visible.
+
+ -- Ted Gould <ted@ubuntu.com>  Mon, 09 Feb 2009 11:01:11 -0600
+
+indicator-applet (0.1~ppa34) intrepid; urgency=low
+
+  * Ah, listener fixes too.  Make everything get together and
+    use the new APIs.
+
+ -- Ted Gould <ted@ubuntu.com>  Fri, 06 Feb 2009 15:02:57 +0100
+
+indicator-applet (0.1~ppa33) intrepid; urgency=low
+
+  * Version bump, autogen.sh
+
+ -- Ted Gould <ted@ubuntu.com>  Fri, 06 Feb 2009 14:35:38 +0100
+
+indicator-applet (0.1~ppa32) intrepid; urgency=low
+
+  * Adding back in the package config data
+
+ -- Ted Gould <ted@ubuntu.com>  Fri, 06 Feb 2009 14:14:33 +0100
+
+indicator-applet (0.1~ppa31) intrepid; urgency=low
+
+  * Ah, silly packaging stuff.  I hate packaging.
+
+ -- Ted Gould <ted@ubuntu.com>  Fri, 06 Feb 2009 11:39:04 +0100
+
+indicator-applet (0.1~ppa30) intrepid; urgency=low
+
+  * Removing GObject introspection, so that it will build in
+    the PPA.  Will put back later.
+
+ -- Ted Gould <ted@ubuntu.com>  Fri, 06 Feb 2009 10:39:59 +0100
+
+indicator-applet (0.1~ppa29) intrepid; urgency=low
+
+  * Bumping for PPA as forgot to run autogen.sh
+
+ -- Ted Gould <ted@ubuntu.com>  Fri, 06 Feb 2009 00:29:11 +0100
+
+indicator-applet (0.1~ppa28) intrepid; urgency=low
+
+  * Updating the server interface to have signals for show and hide
+    on the server and having properties for the desktop and type
+    of the server.
+
+ -- Ted Gould <ted@ubuntu.com>  Thu, 05 Feb 2009 18:22:19 +0100
+
 indicator-applet (0.1~ppa27) intrepid; urgency=low
 
   * Adding an API function for pixbufs

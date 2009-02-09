@@ -74,28 +74,28 @@ listener-marshal.c: $(srcdir)/listener-marshal.list
 pkgconfig_DATA = indicate.pc
 pkgconfigdir = $(libdir)/pkgconfig
 
-gobjectintrospection_gir_DATA = \
-	Indicate-0.1.gir
-gobjectintrospection_girdir = $(datadir)/gir
-
-gobjectintrospection_type_DATA = \
-	Indicate-0.1.typelib
-gobjectintrospection_typedir = $(libdir)/girepository
-
-irscanner_headers = $(patsubst %,$(srcdir)/%,$(indicate_headers))
-Indicate-0.1.gir: $(irscanner_headers)
-	$(G_IR_SCANNER) \
-		-v --namespace Indicate \
-		--nsversion=0.1 \
-		--add-include-path=$(srcdir) \
-		--include=GObject-2.0 \
-		--include=GLib-2.0 \
-		--include=GdkPixbuf-2.0 \
-		--library=indicate --pkg indicate \
-		--output Indicate-0.1.gir $(irscanner_headers)
-
-Indicate-0.1.typelib: Indicate-0.1.gir
-	$(G_IR_COMPILER) \
-		--includedir=$(srcdir) Indicate-0.1.gir \
-		-o Indicate-0.1.typelib
+#gobjectintrospection_gir_DATA = \
+#	Indicate-0.1.gir
+#gobjectintrospection_girdir = $(datadir)/gir
+#
+#gobjectintrospection_type_DATA = \
+#	Indicate-0.1.typelib
+#gobjectintrospection_typedir = $(libdir)/girepository
+#
+#irscanner_headers = $(patsubst %,$(srcdir)/%,$(indicate_headers))
+#Indicate-0.1.gir: $(irscanner_headers)
+#	$(G_IR_SCANNER) \
+#		-v --namespace Indicate \
+#		--nsversion=0.1 \
+#		--add-include-path=$(srcdir) \
+#		--include=GObject-2.0 \
+#		--include=GLib-2.0 \
+#		--include=GdkPixbuf-2.0 \
+#		--library=indicate --pkg indicate \
+#		--output Indicate-0.1.gir $(irscanner_headers)
+#
+#Indicate-0.1.typelib: Indicate-0.1.gir
+#	$(G_IR_COMPILER) \
+#		--includedir=$(srcdir) Indicate-0.1.gir \
+#		-o Indicate-0.1.typelib
 
