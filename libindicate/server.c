@@ -40,7 +40,7 @@ static guint signals[LAST_SIGNAL] = { 0 };
 typedef struct _IndicateServerPrivate IndicateServerPrivate;
 struct _IndicateServerPrivate
 {
-  DBusGConnection *connection;
+	DBusGConnection *connection;
 	gchar * path;
 	GSList * indicators;
 	gboolean visible;
@@ -176,7 +176,9 @@ indicate_server_finalize (GObject * obj)
 	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
 
 	/* TODO: This probably shouldn't be as far down as finalize, but it's fine here. */
-	g_signal_emit(server, signals[SERVER_HIDE], 0, priv->type ? priv->type : "", TRUE);
+	if (priv->visible) {
+		g_signal_emit(server, signals[SERVER_HIDE], 0, priv->type ? priv->type : "", TRUE);
+	}
 
 	if (priv->path) {
 		g_free(priv->path);
@@ -262,13 +264,9 @@ indicate_server_show (IndicateServer * server)
 	if (priv->visible)
 		return;
 
-	DBusGConnection * connection;
+	priv->connection = dbus_g_bus_get(DBUS_BUS_SESSION, NULL);
 
-	connection = dbus_g_bus_get(DBUS_BUS_SESSION, NULL);
-
-  priv->connection = connection;
-
-	dbus_g_connection_register_g_object(connection,
+	dbus_g_connection_register_g_object(priv->connection,
 	                                    priv->path,
 	                                    G_OBJECT(server));
 	priv->visible = TRUE;
@@ -287,12 +285,12 @@ indicate_server_hide (IndicateServer * server)
 	if (priv->visible)
 		return;
 
-  priv->visible = FALSE;
+	priv->visible = FALSE;
 
-	g_signal_emit(server, signals[SERVER_HIDE], 0, "", TRUE);
+	g_signal_emit(server, signals[SERVER_HIDE], 0, priv->type ? priv->type : "", TRUE);
 
 	dbus_g_connection_unref (priv->connection);
-  priv->connection = NULL;
+	priv->connection = NULL;
 	
 	return;
 }
