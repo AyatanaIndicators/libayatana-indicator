@@ -55,7 +55,8 @@ void indicate_server_set_dbus_object (const gchar * obj);
 
 /* Sets the desktop file to get data like name and description
  * out of */
-void indicate_server_set_desktop_file (const gchar * path);
+void indicate_server_set_desktop_file (IndicateServer * server, const gchar * path);
+void indicate_server_set_type (IndicateServer * server, const gchar * type);
 
 /* Show and hide the server on DBus, this allows for the server to
  * be created, change the object, and then shown.  If for some
@@ -70,6 +71,7 @@ void indicate_server_remove_indicator (IndicateServer * server, IndicateIndicato
 
 IndicateServer * indicate_server_ref_default (void);
 void indicate_server_set_default (IndicateServer * server);
+
 
 /* DBus API */
 gboolean indicate_server_get_indicator_count (IndicateServer * server, guint * count, GError **error);
