@@ -21,15 +21,15 @@ indicator_modified (IndicateListener * listener, IndicateListenerServer * server
 }
 
 static void
-server_added (IndicateListener * listener, IndicateListenerServer * server, gpointer data)
+server_added (IndicateListener * listener, IndicateListenerServer * server, gchar * type, gpointer data)
 {
-	g_debug("Indicator Server Added:   %s", INDICATE_LISTENER_SERVER_DBUS_NAME(server));
+	g_debug("Indicator Server Added:   %s %s", INDICATE_LISTENER_SERVER_DBUS_NAME(server), type);
 }
 
 static void
-server_removed (IndicateListener * listener, IndicateListenerServer * server, gpointer data)
+server_removed (IndicateListener * listener, IndicateListenerServer * server, gchar * type, gpointer data)
 {
-	g_debug("Indicator Server Removed: %s", INDICATE_LISTENER_SERVER_DBUS_NAME(server));
+	g_debug("Indicator Server Removed: %s %s", INDICATE_LISTENER_SERVER_DBUS_NAME(server), type);
 }
 
 int
