@@ -647,7 +647,7 @@ indicate_listener_display (IndicateListener * listener, IndicateListenerServer *
 }
 
 void
-indicate_listener_get_type (IndicateListener * listener, IndicateListenerServer * server, indicate_listener_get_type_cb callback, gpointer data)
+indicate_listener_server_get_type (IndicateListener * listener, IndicateListenerServer * server, indicate_listener_get_type_cb callback, gpointer data)
 {
 
 
@@ -655,7 +655,7 @@ indicate_listener_get_type (IndicateListener * listener, IndicateListenerServer 
 }
 
 void
-indicate_listener_get_desktop (IndicateListener * listener, IndicateListenerServer * server, indicate_listener_get_desktop_cb callback, gpointer data)
+indicate_listener_server_get_desktop (IndicateListener * listener, IndicateListenerServer * server, indicate_listener_get_desktop_cb callback, gpointer data)
 {
 
 

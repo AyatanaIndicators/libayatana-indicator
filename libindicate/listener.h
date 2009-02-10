@@ -55,24 +55,24 @@ typedef void (*indicate_listener_get_type_cb) (IndicateListener * listener, Indi
 typedef void (*indicate_listener_get_desktop_cb) (IndicateListener * listener, IndicateListenerServer * server, gchar * desktop, gpointer data);
 
 /* Create a new listener */
-IndicateListener *    indicate_listener_new            (void);
-void                  indicate_listener_get_property   (IndicateListener * listener,
-                                                        IndicateListenerServer * server,
-                                                        IndicateListenerIndicator * indicator,
-                                                        gchar * property,
-                                                        indicate_listener_get_property_cb callback,
-                                                        gpointer data);
-void                  indicate_listener_display        (IndicateListener * listener,
-                                                        IndicateListenerServer * server,
-                                                        IndicateListenerIndicator * indicator);
-void                  indicate_listener_get_type       (IndicateListener * listener,
-                                                        IndicateListenerServer * server,
-                                                        indicate_listener_get_type_cb callback,
-                                                        gpointer data);
-void                  indicate_listener_get_desktop    (IndicateListener * listener,
-                                                        IndicateListenerServer * server,
-                                                        indicate_listener_get_desktop_cb callback,
-                                                        gpointer data);
+IndicateListener *    indicate_listener_new                (void);
+void                  indicate_listener_get_property       (IndicateListener * listener,
+                                                            IndicateListenerServer * server,
+                                                            IndicateListenerIndicator * indicator,
+                                                            gchar * property,
+                                                            indicate_listener_get_property_cb callback,
+                                                            gpointer data);
+void                  indicate_listener_display            (IndicateListener * listener,
+                                                            IndicateListenerServer * server,
+                                                            IndicateListenerIndicator * indicator);
+void                  indicate_listener_server_get_type    (IndicateListener * listener,
+                                                            IndicateListenerServer * server,
+                                                            indicate_listener_get_type_cb callback,
+                                                            gpointer data);
+void                  indicate_listener_server_get_desktop (IndicateListener * listener,
+                                                            IndicateListenerServer * server,
+                                                            indicate_listener_get_desktop_cb callback,
+                                                            gpointer data);
 
 
 
