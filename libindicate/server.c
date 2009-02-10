@@ -372,20 +372,27 @@ void
 indicate_server_set_dbus_object (const gchar * obj)
 {
 	/* TODO */
+
 	return;
 }
 
 void
 indicate_server_set_desktop_file (IndicateServer * server, const gchar * path)
 {
-	/* TODO */
+	GValue value = {0};
+	g_value_init(&value, G_TYPE_STRING);
+	g_value_set_string(&value, path);
+	g_object_set_property(G_OBJECT(server), "desktop", &value);
 	return;
 }
 
 void
 indicate_server_set_type (IndicateServer * server, const gchar * type)
 {
-	/* TODO */
+	GValue value = {0};
+	g_value_init(&value, G_TYPE_STRING);
+	g_value_set_string(&value, type);
+	g_object_set_property(G_OBJECT(server), "type", &value);
 	return;
 }
 
