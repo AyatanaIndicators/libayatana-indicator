@@ -368,6 +368,27 @@ indicate_server_remove_indicator (IndicateServer * server, IndicateIndicator * i
 	return;
 }
 
+void
+indicate_server_set_dbus_object (const gchar * obj)
+{
+	/* TODO */
+	return;
+}
+
+void
+indicate_server_set_desktop_file (IndicateServer * server, const gchar * path)
+{
+	/* TODO */
+	return;
+}
+
+void
+indicate_server_set_type (IndicateServer * server, const gchar * type)
+{
+	/* TODO */
+	return;
+}
+
 static IndicateServer * default_indicate_server = NULL;
 
 IndicateServer *
