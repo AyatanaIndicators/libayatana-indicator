@@ -42,6 +42,7 @@ struct _IndicateListenerPrivate
 
 typedef struct {
 	DBusGProxy * proxy;
+	DBusGProxy * property_proxy;
 	gchar * name;
 	gchar * type;
 	IndicateListener * listener;
@@ -291,6 +292,14 @@ proxy_struct_destroy (gpointer data)
 		proxy_data->indicators = NULL;
 	}
 
+	if (proxy_data->property_proxy) {
+		g_object_unref(G_OBJECT(proxy_data->proxy));
+	}
+
+	if (proxy_data->property_proxy) {
+		g_object_unref(G_OBJECT(proxy_data->proxy));
+	}
+
 	g_free(proxy_data->name);
 	if (proxy_data->type != NULL) {
 		g_free(proxy_data->type);
@@ -379,6 +388,7 @@ todo_idle (gpointer data)
 	                                          proxyt->name,
 	                                          "/org/freedesktop/indicate",
 	                                          "org.freedesktop.indicator");
+	proxyt->property_proxy = NULL;
 	proxyt->listener = listener;
 	proxyt->indicators = NULL;
 
@@ -646,18 +656,102 @@ indicate_listener_display (IndicateListener * listener, IndicateListenerServer *
 	return;
 }
 
-void
-indicate_listener_server_get_type (IndicateListener * listener, IndicateListenerServer * server, indicate_listener_get_type_cb callback, gpointer data)
+typedef struct {
+	IndicateListener * listener;
+	IndicateListenerServer * server;
+	indicate_listener_get_server_property_cb cb;
+	gpointer data;
+} property_cb_t;
+
+static void
+property_cb (DBusGProxy * proxy, DBusGProxyCall * call, void * data)
 {
+	property_cb_t * propertyt = data;
+	GError * error = NULL;
 
+	GValue property;
 
+	dbus_g_proxy_end_call(proxy, call, &error, G_TYPE_VALUE, &property, G_TYPE_INVALID);
+	if (error != NULL) {
+		g_warning("Unable to get property: %s", error->message);
+		g_error_free(error);
+		g_free(propertyt);
+		return;
+	}
 
+	if (!G_VALUE_HOLDS_STRING(&property)) {
+		g_warning("Property returned is not a string!");
+		g_free(propertyt);
+		return;
+	}
+
+	IndicateListener * listener = propertyt->listener;
+	IndicateListenerServer * server = propertyt->server;
+	indicate_listener_get_server_property_cb cb = propertyt->cb;
+	gpointer cb_data = propertyt->data;
+
+	g_free(propertyt);
+
+	gchar * propstr = g_value_dup_string(&property);
+
+	return cb(listener, server, propstr, cb_data);
+}
+
+static void
+get_server_property (IndicateListener * listener, IndicateListenerServer * server, indicate_listener_get_server_property_cb callback, const gchar * property_name, gpointer data)
+{
+	IndicateListenerPrivate * priv = INDICATE_LISTENER_GET_PRIVATE(listener);
+
+	proxy_t * proxyt = g_hash_table_lookup(priv->proxies_working, server);
+
+	if (proxyt == NULL) {
+		g_warning("Looking for a property on an interface that hasn't be setup for indicators.");
+		// Send NULL to the callback
+		return;
+	}
+
+	if (proxyt->property_proxy == NULL) {
+		DBusGConnection * bus;
+		gchar * bus_name;
+		if (proxyt->proxy == priv->dbus_proxy_system) {
+			bus = priv->system_bus;
+			bus_name = "system";
+		} else {
+			bus = priv->session_bus;
+			bus_name = "session";
+		}
+
+		proxyt->property_proxy = dbus_g_proxy_new_for_name(bus,
+		                                                   proxyt->name,
+		                                                   "/org/freedesktop/indicate",
+		                                                   DBUS_INTERFACE_PROPERTIES);
+	}
+
+	property_cb_t * localdata = g_new(property_cb_t, 1);
+	localdata->listener = listener;
+	localdata->server = server;
+	localdata->cb = callback;
+	localdata->data = data;
+
+	dbus_g_proxy_begin_call (proxyt->property_proxy,
+	"Get",
+	property_cb,
+	localdata,
+	G_TYPE_STRING, "org.freedesktop.indicator",
+	G_TYPE_STRING, property_name,
+	G_TYPE_INVALID, G_TYPE_INVALID);
+
+	return;
 }
 
 void
-indicate_listener_server_get_desktop (IndicateListener * listener, IndicateListenerServer * server, indicate_listener_get_desktop_cb callback, gpointer data)
+indicate_listener_server_get_type (IndicateListener * listener, IndicateListenerServer * server, indicate_listener_get_server_property_cb callback, gpointer data)
 {
+	return get_server_property(listener, server, callback, "type", data);
+}
 
-
-
+void
+indicate_listener_server_get_desktop (IndicateListener * listener, IndicateListenerServer * server, indicate_listener_get_server_property_cb callback, gpointer data)
+{
+	return get_server_property(listener, server, callback, "desktop", data);
 }
