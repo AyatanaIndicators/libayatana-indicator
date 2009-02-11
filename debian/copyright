@@ -1,1 +1,22 @@
-Canonical Copyright
+This package was debianized by Ted Gould <ted@canonical.com> on
+Wed, 11 Feb 2009 15:41:06 -0600.
+
+It was downloaded from <http://launchpad.net/indicate-applet/>
+
+Upstream Author(s):
+
+    Ted Gould <ted@canonical.com>
+
+Copyright:
+
+    <Copyright (C) 2009 Canonical Ltd.>
+
+License:
+
+    Licensed under the GPL v3
+
+    libindicate/
+    Licensed under the LGPL v2.1 and/or v3
+
+The Debian packaging is (C) 2009, Canonical Ltd. and
+is licensed under the GPLv3, see `/usr/share/common-licenses/GPL-3'.
