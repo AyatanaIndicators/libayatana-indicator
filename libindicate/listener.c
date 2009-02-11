@@ -91,6 +91,7 @@ static void proxy_struct_destroy (gpointer data);
 static void build_todo_list_cb (DBusGProxy * proxy, char ** names, GError * error, void * data);
 static void todo_list_add (const gchar * name, DBusGProxy * proxy, IndicateListener * listener);
 static gboolean todo_idle (gpointer data);
+void get_type_cb (IndicateListener * listener, IndicateListenerServer * server, gchar * type, gpointer data);
 static void proxy_server_added (DBusGProxy * proxy, const gchar * type, proxy_t * proxyt);
 static void proxy_indicator_added (DBusGProxy * proxy, guint id, const gchar * type, proxy_t * proxyt);
 static void proxy_indicator_removed (DBusGProxy * proxy, guint id, const gchar * type, proxy_t * proxyt);
@@ -450,11 +451,28 @@ todo_idle (gpointer data)
 	dbus_g_proxy_connect_signal(proxyt->proxy, "ServerShow",
 	                            G_CALLBACK(proxy_server_added), proxyt, NULL);
 
-	org_freedesktop_indicator_get_indicator_list_async(proxyt->proxy, proxy_get_indicator_list, proxyt);
+	indicate_listener_server_get_type(listener, (IndicateListenerServer *)proxyt->name, get_type_cb, proxyt);
 
 	g_hash_table_insert(priv->proxies_possible, proxyt->name, proxyt);
 
 	return TRUE;
+}
+
+void
+get_type_cb (IndicateListener * listener, IndicateListenerServer * server, gchar * type, gpointer data)
+{
+	if (type == NULL) {
+		/* This is usually caused by an error getting the type,
+		 * which would mean that this isn't an indicator server */
+		return;
+	}
+
+	proxy_t * proxyt = (proxy_t *)data;
+
+	proxy_server_added (proxyt->proxy, type, proxyt);
+	org_freedesktop_indicator_get_indicator_list_async(proxyt->proxy, proxy_get_indicator_list, proxyt);
+
+	return;
 }
 
 typedef struct {
@@ -524,10 +542,12 @@ proxy_server_added (DBusGProxy * proxy, const gchar * type, proxy_t * proxyt)
 		dbus_g_proxy_connect_signal(proxyt->proxy, "IndicatorModified",
 									G_CALLBACK(proxy_indicator_modified), proxyt, NULL);
 
-		if (proxyt->type != NULL) {
-			g_free(proxyt->type);
+		if (type != NULL) {
+			if (proxyt->type != NULL) {
+				g_free(proxyt->type);
+			}
+			proxyt->type = g_strdup(type);
 		}
-		proxyt->type = g_strdup(type);
 
 		g_signal_emit(proxyt->listener, signals[SERVER_ADDED], 0, proxyt->name, proxyt->type, TRUE);
 	}
@@ -539,7 +559,7 @@ static void
 proxy_indicator_added (DBusGProxy * proxy, guint id, const gchar * type, proxy_t * proxyt)
 {
 	if (proxyt->indicators == NULL) {
-		proxy_server_added (proxy, type, proxyt);
+		proxy_server_added (proxy, NULL, proxyt);
 	}
 
 	GHashTable * indicators = g_hash_table_lookup(proxyt->indicators, type);
