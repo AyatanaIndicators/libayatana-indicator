@@ -771,8 +771,6 @@ get_server_property (IndicateListener * listener, IndicateListenerServer * serve
 	proxy_t * proxyt = g_hash_table_lookup(priv->proxies_working, server);
 
 	if (proxyt == NULL) {
-		g_warning("Looking for a property on an interface that hasn't be setup for indicators.");
-		// Send NULL to the callback
 		return;
 	}
 
