@@ -83,6 +83,7 @@ typedef void (*indicate_listener_get_server_property_cb) (IndicateListener * lis
 
 /* Create a new listener */
 IndicateListener *    indicate_listener_new                (void);
+IndicateListener *    indicate_listener_ref_default        (void);
 void                  indicate_listener_get_property       (IndicateListener * listener,
                                                             IndicateListenerServer * server,
                                                             IndicateListenerIndicator * indicator,

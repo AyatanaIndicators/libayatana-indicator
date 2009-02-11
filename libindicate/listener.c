@@ -243,9 +243,27 @@ indicate_listener_finalize (GObject * obj)
 IndicateListener *
 indicate_listener_new (void)
 {
+	g_warning("Creating a new listener is general discouraged, please use indicate_listener_ref_default");
+
 	IndicateListener * listener;
 	listener = g_object_new(INDICATE_TYPE_LISTENER, NULL);
 	return listener;
+}
+
+static IndicateListener * default_indicate_listener = NULL;
+
+IndicateListener *
+indicate_listener_ref_default (void)
+{
+	if (default_indicate_listener != NULL) {
+		g_object_ref(default_indicate_listener);
+	} else {
+		default_indicate_listener = g_object_new(INDICATE_TYPE_LISTENER, NULL);
+		g_object_add_weak_pointer(G_OBJECT(default_indicate_listener),
+		                          (gpointer *)&default_indicate_listener);
+	}
+
+	return default_indicate_listener;
 }
 
 static void
