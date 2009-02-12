@@ -732,6 +732,7 @@ typedef struct {
 static void
 property_cb (DBusGProxy * proxy, DBusGProxyCall * call, void * data)
 {
+	g_debug("Callback for property");
 	property_cb_t * propertyt = data;
 	GError * error = NULL;
 
@@ -760,15 +761,22 @@ property_cb (DBusGProxy * proxy, DBusGProxyCall * call, void * data)
 
 	gchar * propstr = g_value_dup_string(&property);
 
+	g_debug("\tProperty value: %s", propstr);
+
 	return cb(listener, server, propstr, cb_data);
 }
 
 static void
 get_server_property (IndicateListener * listener, IndicateListenerServer * server, indicate_listener_get_server_property_cb callback, const gchar * property_name, gpointer data)
 {
+	g_debug("Setting up callback for property: %s", property_name);
+
 	IndicateListenerPrivate * priv = INDICATE_LISTENER_GET_PRIVATE(listener);
 
-	proxy_t * proxyt = g_hash_table_lookup(priv->proxies_working, server);
+	proxy_t * proxyt = g_hash_table_lookup(priv->proxies_possible, server);
+	if (proxyt == NULL) {
+		proxy_t * proxyt = g_hash_table_lookup(priv->proxies_working, server);
+	}
 
 	if (proxyt == NULL) {
 		return;
@@ -785,6 +793,7 @@ get_server_property (IndicateListener * listener, IndicateListenerServer * serve
 			bus_name = "session";
 		}
 
+		g_debug("Createing property proxy on %s bus", bus_name);
 		proxyt->property_proxy = dbus_g_proxy_new_for_name(bus,
 		                                                   proxyt->name,
 		                                                   "/org/freedesktop/indicate",
@@ -801,9 +810,10 @@ get_server_property (IndicateListener * listener, IndicateListenerServer * serve
 	"Get",
 	property_cb,
 	localdata,
+	NULL,
 	G_TYPE_STRING, "org.freedesktop.indicator",
 	G_TYPE_STRING, property_name,
-	G_TYPE_INVALID, G_TYPE_INVALID);
+	G_TYPE_INVALID, G_TYPE_VALUE, G_TYPE_INVALID);
 
 	return;
 }
