@@ -71,6 +71,7 @@ struct _IndicateListenerPrivate
 typedef struct {
 	DBusGProxy * proxy;
 	DBusGProxy * property_proxy;
+	DBusGConnection * connection;
 	gchar * name;
 	gchar * type;
 	IndicateListener * listener;
@@ -438,6 +439,7 @@ todo_idle (gpointer data)
 	proxyt->property_proxy = NULL;
 	proxyt->listener = listener;
 	proxyt->indicators = NULL;
+	proxyt->connection = todo->bus;
 
 	priv->proxy_todo = g_array_remove_index(priv->proxy_todo, priv->proxy_todo->len - 1);
 
@@ -732,7 +734,7 @@ typedef struct {
 static void
 property_cb (DBusGProxy * proxy, DBusGProxyCall * call, void * data)
 {
-	g_debug("Callback for property %s %s %s", dbus_g_proxy_get_bus_name(proxy), dbus_g_proxy_get_path(proxy), dbus_g_proxy_get_interface(proxy));
+	/* g_debug("Callback for property %s %s %s", dbus_g_proxy_get_bus_name(proxy), dbus_g_proxy_get_path(proxy), dbus_g_proxy_get_interface(proxy)); */
 	property_cb_t * propertyt = data;
 	GError * error = NULL;
 
@@ -761,7 +763,7 @@ property_cb (DBusGProxy * proxy, DBusGProxyCall * call, void * data)
 
 	gchar * propstr = g_value_dup_string(&property);
 
-	g_debug("\tProperty value: %s", propstr);
+	/* g_debug("\tProperty value: %s", propstr); */
 
 	return cb(listener, server, propstr, cb_data);
 }
@@ -769,8 +771,7 @@ property_cb (DBusGProxy * proxy, DBusGProxyCall * call, void * data)
 static void
 get_server_property (IndicateListener * listener, IndicateListenerServer * server, indicate_listener_get_server_property_cb callback, const gchar * property_name, gpointer data)
 {
-	g_debug("Setting up callback for property: %s", property_name);
-
+	/* g_debug("Setting up callback for property: %s", property_name); */
 	IndicateListenerPrivate * priv = INDICATE_LISTENER_GET_PRIVATE(listener);
 
 	proxy_t * proxyt = g_hash_table_lookup(priv->proxies_possible, server);
@@ -783,18 +784,7 @@ get_server_property (IndicateListener * listener, IndicateListenerServer * serve
 	}
 
 	if (proxyt->property_proxy == NULL) {
-		DBusGConnection * bus;
-		gchar * bus_name;
-		if (proxyt->proxy == priv->dbus_proxy_system) {
-			bus = priv->system_bus;
-			bus_name = "system";
-		} else {
-			bus = priv->session_bus;
-			bus_name = "session";
-		}
-
-		g_debug("Createing property proxy on %s bus", bus_name);
-		proxyt->property_proxy = dbus_g_proxy_new_for_name(bus,
+		proxyt->property_proxy = dbus_g_proxy_new_for_name(proxyt->connection,
 		                                                   proxyt->name,
 		                                                   "/org/freedesktop/indicate",
 		                                                   DBUS_INTERFACE_PROPERTIES);
@@ -807,13 +797,13 @@ get_server_property (IndicateListener * listener, IndicateListenerServer * serve
 	localdata->data = data;
 
 	dbus_g_proxy_begin_call (proxyt->property_proxy,
-	"Get",
-	property_cb,
-	localdata,
-	NULL,
-	G_TYPE_STRING, "org.freedesktop.indicator",
-	G_TYPE_STRING, property_name,
-	G_TYPE_INVALID, G_TYPE_VALUE, G_TYPE_INVALID);
+	                         "Get",
+	                         property_cb,
+	                         localdata,
+	                         NULL,
+	                         G_TYPE_STRING, "org.freedesktop.indicator",
+	                         G_TYPE_STRING, property_name,
+	                         G_TYPE_INVALID, G_TYPE_VALUE, G_TYPE_INVALID);
 
 	return;
 }
