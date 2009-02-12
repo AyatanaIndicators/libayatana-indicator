@@ -887,3 +887,4 @@ indicate_listener_server_get_desktop (IndicateListener * listener, IndicateListe
 {
 	return get_server_property(listener, server, callback, "desktop", data);
 }
+
