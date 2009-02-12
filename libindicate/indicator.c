@@ -240,8 +240,24 @@ indicate_indicator_set_property (IndicateIndicator * indicator, const gchar * ke
 void
 indicate_indicator_set_property_icon (IndicateIndicator * indicator, const gchar * key, const GdkPixbuf * data)
 {
+	GOutputStream * output = g_memory_output_stream_new(NULL, 0, g_realloc, g_free);
 
+	if (!gdk_pixbuf_save_to_stream(data, output, "png", NULL, NULL, "compress", 9)) {
+		g_output_stream_close(output, NULL, NULL);
+		g_warning("Unable to create pixbuf data stream");
+		return;
+	}
 
+	gpointer png_data  = g_memory_output_stream_get_data(output);
+	gsize png_data_len = g_memory_output_stream_get_data_size(output);
+
+	gchar * prop_str = g_base64_encode(png_data, png_data_len);
+	indicate_indicator_set_property(indicator, key, prop_str);
+
+	g_free(prop_str);
+	g_output_stream_close(output, NULL, NULL);
+
+	return;
 }
 
 void
