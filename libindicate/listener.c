@@ -244,7 +244,7 @@ indicate_listener_finalize (GObject * obj)
 IndicateListener *
 indicate_listener_new (void)
 {
-	g_warning("Creating a new listener is general discouraged, please use indicate_listener_ref_default");
+	g_warning("Creating a new listener is generally discouraged, please use indicate_listener_ref_default");
 
 	IndicateListener * listener;
 	listener = g_object_new(INDICATE_TYPE_LISTENER, NULL);
@@ -451,9 +451,9 @@ todo_idle (gpointer data)
 	dbus_g_proxy_connect_signal(proxyt->proxy, "ServerShow",
 	                            G_CALLBACK(proxy_server_added), proxyt, NULL);
 
-	indicate_listener_server_get_type(listener, (IndicateListenerServer *)proxyt->name, get_type_cb, proxyt);
-
 	g_hash_table_insert(priv->proxies_possible, proxyt->name, proxyt);
+
+	indicate_listener_server_get_type(listener, (IndicateListenerServer *)proxyt->name, get_type_cb, proxyt);
 
 	return TRUE;
 }
@@ -732,15 +732,15 @@ typedef struct {
 static void
 property_cb (DBusGProxy * proxy, DBusGProxyCall * call, void * data)
 {
-	g_debug("Callback for property");
+	g_debug("Callback for property %s %s %s", dbus_g_proxy_get_bus_name(proxy), dbus_g_proxy_get_path(proxy), dbus_g_proxy_get_interface(proxy));
 	property_cb_t * propertyt = data;
 	GError * error = NULL;
 
-	GValue property;
+	GValue property = {0};
 
 	dbus_g_proxy_end_call(proxy, call, &error, G_TYPE_VALUE, &property, G_TYPE_INVALID);
 	if (error != NULL) {
-		g_warning("Unable to get property: %s", error->message);
+		/* g_warning("Unable to get property: %s", error->message); */
 		g_error_free(error);
 		g_free(propertyt);
 		return;
