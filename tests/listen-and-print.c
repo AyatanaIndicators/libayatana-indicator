@@ -48,8 +48,9 @@ show_property_time_cb (IndicateListener * listener, IndicateListenerServer * ser
 static void 
 show_property_icon_cb (IndicateListener * listener, IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * property, GdkPixbuf * propertydata, gpointer data)
 {
-
-
+	g_debug("Indicator Property:       %s %d %s %dx%d", INDICATE_LISTENER_SERVER_DBUS_NAME(server), INDICATE_LISTENER_INDICATOR_ID(indicator), property, gdk_pixbuf_get_width(propertydata), gdk_pixbuf_get_height(propertydata));
+	g_object_unref(G_OBJECT(propertydata));
+	return;
 }
 
 static void
