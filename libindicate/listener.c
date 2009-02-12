@@ -650,14 +650,22 @@ proxy_indicators_free (gpointer data)
 	return;
 }
 
+typedef enum _get_property_type get_property_type;
+enum _get_property_type {
+	PROPERTY_TYPE_STRING,
+	PROPERTY_TYPE_TIME,
+	PROPERTY_TYPE_ICON
+};
+
 typedef struct _get_property_t get_property_t;
 struct _get_property_t {
-	indicate_listener_get_property_cb cb;
+	GCallback cb;
 	gpointer data;
 	IndicateListener * listener;
 	IndicateListenerServer * server;
 	IndicateListenerIndicator * indicator;
 	gchar * property;
+	get_property_type type;
 };
 
 static void
@@ -671,7 +679,54 @@ get_property_cb (DBusGProxy *proxy, char * OUT_value, GError *error, gpointer us
 		return;
 	}
 
-	get_property_data->cb(get_property_data->listener, get_property_data->server, get_property_data->indicator, get_property_data->property, OUT_value, get_property_data->data);
+	switch (get_property_data->type) {
+	case PROPERTY_TYPE_STRING: {
+		indicate_listener_get_property_cb cb = (indicate_listener_get_property_cb)get_property_data->cb;
+		cb(get_property_data->listener, get_property_data->server, get_property_data->indicator, get_property_data->property, OUT_value, get_property_data->data);
+		break;
+	}
+	case PROPERTY_TYPE_ICON: {
+		indicate_listener_get_property_icon_cb cb = (indicate_listener_get_property_icon_cb)get_property_data->cb;
+
+		gsize length = 0;
+		guchar * icondata = g_base64_decode(OUT_value, &length);
+		
+		GInputStream * input = g_memory_input_stream_new_from_data(icondata, length, NULL);
+		if (input == NULL) {
+			g_warning("Cound not create input stream from icon property data");
+			g_free(icondata);
+			break;
+		}
+
+		GError * error = NULL;
+		GdkPixbuf * icon = gdk_pixbuf_new_from_stream(input, NULL, &error);
+		if (icon != NULL) {
+			cb(get_property_data->listener, get_property_data->server, get_property_data->indicator, get_property_data->property, icon, get_property_data->data);
+		}
+
+		if (error != NULL) {
+			g_warning("Unable to build Pixbuf from icon data: %s", error->message);
+			g_error_free(error);
+		}
+
+		error = NULL;
+		g_input_stream_close(input, NULL, &error);
+		if (error != NULL) {
+			g_warning("Unable to close input stream: %s", error->message);
+			g_error_free(error);
+		}
+		g_free(icondata);
+		break;
+	}
+	case PROPERTY_TYPE_TIME: {
+		indicate_listener_get_property_time_cb cb = (indicate_listener_get_property_time_cb)get_property_data->cb;
+		GTimeVal time;
+		if (g_time_val_from_iso8601(OUT_value, &time)) {
+			cb(get_property_data->listener, get_property_data->server, get_property_data->indicator, get_property_data->property, &time, get_property_data->data);
+		}
+		break;
+	}
+	}
 
 	g_free(get_property_data->property);
 	g_free(get_property_data);
@@ -679,9 +734,10 @@ get_property_cb (DBusGProxy *proxy, char * OUT_value, GError *error, gpointer us
 	return;
 };
 
-void
-indicate_listener_get_property (IndicateListener * listener, IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * property, indicate_listener_get_property_cb callback, gpointer data)
+static void
+get_property_helper (IndicateListener * listener, IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * property, GCallback callback, gpointer data, get_property_type prop_type)
 {
+	/* g_debug("get_property_helper: %s %d", property, prop_type); */
 	/* TODO: Do we need to somehow refcount the server/indicator while we're waiting on this? */
 	IndicateListenerPrivate * priv = INDICATE_LISTENER_GET_PRIVATE(listener);
 
@@ -698,9 +754,28 @@ indicate_listener_get_property (IndicateListener * listener, IndicateListenerSer
 	get_property_data->server = server;
 	get_property_data->indicator = indicator;
 	get_property_data->property = g_strdup(property);
+	get_property_data->type = prop_type;
 	
 	org_freedesktop_indicator_get_indicator_property_async (proxyt->proxy , INDICATE_LISTENER_INDICATOR_ID(indicator), property, get_property_cb, get_property_data);
 	return;
+}
+
+void
+indicate_listener_get_property (IndicateListener * listener, IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * property, indicate_listener_get_property_cb callback, gpointer data)
+{
+	return get_property_helper(listener, server, indicator, property, G_CALLBACK(callback), data, PROPERTY_TYPE_STRING);
+}
+
+void
+indicate_listener_get_property_time (IndicateListener * listener, IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * property, indicate_listener_get_property_time_cb callback, gpointer data)
+{
+	return get_property_helper(listener, server, indicator, property, G_CALLBACK(callback), data, PROPERTY_TYPE_TIME);
+}
+
+void
+indicate_listener_get_property_icon (IndicateListener * listener, IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * property, indicate_listener_get_property_icon_cb callback, gpointer data)
+{
+	return get_property_helper(listener, server, indicator, property, G_CALLBACK(callback), data, PROPERTY_TYPE_ICON);
 }
 
 static void 
@@ -819,3 +894,4 @@ indicate_listener_server_get_desktop (IndicateListener * listener, IndicateListe
 {
 	return get_server_property(listener, server, callback, "desktop", data);
 }
+

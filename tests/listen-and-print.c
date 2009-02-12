@@ -23,9 +23,61 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "libindicate/listener.h"
 
 static void
+show_property_cb (IndicateListener * listener, IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * property, gchar * propertydata, gpointer data)
+{
+	g_debug("Indicator Property:       %s %d %s %s", INDICATE_LISTENER_SERVER_DBUS_NAME(server), INDICATE_LISTENER_INDICATOR_ID(indicator), property, propertydata);
+	return;
+}
+
+static void
+show_property_time_cb (IndicateListener * listener, IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * property, GTimeVal * propertydata, gpointer data)
+{
+	time_t timet;
+	struct tm * structtm;
+
+	timet = propertydata->tv_sec;
+	structtm = localtime(&timet);
+
+	gchar timestring[80];
+	strftime(timestring, 80, "%I:%M", structtm);
+
+	g_debug("Indicator Property:       %s %d %s %s", INDICATE_LISTENER_SERVER_DBUS_NAME(server), INDICATE_LISTENER_INDICATOR_ID(indicator), property, timestring);
+	return;
+}
+
+static void 
+show_property_icon_cb (IndicateListener * listener, IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * property, GdkPixbuf * propertydata, gpointer data)
+{
+	g_debug("Indicator Property:       %s %d %s %dx%d", INDICATE_LISTENER_SERVER_DBUS_NAME(server), INDICATE_LISTENER_INDICATOR_ID(indicator), property, gdk_pixbuf_get_width(propertydata), gdk_pixbuf_get_height(propertydata));
+	g_object_unref(G_OBJECT(propertydata));
+	return;
+}
+
+static void
+show_property (IndicateListener * listener, IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * property)
+{
+	if (!strcmp(property, "icon")) {
+		indicate_listener_get_property_icon(listener, server, indicator, property, show_property_icon_cb, NULL);
+	} else if (!strcmp(property, "time")) {
+		indicate_listener_get_property_time(listener, server, indicator, property, show_property_time_cb, NULL);
+	} else {
+		indicate_listener_get_property(listener, server, indicator, property, show_property_cb, NULL);
+	}
+
+	return;
+}
+
+static void
+get_properties (IndicateListener * listener, IndicateListenerServer * server, IndicateListenerIndicator * indicator)
+{
+	//TODO: Not in API yet.
+}
+
+static void
 indicator_added (IndicateListener * listener, IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * type, gpointer data)
 {
 	g_debug("Indicator Added:          %s %d %s", INDICATE_LISTENER_SERVER_DBUS_NAME(server), INDICATE_LISTENER_INDICATOR_ID(indicator), type);
+	get_properties(listener, server, indicator);
 }
 
 static void
@@ -38,6 +90,7 @@ static void
 indicator_modified (IndicateListener * listener, IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * type, gchar * property, gpointer data)
 {
 	g_debug("Indicator Modified:       %s %d %s %s", INDICATE_LISTENER_SERVER_DBUS_NAME(server), INDICATE_LISTENER_INDICATOR_ID(indicator), type, property);
+	show_property(listener, server, indicator, property);
 }
 
 static void

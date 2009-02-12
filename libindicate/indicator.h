@@ -99,6 +99,7 @@ void indicate_indicator_user_display (IndicateIndicator * indicator);
 /* Properties handling */
 void indicate_indicator_set_property (IndicateIndicator * indicator, const gchar * key, const gchar * data);
 void indicate_indicator_set_property_icon (IndicateIndicator * indicator, const gchar * key, const GdkPixbuf * data);
+void indicate_indicator_set_property_time (IndicateIndicator * indicator, const gchar * key, GTimeVal * time);
 const gchar * indicate_indicator_get_property (IndicateIndicator * indicator, const gchar * key);
 GPtrArray * indicate_indicator_list_properties (IndicateIndicator * indicator);
 

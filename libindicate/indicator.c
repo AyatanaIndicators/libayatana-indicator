@@ -240,8 +240,45 @@ indicate_indicator_set_property (IndicateIndicator * indicator, const gchar * ke
 void
 indicate_indicator_set_property_icon (IndicateIndicator * indicator, const gchar * key, const GdkPixbuf * data)
 {
+	if (!GDK_IS_PIXBUF(data)) {
+		g_warning("Invalide GdkPixbuf");
+		return;
+	}
 
+	GError * error = NULL;
+	gchar * png_data;
+	gsize png_data_len;
 
+	if (!gdk_pixbuf_save_to_buffer(data, &png_data, &png_data_len, "png", &error, NULL)) {
+		if (error == NULL) {
+			g_warning("Unable to create pixbuf data stream: %d", png_data_len);
+		} else {
+			g_warning("Unable to create pixbuf data stream: %s", error->message);
+			g_error_free(error);
+			error = NULL;
+		}
+
+		return;
+	}
+
+	gchar * prop_str = g_base64_encode(png_data, png_data_len);
+	indicate_indicator_set_property(indicator, key, prop_str);
+
+	g_free(prop_str);
+	g_free(png_data);
+
+	return;
+}
+
+void
+indicate_indicator_set_property_time (IndicateIndicator * indicator, const gchar * key, GTimeVal * time)
+{
+	gchar * timestr = g_time_val_to_iso8601(time);
+	if (timestr != NULL) {
+		indicate_indicator_set_property(indicator, key, timestr);
+		g_free(timestr);
+	}
+	return;
 }
 
 const gchar *
@@ -282,9 +319,11 @@ set_property (IndicateIndicator * indicator, const gchar * key, const gchar * da
 	if (current == NULL || strcmp(current, data)) {
 		/* If the value has changed or there is no value */
 		gchar * newkey = g_strdup(key);
+		/* g_debug("What is newkey? %s", newkey); */
 		g_hash_table_insert(priv->properties, newkey, g_strdup(data));
 		if (indicate_indicator_is_visible(indicator)) {
-			g_signal_emit(indicator, signals[MODIFIED], 0, newkey, TRUE);
+			/* g_debug("Indicator property modified: %s %s", key, data); */
+			g_signal_emit(indicator, signals[MODIFIED], 0, key, TRUE);
 		}
 	}
 
