@@ -352,6 +352,7 @@ indicator_hide_cb (IndicateIndicator * indicator, IndicateServer * server)
 static void
 indicator_modified_cb (IndicateIndicator * indicator, gchar * property, IndicateServer * server)
 {
+	/* g_debug("Indicator Modified: %d %s", indicate_indicator_get_id(indicator), property); */
 	g_signal_emit(server, signals[INDICATOR_MODIFIED], 0, indicate_indicator_get_id(indicator), property, TRUE);
 }
 

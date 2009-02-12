@@ -293,9 +293,11 @@ set_property (IndicateIndicator * indicator, const gchar * key, const gchar * da
 	if (current == NULL || strcmp(current, data)) {
 		/* If the value has changed or there is no value */
 		gchar * newkey = g_strdup(key);
+		/* g_debug("What is newkey? %s", newkey); */
 		g_hash_table_insert(priv->properties, newkey, g_strdup(data));
 		if (indicate_indicator_is_visible(indicator)) {
-			g_signal_emit(indicator, signals[MODIFIED], 0, newkey, TRUE);
+			/* g_debug("Indicator property modified: %s %s", key, data); */
+			g_signal_emit(indicator, signals[MODIFIED], 0, key, TRUE);
 		}
 	}
 
