@@ -56,7 +56,7 @@ main (int argc, char ** argv)
 
 	indicator = indicate_indicator_message_new();
 	indicate_indicator_set_property(INDICATE_INDICATOR(indicator), "subtype", "im");
-	indicate_indicator_set_property(INDICATE_INDICATOR(indicator), "sender", "Ted Gould");
+	indicate_indicator_set_property(INDICATE_INDICATOR(indicator), "sender", "IM Client Test");
 	GTimeVal time; g_get_current_time(&time);
 	indicate_indicator_set_property_time(INDICATE_INDICATOR(indicator), "time", &time);
 	indicate_indicator_show(INDICATE_INDICATOR(indicator));
