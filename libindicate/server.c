@@ -106,7 +106,7 @@ static void get_property (GObject * obj, guint id, GValue * value, GParamSpec * 
 static void
 indicate_server_class_init (IndicateServerClass * class)
 {
-	g_debug("Server Class Initialized");
+	/* g_debug("Server Class Initialized"); */
 	GObjectClass * gobj;
 	gobj = G_OBJECT_CLASS(class);
 
@@ -182,7 +182,7 @@ indicate_server_class_init (IndicateServerClass * class)
 static void
 indicate_server_init (IndicateServer * server)
 {
-	g_debug("Server Object Initialized");
+	/* g_debug("Server Object Initialized"); */
 
 	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
 
