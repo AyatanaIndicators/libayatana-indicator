@@ -23,6 +23,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "libindicate/server.h"
 #include "libindicate/indicator-message.h"
 
+static gboolean
+timeout_cb (gpointer data)
+{
+	g_debug("Modifying time");
+
+	IndicateIndicator * indicator = INDICATE_INDICATOR(data);
+
+	GTimeVal time;
+	g_get_current_time(&time);
+	indicate_indicator_set_property_time(INDICATE_INDICATOR(indicator), "time", &time);
+
+	return TRUE;
+}
+
 static void
 display (IndicateIndicator * indicator, gpointer data)
 {
@@ -53,6 +67,8 @@ main (int argc, char ** argv)
 	indicate_indicator_set_property_time(INDICATE_INDICATOR(indicator), "time", &time);
 
 	g_signal_connect(G_OBJECT(indicator), INDICATE_INDICATOR_SIGNAL_DISPLAY, G_CALLBACK(display), NULL);
+
+	g_timeout_add_seconds(180, timeout_cb, indicator);
 
 	g_main_loop_run(g_main_loop_new(NULL, FALSE));
 
