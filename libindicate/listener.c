@@ -341,10 +341,10 @@ proxy_struct_destroy (gpointer data)
 	}
 
 	if (proxy_data->property_proxy) {
-		g_object_unref(G_OBJECT(proxy_data->proxy));
+		g_object_unref(G_OBJECT(proxy_data->property_proxy));
 	}
 
-	if (proxy_data->property_proxy) {
+	if (proxy_data->proxy) {
 		g_object_unref(G_OBJECT(proxy_data->proxy));
 	}
 
