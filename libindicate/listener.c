@@ -686,9 +686,39 @@ get_property_cb (DBusGProxy *proxy, char * OUT_value, GError *error, gpointer us
 		break;
 	}
 	case PROPERTY_TYPE_ICON: {
+		indicate_listener_get_property_icon_cb cb = (indicate_listener_get_property_icon_cb)get_property_data->cb;
+		
+		GInputStream * input = g_memory_input_stream_new_from_data(OUT_value, strlen(OUT_value) - 1, NULL);
+		if (input == NULL) {
+			g_warning("Cound not create input stream from icon property data");
+			break;
+		}
+
+		GError * error = NULL;
+		GdkPixbuf * icon = gdk_pixbuf_new_from_stream(input, NULL, &error);
+		if (icon != NULL) {
+			cb(get_property_data->listener, get_property_data->server, get_property_data->indicator, get_property_data->property, icon, get_property_data->data);
+		}
+
+		if (error != NULL) {
+			g_warning("Unable to build Pixbuf from icon data: %s", error->message);
+			g_error_free(error);
+		}
+
+		error = NULL;
+		g_input_stream_close(input, NULL, error);
+		if (error != NULL) {
+			g_warning("Unable to close input stream: %s", error->message);
+			g_error_free(error);
+		}
 		break;
 	}
 	case PROPERTY_TYPE_TIME: {
+		indicate_listener_get_property_time_cb cb = (indicate_listener_get_property_icon_cb)get_property_data->cb;
+		GTimeVal time;
+		if (g_time_val_from_iso8601(OUT_value, &time)) {
+			cb(get_property_data->listener, get_property_data->server, get_property_data->indicator, get_property_data->property, &time, get_property_data->data);
+		}
 		break;
 	}
 	}
