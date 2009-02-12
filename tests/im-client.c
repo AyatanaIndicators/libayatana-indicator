@@ -49,10 +49,8 @@ main (int argc, char ** argv)
 	g_type_init();
 
 	IndicateServer * server = indicate_server_ref_default();
-	GValue value = {0};
-	g_value_init(&value, G_TYPE_STRING);
-	g_value_set_static_string(&value, "message.im");
-	g_object_set_property(G_OBJECT(server), "type", &value);
+	indicate_server_set_type(server, "message.im");
+	indicate_server_set_desktop_file(server, "/usr/share/applications/empathy.desktop");
 
 	IndicateIndicatorMessage * indicator;
 
