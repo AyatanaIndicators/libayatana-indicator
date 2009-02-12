@@ -106,7 +106,7 @@ static void get_property (GObject * obj, guint id, GValue * value, GParamSpec * 
 static void
 indicate_server_class_init (IndicateServerClass * class)
 {
-	g_debug("Server Class Initialized");
+	/* g_debug("Server Class Initialized"); */
 	GObjectClass * gobj;
 	gobj = G_OBJECT_CLASS(class);
 
@@ -182,7 +182,7 @@ indicate_server_class_init (IndicateServerClass * class)
 static void
 indicate_server_init (IndicateServer * server)
 {
-	g_debug("Server Object Initialized");
+	/* g_debug("Server Object Initialized"); */
 
 	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
 
@@ -393,6 +393,34 @@ indicate_server_remove_indicator (IndicateServer * server, IndicateIndicator * i
 	g_signal_handlers_disconnect_by_func(indicator, indicator_modified_cb, server);
 
 	g_object_unref(indicator);
+	return;
+}
+
+void
+indicate_server_set_dbus_object (const gchar * obj)
+{
+	/* TODO */
+
+	return;
+}
+
+void
+indicate_server_set_desktop_file (IndicateServer * server, const gchar * path)
+{
+	GValue value = {0};
+	g_value_init(&value, G_TYPE_STRING);
+	g_value_set_string(&value, path);
+	g_object_set_property(G_OBJECT(server), "desktop", &value);
+	return;
+}
+
+void
+indicate_server_set_type (IndicateServer * server, const gchar * type)
+{
+	GValue value = {0};
+	g_value_init(&value, G_TYPE_STRING);
+	g_value_set_string(&value, type);
+	g_object_set_property(G_OBJECT(server), "type", &value);
 	return;
 }
 

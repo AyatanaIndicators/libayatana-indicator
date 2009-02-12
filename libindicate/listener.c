@@ -70,6 +70,8 @@ struct _IndicateListenerPrivate
 
 typedef struct {
 	DBusGProxy * proxy;
+	DBusGProxy * property_proxy;
+	DBusGConnection * connection;
 	gchar * name;
 	gchar * type;
 	IndicateListener * listener;
@@ -90,6 +92,7 @@ static void proxy_struct_destroy (gpointer data);
 static void build_todo_list_cb (DBusGProxy * proxy, char ** names, GError * error, void * data);
 static void todo_list_add (const gchar * name, DBusGProxy * proxy, IndicateListener * listener);
 static gboolean todo_idle (gpointer data);
+void get_type_cb (IndicateListener * listener, IndicateListenerServer * server, gchar * type, gpointer data);
 static void proxy_server_added (DBusGProxy * proxy, const gchar * type, proxy_t * proxyt);
 static void proxy_indicator_added (DBusGProxy * proxy, guint id, const gchar * type, proxy_t * proxyt);
 static void proxy_indicator_removed (DBusGProxy * proxy, guint id, const gchar * type, proxy_t * proxyt);
@@ -242,9 +245,27 @@ indicate_listener_finalize (GObject * obj)
 IndicateListener *
 indicate_listener_new (void)
 {
+	g_warning("Creating a new listener is generally discouraged, please use indicate_listener_ref_default");
+
 	IndicateListener * listener;
 	listener = g_object_new(INDICATE_TYPE_LISTENER, NULL);
 	return listener;
+}
+
+static IndicateListener * default_indicate_listener = NULL;
+
+IndicateListener *
+indicate_listener_ref_default (void)
+{
+	if (default_indicate_listener != NULL) {
+		g_object_ref(default_indicate_listener);
+	} else {
+		default_indicate_listener = g_object_new(INDICATE_TYPE_LISTENER, NULL);
+		g_object_add_weak_pointer(G_OBJECT(default_indicate_listener),
+		                          (gpointer *)&default_indicate_listener);
+	}
+
+	return default_indicate_listener;
 }
 
 static void
@@ -317,6 +338,14 @@ proxy_struct_destroy (gpointer data)
 
 		g_signal_emit(proxy_data->listener, signals[SERVER_REMOVED], 0, proxy_data->name, proxy_data->type, TRUE);
 		proxy_data->indicators = NULL;
+	}
+
+	if (proxy_data->property_proxy) {
+		g_object_unref(G_OBJECT(proxy_data->property_proxy));
+	}
+
+	if (proxy_data->proxy) {
+		g_object_unref(G_OBJECT(proxy_data->proxy));
 	}
 
 	g_free(proxy_data->name);
@@ -407,8 +436,10 @@ todo_idle (gpointer data)
 	                                          proxyt->name,
 	                                          "/org/freedesktop/indicate",
 	                                          "org.freedesktop.indicator");
+	proxyt->property_proxy = NULL;
 	proxyt->listener = listener;
 	proxyt->indicators = NULL;
+	proxyt->connection = todo->bus;
 
 	priv->proxy_todo = g_array_remove_index(priv->proxy_todo, priv->proxy_todo->len - 1);
 
@@ -422,11 +453,28 @@ todo_idle (gpointer data)
 	dbus_g_proxy_connect_signal(proxyt->proxy, "ServerShow",
 	                            G_CALLBACK(proxy_server_added), proxyt, NULL);
 
-	org_freedesktop_indicator_get_indicator_list_async(proxyt->proxy, proxy_get_indicator_list, proxyt);
-
 	g_hash_table_insert(priv->proxies_possible, proxyt->name, proxyt);
 
+	indicate_listener_server_get_type(listener, (IndicateListenerServer *)proxyt->name, get_type_cb, proxyt);
+
 	return TRUE;
+}
+
+void
+get_type_cb (IndicateListener * listener, IndicateListenerServer * server, gchar * type, gpointer data)
+{
+	if (type == NULL) {
+		/* This is usually caused by an error getting the type,
+		 * which would mean that this isn't an indicator server */
+		return;
+	}
+
+	proxy_t * proxyt = (proxy_t *)data;
+
+	proxy_server_added (proxyt->proxy, type, proxyt);
+	org_freedesktop_indicator_get_indicator_list_async(proxyt->proxy, proxy_get_indicator_list, proxyt);
+
+	return;
 }
 
 typedef struct {
@@ -496,10 +544,12 @@ proxy_server_added (DBusGProxy * proxy, const gchar * type, proxy_t * proxyt)
 		dbus_g_proxy_connect_signal(proxyt->proxy, "IndicatorModified",
 									G_CALLBACK(proxy_indicator_modified), proxyt, NULL);
 
-		if (proxyt->type != NULL) {
-			g_free(proxyt->type);
+		if (type != NULL) {
+			if (proxyt->type != NULL) {
+				g_free(proxyt->type);
+			}
+			proxyt->type = g_strdup(type);
 		}
-		proxyt->type = g_strdup(type);
 
 		g_signal_emit(proxyt->listener, signals[SERVER_ADDED], 0, proxyt->name, proxyt->type, TRUE);
 	}
@@ -511,7 +561,7 @@ static void
 proxy_indicator_added (DBusGProxy * proxy, guint id, const gchar * type, proxy_t * proxyt)
 {
 	if (proxyt->indicators == NULL) {
-		proxy_server_added (proxy, type, proxyt);
+		proxy_server_added (proxy, NULL, proxyt);
 	}
 
 	GHashTable * indicators = g_hash_table_lookup(proxyt->indicators, type);
@@ -672,4 +722,100 @@ indicate_listener_display (IndicateListener * listener, IndicateListenerServer *
 	org_freedesktop_indicator_show_indicator_to_user_async (proxyt->proxy, INDICATE_LISTENER_INDICATOR_ID(indicator), listener_display_cb, NULL);
 
 	return;
+}
+
+typedef struct {
+	IndicateListener * listener;
+	IndicateListenerServer * server;
+	indicate_listener_get_server_property_cb cb;
+	gpointer data;
+} property_cb_t;
+
+static void
+property_cb (DBusGProxy * proxy, DBusGProxyCall * call, void * data)
+{
+	/* g_debug("Callback for property %s %s %s", dbus_g_proxy_get_bus_name(proxy), dbus_g_proxy_get_path(proxy), dbus_g_proxy_get_interface(proxy)); */
+	property_cb_t * propertyt = data;
+	GError * error = NULL;
+
+	GValue property = {0};
+
+	dbus_g_proxy_end_call(proxy, call, &error, G_TYPE_VALUE, &property, G_TYPE_INVALID);
+	if (error != NULL) {
+		/* g_warning("Unable to get property: %s", error->message); */
+		g_error_free(error);
+		g_free(propertyt);
+		return;
+	}
+
+	if (!G_VALUE_HOLDS_STRING(&property)) {
+		g_warning("Property returned is not a string!");
+		g_free(propertyt);
+		return;
+	}
+
+	IndicateListener * listener = propertyt->listener;
+	IndicateListenerServer * server = propertyt->server;
+	indicate_listener_get_server_property_cb cb = propertyt->cb;
+	gpointer cb_data = propertyt->data;
+
+	g_free(propertyt);
+
+	gchar * propstr = g_value_dup_string(&property);
+
+	/* g_debug("\tProperty value: %s", propstr); */
+
+	return cb(listener, server, propstr, cb_data);
+}
+
+static void
+get_server_property (IndicateListener * listener, IndicateListenerServer * server, indicate_listener_get_server_property_cb callback, const gchar * property_name, gpointer data)
+{
+	/* g_debug("Setting up callback for property: %s", property_name); */
+	IndicateListenerPrivate * priv = INDICATE_LISTENER_GET_PRIVATE(listener);
+
+	proxy_t * proxyt = g_hash_table_lookup(priv->proxies_possible, server);
+	if (proxyt == NULL) {
+		proxy_t * proxyt = g_hash_table_lookup(priv->proxies_working, server);
+	}
+
+	if (proxyt == NULL) {
+		return;
+	}
+
+	if (proxyt->property_proxy == NULL) {
+		proxyt->property_proxy = dbus_g_proxy_new_for_name(proxyt->connection,
+		                                                   proxyt->name,
+		                                                   "/org/freedesktop/indicate",
+		                                                   DBUS_INTERFACE_PROPERTIES);
+	}
+
+	property_cb_t * localdata = g_new(property_cb_t, 1);
+	localdata->listener = listener;
+	localdata->server = server;
+	localdata->cb = callback;
+	localdata->data = data;
+
+	dbus_g_proxy_begin_call (proxyt->property_proxy,
+	                         "Get",
+	                         property_cb,
+	                         localdata,
+	                         NULL,
+	                         G_TYPE_STRING, "org.freedesktop.indicator",
+	                         G_TYPE_STRING, property_name,
+	                         G_TYPE_INVALID, G_TYPE_VALUE, G_TYPE_INVALID);
+
+	return;
+}
+
+void
+indicate_listener_server_get_type (IndicateListener * listener, IndicateListenerServer * server, indicate_listener_get_server_property_cb callback, gpointer data)
+{
+	return get_server_property(listener, server, callback, "type", data);
+}
+
+void
+indicate_listener_server_get_desktop (IndicateListener * listener, IndicateListenerServer * server, indicate_listener_get_server_property_cb callback, gpointer data)
+{
+	return get_server_property(listener, server, callback, "desktop", data);
 }

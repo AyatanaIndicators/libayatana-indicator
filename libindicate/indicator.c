@@ -67,7 +67,7 @@ static GPtrArray * list_properties (IndicateIndicator * indicator);
 static void
 indicate_indicator_class_init (IndicateIndicatorClass * class)
 {
-	g_debug("Indicator Class Initialized.");
+	/* g_debug("Indicator Class Initialized."); */
 
 	GObjectClass * gobj;
 	gobj = G_OBJECT_CLASS(class);
@@ -116,7 +116,7 @@ indicate_indicator_class_init (IndicateIndicatorClass * class)
 static void
 indicate_indicator_init (IndicateIndicator * indicator)
 {
-	g_debug("Indicator Object Initialized.");
+	/* g_debug("Indicator Object Initialized."); */
 	IndicateIndicatorPrivate * priv = INDICATE_INDICATOR_GET_PRIVATE(indicator);
 
 	priv->is_visible = FALSE;

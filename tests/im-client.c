@@ -37,7 +37,7 @@ main (int argc, char ** argv)
 	IndicateServer * server = indicate_server_ref_default();
 	GValue value = {0};
 	g_value_init(&value, G_TYPE_STRING);
-	g_value_set_static_string(&value, "message");
+	g_value_set_static_string(&value, "message.im");
 	g_object_set_property(G_OBJECT(server), "type", &value);
 
 	IndicateIndicatorMessage * indicator;

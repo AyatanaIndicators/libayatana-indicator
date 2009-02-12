@@ -231,8 +231,18 @@ void
 <RETURNS>void </RETURNS>
 IndicateListener * listener, IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * property, gchar * propertydata, gpointer data
 </USER_FUNCTION>
+<USER_FUNCTION>
+<NAME>indicate_listener_get_server_property_cb</NAME>
+<RETURNS>void </RETURNS>
+IndicateListener * listener, IndicateListenerServer * server, gchar * value, gpointer data
+</USER_FUNCTION>
 <FUNCTION>
 <NAME>indicate_listener_new</NAME>
+<RETURNS>IndicateListener *</RETURNS>
+void
+</FUNCTION>
+<FUNCTION>
+<NAME>indicate_listener_ref_default</NAME>
 <RETURNS>IndicateListener *</RETURNS>
 void
 </FUNCTION>
@@ -245,6 +255,16 @@ IndicateListener * listener,IndicateListenerServer * server,IndicateListenerIndi
 <NAME>indicate_listener_display</NAME>
 <RETURNS>void                  </RETURNS>
 IndicateListener * listener,IndicateListenerServer * server,IndicateListenerIndicator * indicator
+</FUNCTION>
+<FUNCTION>
+<NAME>indicate_listener_server_get_type</NAME>
+<RETURNS>void                  </RETURNS>
+IndicateListener * listener,IndicateListenerServer * server,indicate_listener_get_server_property_cb callback,gpointer data
+</FUNCTION>
+<FUNCTION>
+<NAME>indicate_listener_server_get_desktop</NAME>
+<RETURNS>void                  </RETURNS>
+IndicateListener * listener,IndicateListenerServer * server,indicate_listener_get_server_property_cb callback,gpointer data
 </FUNCTION>
 <MACRO>
 <NAME>INDICATE_TYPE_SERVER</NAME>
@@ -326,7 +346,12 @@ const gchar * obj
 <FUNCTION>
 <NAME>indicate_server_set_desktop_file</NAME>
 <RETURNS>void </RETURNS>
-const gchar * path
+IndicateServer * server, const gchar * path
+</FUNCTION>
+<FUNCTION>
+<NAME>indicate_server_set_type</NAME>
+<RETURNS>void </RETURNS>
+IndicateServer * server, const gchar * type
 </FUNCTION>
 <FUNCTION>
 <NAME>indicate_server_show</NAME>
