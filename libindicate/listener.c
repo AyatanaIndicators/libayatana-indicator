@@ -706,7 +706,7 @@ get_property_cb (DBusGProxy *proxy, char * OUT_value, GError *error, gpointer us
 		}
 
 		error = NULL;
-		g_input_stream_close(input, NULL, error);
+		g_input_stream_close(input, NULL, &error);
 		if (error != NULL) {
 			g_warning("Unable to close input stream: %s", error->message);
 			g_error_free(error);
@@ -714,7 +714,7 @@ get_property_cb (DBusGProxy *proxy, char * OUT_value, GError *error, gpointer us
 		break;
 	}
 	case PROPERTY_TYPE_TIME: {
-		indicate_listener_get_property_time_cb cb = (indicate_listener_get_property_icon_cb)get_property_data->cb;
+		indicate_listener_get_property_time_cb cb = (indicate_listener_get_property_time_cb)get_property_data->cb;
 		GTimeVal time;
 		if (g_time_val_from_iso8601(OUT_value, &time)) {
 			cb(get_property_data->listener, get_property_data->server, get_property_data->indicator, get_property_data->property, &time, get_property_data->data);
@@ -732,6 +732,7 @@ get_property_cb (DBusGProxy *proxy, char * OUT_value, GError *error, gpointer us
 static void
 get_property_helper (IndicateListener * listener, IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * property, GCallback callback, gpointer data, get_property_type prop_type)
 {
+	/* g_debug("get_property_helper: %s %d", property, prop_type); */
 	/* TODO: Do we need to somehow refcount the server/indicator while we're waiting on this? */
 	IndicateListenerPrivate * priv = INDICATE_LISTENER_GET_PRIVATE(listener);
 
@@ -748,6 +749,7 @@ get_property_helper (IndicateListener * listener, IndicateListenerServer * serve
 	get_property_data->server = server;
 	get_property_data->indicator = indicator;
 	get_property_data->property = g_strdup(property);
+	get_property_data->type = prop_type;
 	
 	org_freedesktop_indicator_get_indicator_property_async (proxyt->proxy , INDICATE_LISTENER_INDICATOR_ID(indicator), property, get_property_cb, get_property_data);
 	return;
