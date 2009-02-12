@@ -1,3 +1,13 @@
+indicator-applet (0.1~ppa36) intrepid; urgency=low
+
+  * Better handling of the properties with convience functions
+    and working on both sides of the connection.
+  * Cleaning up the listener code to make it more robust.
+  * Adding a ref_default for listeners.
+  * Correcting all of the license information.
+
+ -- Ted Gould <ted@ubuntu.com>  Wed, 11 Feb 2009 20:34:14 -0600
+
 indicator-applet (0.1~ppa35) intrepid; urgency=low
 
   * Better use of type and sending it with signals.
