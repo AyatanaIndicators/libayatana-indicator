@@ -244,6 +244,17 @@ indicate_indicator_set_property_icon (IndicateIndicator * indicator, const gchar
 
 }
 
+void
+indicate_indicator_set_property_time (IndicateIndicator * indicator, const gchar * key, GTimeVal * time)
+{
+	gchar * timestr = g_time_val_to_iso8601(time);
+	if (timestr != NULL) {
+		indicate_indicator_set_property(indicator, key, timestr);
+		g_free(timestr);
+	}
+	return;
+}
+
 const gchar *
 indicate_indicator_get_property (IndicateIndicator * indicator, const gchar * key)
 {
