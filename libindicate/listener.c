@@ -687,10 +687,14 @@ get_property_cb (DBusGProxy *proxy, char * OUT_value, GError *error, gpointer us
 	}
 	case PROPERTY_TYPE_ICON: {
 		indicate_listener_get_property_icon_cb cb = (indicate_listener_get_property_icon_cb)get_property_data->cb;
+
+		gsize length = 0;
+		guchar * icondata = g_base64_decode(OUT_value, &length);
 		
-		GInputStream * input = g_memory_input_stream_new_from_data(OUT_value, strlen(OUT_value) - 1, NULL);
+		GInputStream * input = g_memory_input_stream_new_from_data(icondata, length, NULL);
 		if (input == NULL) {
 			g_warning("Cound not create input stream from icon property data");
+			g_free(icondata);
 			break;
 		}
 
@@ -711,6 +715,7 @@ get_property_cb (DBusGProxy *proxy, char * OUT_value, GError *error, gpointer us
 			g_warning("Unable to close input stream: %s", error->message);
 			g_error_free(error);
 		}
+		g_free(icondata);
 		break;
 	}
 	case PROPERTY_TYPE_TIME: {
