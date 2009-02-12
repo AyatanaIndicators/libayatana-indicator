@@ -82,7 +82,7 @@ main (int argc, char ** argv)
 
 	g_signal_connect(G_OBJECT(indicator), INDICATE_INDICATOR_SIGNAL_DISPLAY, G_CALLBACK(display), NULL);
 
-	g_timeout_add_seconds(10, timeout_cb, indicator);
+	g_timeout_add_seconds(180, timeout_cb, indicator);
 
 	g_main_loop_run(g_main_loop_new(NULL, FALSE));
 
