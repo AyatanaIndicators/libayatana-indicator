@@ -240,22 +240,32 @@ indicate_indicator_set_property (IndicateIndicator * indicator, const gchar * ke
 void
 indicate_indicator_set_property_icon (IndicateIndicator * indicator, const gchar * key, const GdkPixbuf * data)
 {
-	GOutputStream * output = g_memory_output_stream_new(NULL, 0, g_realloc, g_free);
-
-	if (!gdk_pixbuf_save_to_stream(data, output, "png", NULL, NULL, "compress", 9)) {
-		g_output_stream_close(output, NULL, NULL);
-		g_warning("Unable to create pixbuf data stream");
+	if (!GDK_IS_PIXBUF(data)) {
+		g_warning("Invalide GdkPixbuf");
 		return;
 	}
 
-	gpointer png_data  = g_memory_output_stream_get_data(output);
-	gsize png_data_len = g_memory_output_stream_get_data_size(output);
+	GError * error = NULL;
+	gchar * png_data;
+	gsize png_data_len;
+
+	if (!gdk_pixbuf_save_to_buffer(data, &png_data, &png_data_len, "png", &error, NULL)) {
+		if (error == NULL) {
+			g_warning("Unable to create pixbuf data stream: %d", png_data_len);
+		} else {
+			g_warning("Unable to create pixbuf data stream: %s", error->message);
+			g_error_free(error);
+			error = NULL;
+		}
+
+		return;
+	}
 
 	gchar * prop_str = g_base64_encode(png_data, png_data_len);
 	indicate_indicator_set_property(indicator, key, prop_str);
 
 	g_free(prop_str);
-	g_output_stream_close(output, NULL, NULL);
+	g_free(png_data);
 
 	return;
 }
