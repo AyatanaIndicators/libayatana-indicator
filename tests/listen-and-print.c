@@ -57,7 +57,7 @@ main (int argc, char ** argv)
 {
 	g_type_init();
 
-	IndicateListener * listener = indicate_listener_new();
+	IndicateListener * listener = indicate_listener_ref_default();
 
 	g_signal_connect(listener, INDICATE_LISTENER_SIGNAL_INDICATOR_ADDED, G_CALLBACK(indicator_added), NULL);
 	g_signal_connect(listener, INDICATE_LISTENER_SIGNAL_INDICATOR_REMOVED, G_CALLBACK(indicator_removed), NULL);
