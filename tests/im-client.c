@@ -45,10 +45,12 @@ main (int argc, char ** argv)
 	indicator = indicate_indicator_message_new();
 	indicate_indicator_set_property(INDICATE_INDICATOR(indicator), "subtype", "im");
 	indicate_indicator_set_property(INDICATE_INDICATOR(indicator), "sender", "Ted Gould");
-	indicate_indicator_set_property(INDICATE_INDICATOR(indicator), "time", "11:11");
+	GTimeVal time; g_get_current_time(&time);
+	indicate_indicator_set_property_time(INDICATE_INDICATOR(indicator), "time", &time);
 	indicate_indicator_show(INDICATE_INDICATOR(indicator));
 
-	indicate_indicator_set_property(INDICATE_INDICATOR(indicator), "time", "11:12");
+	g_get_current_time(&time);
+	indicate_indicator_set_property_time(INDICATE_INDICATOR(indicator), "time", &time);
 
 	g_signal_connect(G_OBJECT(indicator), INDICATE_INDICATOR_SIGNAL_DISPLAY, G_CALLBACK(display), NULL);
 
