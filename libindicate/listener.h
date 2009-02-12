@@ -33,6 +33,8 @@ License version 3 and version 2.1 along with this program.  If not, see
 #include <glib.h>
 #include <glib-object.h>
 
+#include <gdk-pixbuf/gdk-pixbuf.h>
+
 #include "indicator.h"
 #include "server.h"
 
@@ -79,6 +81,8 @@ struct _IndicateListenerClass {
 GType indicate_listener_get_type (void) G_GNUC_CONST;
 
 typedef void (*indicate_listener_get_property_cb) (IndicateListener * listener, IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * property, gchar * propertydata, gpointer data);
+typedef void (*indicate_listener_get_property_time_cb) (IndicateListener * listener, IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * property, GTimeVal * propertydata, gpointer data);
+typedef void (*indicate_listener_get_property_icon_cb) (IndicateListener * listener, IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * property, GdkPixbuf * propertydata, gpointer data);
 typedef void (*indicate_listener_get_server_property_cb) (IndicateListener * listener, IndicateListenerServer * server, gchar * value, gpointer data);
 
 /* Create a new listener */
@@ -89,6 +93,18 @@ void                  indicate_listener_get_property       (IndicateListener * l
                                                             IndicateListenerIndicator * indicator,
                                                             gchar * property,
                                                             indicate_listener_get_property_cb callback,
+                                                            gpointer data);
+void                  indicate_listener_get_property_time  (IndicateListener * listener,
+                                                            IndicateListenerServer * server,
+                                                            IndicateListenerIndicator * indicator,
+                                                            gchar * property,
+                                                            indicate_listener_get_property_time_cb callback,
+                                                            gpointer data);
+void                  indicate_listener_get_property_icon  (IndicateListener * listener,
+                                                            IndicateListenerServer * server,
+                                                            IndicateListenerIndicator * indicator,
+                                                            gchar * property,
+                                                            indicate_listener_get_property_icon_cb callback,
                                                             gpointer data);
 void                  indicate_listener_display            (IndicateListener * listener,
                                                             IndicateListenerServer * server,
