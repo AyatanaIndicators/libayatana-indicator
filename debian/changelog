@@ -1,3 +1,10 @@
+indicator-applet (0.1~ppa39) intrepid; urgency=low
+
+  * Fixing a bug where properties didn't work on running
+    servers.  Locally defined variable, oops.
+
+ -- Ted Gould <ted@ubuntu.com>  Fri, 13 Feb 2009 15:13:36 -0600
+
 indicator-applet (0.1~ppa38) intrepid; urgency=low
 
   * Adding gio to the configure script.  I'm unsure why it builds
