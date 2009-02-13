@@ -1,3 +1,11 @@
+indicator-applet (0.1~ppa38) intrepid; urgency=low
+
+  * Adding gio to the configure script.  I'm unsure why it builds
+    locally and not on the buildds because of this.  But, it seems
+    to make a difference.  Eh, no more dependencies really.
+
+ -- Ted Gould <ted@ubuntu.com>  Thu, 12 Feb 2009 20:19:11 -0600
+
 indicator-applet (0.1~ppa37) intrepid; urgency=low
 
   * Really fleshing out the icon and time stuff so that it
