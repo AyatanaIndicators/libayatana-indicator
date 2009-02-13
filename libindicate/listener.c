@@ -846,15 +846,16 @@ property_cb (DBusGProxy * proxy, DBusGProxyCall * call, void * data)
 static void
 get_server_property (IndicateListener * listener, IndicateListenerServer * server, indicate_listener_get_server_property_cb callback, const gchar * property_name, gpointer data)
 {
-	/* g_debug("Setting up callback for property: %s", property_name); */
+	/* g_debug("Setting up callback for property %s on %s", property_name, INDICATE_LISTENER_SERVER_DBUS_NAME(server)); */
 	IndicateListenerPrivate * priv = INDICATE_LISTENER_GET_PRIVATE(listener);
 
 	proxy_t * proxyt = g_hash_table_lookup(priv->proxies_possible, server);
 	if (proxyt == NULL) {
-		proxy_t * proxyt = g_hash_table_lookup(priv->proxies_working, server);
+		proxyt = g_hash_table_lookup(priv->proxies_working, server);
 	}
 
 	if (proxyt == NULL) {
+		g_warning("Can not find a proxy for the server at all.");
 		return;
 	}
 
