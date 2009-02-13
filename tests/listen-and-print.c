@@ -94,9 +94,23 @@ indicator_modified (IndicateListener * listener, IndicateListenerServer * server
 }
 
 static void
+type_cb (IndicateListener * listener, IndicateListenerServer * server, gchar * value, gpointer data)
+{
+	g_debug("Indicator Server Type:    %s %s", INDICATE_LISTENER_SERVER_DBUS_NAME(server), value);
+}
+
+static void
+desktop_cb (IndicateListener * listener, IndicateListenerServer * server, gchar * value, gpointer data)
+{
+	g_debug("Indicator Server Desktop: %s %s", INDICATE_LISTENER_SERVER_DBUS_NAME(server), value);
+}
+
+static void
 server_added (IndicateListener * listener, IndicateListenerServer * server, gchar * type, gpointer data)
 {
 	g_debug("Indicator Server Added:   %s %s", INDICATE_LISTENER_SERVER_DBUS_NAME(server), type);
+	indicate_listener_server_get_type(listener, server, type_cb, NULL);
+	indicate_listener_server_get_desktop(listener, server, desktop_cb, NULL);
 }
 
 static void
