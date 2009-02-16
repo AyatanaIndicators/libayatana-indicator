@@ -103,7 +103,7 @@ applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
   
 	/* Set panel options */
 	gtk_container_set_border_width(GTK_CONTAINER (applet), 0);
-	panel_applet_set_flags(applet, PANEL_APPLET_EXPAND_MINOR);	
+	panel_applet_set_flags(applet, PANEL_APPLET_EXPAND_MINOR | PANEL_APPLET_HAS_HANDLE);
   
 	/* Init some theme/icon stuff */
 	gtk_icon_theme_append_search_path(gtk_icon_theme_get_default(),
