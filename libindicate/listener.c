@@ -688,6 +688,11 @@ get_property_cb (DBusGProxy *proxy, char * OUT_value, GError *error, gpointer us
 	case PROPERTY_TYPE_ICON: {
 		indicate_listener_get_property_icon_cb cb = (indicate_listener_get_property_icon_cb)get_property_data->cb;
 
+		/* There is no icon */
+		if (OUT_value == NULL || OUT_value[0] == '\0') {
+			break;
+		}
+
 		gsize length = 0;
 		guchar * icondata = g_base64_decode(OUT_value, &length);
 		

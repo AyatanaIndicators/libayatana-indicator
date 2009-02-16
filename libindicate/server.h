@@ -45,6 +45,16 @@ G_BEGIN_DECLS
 #define INDICATE_IS_SERVER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), INDICATE_TYPE_SERVER))
 #define INDICATE_SERVER_GET_CLASS(object) (G_TYPE_INSTANCE_GET_CLASS((object), INDICATE_TYPE_SERVER, IndicateServerClass))
 
+#define INDICATE_SERVER_INDICATOR_NULL  (0)
+
+#define INDICATE_SERVER_SIGNAL_INDICATOR_ADDED      "indicator-added"
+#define INDICATE_SERVER_SIGNAL_INDICATOR_REMOVED    "indicator-removed"
+#define INDICATE_SERVER_SIGNAL_INDICATOR_MODIFIED   "indicator-modified"
+#define INDICATE_SERVER_SIGNAL_SERVER_SHOW          "server-show"
+#define INDICATE_SERVER_SIGNAL_SERVER_HIDE          "server-hide"
+#define INDICATE_SERVER_SIGNAL_SERVER_DISPLAY       "server-display"
+
+
 typedef struct _IndicateServer IndicateServer;
 struct _IndicateServer {
 	GObject parent;
@@ -60,6 +70,7 @@ struct _IndicateServerClass {
 	void (* indicator_modified) (IndicateServer * server, guint id, gchar * property);
 	void (* server_show) (IndicateServer * server, gchar * type);
 	void (* server_hide) (IndicateServer * server, gchar * type);
+	void (* server_display) (IndicateServer * server);
 
 	/* Virtual Functions */
 	gboolean (*get_indicator_count) (IndicateServer * server, guint * count, GError **error);
@@ -115,6 +126,7 @@ gboolean indicate_server_show_indicator_to_user (IndicateServer * server, guint 
 void indicate_server_emit_indicator_added (IndicateServer *server, guint id, const gchar *type);
 void indicate_server_emit_indicator_removed (IndicateServer *server, guint id, const gchar *type);
 void indicate_server_emit_indicator_modified (IndicateServer *server, guint id, const gchar *property);
+void indicate_server_emit_server_display (IndicateServer *server);
 
 G_END_DECLS
 

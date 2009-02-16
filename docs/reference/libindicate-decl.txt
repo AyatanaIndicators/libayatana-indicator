@@ -315,6 +315,34 @@ IndicateListener * listener,IndicateListenerServer * server,indicate_listener_ge
 <NAME>INDICATE_SERVER_GET_CLASS</NAME>
 #define INDICATE_SERVER_GET_CLASS(object) (G_TYPE_INSTANCE_GET_CLASS((object), INDICATE_TYPE_SERVER, IndicateServerClass))
 </MACRO>
+<MACRO>
+<NAME>INDICATE_SERVER_INDICATOR_NULL</NAME>
+#define INDICATE_SERVER_INDICATOR_NULL  (0)
+</MACRO>
+<MACRO>
+<NAME>INDICATE_SERVER_SIGNAL_INDICATOR_ADDED</NAME>
+#define INDICATE_SERVER_SIGNAL_INDICATOR_ADDED      "indicator-added"
+</MACRO>
+<MACRO>
+<NAME>INDICATE_SERVER_SIGNAL_INDICATOR_REMOVED</NAME>
+#define INDICATE_SERVER_SIGNAL_INDICATOR_REMOVED    "indicator-removed"
+</MACRO>
+<MACRO>
+<NAME>INDICATE_SERVER_SIGNAL_INDICATOR_MODIFIED</NAME>
+#define INDICATE_SERVER_SIGNAL_INDICATOR_MODIFIED   "indicator-modified"
+</MACRO>
+<MACRO>
+<NAME>INDICATE_SERVER_SIGNAL_SERVER_SHOW</NAME>
+#define INDICATE_SERVER_SIGNAL_SERVER_SHOW          "server-show"
+</MACRO>
+<MACRO>
+<NAME>INDICATE_SERVER_SIGNAL_SERVER_HIDE</NAME>
+#define INDICATE_SERVER_SIGNAL_SERVER_HIDE          "server-hide"
+</MACRO>
+<MACRO>
+<NAME>INDICATE_SERVER_SIGNAL_SERVER_DISPLAY</NAME>
+#define INDICATE_SERVER_SIGNAL_SERVER_DISPLAY       "server-display"
+</MACRO>
 <STRUCT>
 <NAME>IndicateServer</NAME>
 </STRUCT>
@@ -339,6 +367,7 @@ struct _IndicateServerClass {
 	void (* indicator_modified) (IndicateServer * server, guint id, gchar * property);
 	void (* server_show) (IndicateServer * server, gchar * type);
 	void (* server_hide) (IndicateServer * server, gchar * type);
+	void (* server_display) (IndicateServer * server);
 
 	/* Virtual Functions */
 	gboolean (*get_indicator_count) (IndicateServer * server, guint * count, GError **error);
@@ -467,6 +496,11 @@ IndicateServer *server, guint id, const gchar *type
 <NAME>indicate_server_emit_indicator_modified</NAME>
 <RETURNS>void </RETURNS>
 IndicateServer *server, guint id, const gchar *property
+</FUNCTION>
+<FUNCTION>
+<NAME>indicate_server_emit_server_display</NAME>
+<RETURNS>void </RETURNS>
+IndicateServer *server
 </FUNCTION>
 <MACRO>
 <NAME>INDICATE_TYPE_INDICATOR_MESSAGE</NAME>
