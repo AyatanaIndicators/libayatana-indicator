@@ -127,6 +127,7 @@ applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 	gtk_container_set_border_width(GTK_CONTAINER(menubar), 0);
 
 	gtk_container_add(GTK_CONTAINER(applet), menubar);
+	panel_applet_set_background_widget(applet, menubar);
 	gtk_widget_show(menubar);
 
 	/* load 'em */
