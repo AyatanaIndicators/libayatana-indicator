@@ -52,6 +52,7 @@ enum {
 	INDICATOR_MODIFIED,
 	SERVER_SHOW,
 	SERVER_HIDE,
+	SERVER_DISPLAY,
 	LAST_SIGNAL
 };
 
@@ -116,41 +117,48 @@ indicate_server_class_init (IndicateServerClass * class)
 	gobj->set_property = set_property;
 	gobj->get_property = get_property;
 
-	signals[INDICATOR_ADDED] = g_signal_new("indicator-added",
+	signals[INDICATOR_ADDED] = g_signal_new(INDICATE_SERVER_SIGNAL_INDICATOR_ADDED,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateServerClass, indicator_added),
 	                                        NULL, NULL,
 	                                        g_cclosure_marshal_VOID__UINT_POINTER,
 	                                        G_TYPE_NONE, 2, G_TYPE_UINT, G_TYPE_STRING);
-	signals[INDICATOR_REMOVED] = g_signal_new("indicator-removed",
+	signals[INDICATOR_REMOVED] = g_signal_new(INDICATE_SERVER_SIGNAL_INDICATOR_REMOVED,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateServerClass, indicator_removed),
 	                                        NULL, NULL,
 	                                        g_cclosure_marshal_VOID__UINT_POINTER,
 	                                        G_TYPE_NONE, 2, G_TYPE_UINT, G_TYPE_STRING);
-	signals[INDICATOR_MODIFIED] = g_signal_new("indicator-modified",
+	signals[INDICATOR_MODIFIED] = g_signal_new(INDICATE_SERVER_SIGNAL_INDICATOR_MODIFIED,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateServerClass, indicator_modified),
 	                                        NULL, NULL,
 	                                        g_cclosure_marshal_VOID__UINT_POINTER,
 	                                        G_TYPE_NONE, 2, G_TYPE_UINT, G_TYPE_STRING);
-	signals[SERVER_SHOW] = g_signal_new("server-show",
+	signals[SERVER_SHOW] = g_signal_new(INDICATE_SERVER_SIGNAL_SERVER_SHOW,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateServerClass, server_show),
 	                                        NULL, NULL,
 	                                        g_cclosure_marshal_VOID__POINTER,
 	                                        G_TYPE_NONE, 1, G_TYPE_STRING);
-	signals[SERVER_HIDE] = g_signal_new("server-hide",
+	signals[SERVER_HIDE] = g_signal_new(INDICATE_SERVER_SIGNAL_SERVER_HIDE,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateServerClass, server_hide),
 	                                        NULL, NULL,
 	                                        g_cclosure_marshal_VOID__POINTER,
 	                                        G_TYPE_NONE, 1, G_TYPE_STRING);
+	signals[SERVER_DISPLAY] = g_signal_new(INDICATE_SERVER_SIGNAL_SERVER_DISPLAY,
+	                                        G_TYPE_FROM_CLASS (class),
+	                                        G_SIGNAL_RUN_LAST,
+	                                        G_STRUCT_OFFSET (IndicateServerClass, server_display),
+	                                        NULL, NULL,
+	                                        g_cclosure_marshal_VOID__VOID,
+	                                        G_TYPE_NONE, 0);
 
 	g_object_class_install_property (gobj, PROP_DESKTOP,
 	                                 g_param_spec_string("desktop", "Desktop File",
@@ -661,6 +669,11 @@ get_indicator_properties (IndicateServer * server, guint id, gchar *** propertie
 static gboolean
 show_indicator_to_user (IndicateServer * server, guint id, GError ** error)
 {
+	if (id == INDICATE_SERVER_INDICATOR_NULL) {
+		g_signal_emit(server, signals[SERVER_DISPLAY], 0, TRUE);
+		return TRUE;
+	}
+
 	IndicateIndicator * indicator = get_indicator(server, id, error);
 	if (indicator == NULL) {
 		return FALSE;
@@ -878,4 +891,12 @@ indicate_server_emit_indicator_modified (IndicateServer *server, guint id, const
   g_return_if_fail (property);
   
   g_signal_emit(server, signals[INDICATOR_MODIFIED], 0, id, property);
+}
+
+void 
+indicate_server_emit_server_display (IndicateServer *server)
+{
+  g_return_if_fail (INDICATE_IS_SERVER (server));
+  
+  g_signal_emit(server, signals[SERVER_DISPLAY], 0, TRUE);
 }
