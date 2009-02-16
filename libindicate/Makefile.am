@@ -5,7 +5,7 @@ INCLUDES= \
 EXTRA_DIST = \
 	indicate-interface.xml \
 	listener-marshal.list \
-	libindicate.pc.in
+	indicate.pc.in
 
 BUILT_SOURCES = \
 	dbus-indicate-server.h \
