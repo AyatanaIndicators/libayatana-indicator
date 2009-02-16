@@ -1,3 +1,14 @@
+indicator-applet (0.1~ppa40) intrepid; urgency=low
+
+  * Making the icons function check for null string before
+    everyone throws an error afterwards.
+  * Adding a signal to the server for server display based
+    on getting the null indicator.
+  * General server cleanup of signals.  Now there are defines
+    for all of the strings.
+
+ -- Ted Gould <ted@ubuntu.com>  Sun, 15 Feb 2009 22:05:40 -0600
+
 indicator-applet (0.1~ppa39) intrepid; urgency=low
 
   * Fixing a bug where properties didn't work on running
