@@ -56,7 +56,13 @@ timeout_cb (gpointer data)
 static void
 display (IndicateIndicator * indicator, gpointer data)
 {
-	g_debug("Ah, I've been displayed");
+	g_debug("Ah, my indicator has been displayed");
+}
+
+static void
+server_display (IndicateServer * server, gpointer data)
+{
+	g_debug("Ah, my server has been displayed");
 }
 
 int
@@ -67,6 +73,7 @@ main (int argc, char ** argv)
 	IndicateServer * server = indicate_server_ref_default();
 	indicate_server_set_type(server, "message.im");
 	indicate_server_set_desktop_file(server, "/usr/share/applications/empathy.desktop");
+	g_signal_connect(G_OBJECT(server), INDICATE_SERVER_SIGNAL_SERVER_DISPLAY, G_CALLBACK(server_display), NULL);
 
 	IndicateIndicatorMessage * indicator;
 
