@@ -1,3 +1,10 @@
+indicator-applet (0.1~ppa41) intrepid; urgency=low
+
+  * Putting on a handle
+  * Adding in a background function from panel-lib
+
+ -- Ted Gould <ted@ubuntu.com>  Sun, 15 Feb 2009 22:58:46 -0600
+
 indicator-applet (0.1~ppa40) intrepid; urgency=low
 
   * Making the icons function check for null string before
