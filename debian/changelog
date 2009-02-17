@@ -1,4 +1,4 @@
-indicator-applet (0.1-0ubuntu1) UNRELEASED; urgency=low
+indicator-applet (0.1-0ubuntu1) jaunty; urgency=low
 
   * Initial release, based on DX team's PPA packaging branch.
     (lp:~indicator-applet-developers/indicator-applet/applet-packaging)
@@ -10,4 +10,4 @@ indicator-applet (0.1-0ubuntu1) UNRELEASED; urgency=low
   * configure.ac: Add missing gio-2.0 pkgconfig check (from DX team
     PPA packaging branch), and autoreconf to pick up the change.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 17 Feb 2009 10:27:45 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 17 Feb 2009 10:28:14 +0100
