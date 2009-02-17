@@ -4,5 +4,6 @@ indicator-applet (0.1-0ubuntu1) UNRELEASED; urgency=low
     (lp:~indicator-applet-developers/indicator-applet/applet-packaging)
   * debian/control: Add Homepage:, Vcs-Bzr:, and proper package
     descriptions.
+  * debian/copyright: Properly describe licenses.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 17 Feb 2009 09:10:51 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 17 Feb 2009 09:24:37 +0100
