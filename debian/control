@@ -14,14 +14,19 @@ Build-Depends: debhelper (>= 5.0),
                gobject-introspection-glib-2.0 (>= 0.6),
                libgirepository-dev (>= 0.6)
 Standards-Version: 3.8.0
+Homepage: https://launchpad.net/indicator-applet
+Vcs-Bzr: http://bazaar.launchpad.net/~ubuntu-core-dev/indicator-applet/ubuntu/files
 
 Package: indicator-applet
 Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
          gnome-panel
-Description: Applet for the GNOME panel providing various indicators for
- display to users.
+Description: GNOME panel message indicator applet
+ indicator-applet is an applet to display information from
+ various applications consistently in the GNOME panel. 
+ .
+ Currently this includes support for messaging applications.
 
 Package: libindicate0
 Section: libs
@@ -30,7 +35,13 @@ Replaces: libindicate
 Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends}
-Description: A library used to indicate.
+Description: GNOME panel message indicator applet - shared library
+ indicator-applet is an applet to display information from
+ various applications consistently in the GNOME panel. 
+ .
+ Currently this includes support for messaging applications.
+ .
+ This package contains shared libraries to be used by applications.
 
 Package: libindicate-dev
 Section: libdevel
@@ -40,4 +51,10 @@ Depends: ${shlibs:Depends},
          libindicate0 (= ${binary:Version}),
          libdbus-glib-1-dev (>= 0.76),
          libgtk2.0-dev (>= 2.12.0)
-Description: Development files.
+Description: GNOME panel message indicator applet - shared library
+ indicator-applet is an applet to display information from
+ various applications consistently in the GNOME panel. 
+ .
+ Currently this includes support for messaging applications.
+ .
+ This package contains files that are needed to build applications.
