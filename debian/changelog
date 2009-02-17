@@ -2,8 +2,10 @@ indicator-applet (0.1-0ubuntu1) UNRELEASED; urgency=low
 
   * Initial release, based on DX team's PPA packaging branch.
     (lp:~indicator-applet-developers/indicator-applet/applet-packaging)
+  * Repack orig.tar.gz with a copy of the LGPL 3, libindicate/* is
+    under that license.
   * debian/control: Add Homepage:, Vcs-Bzr:, and proper package
     descriptions.
   * debian/copyright: Properly describe licenses.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 17 Feb 2009 09:24:37 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 17 Feb 2009 09:31:25 +0100
