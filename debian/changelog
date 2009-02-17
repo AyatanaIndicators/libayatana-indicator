@@ -7,5 +7,7 @@ indicator-applet (0.1-0ubuntu1) UNRELEASED; urgency=low
   * debian/control: Add Homepage:, Vcs-Bzr:, and proper package
     descriptions.
   * debian/copyright: Properly describe licenses.
+  * configure.ac: Add missing gio-2.0 pkgconfig check (from DX team
+    PPA packaging branch), and autoreconf to pick up the change.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 17 Feb 2009 09:31:25 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 17 Feb 2009 10:27:45 +0100
