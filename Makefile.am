@@ -6,3 +6,13 @@ SUBDIRS = \
 	data \
 	po \
 	docs
+
+EXTRA_DIST = \
+	COPYING.LIB.LGPL.2.1 \
+	COPYING.LIB.LGPL.3 \
+	gtk-doc.make \
+	omf.make \
+	xmldocs.make
+
+DISTCLEANFILES = \
+	indicator-applet-*.tar.gz

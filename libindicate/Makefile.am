@@ -3,7 +3,9 @@ INCLUDES= \
 	-DG_LOG_DOMAIN=\"libindicate\"
 
 EXTRA_DIST = \
-	indicate-interface.xml
+	indicate-interface.xml \
+	listener-marshal.list \
+	indicate.pc.in
 
 BUILT_SOURCES = \
 	dbus-indicate-server.h \
