@@ -1,3 +1,9 @@
+indicator-applet (0.1-0ubuntu3~ppa1) intrepid; urgency=low
+
+  * Pulling in and testing icon changes.
+
+ -- Ted Gould <ted@ubuntu.com>  Wed, 18 Feb 2009 14:05:14 -0600
+
 indicator-applet (0.1-0ubuntu2) UNRELEASED; urgency=low
 
   * debian/control: Fix Vcs-Bzr.
