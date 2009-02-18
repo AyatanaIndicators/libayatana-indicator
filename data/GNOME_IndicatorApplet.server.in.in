@@ -23,6 +23,6 @@
     </oaf_attribute>
     <oaf_attribute name="name" type="string" _value="Indicator Applet"/>
     <oaf_attribute name="description" type="string" _value="An indicator of something that needs your attention on the desktop"/>
-    <oaf_attribute name="panel:icon" type="string" value="stock_stop"/>
+    <oaf_attribute name="panel:icon" type="string" value="indicator-applet"/>
   </oaf_server>
 </oaf_info>
