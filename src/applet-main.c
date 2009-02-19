@@ -100,6 +100,12 @@ applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 	GtkWidget *menubar;
 	gint i;
 	gint indicators_loaded = 0;
+
+        /* check if we are running stracciatella session */
+        if (g_strcmp0(g_getenv("GDMSESSION"), "gnome-stracciatella") == 0) {
+                g_debug("Running stracciatella GNOME session, disabling myself");
+                return TRUE;
+        }
   
 	/* Set panel options */
 	gtk_container_set_border_width(GTK_CONTAINER (applet), 0);
