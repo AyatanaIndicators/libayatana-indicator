@@ -1,3 +1,9 @@
+indicator-applet (0.1.1-0ubuntu3~ppa1) jaunty; urgency=low
+
+  * Turning on GIR
+
+ -- Ted Gould <ted@ubuntu.com>  Wed, 25 Feb 2009 11:16:12 -0600
+
 indicator-applet (0.1-0ubuntu3~ppa1) intrepid; urgency=low
 
   * Pulling in and testing icon changes.
