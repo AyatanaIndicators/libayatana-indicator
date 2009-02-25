@@ -101,3 +101,7 @@ Indicate-0.1.typelib: Indicate-0.1.gir
 		--includedir=$(srcdir) Indicate-0.1.gir \
 		-o Indicate-0.1.typelib
 
+DISTCLEANFILES = \
+	Indicate-0.1.gir \
+	Indicate-0.1.typelib
+
