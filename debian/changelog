@@ -1,3 +1,9 @@
+indicator-applet (0.1.1-0ubuntu3~ppa2) jaunty; urgency=low
+
+  * Putting GIR into the install files.
+
+ -- Ted Gould <ted@ubuntu.com>  Wed, 25 Feb 2009 14:35:59 -0600
+
 indicator-applet (0.1.1-0ubuntu3~ppa1) jaunty; urgency=low
 
   * Turning on GIR
