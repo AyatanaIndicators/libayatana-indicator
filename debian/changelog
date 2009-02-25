@@ -16,15 +16,24 @@ indicator-applet (0.1-0ubuntu3~ppa1) intrepid; urgency=low
 
  -- Ted Gould <ted@ubuntu.com>  Wed, 18 Feb 2009 14:05:14 -0600
 
-indicator-applet (0.1-0ubuntu2) UNRELEASED; urgency=low
+indicator-applet (0.1.1-0ubuntu2) UNRELEASED; urgency=low
 
+  * src/applet-main.c, applet_fill_cb(): Do not show anything if we
+    are running under a stracciatella GNOME session (i. e. without
+    Ubuntu components). See UbuntuSpec:stracciatella-session.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 19 Feb 2009 17:24:04 +0100
+
+indicator-applet (0.1.1-0ubuntu1) jaunty; urgency=low
+
+  * New upstream release with some icon changes.
   * debian/control: Fix Vcs-Bzr.
   * debian/control: Update package descriptions; the messaging part is
     provided by indicator-messages.
   * debian/copyright: Fix leftover word "either" from the license
     description.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 17 Feb 2009 11:26:38 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 19 Feb 2009 16:12:01 +0100
 
 indicator-applet (0.1-0ubuntu1) jaunty; urgency=low
 
