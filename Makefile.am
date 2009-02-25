@@ -15,4 +15,5 @@ EXTRA_DIST = \
 	xmldocs.make
 
 DISTCLEANFILES = \
-	indicator-applet-*.tar.gz
+	indicator-applet-*.tar.gz \
+	gtk-doc.make
