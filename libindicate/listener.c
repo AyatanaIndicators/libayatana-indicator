@@ -31,6 +31,8 @@ License version 3 and version 2.1 along with this program.  If not, see
 #include "listener-marshal.h"
 #include <dbus/dbus-glib-bindings.h>
 #include "dbus-indicate-client.h"
+#include "dbus-listener-client.h"
+#include "dbus-listener-server.h"
 
 /* Errors */
 enum {
@@ -789,6 +791,13 @@ void
 indicate_listener_get_property_icon (IndicateListener * listener, IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * property, indicate_listener_get_property_icon_cb callback, gpointer data)
 {
 	return get_property_helper(listener, server, indicator, property, G_CALLBACK(callback), data, PROPERTY_TYPE_ICON);
+}
+
+gboolean
+indicate_listener_get_indicator_servers (IndicateListener * listener, GList * servers)
+{
+
+
 }
 
 static void 
