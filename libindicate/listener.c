@@ -287,7 +287,7 @@ dbus_owner_change (DBusGProxy * proxy, const gchar * name, const gchar * prev, c
 	/* g_debug("Name change on %s bus: '%s' from '%s' to '%s'", bus_name, name, prev, new); */
 
 	if (prev != NULL && prev[0] == '\0') {
-		todo_list_add(name, proxy, listener, false);
+		todo_list_add(name, proxy, listener, FALSE);
 	}
 	if (new != NULL && new[0] == '\0') {
 		proxy_t * proxyt;
@@ -370,7 +370,7 @@ build_todo_list_cb (DBusGProxy * proxy, char ** names, GError * error, void * da
 
 	guint i = 0;
 	for (i = 0; names[i] != NULL; i++) {
-		todo_list_add(names[i], proxy, listener, true);
+		todo_list_add(names[i], proxy, listener, TRUE);
 	}
 
 	return;
