@@ -4,6 +4,7 @@ INCLUDES= \
 
 EXTRA_DIST = \
 	indicate-interface.xml \
+	indicate-listener.xml \
 	listener-marshal.list \
 	indicate.pc.in
 
