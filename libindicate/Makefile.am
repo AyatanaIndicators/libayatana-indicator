@@ -11,6 +11,8 @@ EXTRA_DIST = \
 BUILT_SOURCES = \
 	dbus-indicate-server.h \
 	dbus-indicate-client.h \
+	dbus-listener-server.h \
+	dbus-listener-client.h \
 	listener-marshal.c \
 	listener-marshal.h
 
