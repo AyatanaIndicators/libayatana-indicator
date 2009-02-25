@@ -64,6 +64,20 @@ dbus-indicate-client.h: indicate-interface.xml
 		--output=dbus-indicate-client.h \
 		$(srcdir)/indicate-interface.xml
 
+dbus-listener-server.h: indicate-listener.xml
+	dbus-binding-tool \
+		--prefix=indicate_listener \
+		--mode=glib-server \
+		--output=dbus-listener-server.h \
+		$(srcdir)/indicate-listener.xml
+
+dbus-listener-client.h: indicate-listener.xml
+	dbus-binding-tool \
+		--prefix=indicate_listener \
+		--mode=glib-client \
+		--output=dbus-listener-client.h \
+		$(srcdir)/indicate-listener.xml
+
 listener-marshal.h: $(srcdir)/listener-marshal.list
 	glib-genmarshal --header \
 		--prefix=indicate_listener_marshal $(srcdir)/listener-marshal.list \
