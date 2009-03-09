@@ -1,5 +1,5 @@
 
-noinst_PROGRAMS = \
+libexec_PROGRAMS = \
 	indicate-and-crash \
 	indicate-alot \
 	listen-and-print \
@@ -49,3 +49,12 @@ im_client_LDADD = \
 	../libindicate/libindicate.la \
 	$(LIBINDICATE_LIBS)
 
+examplesdir = $(docdir)/examples/
+
+examples_DATA = \
+	$(indicate_and_crash_SOURCES) \
+	$(indicate_alot_SOURCES) \
+	$(listen_and_print_SOURCES) \
+	$(im_client_SOURCES)
+
+EXTRA_DIST = $(examples_DATA)
