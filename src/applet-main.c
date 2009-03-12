@@ -83,6 +83,18 @@ load_module (const gchar * name, GtkWidget * menu)
 }
 
 static gboolean
+menubar_press (GtkWidget * widget,
+                    GdkEventButton *event,
+                    gpointer data)
+{
+	if (event->button != 1) {
+		g_signal_stop_emission_by_name(widget, "button-press-event");
+	}
+
+	return FALSE;
+}
+
+static gboolean
 menubar_on_expose (GtkWidget * widget,
                     GdkEventExpose *event,
                     GtkWidget * menubar)
@@ -94,21 +106,82 @@ menubar_on_expose (GtkWidget * widget,
 	return FALSE;
 }
 
+static void
+about_cb (BonoboUIComponent *ui_container,
+	  gpointer           data,
+	  const gchar       *cname)
+{
+	static const gchar *authors[] = {
+		"Ted Gould <ted@canonical.com>",
+		NULL
+	};
+
+	static gchar *license[] = {
+		N_("The Fast User Switch Applet is free software; you can redistribute it and/or modify "
+		   "it under the terms of the GNU General Public License as published by "
+		   "the Free Software Foundation; either version 3 of the License."),
+		N_("This program is distributed in the hope that it will be useful, "
+		   "but WITHOUT ANY WARRANTY; without even the implied warranties of "
+		   "MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR "
+		   "PURPOSE.  See the GNU General Public License for more details."),
+		N_("You should have received a copy of the GNU General Public License "
+		   "along with this program; if not, write to the Free Software "
+		   "Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA "),
+		NULL
+	};
+	gchar *license_i18n;
+
+	license_i18n = g_strjoinv ("\n\n", license);
+
+	gtk_show_about_dialog(NULL,
+		"version", "0.0",
+		"copyright", "Copyright \xc2\xa9 2009 Canonical, Ltd.",
+		"comments", _("An applet to hold all of the system indicators."),
+		"authors", authors,
+		"license", license_i18n,
+		"wrap-license", TRUE,
+		"translator-credits", _("translator-credits"),
+		"logo-icon-name", "stock_people",
+		"website", "http://launchpad.net/indicator-applet",
+		"website-label", "Fast User Switch Applet Website",
+		NULL
+	);
+
+	g_free (license_i18n);
+
+	return;
+}
+
+#ifdef N_
+#undef N_
+#endif
+#define N_(x) x
+
 static gboolean
 applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 {
+	static const BonoboUIVerb menu_verbs[] = {
+		BONOBO_UI_VERB ("IndicatorAppletAbout", about_cb),
+		BONOBO_UI_VERB_END
+	};
+	static const gchar * menu_xml = 
+		"<Root><popups><popup name=\"button3\">"
+		"<menuitem name=\"About Item\" verb=\"IndicatorAppletAbout\" _label=\"" N_("_About") "\" pixtype=\"stock\" pixname=\"gtk-about\"/>"
+		"</popup></popups></Root>";
+
 	GtkWidget *menubar;
 	gint i;
 	gint indicators_loaded = 0;
   
 	/* Set panel options */
 	gtk_container_set_border_width(GTK_CONTAINER (applet), 0);
-	panel_applet_set_flags(applet, PANEL_APPLET_EXPAND_MINOR | PANEL_APPLET_HAS_HANDLE);
+	panel_applet_set_flags(applet, PANEL_APPLET_EXPAND_MINOR);
+	panel_applet_setup_menu(applet, menu_xml, menu_verbs, NULL);
   
 	/* Init some theme/icon stuff */
 	gtk_icon_theme_append_search_path(gtk_icon_theme_get_default(),
 	                                  ICONS_DIR);
-	g_debug("Icons directory: %s", ICONS_DIR);
+	/* g_debug("Icons directory: %s", ICONS_DIR); */
 	gtk_rc_parse_string (
 	    "style \"indicator-applet-style\"\n"
         "{\n"
@@ -123,6 +196,7 @@ applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 	/* Build menubar */
 	menubar = gtk_menu_bar_new();
 	GTK_WIDGET_SET_FLAGS (menubar, GTK_WIDGET_FLAGS(menubar) | GTK_CAN_FOCUS);
+	g_signal_connect(menubar, "button-press-event", G_CALLBACK(menubar_press), NULL);
 	g_signal_connect_after(menubar, "expose-event", G_CALLBACK(menubar_on_expose), menubar);
 	gtk_container_set_border_width(GTK_CONTAINER(menubar), 0);
 
