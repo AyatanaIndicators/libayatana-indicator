@@ -117,7 +117,7 @@ about_cb (BonoboUIComponent *ui_container,
 	};
 
 	static gchar *license[] = {
-		N_("The Fast User Switch Applet is free software; you can redistribute it and/or modify "
+		N_("The Indicator Applet is free software; you can redistribute it and/or modify "
 		   "it under the terms of the GNU General Public License as published by "
 		   "the Free Software Foundation; either version 3 of the License."),
 		N_("This program is distributed in the hope that it will be useful, "
@@ -134,16 +134,16 @@ about_cb (BonoboUIComponent *ui_container,
 	license_i18n = g_strjoinv ("\n\n", license);
 
 	gtk_show_about_dialog(NULL,
-		"version", "0.0",
+		"version", "0.1",
 		"copyright", "Copyright \xc2\xa9 2009 Canonical, Ltd.",
 		"comments", _("An applet to hold all of the system indicators."),
 		"authors", authors,
 		"license", license_i18n,
 		"wrap-license", TRUE,
 		"translator-credits", _("translator-credits"),
-		"logo-icon-name", "stock_people",
+		"logo-icon-name", "indicator-applet",
 		"website", "http://launchpad.net/indicator-applet",
-		"website-label", "Fast User Switch Applet Website",
+		"website-label", _("Indicator Applet Website"),
 		NULL
 	);
 
@@ -165,9 +165,9 @@ applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 		BONOBO_UI_VERB_END
 	};
 	static const gchar * menu_xml = 
-		"<Root><popups><popup name=\"button3\">"
-		"<menuitem name=\"About Item\" verb=\"IndicatorAppletAbout\" _label=\"" N_("_About") "\" pixtype=\"stock\" pixname=\"gtk-about\"/>"
-		"</popup></popups></Root>";
+		"<popup name=\"button3\">"
+			"<menuitem name=\"About Item\" verb=\"IndicatorAppletAbout\" _label=\"" N_("_About") "\" pixtype=\"stock\" pixname=\"gtk-about\"/>"
+		"</popup>";
 
 	GtkWidget *menubar;
 	gint i;
