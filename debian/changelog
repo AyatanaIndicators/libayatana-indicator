@@ -1,3 +1,9 @@
+indicator-applet (0.1.2-0ubuntu1~ppa1) jaunty; urgency=low
+
+  * Merging in new upstream version 0.1.2
+
+ -- Ted Gould <ted@ubuntu.com>  Thu, 12 Mar 2009 19:24:51 +0200
+
 indicator-applet (0.1.1-0ubuntu3~ppa3) jaunty; urgency=low
 
   * debian/control: Adding in gobject-introspection-repository
