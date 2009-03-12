@@ -190,8 +190,9 @@ applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
         "    GtkWidget::focus-line-width = 0\n"
         "    GtkWidget::focus-padding = 0\n"
         "}\n"
-        "widget \"*.indicator-applet-menubar\" style \"indicator-applet-style\"");
-	gtk_widget_set_name(GTK_WIDGET (applet), "indicator-applet-menubar");
+        "widget \"*.fast-user-switch-applet\" style \"indicator-applet-style\"");
+	//gtk_widget_set_name(GTK_WIDGET (applet), "indicator-applet-menubar");
+	gtk_widget_set_name(GTK_WIDGET (applet), "fast-user-switch-applet");
 
 	/* Build menubar */
 	menubar = gtk_menu_bar_new();
