@@ -31,6 +31,8 @@ License version 3 and version 2.1 along with this program.  If not, see
 #include "listener-marshal.h"
 #include <dbus/dbus-glib-bindings.h>
 #include "dbus-indicate-client.h"
+#include "dbus-listener-client.h"
+#include "dbus-listener-server.h"
 
 /* Errors */
 enum {
@@ -81,6 +83,7 @@ typedef struct {
 typedef struct {
 	DBusGConnection * bus;
 	gchar * name;
+	gboolean startup;
 } proxy_todo_t;
 
 G_DEFINE_TYPE (IndicateListener, indicate_listener, G_TYPE_OBJECT);
@@ -90,7 +93,7 @@ static void indicate_listener_finalize (GObject * obj);
 static void dbus_owner_change (DBusGProxy * proxy, const gchar * name, const gchar * prev, const gchar * new, IndicateListener * listener);
 static void proxy_struct_destroy (gpointer data);
 static void build_todo_list_cb (DBusGProxy * proxy, char ** names, GError * error, void * data);
-static void todo_list_add (const gchar * name, DBusGProxy * proxy, IndicateListener * listener);
+static void todo_list_add (const gchar * name, DBusGProxy * proxy, IndicateListener * listener, gboolean startup);
 static gboolean todo_idle (gpointer data);
 void get_type_cb (IndicateListener * listener, IndicateListenerServer * server, gchar * type, gpointer data);
 static void proxy_server_added (DBusGProxy * proxy, const gchar * type, proxy_t * proxyt);
@@ -286,7 +289,7 @@ dbus_owner_change (DBusGProxy * proxy, const gchar * name, const gchar * prev, c
 	/* g_debug("Name change on %s bus: '%s' from '%s' to '%s'", bus_name, name, prev, new); */
 
 	if (prev != NULL && prev[0] == '\0') {
-		todo_list_add(name, proxy, listener);
+		todo_list_add(name, proxy, listener, FALSE);
 	}
 	if (new != NULL && new[0] == '\0') {
 		proxy_t * proxyt;
@@ -369,14 +372,14 @@ build_todo_list_cb (DBusGProxy * proxy, char ** names, GError * error, void * da
 
 	guint i = 0;
 	for (i = 0; names[i] != NULL; i++) {
-		todo_list_add(names[i], proxy, listener);
+		todo_list_add(names[i], proxy, listener, TRUE);
 	}
 
 	return;
 }
 
 static void
-todo_list_add (const gchar * name, DBusGProxy * proxy, IndicateListener * listener)
+todo_list_add (const gchar * name, DBusGProxy * proxy, IndicateListener * listener, gboolean startup)
 {
 	if (name == NULL || name[0] != ':') {
 		return;
@@ -398,6 +401,7 @@ todo_list_add (const gchar * name, DBusGProxy * proxy, IndicateListener * listen
 	proxy_todo_t todo;
 	todo.name = g_strdup(name);
 	todo.bus  = bus;
+	todo.startup = startup;
 
 	g_array_append_val(priv->proxy_todo, todo);
 
@@ -455,6 +459,12 @@ todo_idle (gpointer data)
 
 	g_hash_table_insert(priv->proxies_possible, proxyt->name, proxyt);
 
+	/* I think that we need to have this as there is a race
+	 * condition here.  If someone comes on the bus and we get
+	 * that message, but before we set up the handler for the ServerShow
+	 * signal it gets sent, we wouldn't get it.  So then we would
+	 * miss an indicator server coming on the bus.  I'd like to not
+	 * generate a warning in every app with DBus though. */
 	indicate_listener_server_get_type(listener, (IndicateListenerServer *)proxyt->name, get_type_cb, proxyt);
 
 	return TRUE;
@@ -781,6 +791,13 @@ void
 indicate_listener_get_property_icon (IndicateListener * listener, IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * property, indicate_listener_get_property_icon_cb callback, gpointer data)
 {
 	return get_property_helper(listener, server, indicator, property, G_CALLBACK(callback), data, PROPERTY_TYPE_ICON);
+}
+
+gboolean
+indicate_listener_get_indicator_servers (IndicateListener * listener, GList * servers)
+{
+
+
 }
 
 static void 
