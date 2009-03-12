@@ -14,6 +14,9 @@ EXTRA_DIST = \
 	omf.make \
 	xmldocs.make
 
+DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc --disable-scrollkeeper
+
 DISTCLEANFILES = \
 	indicator-applet-*.tar.gz \
 	gtk-doc.make
+

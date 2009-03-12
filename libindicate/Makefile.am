@@ -34,6 +34,8 @@ libindicate_la_SOURCES = \
 	$(indicate_headers) \
 	dbus-indicate-server.h \
 	dbus-indicate-client.h \
+	dbus-listener-server.h \
+	dbus-listener-client.h \
 	server.c \
 	listener.c \
 	listener-marshal.c \
