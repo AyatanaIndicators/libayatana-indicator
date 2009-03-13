@@ -1,3 +1,9 @@
+indicator-applet (0.1.2-0ubuntu1~ppa2) jaunty; urgency=low
+
+  * Autogen failure.
+
+ -- Ted Gould <ted@ubuntu.com>  Fri, 13 Mar 2009 09:26:29 +0200
+
 indicator-applet (0.1.2-0ubuntu1~ppa1) jaunty; urgency=low
 
   * Merging in new upstream version 0.1.2
