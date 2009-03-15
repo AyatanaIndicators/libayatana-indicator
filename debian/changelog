@@ -1,39 +1,14 @@
-indicator-applet (0.1.2-0ubuntu1~ppa2) jaunty; urgency=low
+indicator-applet (0.1.2-0ubuntu1) jaunty; urgency=low
 
-  * Autogen failure.
+  * New upstream version
+    * Removes duplicate prototypes (LP: #338885)
+    * Fixes background color to match them on dark themes when
+      the panel color is not set (LP: #334490)
+    * Removing the handle and replacing it with the ability to
+      right click on the applet to get a panel menu (LP: #339818)
+    * Various build fixes
 
- -- Ted Gould <ted@ubuntu.com>  Fri, 13 Mar 2009 09:26:29 +0200
-
-indicator-applet (0.1.2-0ubuntu1~ppa1) jaunty; urgency=low
-
-  * Merging in new upstream version 0.1.2
-
- -- Ted Gould <ted@ubuntu.com>  Thu, 12 Mar 2009 19:24:51 +0200
-
-indicator-applet (0.1.1-0ubuntu3~ppa3) jaunty; urgency=low
-
-  * debian/control: Adding in gobject-introspection-repository
-    to pull in GdkPixbuf-2.0.gir.
-
- -- Ted Gould <ted@ubuntu.com>  Wed, 25 Feb 2009 15:47:29 -0600
-
-indicator-applet (0.1.1-0ubuntu3~ppa2) jaunty; urgency=low
-
-  * Putting GIR into the install files.
-
- -- Ted Gould <ted@ubuntu.com>  Wed, 25 Feb 2009 14:35:59 -0600
-
-indicator-applet (0.1.1-0ubuntu3~ppa1) jaunty; urgency=low
-
-  * Turning on GIR
-
- -- Ted Gould <ted@ubuntu.com>  Wed, 25 Feb 2009 11:16:12 -0600
-
-indicator-applet (0.1-0ubuntu3~ppa1) intrepid; urgency=low
-
-  * Pulling in and testing icon changes.
-
- -- Ted Gould <ted@ubuntu.com>  Wed, 18 Feb 2009 14:05:14 -0600
+ -- Ted Gould <ted@ubuntu.com>  Sun, 15 Mar 2009 08:58:20 -0500
 
 indicator-applet (0.1.1-0ubuntu2) UNRELEASED; urgency=low
 
