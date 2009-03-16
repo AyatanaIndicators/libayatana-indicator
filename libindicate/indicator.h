@@ -78,9 +78,6 @@ GType indicate_indicator_get_type(void) G_GNUC_CONST;
 
 IndicateIndicator * indicate_indicator_new (void);
 
-/* Should these just be GObject properties? */
-void indicate_indicator_set_property (IndicateIndicator * indicator, const gchar * property_name, const gchar * property_value);
-
 /* Show and hide this indicator */
 void indicate_indicator_show (IndicateIndicator * indicator);
 void indicate_indicator_hide (IndicateIndicator * indicator);

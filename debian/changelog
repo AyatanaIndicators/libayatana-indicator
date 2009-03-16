@@ -1,3 +1,15 @@
+indicator-applet (0.1.2-0ubuntu1) jaunty; urgency=low
+
+  * New upstream version
+    * Removes duplicate prototypes (LP: #338885)
+    * Fixes background color to match them on dark themes when
+      the panel color is not set (LP: #334490)
+    * Removing the handle and replacing it with the ability to
+      right click on the applet to get a panel menu (LP: #339818)
+    * Various build fixes
+
+ -- Ted Gould <ted@ubuntu.com>  Sun, 15 Mar 2009 08:58:20 -0500
+
 indicator-applet (0.1.1-0ubuntu2) UNRELEASED; urgency=low
 
   * src/applet-main.c, applet_fill_cb(): Do not show anything if we
