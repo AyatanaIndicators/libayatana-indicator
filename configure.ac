@@ -61,22 +61,29 @@ AC_SUBST(LIBINDICATE_LIBS)
 # GObject Introspection
 ###########################
 
-PKG_CHECK_MODULES(GOBJECT_INTROSPECTION, [gobject-introspection-1.0 >= 0.6], gir_ok=yes, gir_ok=no)
+AC_ARG_ENABLE(gobject-introspection, AC_HELP_STRING([--enable-gobject-introspection], [enable building the gobject-introspection files]), [enable_gir=$enableval], [enable_gir=yes])
+
+if test "x$enable_gir" = "xyes"; then
+	PKG_CHECK_MODULES(GOBJECT_INTROSPECTION, [gobject-introspection-1.0 >= 0.6], gir_ok=yes, gir_ok=no)
+
+	if test "x$gir_ok" = "xyes"; then
+		G_IR_SCANNER=`$PKG_CONFIG --variable=g_ir_scanner gobject-introspection-1.0`
+		AC_SUBST(G_IR_SCANNER)
+		G_IR_COMPILER=`$PKG_CONFIG --variable=g_ir_compiler gobject-introspection-1.0`
+		AC_SUBST(G_IR_COMPILER)
+		G_IR_GENERATE=`$PKG_CONFIG --variable=g_ir_generate gobject-introspection-1.0`
+		AC_SUBST(G_IR_GENERATE)
+
+		GIRDIR=`$PKG_CONFIG --variable=girdir gobject-introspection-1.0`
+		AC_SUBST(GIRDIR)
+		TYPELIBDIR="$($PKG_CONFIG --variable=typelibdir gobject-introspection-1.0)"
+		AC_SUBST(TYPELIBDIR) 
+	fi
+else
+	gir_ok=no
+fi
 
 AM_CONDITIONAL(USE_GIR, test "x$gir_ok" = "xyes")
-if test "x$gir_ok" = "xyes"; then
-	G_IR_SCANNER=`$PKG_CONFIG --variable=g_ir_scanner gobject-introspection-1.0`
-	AC_SUBST(G_IR_SCANNER)
-	G_IR_COMPILER=`$PKG_CONFIG --variable=g_ir_compiler gobject-introspection-1.0`
-	AC_SUBST(G_IR_COMPILER)
-	G_IR_GENERATE=`$PKG_CONFIG --variable=g_ir_generate gobject-introspection-1.0`
-	AC_SUBST(G_IR_GENERATE)
-
-	GIRDIR=`$PKG_CONFIG --variable=girdir gobject-introspection-1.0`
-	AC_SUBST(GIRDIR)
-	TYPELIBDIR="$($PKG_CONFIG --variable=typelibdir gobject-introspection-1.0)"
-	AC_SUBST(TYPELIBDIR) 
-fi
 
 ###########################
 # GTK Doc 
@@ -119,5 +126,6 @@ AC_MSG_NOTICE([
 
 Indicator Applet Configuration:
 
-	Prefix:        $prefix
+	Prefix:                 $prefix
+	GObject Introspection:  $gir_ok
 ])
