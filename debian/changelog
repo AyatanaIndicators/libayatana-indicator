@@ -1,6 +1,11 @@
 indicator-applet (0.1.2-0ubuntu2) UNRELEASED; urgency=low
 
   * Add debian/watch.
+  * Add bzr-builddeb configuration (merge mode). Fortunately this doesn't
+    insist on having *only* debian/ in bzr. This gives us the best of both
+    worlds, bzd-bd auto-downloading orig.tar.gz and merging in the
+    pre-generated autoconf stuff, and retaining the possibility of merging
+    directly from trunk, since we keep the full upstream source in this branch.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 17 Mar 2009 10:51:46 +0100
 
