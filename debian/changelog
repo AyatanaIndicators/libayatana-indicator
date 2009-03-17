@@ -1,3 +1,11 @@
+indicator-applet (0.1.2-0ubuntu3~ted1) jaunty; urgency=low
+
+  * debian/control: Removing GObject introspection
+  * configure.ac, libindicate/Makefile.am: Making the GObject
+    introspection optional.
+
+ -- Ted Gould <ted@ubuntu.com>  Tue, 17 Mar 2009 11:03:55 -0500
+
 indicator-applet (0.1.2-0ubuntu2) UNRELEASED; urgency=low
 
   * Add debian/watch.
