@@ -1,3 +1,10 @@
+indicator-applet (0.1.2-0ubuntu3~ted3) jaunty; urgency=low
+
+  * New version from upstream with explicitly disabling the
+    gobject introspection stuff.
+
+ -- Ted Gould <ted@ubuntu.com>  Tue, 17 Mar 2009 13:40:01 -0500
+
 indicator-applet (0.1.2-0ubuntu3~ted2) jaunty; urgency=low
 
   * PPA version bump.  Forgot autogen.sh
