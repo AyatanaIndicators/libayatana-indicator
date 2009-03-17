@@ -95,6 +95,8 @@ listener-marshal.c: $(srcdir)/listener-marshal.list
 pkgconfig_DATA = indicate.pc
 pkgconfigdir = $(libdir)/pkgconfig
 
+if USE_GIR
+
 gobjectintrospection_gir_DATA = \
 	Indicate-0.1.gir
 gobjectintrospection_girdir = $(datadir)/gir
@@ -124,3 +126,4 @@ DISTCLEANFILES = \
 	Indicate-0.1.gir \
 	Indicate-0.1.typelib
 
+endif
