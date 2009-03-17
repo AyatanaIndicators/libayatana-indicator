@@ -1,3 +1,9 @@
+indicator-applet (0.1.2-0ubuntu3~ted1ubuntu1) jaunty; urgency=low
+
+  * PPA version bump.  Forgot autogen.sh
+
+ -- Ted Gould <ted@ubuntu.com>  Tue, 17 Mar 2009 11:28:38 -0500
+
 indicator-applet (0.1.2-0ubuntu3~ted1) jaunty; urgency=low
 
   * debian/control: Removing GObject introspection
