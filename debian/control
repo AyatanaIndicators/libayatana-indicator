@@ -9,11 +9,7 @@ Build-Depends: debhelper (>= 5.0),
                libdbus-glib-1-dev,
                gnome-doc-utils,
                libtool,
-               intltool,
-               gobject-introspection (>= 0.6),
-               gobject-introspection-glib-2.0 (>= 0.6),
-               libgirepository-dev (>= 0.6),
-               gobject-introspection-repository
+               intltool
 Standards-Version: 3.8.0
 Homepage: https://launchpad.net/indicator-applet
 Vcs-Bzr: http://bazaar.launchpad.net/~ubuntu-core-dev/indicator-applet/ubuntu
