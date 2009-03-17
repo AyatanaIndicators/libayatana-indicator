@@ -1,4 +1,4 @@
-indicator-applet (0.1.2-0ubuntu3~ted1ubuntu1) jaunty; urgency=low
+indicator-applet (0.1.2-0ubuntu3~ted2) jaunty; urgency=low
 
   * PPA version bump.  Forgot autogen.sh
 
