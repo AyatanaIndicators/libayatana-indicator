@@ -10,7 +10,7 @@ indicator-applet (0.1.2-0ubuntu1) jaunty; urgency=low
 
  -- Ted Gould <ted@ubuntu.com>  Sun, 15 Mar 2009 08:58:20 -0500
 
-indicator-applet (0.1.1-0ubuntu2) UNRELEASED; urgency=low
+indicator-applet (0.1.1-0ubuntu2) jaunty; urgency=low
 
   * src/applet-main.c, applet_fill_cb(): Do not show anything if we
     are running under a stracciatella GNOME session (i. e. without
