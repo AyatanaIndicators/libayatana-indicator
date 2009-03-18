@@ -1,3 +1,9 @@
+indicator-applet (0.1.2-0ubuntu3~ted4) jaunty; urgency=low
+
+  * Version bump for PPA.  No more bzr builddeb.  Evil.
+
+ -- Ted Gould <ted@ubuntu.com>  Tue, 17 Mar 2009 19:44:40 -0500
+
 indicator-applet (0.1.2-0ubuntu3~ted3) jaunty; urgency=low
 
   * New version from upstream with explicitly disabling the
