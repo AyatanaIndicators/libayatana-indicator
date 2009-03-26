@@ -126,16 +126,15 @@ about_cb (BonoboUIComponent *ui_container,
 	};
 
 	static gchar *license[] = {
-		N_("The Indicator Applet is free software; you can redistribute it and/or modify "
-		   "it under the terms of the GNU General Public License as published by "
-		   "the Free Software Foundation; either version 3 of the License."),
-		N_("This program is distributed in the hope that it will be useful, "
-		   "but WITHOUT ANY WARRANTY; without even the implied warranties of "
-		   "MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR "
-		   "PURPOSE.  See the GNU General Public License for more details."),
-		N_("You should have received a copy of the GNU General Public License "
-		   "along with this program; if not, write to the Free Software "
-		   "Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA "),
+        N_("This program is free software: you can redistribute it and/or modify it "
+           "under the terms of the GNU General Public License version 3, as published "
+           "by the Free Software Foundation."),
+        N_("This program is distributed in the hope that it will be useful, but "
+           "WITHOUT ANY WARRANTY; without even the implied warranties of "
+           "MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR "
+           "PURPOSE.  See the GNU General Public License for more details."),
+        N_("You should have received a copy of the GNU General Public License along "
+           "with this program.  If not, see <http://www.gnu.org/licenses/>."),
 		NULL
 	};
 	gchar *license_i18n;
