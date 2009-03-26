@@ -20,7 +20,9 @@ You should have received a copy of the GNU General Public License along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <config.h>
 #include <panel-applet.h>
+#include <libgnomeui/gnome-ui-init.h>
 
 #define SYMBOL_NAME  "get_menu_item"
 #define ICONS_DIR  (DATADIR G_DIR_SEPARATOR_S "indicator-applet" G_DIR_SEPARATOR_S "icons")
@@ -33,6 +35,13 @@ static void cw_panel_background_changed (PanelApplet               *applet,
                         				         GdkColor                  *colour,
                         				         GdkPixmap                 *pixmap,
                                          GtkWidget                 *menubar);
+
+/* ****************** *
+ *  Global Variables  *
+ * ****************** */
+
+static GnomeProgram *program = NULL;
+
 
 /*************
  * main
@@ -172,7 +181,20 @@ applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 	GtkWidget *menubar;
 	gint i;
 	gint indicators_loaded = 0;
-  
+	static gboolean first_time = FALSE;
+
+	if (!first_time)
+	{
+        gint argc = 1;
+        gchar *argv[2] = { "indicator-applet", NULL};
+	    
+		first_time = TRUE;
+		program = gnome_program_init ("indicator-applet", "0.1",
+				    LIBGNOMEUI_MODULE, argc, argv,
+				    GNOME_PROGRAM_STANDARD_PROPERTIES,
+				    NULL);
+	}
+
 	/* Set panel options */
 	gtk_container_set_border_width(GTK_CONTAINER (applet), 0);
 	panel_applet_set_flags(applet, PANEL_APPLET_EXPAND_MINOR);
