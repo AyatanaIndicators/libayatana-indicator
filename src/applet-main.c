@@ -224,10 +224,6 @@ applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 	g_signal_connect_after(menubar, "expose-event", G_CALLBACK(menubar_on_expose), menubar);
 	gtk_container_set_border_width(GTK_CONTAINER(menubar), 0);
 
-	gtk_container_add(GTK_CONTAINER(applet), menubar);
-	panel_applet_set_background_widget(applet, menubar);
-	gtk_widget_show(menubar);
-
 	/* load 'em */
 	if (g_file_test(INDICATOR_DIR, (G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR))) {
 		GDir * dir = g_dir_open(INDICATOR_DIR, 0, NULL);
@@ -240,10 +236,13 @@ applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 	}
 
 	if (indicators_loaded == 0) {
-		GtkWidget * item = gtk_menu_item_new_with_label("No Indicators");
-		gtk_widget_set_sensitive(item, FALSE);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menubar), item);
+		GtkWidget * item = gtk_label_new("No Indicators");
+		gtk_container_add(GTK_CONTAINER(applet), item);
 		gtk_widget_show(item);
+	} else {
+		gtk_container_add(GTK_CONTAINER(applet), menubar);
+		panel_applet_set_background_widget(applet, menubar);
+		gtk_widget_show(menubar);
 	}
   
 	/* Background of applet */
