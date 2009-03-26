@@ -199,6 +199,8 @@ applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 	gtk_container_set_border_width(GTK_CONTAINER (applet), 0);
 	panel_applet_set_flags(applet, PANEL_APPLET_EXPAND_MINOR);
 	panel_applet_setup_menu(applet, menu_xml, menu_verbs, NULL);
+    atk_object_set_name (gtk_widget_get_accessible (GTK_WIDGET (applet)),
+                         "indicator-applet");
   
 	/* Init some theme/icon stuff */
 	gtk_icon_theme_append_search_path(gtk_icon_theme_get_default(),
