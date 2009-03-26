@@ -4,7 +4,7 @@ AC_INIT(src/applet-main.c)
 AC_PREREQ(2.53)
 
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(indicator-applet, 0.1.3)
+AM_INIT_AUTOMAKE(indicator-applet, 0.1.4)
 
 AM_MAINTAINER_MODE
 
