@@ -91,6 +91,8 @@ AM_CONDITIONAL(USE_GIR, test "x$gir_ok" = "xyes")
 ###########################
 
 GTK_DOC_CHECK([1.4])
+GNOME_DOC_INIT
+GNOME_COMPILE_WARNINGS
 
 ##############################
 # Custom Junk
