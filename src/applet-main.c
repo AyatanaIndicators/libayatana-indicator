@@ -236,6 +236,7 @@ applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 	}
 
 	if (indicators_loaded == 0) {
+		/* A label to allow for click through */
 		GtkWidget * item = gtk_label_new("No Indicators");
 		gtk_container_add(GTK_CONTAINER(applet), item);
 		gtk_widget_show(item);
