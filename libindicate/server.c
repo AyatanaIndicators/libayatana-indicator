@@ -318,7 +318,7 @@ indicate_server_hide (IndicateServer * server)
 	g_return_if_fail(INDICATE_IS_SERVER(server));
 	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
 
-	if (priv->visible)
+	if (!priv->visible)
 		return;
 
 	priv->visible = FALSE;
