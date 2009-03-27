@@ -6,8 +6,8 @@
       <item value="IDL:Bonobo/GenericFactory:1.0"/>
       <item value="IDL:Bonobo/Unknown:1.0"/>
     </oaf_attribute>
-    <oaf_attribute name="name" type="string" _value="Indicator Applet Factory"/>
-    <oaf_attribute name="description" type="string" _value="Indicator Applet Factory"/>
+    <oaf_attribute name="name" type="string" value="Indicator Applet Factory"/>
+    <oaf_attribute name="description" type="string" value="Indicator Applet Factory"/>
     <oaf_attribute name="bonobo:environment" type="stringv">
        <item value="DBUS_SESSION_BUS_ADDRESS"/>
     </oaf_attribute>
