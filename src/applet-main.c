@@ -139,7 +139,7 @@ about_cb (BonoboUIComponent *ui_container,
 	};
 	gchar *license_i18n;
 
-	license_i18n = g_strjoinv ("\n\n", license);
+	license_i18n = g_strconcat (_(license[0]), "\n\n", _(license[1]), "\n\n", _(license[2]), NULL);
 
 	gtk_show_about_dialog(NULL,
 		"version", "0.1",
@@ -237,7 +237,7 @@ applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 
 	if (indicators_loaded == 0) {
 		/* A label to allow for click through */
-		GtkWidget * item = gtk_label_new("No Indicators");
+		GtkWidget * item = gtk_label_new(_("No Indicators"));
 		gtk_container_add(GTK_CONTAINER(applet), item);
 		gtk_widget_show(item);
 	} else {
