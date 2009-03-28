@@ -1,4 +1,4 @@
-indicator-applet (0.1.4-0ubuntu1) UNRELEASED; urgency=low
+indicator-applet (0.1.4-0ubuntu1) jaunty; urgency=low
 
   * New upstream version
     * Changing the text in the license box to make sense. (LP: #346215)
@@ -16,7 +16,7 @@ indicator-applet (0.1.4-0ubuntu1) UNRELEASED; urgency=low
   * debian/control: Adding libgnomeui-dev as a dependency as it was added
     upstream.
 
- -- Ted Gould <ted@ubuntu.com>  Fri, 27 Mar 2009 23:36:00 -0500
+ -- Ted Gould <ted@ubuntu.com>  Fri, 27 Mar 2009 23:41:21 -0500
 
 indicator-applet (0.1.3-0ubuntu2) jaunty; urgency=low
 
