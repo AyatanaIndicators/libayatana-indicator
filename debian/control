@@ -18,7 +18,8 @@ Package: indicator-applet
 Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
-         gnome-panel
+         gnome-panel,
+         indicator-messages
 Description: GNOME panel indicator applet
  indicator-applet is an applet to display information from
  various applications consistently in the GNOME panel. 
