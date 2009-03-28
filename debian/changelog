@@ -13,6 +13,8 @@ indicator-applet (0.1.4-0ubuntu1) UNRELEASED; urgency=low
       (LP: #349540)
     * Make sure translations get loaded and make the 'No Indicators' error
       and the license translatable.  Patch from Gabor Kelemen.  (LP: #349998) 
+  * debian/control: Adding libgnomeui-dev as a dependency as it was added
+    upstream.
 
  -- Ted Gould <ted@ubuntu.com>  Fri, 27 Mar 2009 23:36:00 -0500
 
