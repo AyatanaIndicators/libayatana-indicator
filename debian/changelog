@@ -1,3 +1,21 @@
+indicator-applet (0.1.4-0ubuntu1) UNRELEASED; urgency=low
+
+  * New upstream version
+    * Changing the text in the license box to make sense. (LP: #346215)
+    * Call GNOME Program Init to initialize all of the ATK and gettext
+      stuff that needs to be initialized for it all to work.  Patch from
+      Eitan Isaacson.  (LP: #349031)
+    * Give the indicator applet an ATK name so it can be found by the
+      accessibility frameworks.  Patch from Eitan Isaacson.  (LP: #349031)
+    * Making it so the 'No Indicators' situation uses a label instead of a
+      desensitized menu item to allow right click through.  (LP: #346359)
+    * Remove the making of 'Indicator Applet Factory' translatable.
+      (LP: #349540)
+    * Make sure translations get loaded and make the 'No Indicators' error
+      and the license translatable.  Patch from Gabor Kelemen.  (LP: #349998) 
+
+ -- Ted Gould <ted@ubuntu.com>  Fri, 27 Mar 2009 23:36:00 -0500
+
 indicator-applet (0.1.3-0ubuntu2) jaunty; urgency=low
 
   * debian/control: Add dependency to indicator-messages; the applet is
