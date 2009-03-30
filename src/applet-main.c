@@ -20,7 +20,9 @@ You should have received a copy of the GNU General Public License along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <config.h>
 #include <panel-applet.h>
+#include <libgnomeui/gnome-ui-init.h>
 
 #define SYMBOL_NAME  "get_menu_item"
 #define ICONS_DIR  (DATADIR G_DIR_SEPARATOR_S "indicator-applet" G_DIR_SEPARATOR_S "icons")
@@ -33,6 +35,13 @@ static void cw_panel_background_changed (PanelApplet               *applet,
                         				         GdkColor                  *colour,
                         				         GdkPixmap                 *pixmap,
                                          GtkWidget                 *menubar);
+
+/* ****************** *
+ *  Global Variables  *
+ * ****************** */
+
+static GnomeProgram *program = NULL;
+
 
 /*************
  * main
@@ -117,21 +126,20 @@ about_cb (BonoboUIComponent *ui_container,
 	};
 
 	static gchar *license[] = {
-		N_("The Indicator Applet is free software; you can redistribute it and/or modify "
-		   "it under the terms of the GNU General Public License as published by "
-		   "the Free Software Foundation; either version 3 of the License."),
-		N_("This program is distributed in the hope that it will be useful, "
-		   "but WITHOUT ANY WARRANTY; without even the implied warranties of "
-		   "MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR "
-		   "PURPOSE.  See the GNU General Public License for more details."),
-		N_("You should have received a copy of the GNU General Public License "
-		   "along with this program; if not, write to the Free Software "
-		   "Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA "),
+        N_("This program is free software: you can redistribute it and/or modify it "
+           "under the terms of the GNU General Public License version 3, as published "
+           "by the Free Software Foundation."),
+        N_("This program is distributed in the hope that it will be useful, but "
+           "WITHOUT ANY WARRANTY; without even the implied warranties of "
+           "MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR "
+           "PURPOSE.  See the GNU General Public License for more details."),
+        N_("You should have received a copy of the GNU General Public License along "
+           "with this program.  If not, see <http://www.gnu.org/licenses/>."),
 		NULL
 	};
 	gchar *license_i18n;
 
-	license_i18n = g_strjoinv ("\n\n", license);
+	license_i18n = g_strconcat (_(license[0]), "\n\n", _(license[1]), "\n\n", _(license[2]), NULL);
 
 	gtk_show_about_dialog(NULL,
 		"version", "0.1",
@@ -173,16 +181,32 @@ applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 	gint i;
 	gint indicators_loaded = 0;
 
-        /* check if we are running stracciatella session */
-        if (g_strcmp0(g_getenv("GDMSESSION"), "gnome-stracciatella") == 0) {
-                g_debug("Running stracciatella GNOME session, disabling myself");
-                return TRUE;
-        }
+	/* check if we are running stracciatella session */
+	if (g_strcmp0(g_getenv("GDMSESSION"), "gnome-stracciatella") == 0) {
+		g_debug("Running stracciatella GNOME session, disabling myself");
+		return TRUE;
+	}
   
+	static gboolean first_time = FALSE;
+
+	if (!first_time)
+	{
+        gint argc = 1;
+        gchar *argv[2] = { "indicator-applet", NULL};
+	    
+		first_time = TRUE;
+		program = gnome_program_init ("indicator-applet", "0.1",
+				    LIBGNOMEUI_MODULE, argc, argv,
+				    GNOME_PROGRAM_STANDARD_PROPERTIES,
+				    NULL);
+	}
+
 	/* Set panel options */
 	gtk_container_set_border_width(GTK_CONTAINER (applet), 0);
 	panel_applet_set_flags(applet, PANEL_APPLET_EXPAND_MINOR);
 	panel_applet_setup_menu(applet, menu_xml, menu_verbs, NULL);
+    atk_object_set_name (gtk_widget_get_accessible (GTK_WIDGET (applet)),
+                         "indicator-applet");
   
 	/* Init some theme/icon stuff */
 	gtk_icon_theme_append_search_path(gtk_icon_theme_get_default(),
@@ -207,10 +231,6 @@ applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 	g_signal_connect_after(menubar, "expose-event", G_CALLBACK(menubar_on_expose), menubar);
 	gtk_container_set_border_width(GTK_CONTAINER(menubar), 0);
 
-	gtk_container_add(GTK_CONTAINER(applet), menubar);
-	panel_applet_set_background_widget(applet, menubar);
-	gtk_widget_show(menubar);
-
 	/* load 'em */
 	if (g_file_test(INDICATOR_DIR, (G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR))) {
 		GDir * dir = g_dir_open(INDICATOR_DIR, 0, NULL);
@@ -223,10 +243,14 @@ applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 	}
 
 	if (indicators_loaded == 0) {
-		GtkWidget * item = gtk_menu_item_new_with_label("No Indicators");
-		gtk_widget_set_sensitive(item, FALSE);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menubar), item);
+		/* A label to allow for click through */
+		GtkWidget * item = gtk_label_new(_("No Indicators"));
+		gtk_container_add(GTK_CONTAINER(applet), item);
 		gtk_widget_show(item);
+	} else {
+		gtk_container_add(GTK_CONTAINER(applet), menubar);
+		panel_applet_set_background_widget(applet, menubar);
+		gtk_widget_show(menubar);
 	}
   
 	/* Background of applet */

@@ -8,6 +8,7 @@ Build-Depends: debhelper (>= 5.0),
                libpanel-applet2-dev (>= 2.0.0),
                libdbus-glib-1-dev,
                gnome-doc-utils,
+               libgnomeui-dev,
                libtool,
                intltool
 Standards-Version: 3.8.0

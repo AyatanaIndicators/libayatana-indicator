@@ -4,7 +4,7 @@ AC_INIT(src/applet-main.c)
 AC_PREREQ(2.53)
 
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(indicator-applet, 0.1.3)
+AM_INIT_AUTOMAKE(indicator-applet, 0.1.4)
 
 AM_MAINTAINER_MODE
 
@@ -39,7 +39,8 @@ PANEL_REQUIRED_VERSION=2.0.0
 DBUS_REQUIRED_VERSION=0.76
 
 PKG_CHECK_MODULES(APPLET, gtk+-2.0 >= $GTK_REQUIRED_VERSION
-                          libpanelapplet-2.0 >= $PANEL_REQUIRED_VERSION)
+                          libpanelapplet-2.0 >= $PANEL_REQUIRED_VERSION
+						  libgnomeui-2.0)
 AC_SUBST(APPLET_CFLAGS)
 AC_SUBST(APPLET_LIBS)
 
@@ -90,6 +91,24 @@ AM_CONDITIONAL(USE_GIR, test "x$gir_ok" = "xyes")
 ###########################
 
 GTK_DOC_CHECK([1.4])
+GNOME_DOC_INIT
+GNOME_COMPILE_WARNINGS
+
+##############################
+# Custom Junk
+##############################
+
+AC_DEFUN([AC_DEFINE_PATH], [
+  test "x$prefix" = xNONE && prefix="$ac_default_prefix"
+  test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
+  ac_define_path=`eval echo [$]$2`
+  ac_define_path=`eval echo [$]ac_define_path`
+  $1="$ac_define_path"
+  AC_SUBST($1)
+  ifelse($3, ,
+    AC_DEFINE_UNQUOTED($1, "$ac_define_path"),
+    AC_DEFINE_UNQUOTED($1, "$ac_define_path", $3))
+])
 
 ###########################
 # Internationalization
@@ -98,8 +117,38 @@ GTK_DOC_CHECK([1.4])
 GETTEXT_PACKAGE=indicator-applet
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE", [Name of the default gettext domain])
+AC_DEFINE_PATH(GNOMELOCALEDIR, "${datadir}/locale", [locale directory])
 
 AM_GLIB_GNU_GETTEXT
+
+##############################
+# ./configure Flags messings
+##############################
+
+cflags_set=${CFLAGS+set}
+# find the actual value for $prefix that we'll end up with
+REAL_PREFIX=
+if test "x$prefix" = "xNONE"; then
+  REAL_PREFIX=$ac_default_prefix
+else
+  REAL_PREFIX=$prefix
+fi
+
+# Have to go $sysconfdir->$prefix/etc->/usr/local/etc   
+# if you actually know how to code shell then fix this :-)
+SYSCONFDIR_TMP="$sysconfdir"
+old_prefix=$prefix
+prefix=$REAL_PREFIX
+EXPANDED_SYSCONFDIR=`eval echo $SYSCONFDIR_TMP`
+prefix=$old_prefix
+AC_SUBST(EXPANDED_SYSCONFDIR)
+
+dnl Save flags to aclocal
+ACLOCAL="$ACLOCAL $ACLOCAL_FLAGS"
+
+AC_DEFINE_PATH(PREFIX, "${prefix}", [prefix directory])
+AC_DEFINE_PATH(SYSCONFDIR, "${sysconfdir}", [system configuration dir])
+AC_DEFINE_PATH(LIBDIR, "${libdir}", [system configuration dir])
 
 ###########################
 # Files
