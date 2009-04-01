@@ -54,7 +54,8 @@ G_BEGIN_DECLS
 #define INDICATE_SERVER_SIGNAL_SERVER_SHOW          "server-show"
 #define INDICATE_SERVER_SIGNAL_SERVER_HIDE          "server-hide"
 #define INDICATE_SERVER_SIGNAL_SERVER_DISPLAY       "server-display"
-#define INDICATE_SERVER_SIGNAL_LISTENER_INTERESTED  "listener-interested"
+#define INDICATE_SERVER_SIGNAL_INTEREST_ADDED       "interest-added"
+#define INDICATE_SERVER_SIGNAL_INTEREST_REMOVED     "interest-removed"
 
 typedef struct _IndicateServer IndicateServer;
 struct _IndicateServer {
@@ -72,7 +73,8 @@ struct _IndicateServerClass {
 	void (* server_show) (IndicateServer * server, gchar * type);
 	void (* server_hide) (IndicateServer * server, gchar * type);
 	void (* server_display) (IndicateServer * server);
-	void (* listener_interested) (IndicateServer * server, IndicateServerInterests * interests);
+	void (* interest_added) (IndicateServer * server, IndicateServerInterests interest);
+	void (* interest_removed) (IndicateServer * server, IndicateServerInterests interest);
 
 	/* Virtual Functions */
 	gboolean (*get_indicator_count) (IndicateServer * server, guint * count, GError **error);
@@ -118,6 +120,9 @@ void indicate_server_remove_indicator (IndicateServer * server, IndicateIndicato
 
 IndicateServer * indicate_server_ref_default (void);
 void indicate_server_set_default (IndicateServer * server);
+
+/* Check to see if there is someone, out there, who likes this */
+gboolean indicate_server_check_interest (IndicateServer * server, IndicateServerInterests interest);
 
 
 /* DBus API */
