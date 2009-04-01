@@ -28,6 +28,7 @@ License version 3 and version 2.1 along with this program.  If not, see
 */
  
 #include "server.h"
+#include "interests-priv.h"
 #include "dbus-indicate-server.h"
 
 /* Errors */

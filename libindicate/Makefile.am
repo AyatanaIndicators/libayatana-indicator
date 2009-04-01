@@ -25,7 +25,8 @@ indicate_headers = \
 	indicator.h \
 	indicator-message.h \
 	listener.h \
-	server.h
+	server.h \
+	interests.h
 
 libindicateinclude_HEADERS = \
 	$(indicate_headers)
@@ -41,7 +42,8 @@ libindicate_la_SOURCES = \
 	listener-marshal.c \
 	listener-marshal.h \
 	indicator.c \
-	indicator-message.c
+	indicator-message.c \
+	interestes-priv.h
 
 libindicate_la_LDFLAGS = \
 	-version-info $(LIBINDICATE_CURRENT):$(LIBINDICATE_REVISION):$(LIBINDICATE_AGE) \

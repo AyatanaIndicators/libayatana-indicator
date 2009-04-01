@@ -34,6 +34,7 @@ License version 3 and version 2.1 along with this program.  If not, see
 #include <glib-object.h>
 
 #include "indicator.h"
+#include "interests.h"
 
 G_BEGIN_DECLS
 
@@ -53,7 +54,7 @@ G_BEGIN_DECLS
 #define INDICATE_SERVER_SIGNAL_SERVER_SHOW          "server-show"
 #define INDICATE_SERVER_SIGNAL_SERVER_HIDE          "server-hide"
 #define INDICATE_SERVER_SIGNAL_SERVER_DISPLAY       "server-display"
-
+#define INDICATE_SERVER_SIGNAL_LISTENER_INTERESTED  "listener-interested"
 
 typedef struct _IndicateServer IndicateServer;
 struct _IndicateServer {
@@ -71,6 +72,7 @@ struct _IndicateServerClass {
 	void (* server_show) (IndicateServer * server, gchar * type);
 	void (* server_hide) (IndicateServer * server, gchar * type);
 	void (* server_display) (IndicateServer * server);
+	void (* listener_interested) (IndicateServer * server, IndicateServerInterests * interests);
 
 	/* Virtual Functions */
 	gboolean (*get_indicator_count) (IndicateServer * server, guint * count, GError **error);
@@ -82,6 +84,12 @@ struct _IndicateServerClass {
 	gboolean (*get_indicator_properties) (IndicateServer * server, guint id, gchar *** properties, GError **error);
 	gboolean (*show_indicator_to_user) (IndicateServer * server, guint id, GError ** error);
 	guint    (*get_next_id) (IndicateServer * server);
+
+	/* Reserver for future use */
+	void (*indicate_server_reserved1)(void);
+	void (*indicate_server_reserved2)(void);
+	void (*indicate_server_reserved3)(void);
+	void (*indicate_server_reserved4)(void);
 };
 
 GType indicate_server_get_type (void) G_GNUC_CONST;
