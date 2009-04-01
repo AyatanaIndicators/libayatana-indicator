@@ -54,6 +54,7 @@ static guint signals[LAST_SIGNAL] = { 0 };
 struct _IndicateListenerServer {
 	gchar * name;
 	DBusGProxy * proxy;
+	DBusGConnection * connection;
 };
 
 struct _IndicateListenerIndicator {
@@ -96,7 +97,7 @@ proxy_t_equal (gconstpointer pa, gconstpointer pb)
 {
 	proxy_t * a = (proxy_t *)pa; proxy_t * b = (proxy_t *)pb;
 
-	if (a->proxy == b->proxy) {
+	if (a->connection == b->connection) {
 		return g_strcmp0(a->name, b->name);
 	} else {
 		/* we're only using this for equal, not sorting */
@@ -317,7 +318,7 @@ dbus_owner_change (DBusGProxy * proxy, const gchar * name, const gchar * prev, c
 	}
 	if (new != NULL && new[0] == '\0') {
 		proxy_t searchitem;
-		searchitem.proxy = proxy;
+		searchitem.connection = bus;
 		searchitem.name = (gchar *)name; /* Droping const, not that it isn't, but to remove the warning */
 
 		GList * proxyt_item;
@@ -474,6 +475,7 @@ todo_idle (gpointer data)
 	proxyt->connection = todo->bus;
 	proxyt->server.name = todo->name;
 	proxyt->server.proxy = proxyt->proxy;
+	proxyt->server.connection = proxyt->connection;
 
 	priv->proxy_todo = g_array_remove_index(priv->proxy_todo, priv->proxy_todo->len - 1);
 
@@ -896,7 +898,7 @@ get_server_property (IndicateListener * listener, IndicateListenerServer * serve
 
 	proxy_t searchitem;
 	searchitem.name = server->name;
-	searchitem.proxy = server->proxy;
+	searchitem.connection = server->connection;
 
 	GList * proxyitem = g_list_find_custom(priv->proxies_possible, &searchitem, proxy_t_equal);
 	if (proxyitem == NULL) {
