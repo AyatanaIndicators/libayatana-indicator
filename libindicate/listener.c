@@ -51,6 +51,15 @@ enum {
 
 static guint signals[LAST_SIGNAL] = { 0 };
 
+struct _IndicateListenerServer {
+	gchar * name;
+	DBusGProxy * proxy;
+};
+
+struct _IndicateListenerIndicator {
+	guint id;
+};
+
 typedef struct _IndicateListenerPrivate IndicateListenerPrivate;
 struct _IndicateListenerPrivate
 {
@@ -60,8 +69,8 @@ struct _IndicateListenerPrivate
 	DBusGProxy * dbus_proxy_session;
 	DBusGProxy * dbus_proxy_system;
 
-	GHashTable * proxies_working;
-	GHashTable * proxies_possible;
+	GList * proxies_working;
+	GList * proxies_possible;
 
 	GArray * proxy_todo;
 	guint todo_idle;
@@ -78,7 +87,22 @@ typedef struct {
 	gchar * type;
 	IndicateListener * listener;
 	GHashTable * indicators;
+
+	IndicateListenerServer server;
 } proxy_t;
+
+static gint
+proxy_t_equal (gconstpointer pa, gconstpointer pb)
+{
+	proxy_t * a = (proxy_t *)pa; proxy_t * b = (proxy_t *)pb;
+
+	if (a->proxy == b->proxy) {
+		return g_strcmp0(a->name, b->name);
+	} else {
+		/* we're only using this for equal, not sorting */
+		return 1;
+	}
+}
 
 typedef struct {
 	DBusGConnection * bus;
@@ -219,8 +243,8 @@ indicate_listener_init (IndicateListener * listener)
 	                            G_CALLBACK(dbus_owner_change), listener, NULL);
 
 	/* Initialize Data structures */
-	priv->proxies_working = g_hash_table_new(g_str_hash, g_str_equal);
-	priv->proxies_possible = g_hash_table_new(g_str_hash, g_str_equal);
+	priv->proxies_working = NULL;
+	priv->proxies_possible = NULL;
 
 	/* TODO: Look at some common scenarios and find out how to make this sized */
 	priv->proxy_todo = g_array_new(FALSE, TRUE, sizeof(proxy_todo_t));
@@ -292,16 +316,20 @@ dbus_owner_change (DBusGProxy * proxy, const gchar * name, const gchar * prev, c
 		todo_list_add(name, proxy, listener, FALSE);
 	}
 	if (new != NULL && new[0] == '\0') {
-		proxy_t * proxyt;
-		proxyt = g_hash_table_lookup(priv->proxies_working, name);
-		if (proxyt != NULL) {
-			g_hash_table_remove(priv->proxies_working, name);
-			proxy_struct_destroy(proxyt);
+		proxy_t searchitem;
+		searchitem.proxy = proxy;
+		searchitem.name = (gchar *)name; /* Droping const, not that it isn't, but to remove the warning */
+
+		GList * proxyt_item;
+		proxyt_item = g_list_find_custom(priv->proxies_working, &searchitem, proxy_t_equal);
+		if (proxyt_item != NULL) {
+			proxy_struct_destroy((proxy_t *)proxyt_item->data);
+			priv->proxies_working = g_list_remove(priv->proxies_working, proxyt_item);
 		}
-		proxyt = g_hash_table_lookup(priv->proxies_possible, name);
-		if (proxyt != NULL) {
-			g_hash_table_remove(priv->proxies_possible, name);
-			proxy_struct_destroy(proxyt);
+		proxyt_item = g_list_find_custom(priv->proxies_possible, &searchitem, proxy_t_equal);
+		if (proxyt_item != NULL) {
+			proxy_struct_destroy((proxy_t *)proxyt_item->data);
+			priv->proxies_possible = g_list_remove(priv->proxies_possible, proxyt_item);
 		}
 	}
 
@@ -319,7 +347,7 @@ proxy_struct_destroy_indicators (gpointer key, gpointer value, gpointer data)
 	GList * indicator;
 	for (indicator = keys; indicator != NULL; indicator = indicator->next) {
 		guint id = (guint)indicator->data;
-		g_signal_emit(proxy_data->listener, signals[INDICATOR_REMOVED], 0, proxy_data->name, id, type, TRUE);
+		g_signal_emit(proxy_data->listener, signals[INDICATOR_REMOVED], 0, &proxy_data->server, GUINT_TO_POINTER(id), type, TRUE);
 	}
 	g_list_free(keys);
 
@@ -339,7 +367,7 @@ proxy_struct_destroy (gpointer data)
 							 proxy_data);
 		g_hash_table_remove_all(proxy_data->indicators);
 
-		g_signal_emit(proxy_data->listener, signals[SERVER_REMOVED], 0, proxy_data->name, proxy_data->type, TRUE);
+		g_signal_emit(proxy_data->listener, signals[SERVER_REMOVED], 0, &proxy_data->server, proxy_data->type, TRUE);
 		proxy_data->indicators = NULL;
 	}
 
@@ -444,6 +472,8 @@ todo_idle (gpointer data)
 	proxyt->listener = listener;
 	proxyt->indicators = NULL;
 	proxyt->connection = todo->bus;
+	proxyt->server.name = todo->name;
+	proxyt->server.proxy = proxyt->proxy;
 
 	priv->proxy_todo = g_array_remove_index(priv->proxy_todo, priv->proxy_todo->len - 1);
 
@@ -457,7 +487,7 @@ todo_idle (gpointer data)
 	dbus_g_proxy_connect_signal(proxyt->proxy, "ServerShow",
 	                            G_CALLBACK(proxy_server_added), proxyt, NULL);
 
-	g_hash_table_insert(priv->proxies_possible, proxyt->name, proxyt);
+	priv->proxies_possible = g_list_append(priv->proxies_possible, proxyt);
 
 	/* I think that we need to have this as there is a race
 	 * condition here.  If someone comes on the bus and we get
@@ -465,7 +495,7 @@ todo_idle (gpointer data)
 	 * signal it gets sent, we wouldn't get it.  So then we would
 	 * miss an indicator server coming on the bus.  I'd like to not
 	 * generate a warning in every app with DBus though. */
-	indicate_listener_server_get_type(listener, (IndicateListenerServer *)proxyt->name, get_type_cb, proxyt);
+	indicate_listener_server_get_type(listener, &proxyt->server, get_type_cb, proxyt);
 
 	return TRUE;
 }
@@ -538,8 +568,13 @@ proxy_server_added (DBusGProxy * proxy, const gchar * type, proxy_t * proxyt)
 		                                           g_free, proxy_indicators_free);
 		/* Elevate to working */
 		IndicateListenerPrivate * priv = INDICATE_LISTENER_GET_PRIVATE(proxyt->listener);
-		g_hash_table_remove(priv->proxies_possible, proxyt->name);
-		g_hash_table_insert(priv->proxies_working, proxyt->name, proxyt);
+
+		GList * proxyt_item;
+		proxyt_item = g_list_find_custom(priv->proxies_possible, proxyt, proxy_t_equal);
+		if (proxyt_item != NULL) {
+			priv->proxies_possible = g_list_remove(priv->proxies_possible, proxyt_item);
+		}
+		priv->proxies_working = g_list_append(priv->proxies_working, proxyt);
 
 		dbus_g_proxy_add_signal(proxyt->proxy, "IndicatorAdded",
 								G_TYPE_UINT, G_TYPE_STRING, G_TYPE_INVALID);
@@ -561,7 +596,7 @@ proxy_server_added (DBusGProxy * proxy, const gchar * type, proxy_t * proxyt)
 			proxyt->type = g_strdup(type);
 		}
 
-		g_signal_emit(proxyt->listener, signals[SERVER_ADDED], 0, proxyt->name, proxyt->type, TRUE);
+		g_signal_emit(proxyt->listener, signals[SERVER_ADDED], 0, &proxyt->server, proxyt->type, TRUE);
 	}
 
 	return;
@@ -583,7 +618,7 @@ proxy_indicator_added (DBusGProxy * proxy, guint id, const gchar * type, proxy_t
 
 	if (!g_hash_table_lookup(indicators, (gpointer)id)) {
 		g_hash_table_insert(indicators, (gpointer)id, (gpointer)TRUE);
-		g_signal_emit(proxyt->listener, signals[INDICATOR_ADDED], 0, proxyt->name, id, type, TRUE);
+		g_signal_emit(proxyt->listener, signals[INDICATOR_ADDED], 0, &proxyt->server, GUINT_TO_POINTER(id), type, TRUE);
 	}
 
 	return;
@@ -609,7 +644,7 @@ proxy_indicator_removed (DBusGProxy * proxy, guint id, const gchar * type, proxy
 	}
 
 	g_hash_table_remove(indicators, (gpointer)id);
-	g_signal_emit(proxyt->listener, signals[INDICATOR_REMOVED], 0, proxyt->name, id, type, TRUE);
+	g_signal_emit(proxyt->listener, signals[INDICATOR_REMOVED], 0, &proxyt->server, GUINT_TO_POINTER(id), type, TRUE);
 
 	return;
 }
@@ -642,7 +677,7 @@ proxy_indicator_modified (DBusGProxy * proxy, guint id, const gchar * property, 
 		return;
 	}
 
-	g_signal_emit(proxyt->listener, signals[INDICATOR_MODIFIED], 0, proxyt->name, id, type, property, TRUE);
+	g_signal_emit(proxyt->listener, signals[INDICATOR_MODIFIED], 0, &proxyt->server, GUINT_TO_POINTER(id), type, property, TRUE);
 
 	return;
 }
@@ -754,14 +789,6 @@ get_property_helper (IndicateListener * listener, IndicateListenerServer * serve
 {
 	/* g_debug("get_property_helper: %s %d", property, prop_type); */
 	/* TODO: Do we need to somehow refcount the server/indicator while we're waiting on this? */
-	IndicateListenerPrivate * priv = INDICATE_LISTENER_GET_PRIVATE(listener);
-
-	proxy_t * proxyt = g_hash_table_lookup(priv->proxies_working, server);
-	if (proxyt == NULL) {
-		g_error("Trying to get property '%s' on server '%s' that currently isn't set to working.", property, (gchar *)server);
-		return;
-	}
-
 	get_property_t * get_property_data = g_new(get_property_t, 1);
 	get_property_data->cb = callback;
 	get_property_data->data = data;
@@ -771,7 +798,7 @@ get_property_helper (IndicateListener * listener, IndicateListenerServer * serve
 	get_property_data->property = g_strdup(property);
 	get_property_data->type = prop_type;
 	
-	org_freedesktop_indicator_get_indicator_property_async (proxyt->proxy , INDICATE_LISTENER_INDICATOR_ID(indicator), property, get_property_cb, get_property_data);
+	org_freedesktop_indicator_get_indicator_property_async (server->proxy , INDICATE_LISTENER_INDICATOR_ID(indicator), property, get_property_cb, get_property_data);
 	return;
 }
 
@@ -812,11 +839,7 @@ listener_display_cb (DBusGProxy *proxy, GError *error, gpointer userdata)
 void
 indicate_listener_display (IndicateListener * listener, IndicateListenerServer * server, IndicateListenerIndicator * indicator)
 {
-	IndicateListenerPrivate * priv = INDICATE_LISTENER_GET_PRIVATE(listener);
-
-	proxy_t * proxyt = g_hash_table_lookup(priv->proxies_working, server);
-
-	org_freedesktop_indicator_show_indicator_to_user_async (proxyt->proxy, INDICATE_LISTENER_INDICATOR_ID(indicator), listener_display_cb, NULL);
+	org_freedesktop_indicator_show_indicator_to_user_async (server->proxy, INDICATE_LISTENER_INDICATOR_ID(indicator), listener_display_cb, NULL);
 
 	return;
 }
@@ -871,15 +894,21 @@ get_server_property (IndicateListener * listener, IndicateListenerServer * serve
 	/* g_debug("Setting up callback for property %s on %s", property_name, INDICATE_LISTENER_SERVER_DBUS_NAME(server)); */
 	IndicateListenerPrivate * priv = INDICATE_LISTENER_GET_PRIVATE(listener);
 
-	proxy_t * proxyt = g_hash_table_lookup(priv->proxies_possible, server);
-	if (proxyt == NULL) {
-		proxyt = g_hash_table_lookup(priv->proxies_working, server);
+	proxy_t searchitem;
+	searchitem.name = server->name;
+	searchitem.proxy = server->proxy;
+
+	GList * proxyitem = g_list_find_custom(priv->proxies_possible, &searchitem, proxy_t_equal);
+	if (proxyitem == NULL) {
+		proxyitem = g_list_find_custom(priv->proxies_working, &searchitem, proxy_t_equal);
 	}
 
-	if (proxyt == NULL) {
+	if (proxyitem == NULL) {
 		g_warning("Can not find a proxy for the server at all.");
 		return;
 	}
+
+	proxy_t * proxyt = (proxy_t *)proxyitem->data;
 
 	if (proxyt->property_proxy == NULL) {
 		proxyt->property_proxy = dbus_g_proxy_new_for_name(proxyt->connection,
@@ -916,5 +945,17 @@ void
 indicate_listener_server_get_desktop (IndicateListener * listener, IndicateListenerServer * server, indicate_listener_get_server_property_cb callback, gpointer data)
 {
 	return get_server_property(listener, server, callback, "desktop", data);
+}
+
+const gchar *
+indicate_listener_server_get_dbusname (IndicateListenerServer * server)
+{
+	return server->name;
+}
+
+guint
+indicate_listener_indicator_get_id (IndicateListenerIndicator * indicator)
+{
+	return GPOINTER_TO_UINT(indicator);
 }
 
