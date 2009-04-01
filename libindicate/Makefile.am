@@ -43,7 +43,7 @@ libindicate_la_SOURCES = \
 	listener-marshal.h \
 	indicator.c \
 	indicator-message.c \
-	interestes-priv.h
+	interests-priv.h
 
 libindicate_la_LDFLAGS = \
 	-version-info $(LIBINDICATE_CURRENT):$(LIBINDICATE_REVISION):$(LIBINDICATE_AGE) \
