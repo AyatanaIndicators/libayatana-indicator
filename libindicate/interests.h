@@ -34,9 +34,9 @@ License version 3 and version 2.1 along with this program.  If not, see
 
 G_BEGIN_DECLS
 
-typedef enum _IndicateServerInterests IndicateServerInterests;
-enum _IndicateServerInterests {
-	INDICATE_INTEREST_END,               /**< Finishes a list of interests */
+typedef enum _IndicateInterests IndicateInterests;
+enum _IndicateInterests {
+	INDICATE_INTEREST_NONE,              /**< We're of no interest */
 	INDICATE_INTEREST_SERVER_DISPLAY,    /**< Displays the server's existance to the user */
 	INDICATE_INTEREST_SERVER_SIGNAL,     /**< Will send signals to the server to be displayed */
 	INDICATE_INTEREST_INDICATOR_DISPLAY, /**< Displays indicators to the user */

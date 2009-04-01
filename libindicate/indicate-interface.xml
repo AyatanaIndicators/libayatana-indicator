@@ -66,6 +66,12 @@ License version 3 and version 2.1 along with this program.  If not, see
 		<method name="ShowIndicatorToUser">
 			<arg type="u" name="id" direction="in" />
 		</method>
+		<method name="ShowInterest">
+			<arg type="s" name="interest" direction="in" />
+		</method>
+		<method name="RemoveInterest">
+			<arg type="s" name="interest" direction="in" />
+		</method>
 
 
 <!-- Signals -->

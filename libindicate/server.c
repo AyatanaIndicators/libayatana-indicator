@@ -43,6 +43,8 @@ enum {
 	NO_GET_INDICATOR_PROPERTIES,
 	NO_SHOW_INDICATOR_TO_USER,
 	INVALID_INDICATOR_ID,
+	NO_SHOW_INTEREST,
+	NO_REMOVE_INTEREST,
 	LAST_ERROR
 };
 
@@ -864,6 +866,74 @@ indicate_server_get_next_id (IndicateServer * server)
 	}
 
 	return 0;
+}
+
+static IndicateInterests
+interest_string_to_enum (gchar * interest_string)
+{
+	if (!g_strcmp0(interest_string, INDICATE_INTEREST_STRING_SERVER_DISPLAY)) {
+		return INDICATE_INTEREST_SERVER_DISPLAY;
+	}
+
+	if (!g_strcmp0(interest_string, INDICATE_INTEREST_STRING_SERVER_SIGNAL)) {
+		return INDICATE_INTEREST_SERVER_SIGNAL;
+	}
+
+	if (!g_strcmp0(interest_string, INDICATE_INTEREST_STRING_INDICATOR_DISPLAY)) {
+		return INDICATE_INTEREST_INDICATOR_DISPLAY;
+	}
+
+	if (!g_strcmp0(interest_string, INDICATE_INTEREST_STRING_INDICATOR_SIGNAL)) {
+		return INDICATE_INTEREST_INDICATOR_SIGNAL;
+	}
+
+	if (!g_strcmp0(interest_string, INDICATE_INTEREST_STRING_INDICATOR_COUNT)) {
+		return INDICATE_INTEREST_INDICATOR_COUNT;
+	}
+
+	return INDICATE_INTEREST_NONE;
+}
+
+gboolean
+indicate_server_show_interest (IndicateServer * server, gchar * interest, GError ** error)
+{
+	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
+
+	if (class != NULL) {
+		return class->show_interest (server, interest_string_to_enum(interest));
+	}
+
+	if (error) {
+		g_set_error(error,
+		            indicate_server_error_quark(),
+		            NO_SHOW_INTEREST,
+		            "show_interest function doesn't exist for this server class: %s",
+		            G_OBJECT_TYPE_NAME(server));
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+gboolean
+indicate_server_remove_interest (IndicateServer * server, gchar * interest, GError ** error)
+{
+	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
+
+	if (class != NULL) {
+		return class->remove_interest (server, interest_string_to_enum(interest));
+	}
+
+	if (error) {
+		g_set_error(error,
+		            indicate_server_error_quark(),
+		            NO_REMOVE_INTEREST,
+		            "remove_interest function doesn't exist for this server class: %s",
+		            G_OBJECT_TYPE_NAME(server));
+		return FALSE;
+	}
+
+	return TRUE;
 }
 
 /* Signal emission functions for sub-classes of the server */
