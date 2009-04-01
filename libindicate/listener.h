@@ -119,10 +119,14 @@ void                  indicate_listener_server_get_desktop (IndicateListener * l
                                                             IndicateListenerServer * server,
                                                             indicate_listener_get_server_property_cb callback,
                                                             gpointer data);
-const gchar *         indicate_listener_server_get_dbusname (IndicateListenerServer * server);
-guint                 indicate_listener_indicator_get_id    (IndicateListenerIndicator * indicator);
-
-
+const gchar *         indicate_listener_server_get_dbusname      (IndicateListenerServer * server);
+guint                 indicate_listener_indicator_get_id         (IndicateListenerIndicator * indicator);
+void                  indicate_listener_server_show_interest     (IndicateListener * listener,
+                                                                  IndicateListenerServer * server,
+                                                                  IndicateInterests interest);
+void                  indicate_listener_server_remove_interest   (IndicateListener * listener,
+                                                                  IndicateListenerServer * server,
+                                                                  IndicateInterests interest);
 
 
 G_END_DECLS
