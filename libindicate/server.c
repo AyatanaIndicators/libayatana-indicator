@@ -88,10 +88,19 @@ struct _IndicateServerPrivate
 
 	// TODO: Should have a more robust way to track this, but this'll work for now
 	guint num_hidden;
+
+	gboolean interests[INDICATE_INTEREST_LAST];
+	GList * interestedfolks;
 };
 
 #define INDICATE_SERVER_GET_PRIVATE(o) \
           (G_TYPE_INSTANCE_GET_PRIVATE ((o), INDICATE_TYPE_SERVER, IndicateServerPrivate))
+
+typedef struct _IndicateServerInterestedFolk IndicateServerInterestedFolk;
+struct _IndicateServerInterestedFolk {
+	gchar * sender;
+	gboolean interests[INDICATE_INTEREST_LAST];
+};
 
 
 /* Define Type */
@@ -113,6 +122,10 @@ static void get_property (GObject * obj, guint id, GValue * value, GParamSpec * 
 static gboolean show_interest (IndicateServer * server, gchar * sender, IndicateInterests interest);
 static gboolean remove_interest (IndicateServer * server, gchar * sender, IndicateInterests interest);
 static gboolean check_interest (IndicateServer * server, IndicateInterests intrest);
+static gint indicate_server_interested_folks_equal (gconstpointer a, gconstpointer b);
+static void indicate_server_interested_folks_init (IndicateServerInterestedFolk * folk);
+static void indicate_server_interested_folks_set (IndicateServerInterestedFolk * folk, IndicateInterests interest, gboolean value);
+static void indicate_server_interested_folks_copy (IndicateServerInterestedFolk * folk, gboolean * interests);
 
 /* DBus API */
 gboolean indicate_server_get_indicator_count (IndicateServer * server, guint * count, GError **error);
@@ -246,6 +259,13 @@ indicate_server_init (IndicateServer * server)
 	priv->current_id = 0;
 	priv->type = NULL;
 	priv->desktop = NULL;
+
+	guint i;
+	for (i = INDICATE_INTEREST_NONE; i < INDICATE_INTEREST_LAST; i++) {
+		priv->interests[i] = FALSE;
+	}
+	priv->interestedfolks = NULL;
+
 
 	return;
 }
@@ -1060,3 +1080,45 @@ indicate_server_emit_server_display (IndicateServer *server)
   
   g_signal_emit(server, signals[SERVER_DISPLAY], 0, TRUE);
 }
+
+/* *** Folks stuff *** */
+
+static gint
+indicate_server_interested_folks_equal (gconstpointer a, gconstpointer b)
+{
+	return g_strcmp0(((IndicateServerInterestedFolk *)a)->sender,((IndicateServerInterestedFolk *)b)->sender);
+}
+
+static void
+indicate_server_interested_folks_init (IndicateServerInterestedFolk * folk)
+{
+	folk->sender = NULL;
+
+	guint i;
+	for (i = INDICATE_INTEREST_NONE; i < INDICATE_INTEREST_LAST; i++) {
+		folk->interests[i] = FALSE;
+	}
+
+	return;
+}
+
+static void
+indicate_server_interested_folks_set (IndicateServerInterestedFolk * folk, IndicateInterests interest, gboolean value)
+{
+	folk->interests[interest] = value;
+	return;
+}
+
+static void
+indicate_server_interested_folks_copy (IndicateServerInterestedFolk * folk, gboolean * interests)
+{
+	guint i;
+	for (i = INDICATE_INTEREST_NONE; i < INDICATE_INTEREST_LAST; i++) {
+		if (folk->interests[i]) {
+			interests[i] = TRUE;
+		}
+	}
+
+	return;
+}
+/* *** End Folks *** */

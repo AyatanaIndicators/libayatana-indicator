@@ -42,7 +42,7 @@ enum _IndicateInterests {
 	INDICATE_INTEREST_INDICATOR_DISPLAY, /**< Displays indicators to the user */
 	INDICATE_INTEREST_INDICATOR_SIGNAL,  /**< Will return signals based on individual indicators being responded to */
 	INDICATE_INTEREST_INDICATOR_COUNT,   /**< Only displays a count of the indicators */
-	INDICATE_INTEREST_INDICATOR_LAST     /**< Makes merges and counting easier */
+	INDICATE_INTEREST_LAST               /**< Makes merges and counting easier */
 };
 
 G_END_DECLS
