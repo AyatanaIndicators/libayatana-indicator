@@ -29,7 +29,8 @@ License version 3 and version 2.1 along with this program.  If not, see
  
 #include "server.h"
 #include "interests-priv.h"
-#include "dbus-indicate-server.h"
+#include <dbus/dbus-glib.h>
+#include <dbus/dbus-glib-lowlevel.h>
 
 /* Errors */
 enum {
@@ -45,6 +46,8 @@ enum {
 	INVALID_INDICATOR_ID,
 	NO_SHOW_INTEREST,
 	NO_REMOVE_INTEREST,
+	SHOW_INTEREST_FAILED,
+	REMOVE_INTEREST_FAILED,
 	LAST_ERROR
 };
 
@@ -105,6 +108,23 @@ static gboolean show_indicator_to_user (IndicateServer * server, guint id, GErro
 static guint get_next_id (IndicateServer * server);
 static void set_property (GObject * obj, guint id, const GValue * value, GParamSpec * pspec);
 static void get_property (GObject * obj, guint id, GValue * value, GParamSpec * pspec);
+
+/* DBus API */
+gboolean indicate_server_get_indicator_count (IndicateServer * server, guint * count, GError **error);
+gboolean indicate_server_get_indicator_count_by_type (IndicateServer * server, gchar * type, guint * count, GError **error);
+gboolean indicate_server_get_indicator_list (IndicateServer * server, GArray ** indicators, GError ** error);
+gboolean indicate_server_get_indicator_list_by_type (IndicateServer * server, gchar * type, guint ** indicators, GError ** error);
+gboolean indicate_server_get_indicator_property (IndicateServer * server, guint id, gchar * property, gchar ** value, GError **error);
+gboolean indicate_server_get_indicator_property_group (IndicateServer * server, guint id, GPtrArray * properties, gchar *** value, GError **error);
+gboolean indicate_server_get_indicator_properties (IndicateServer * server, guint id, gchar *** properties, GError **error);
+gboolean indicate_server_show_indicator_to_user (IndicateServer * server, guint id, GError ** error);
+gboolean indicate_server_show_interest (IndicateServer * server, gchar * interest, DBusGMethodInvocation * method);
+gboolean indicate_server_remove_interest (IndicateServer * server, gchar * interest, DBusGMethodInvocation * method);
+
+/* Has to be after the dbus prototypes */
+#include "dbus-indicate-server.h"
+
+
 
 /* Code */
 static void
@@ -895,45 +915,69 @@ interest_string_to_enum (gchar * interest_string)
 }
 
 gboolean
-indicate_server_show_interest (IndicateServer * server, gchar * interest, GError ** error)
+indicate_server_show_interest (IndicateServer * server, gchar * interest, DBusGMethodInvocation * method)
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
 	if (class != NULL) {
-		return class->show_interest (server, interest_string_to_enum(interest));
+		if (class->show_interest (server, dbus_g_method_get_sender(method), interest_string_to_enum(interest))){
+			dbus_g_method_return(method);
+			return TRUE;
+		} else {
+			GError * error;
+			g_set_error(&error,
+						indicate_server_error_quark(),
+						SHOW_INTEREST_FAILED,
+						"Unable to show interest: %s",
+						interest);
+			dbus_g_method_return_error(method, error);
+			g_error_free(error);
+			return FALSE;
+		}
 	}
 
-	if (error) {
-		g_set_error(error,
-		            indicate_server_error_quark(),
-		            NO_SHOW_INTEREST,
-		            "show_interest function doesn't exist for this server class: %s",
-		            G_OBJECT_TYPE_NAME(server));
-		return FALSE;
-	}
-
-	return TRUE;
+	GError * error;
+	g_set_error(&error,
+				indicate_server_error_quark(),
+				NO_SHOW_INTEREST,
+				"show_interest function doesn't exist for this server class: %s",
+				G_OBJECT_TYPE_NAME(server));
+	dbus_g_method_return_error(method, error);
+	g_error_free(error);
+	return FALSE;
 }
 
 gboolean
-indicate_server_remove_interest (IndicateServer * server, gchar * interest, GError ** error)
+indicate_server_remove_interest (IndicateServer * server, gchar * interest, DBusGMethodInvocation * method)
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
 	if (class != NULL) {
-		return class->remove_interest (server, interest_string_to_enum(interest));
+		if (class->remove_interest (server, dbus_g_method_get_sender(method), interest_string_to_enum(interest))){
+			dbus_g_method_return(method);
+			return TRUE;
+		} else {
+			GError * error;
+			g_set_error(&error,
+						indicate_server_error_quark(),
+						REMOVE_INTEREST_FAILED,
+						"Unable to remove interest: %s",
+						interest);
+			dbus_g_method_return_error(method, error);
+			g_error_free(error);
+			return FALSE;
+		}
 	}
 
-	if (error) {
-		g_set_error(error,
-		            indicate_server_error_quark(),
-		            NO_REMOVE_INTEREST,
-		            "remove_interest function doesn't exist for this server class: %s",
-		            G_OBJECT_TYPE_NAME(server));
-		return FALSE;
-	}
-
-	return TRUE;
+	GError * error;
+	g_set_error(&error,
+				indicate_server_error_quark(),
+				NO_REMOVE_INTEREST,
+				"remove_interest function doesn't exist for this server class: %s",
+				G_OBJECT_TYPE_NAME(server));
+	dbus_g_method_return_error(method, error);
+	g_error_free(error);
+	return FALSE;
 }
 
 /* Signal emission functions for sub-classes of the server */

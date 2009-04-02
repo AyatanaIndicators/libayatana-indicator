@@ -67,9 +67,11 @@ License version 3 and version 2.1 along with this program.  If not, see
 			<arg type="u" name="id" direction="in" />
 		</method>
 		<method name="ShowInterest">
+			<annotation name="org.freedesktop.DBus.GLib.Async" value="true" />
 			<arg type="s" name="interest" direction="in" />
 		</method>
 		<method name="RemoveInterest">
+			<annotation name="org.freedesktop.DBus.GLib.Async" value="true" />
 			<arg type="s" name="interest" direction="in" />
 		</method>
 

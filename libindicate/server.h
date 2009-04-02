@@ -86,8 +86,9 @@ struct _IndicateServerClass {
 	gboolean (*get_indicator_properties) (IndicateServer * server, guint id, gchar *** properties, GError **error);
 	gboolean (*show_indicator_to_user) (IndicateServer * server, guint id, GError ** error);
 	guint    (*get_next_id) (IndicateServer * server);
-	gboolean (*show_interest) (IndicateServer * server, IndicateInterests interest);
-	gboolean (*remove_interest) (IndicateServer * server, IndicateInterests interest);
+	gboolean (*show_interest) (IndicateServer * server, gchar * sender, IndicateInterests interest);
+	gboolean (*remove_interest) (IndicateServer * server, gchar * sender, IndicateInterests interest);
+	gboolean (*check_interest) (IndicateServer * server, IndicateInterests interest);
 
 	/* Reserver for future use */
 	void (*indicate_server_reserved1)(void);
@@ -126,18 +127,6 @@ void indicate_server_set_default (IndicateServer * server);
 /* Check to see if there is someone, out there, who likes this */
 gboolean indicate_server_check_interest (IndicateServer * server, IndicateInterests interest);
 
-
-/* DBus API */
-gboolean indicate_server_get_indicator_count (IndicateServer * server, guint * count, GError **error);
-gboolean indicate_server_get_indicator_count_by_type (IndicateServer * server, gchar * type, guint * count, GError **error);
-gboolean indicate_server_get_indicator_list (IndicateServer * server, GArray ** indicators, GError ** error);
-gboolean indicate_server_get_indicator_list_by_type (IndicateServer * server, gchar * type, guint ** indicators, GError ** error);
-gboolean indicate_server_get_indicator_property (IndicateServer * server, guint id, gchar * property, gchar ** value, GError **error);
-gboolean indicate_server_get_indicator_property_group (IndicateServer * server, guint id, GPtrArray * properties, gchar *** value, GError **error);
-gboolean indicate_server_get_indicator_properties (IndicateServer * server, guint id, gchar *** properties, GError **error);
-gboolean indicate_server_show_indicator_to_user (IndicateServer * server, guint id, GError ** error);
-gboolean indicate_server_show_interest (IndicateServer * server, gchar * interest, GError ** error);
-gboolean indicate_server_remove_interest (IndicateServer * server, gchar * interest, GError ** error);
 
 /* Signal emission functions for sub-classes of the server */
 void indicate_server_emit_indicator_added (IndicateServer *server, guint id, const gchar *type);
