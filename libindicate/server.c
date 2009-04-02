@@ -59,6 +59,8 @@ enum {
 	SERVER_SHOW,
 	SERVER_HIDE,
 	SERVER_DISPLAY,
+	INTEREST_ADDED,
+	INTEREST_REMOVED,
 	LAST_SIGNAL
 };
 
@@ -185,6 +187,20 @@ indicate_server_class_init (IndicateServerClass * class)
 	                                        NULL, NULL,
 	                                        g_cclosure_marshal_VOID__VOID,
 	                                        G_TYPE_NONE, 0);
+	signals[INTEREST_ADDED] = g_signal_new(INDICATE_SERVER_SIGNAL_INTEREST_ADDED,
+	                                        G_TYPE_FROM_CLASS (class),
+	                                        G_SIGNAL_RUN_LAST,
+	                                        G_STRUCT_OFFSET (IndicateServerClass, interest_added),
+	                                        NULL, NULL,
+	                                        g_cclosure_marshal_VOID__UINT,
+	                                        G_TYPE_NONE, 1, G_TYPE_UINT);
+	signals[INTEREST_REMOVED] = g_signal_new(INDICATE_SERVER_SIGNAL_INTEREST_REMOVED,
+	                                        G_TYPE_FROM_CLASS (class),
+	                                        G_SIGNAL_RUN_LAST,
+	                                        G_STRUCT_OFFSET (IndicateServerClass, interest_removed),
+	                                        NULL, NULL,
+	                                        g_cclosure_marshal_VOID__UINT,
+	                                        G_TYPE_NONE, 1, G_TYPE_UINT);
 
 	g_object_class_install_property (gobj, PROP_DESKTOP,
 	                                 g_param_spec_string("desktop", "Desktop File",
