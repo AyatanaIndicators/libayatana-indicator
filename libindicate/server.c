@@ -488,6 +488,10 @@ get_next_id (IndicateServer * server)
 static gboolean
 show_interest (IndicateServer * server, gchar * sender, IndicateInterests interest)
 {
+	if (!(interest > INDICATE_INTEREST_NONE && interest < INDICATE_INTEREST_LAST)) {
+		return FALSE;
+	}
+
 	/* g_debug("Someone is showing interest.  %s in %d", sender, interest); */
 	IndicateServerInterestedFolk localfolk;
 	localfolk.sender = sender;
@@ -516,6 +520,10 @@ show_interest (IndicateServer * server, gchar * sender, IndicateInterests intere
 static gboolean
 remove_interest (IndicateServer * server, gchar * sender, IndicateInterests interest)
 {
+	if (!(interest > INDICATE_INTEREST_NONE && interest < INDICATE_INTEREST_LAST)) {
+		return FALSE;
+	}
+
 	IndicateServerInterestedFolk localfolk;
 	localfolk.sender = sender;
 
