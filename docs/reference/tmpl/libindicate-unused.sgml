@@ -1,0 +1,87 @@
+<!-- ##### FUNCTION indicate_server_get_indicator_count ##### -->
+<para>
+
+</para>
+
+@server: 
+@count: 
+@error: 
+@Returns: 
+
+<!-- ##### FUNCTION indicate_server_get_indicator_count_by_type ##### -->
+<para>
+
+</para>
+
+@server: 
+@type: 
+@count: 
+@error: 
+@Returns: 
+
+<!-- ##### FUNCTION indicate_server_get_indicator_list ##### -->
+<para>
+
+</para>
+
+@server: 
+@indicators: 
+@error: 
+@Returns: 
+
+<!-- ##### FUNCTION indicate_server_get_indicator_list_by_type ##### -->
+<para>
+
+</para>
+
+@server: 
+@type: 
+@indicators: 
+@error: 
+@Returns: 
+
+<!-- ##### FUNCTION indicate_server_get_indicator_properties ##### -->
+<para>
+
+</para>
+
+@server: 
+@id: 
+@properties: 
+@error: 
+@Returns: 
+
+<!-- ##### FUNCTION indicate_server_get_indicator_property ##### -->
+<para>
+
+</para>
+
+@server: 
+@id: 
+@property: 
+@value: 
+@error: 
+@Returns: 
+
+<!-- ##### FUNCTION indicate_server_get_indicator_property_group ##### -->
+<para>
+
+</para>
+
+@server: 
+@id: 
+@properties: 
+@value: 
+@error: 
+@Returns: 
+
+<!-- ##### FUNCTION indicate_server_show_indicator_to_user ##### -->
+<para>
+
+</para>
+
+@server: 
+@id: 
+@error: 
+@Returns: 
+
