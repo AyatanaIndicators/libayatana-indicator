@@ -78,6 +78,8 @@ typedef struct _IndicateServerPrivate IndicateServerPrivate;
 struct _IndicateServerPrivate
 {
 	DBusGConnection *connection;
+	DBusGProxy * dbus_proxy;
+
 	gchar * path;
 	GSList * indicators;
 	gboolean visible;
@@ -116,6 +118,7 @@ static gboolean get_indicator_property (IndicateServer * server, guint id, gchar
 static gboolean get_indicator_property_group (IndicateServer * server, guint id, GPtrArray * properties, gchar *** value, GError **error);
 static gboolean get_indicator_properties (IndicateServer * server, guint id, gchar *** properties, GError **error);
 static gboolean show_indicator_to_user (IndicateServer * server, guint id, GError ** error);
+static void dbus_owner_change (DBusGProxy * proxy, const gchar * name, const gchar * prev, const gchar * new, IndicateServer * server);
 static guint get_next_id (IndicateServer * server);
 static void set_property (GObject * obj, guint id, const GValue * value, GParamSpec * pspec);
 static void get_property (GObject * obj, guint id, GValue * value, GParamSpec * pspec);
@@ -373,6 +376,17 @@ indicate_server_show (IndicateServer * server)
 	priv->visible = TRUE;
 
 	g_signal_emit(server, signals[SERVER_SHOW], 0, priv->type ? priv->type : "", TRUE);
+
+	priv->dbus_proxy = dbus_g_proxy_new_for_name_owner (priv->connection,
+	                                                    DBUS_SERVICE_DBUS,
+	                                                    DBUS_PATH_DBUS,
+	                                                    DBUS_INTERFACE_DBUS,
+	                                                    NULL);
+	dbus_g_proxy_add_signal(priv->dbus_proxy, "NameOwnerChanged",
+	                        G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
+	                        G_TYPE_INVALID);
+	dbus_g_proxy_connect_signal(priv->dbus_proxy, "NameOwnerChanged",
+	                            G_CALLBACK(dbus_owner_change), server, NULL);
 	
 	return;
 }
@@ -388,12 +402,34 @@ indicate_server_hide (IndicateServer * server)
 
 	priv->visible = FALSE;
 
+	/* Delete interested parties */
+	g_list_foreach(priv->interestedfolks, (GFunc)g_free, NULL);
+	g_list_free(priv->interestedfolks);
+	priv->interestedfolks = NULL;
+
+	/* Signal the lack of interest */
+	guint i;
+	for (i = INDICATE_INTEREST_NONE; i < INDICATE_INTEREST_LAST; i++) {
+		if (priv->interests[i]) {
+			g_signal_emit(G_OBJECT(server), signals[INTEREST_REMOVED], 0, i, TRUE);
+		}
+		priv->interests[i] = FALSE;
+	}
+
 	g_signal_emit(server, signals[SERVER_HIDE], 0, priv->type ? priv->type : "", TRUE);
 
+	g_object_unref(G_OBJECT(priv->dbus_proxy));
 	dbus_g_connection_unref (priv->connection);
 	priv->connection = NULL;
 	
 	return;
+}
+
+static void
+dbus_owner_change (DBusGProxy * proxy, const gchar * name, const gchar * prev, const gchar * new, IndicateServer * server)
+{
+
+
 }
 
 static guint
@@ -422,7 +458,7 @@ show_interest (IndicateServer * server, gchar * sender, IndicateInterests intere
 		folkpointer = (IndicateServerInterestedFolk *)entry->data;
 	}
 
-	indicate_server_interested_folk_set(folkpointer, interest, TRUE);
+	indicate_server_interested_folks_set(folkpointer, interest, TRUE);
 	if (!priv->interests[interest]) {
 		g_signal_emit(G_OBJECT(server), signals[INTEREST_ADDED], 0, interest, TRUE);
 		priv->interests[interest] = TRUE;
@@ -449,7 +485,7 @@ remove_interest (IndicateServer * server, gchar * sender, IndicateInterests inte
 		folkpointer = (IndicateServerInterestedFolk *)entry->data;
 	}
 
-	indicate_server_interested_folk_set(folkpointer, interest, FALSE);
+	indicate_server_interested_folks_set(folkpointer, interest, FALSE);
 
 	if (priv->interests[interest]) {
 		guint i;
@@ -460,7 +496,7 @@ remove_interest (IndicateServer * server, gchar * sender, IndicateInterests inte
 		GList * listi = NULL;
 		for (listi = priv->interestedfolks ; listi != NULL ; listi = listi->next) {
 			folkpointer = (IndicateServerInterestedFolk *)listi->data;
-			inkscape_server_interested_folk_copy(folkpointer, priv->interests);
+			indicate_server_interested_folks_copy(folkpointer, priv->interests);
 		}
 
 		if (!priv->interests[interest]) {
@@ -472,7 +508,7 @@ remove_interest (IndicateServer * server, gchar * sender, IndicateInterests inte
 }
 
 static gboolean
-check_interest (IndicateServer * server, IndicateInterests intrest)
+check_interest (IndicateServer * server, IndicateInterests interest)
 {
 	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
 	return priv->interests[interest];
