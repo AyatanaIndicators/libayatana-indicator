@@ -713,7 +713,7 @@ indicate_server_get_indicator_count (IndicateServer * server, guint * count, GEr
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
-	if (class != NULL) {
+	if (class != NULL && class->get_indicator_count != NULL) {
 		return class->get_indicator_count (server, count, error);
 	}
 
@@ -734,7 +734,7 @@ indicate_server_get_indicator_count_by_type (IndicateServer * server, gchar * ty
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
-	if (class != NULL) {
+	if (class != NULL && class->get_indicator_count_by_type != NULL) {
 		return class->get_indicator_count_by_type (server, type, count, error);
 	}
 
@@ -755,7 +755,7 @@ indicate_server_get_indicator_list (IndicateServer * server, GArray ** indicator
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
-	if (class != NULL) {
+	if (class != NULL && class->get_indicator_list != NULL) {
 		return class->get_indicator_list (server, indicators, error);
 	}
 
@@ -776,7 +776,7 @@ indicate_server_get_indicator_list_by_type (IndicateServer * server, gchar * typ
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
-	if (class != NULL) {
+	if (class != NULL && class->get_indicator_list_by_type != NULL) {
 		return class->get_indicator_list_by_type (server, type, indicators, error);
 	}
 
@@ -797,7 +797,7 @@ indicate_server_get_indicator_property (IndicateServer * server, guint id, gchar
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
-	if (class != NULL) {
+	if (class != NULL && class->get_indicator_property != NULL) {
 		return class->get_indicator_property (server, id, property, value, error);
 	}
 
@@ -818,7 +818,7 @@ indicate_server_get_indicator_property_group (IndicateServer * server, guint id,
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
-	if (class != NULL) {
+	if (class != NULL && class->get_indicator_property_group != NULL) {
 		return class->get_indicator_property_group (server, id, properties, value, error);
 	}
 
@@ -839,7 +839,7 @@ indicate_server_get_indicator_properties (IndicateServer * server, guint id, gch
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
-	if (class != NULL) {
+	if (class != NULL && class->get_indicator_properties != NULL) {
 		return class->get_indicator_properties (server, id, properties, error);
 	}
 
@@ -860,7 +860,7 @@ indicate_server_show_indicator_to_user (IndicateServer * server, guint id, GErro
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
-	if (class != NULL) {
+	if (class != NULL && class->show_indicator_to_user != NULL) {
 		return class->show_indicator_to_user (server, id, error);
 	}
 
@@ -881,7 +881,7 @@ indicate_server_get_next_id (IndicateServer * server)
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
-	if (class != NULL) {
+	if (class != NULL && class->get_next_id != NULL) {
 		return class->get_next_id (server);
 	}
 
@@ -919,7 +919,7 @@ indicate_server_show_interest (IndicateServer * server, gchar * interest, DBusGM
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
-	if (class != NULL) {
+	if (class != NULL && class->show_interest != NULL) {
 		if (class->show_interest (server, dbus_g_method_get_sender(method), interest_string_to_enum(interest))){
 			dbus_g_method_return(method);
 			return TRUE;
@@ -952,7 +952,7 @@ indicate_server_remove_interest (IndicateServer * server, gchar * interest, DBus
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
-	if (class != NULL) {
+	if (class != NULL && class->remove_interest != NULL) {
 		if (class->remove_interest (server, dbus_g_method_get_sender(method), interest_string_to_enum(interest))){
 			dbus_g_method_return(method);
 			return TRUE;
