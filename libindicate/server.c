@@ -428,8 +428,46 @@ indicate_server_hide (IndicateServer * server)
 static void
 dbus_owner_change (DBusGProxy * proxy, const gchar * name, const gchar * prev, const gchar * new, IndicateServer * server)
 {
+	if (prev != NULL) {
+		/* We only care about people leaving the bus */
+		return;
+	}
 
+	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
 
+	IndicateServerInterestedFolk searchitem;
+	searchitem.sender = (gchar *)name;
+	GList * entry = g_list_find_custom(priv->interestedfolks, &searchitem, indicate_server_interested_folks_equal);
+
+	if (entry == NULL) {
+		return;
+	}
+
+	IndicateServerInterestedFolk * folk = (IndicateServerInterestedFolk *)entry->data;
+	priv->interestedfolks = g_list_remove(priv->interestedfolks, entry);
+
+	guint i;
+	for (i = INDICATE_INTEREST_NONE; i < INDICATE_INTEREST_LAST; i++) {
+		priv->interests[i] = FALSE;
+	}
+
+	GList * listi = NULL;
+	for (listi = priv->interestedfolks ; listi != NULL ; listi = listi->next) {
+		IndicateServerInterestedFolk * folkpointer = (IndicateServerInterestedFolk *)listi->data;
+		indicate_server_interested_folks_copy(folkpointer, priv->interests);
+	}
+
+	for (i = INDICATE_INTEREST_NONE; i < INDICATE_INTEREST_LAST; i++) {
+		if (folk->interests[i] != priv->interests[i]) {
+			/* We can only remove interest here.  Think about it for a
+			   moment and I think you'll be cool with it. */
+			g_signal_emit(G_OBJECT(server), signals[INTEREST_REMOVED], 0, i, TRUE);
+		}
+	}
+
+	g_free(folk);
+
+	return;
 }
 
 static guint
