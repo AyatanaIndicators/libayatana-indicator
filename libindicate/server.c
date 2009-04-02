@@ -126,9 +126,10 @@ static gboolean show_interest (IndicateServer * server, gchar * sender, Indicate
 static gboolean remove_interest (IndicateServer * server, gchar * sender, IndicateInterests interest);
 static gboolean check_interest (IndicateServer * server, IndicateInterests intrest);
 static gint indicate_server_interested_folks_equal (gconstpointer a, gconstpointer b);
-static void indicate_server_interested_folks_init (IndicateServerInterestedFolk * folk);
+static void indicate_server_interested_folks_init (IndicateServerInterestedFolk * folk, gchar * sender);
 static void indicate_server_interested_folks_set (IndicateServerInterestedFolk * folk, IndicateInterests interest, gboolean value);
 static void indicate_server_interested_folks_copy (IndicateServerInterestedFolk * folk, gboolean * interests);
+static void indicate_server_interested_folks_destroy(IndicateServerInterestedFolk * folk);
 
 /* DBus API */
 gboolean indicate_server_get_indicator_count (IndicateServer * server, guint * count, GError **error);
@@ -403,7 +404,7 @@ indicate_server_hide (IndicateServer * server)
 	priv->visible = FALSE;
 
 	/* Delete interested parties */
-	g_list_foreach(priv->interestedfolks, (GFunc)g_free, NULL);
+	g_list_foreach(priv->interestedfolks, (GFunc)indicate_server_interested_folks_destroy, NULL);
 	g_list_free(priv->interestedfolks);
 	priv->interestedfolks = NULL;
 
@@ -428,11 +429,13 @@ indicate_server_hide (IndicateServer * server)
 static void
 dbus_owner_change (DBusGProxy * proxy, const gchar * name, const gchar * prev, const gchar * new, IndicateServer * server)
 {
-	if (prev != NULL) {
+	g_debug("DBus Owner change (%s, %s, %s)", name, prev, new);
+	if (prev == NULL || prev[0] == '\0') {
 		/* We only care about people leaving the bus */
 		return;
 	}
 
+	g_debug("\tBeing removed, interesting");
 	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
 
 	IndicateServerInterestedFolk searchitem;
@@ -440,11 +443,12 @@ dbus_owner_change (DBusGProxy * proxy, const gchar * name, const gchar * prev, c
 	GList * entry = g_list_find_custom(priv->interestedfolks, &searchitem, indicate_server_interested_folks_equal);
 
 	if (entry == NULL) {
+		g_debug("\tWe don't have it, not interesting");
 		return;
 	}
 
 	IndicateServerInterestedFolk * folk = (IndicateServerInterestedFolk *)entry->data;
-	priv->interestedfolks = g_list_remove(priv->interestedfolks, entry);
+	priv->interestedfolks = g_list_remove(priv->interestedfolks, entry->data);
 
 	guint i;
 	for (i = INDICATE_INTEREST_NONE; i < INDICATE_INTEREST_LAST; i++) {
@@ -454,13 +458,16 @@ dbus_owner_change (DBusGProxy * proxy, const gchar * name, const gchar * prev, c
 	GList * listi = NULL;
 	for (listi = priv->interestedfolks ; listi != NULL ; listi = listi->next) {
 		IndicateServerInterestedFolk * folkpointer = (IndicateServerInterestedFolk *)listi->data;
+		g_debug("\tRebuild list from folk: %s", folkpointer->sender);
 		indicate_server_interested_folks_copy(folkpointer, priv->interests);
 	}
 
 	for (i = INDICATE_INTEREST_NONE; i < INDICATE_INTEREST_LAST; i++) {
+		g_debug("\tComparing interests.  Interest: %d  Folk: %d  Everyone: %d", i, folk->interests[i], priv->interests[i]);
 		if (folk->interests[i] != priv->interests[i]) {
 			/* We can only remove interest here.  Think about it for a
 			   moment and I think you'll be cool with it. */
+			g_debug("\tOh, and it was interested in %d.  Not anymore.", i);
 			g_signal_emit(G_OBJECT(server), signals[INTEREST_REMOVED], 0, i, TRUE);
 		}
 	}
@@ -481,6 +488,7 @@ get_next_id (IndicateServer * server)
 static gboolean
 show_interest (IndicateServer * server, gchar * sender, IndicateInterests interest)
 {
+	g_debug("Someone is showing interest.  %s in %d", sender, interest);
 	IndicateServerInterestedFolk localfolk;
 	localfolk.sender = sender;
 
@@ -490,7 +498,7 @@ show_interest (IndicateServer * server, gchar * sender, IndicateInterests intere
 	IndicateServerInterestedFolk * folkpointer = NULL;
 	if (entry == NULL) {
 		folkpointer = g_new(IndicateServerInterestedFolk, 1);
-		indicate_server_interested_folks_init(folkpointer);
+		indicate_server_interested_folks_init(folkpointer, sender);
 		priv->interestedfolks = g_list_append(priv->interestedfolks, folkpointer);
 	} else {
 		folkpointer = (IndicateServerInterestedFolk *)entry->data;
@@ -517,7 +525,7 @@ remove_interest (IndicateServer * server, gchar * sender, IndicateInterests inte
 	IndicateServerInterestedFolk * folkpointer = NULL;
 	if (entry == NULL) {
 		folkpointer = g_new(IndicateServerInterestedFolk, 1);
-		indicate_server_interested_folks_init(folkpointer);
+		indicate_server_interested_folks_init(folkpointer, sender);
 		priv->interestedfolks = g_list_append(priv->interestedfolks, folkpointer);
 	} else {
 		folkpointer = (IndicateServerInterestedFolk *)entry->data;
@@ -1215,9 +1223,9 @@ indicate_server_interested_folks_equal (gconstpointer a, gconstpointer b)
 }
 
 static void
-indicate_server_interested_folks_init (IndicateServerInterestedFolk * folk)
+indicate_server_interested_folks_init (IndicateServerInterestedFolk * folk, gchar * sender)
 {
-	folk->sender = NULL;
+	folk->sender = g_strdup(sender);
 
 	guint i;
 	for (i = INDICATE_INTEREST_NONE; i < INDICATE_INTEREST_LAST; i++) {
@@ -1244,6 +1252,14 @@ indicate_server_interested_folks_copy (IndicateServerInterestedFolk * folk, gboo
 		}
 	}
 
+	return;
+}
+
+static void
+indicate_server_interested_folks_destroy(IndicateServerInterestedFolk * folk)
+{
+	g_free(folk->sender);
+	g_free(folk);
 	return;
 }
 /* *** End Folks *** */
