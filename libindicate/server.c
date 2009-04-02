@@ -108,6 +108,9 @@ static gboolean show_indicator_to_user (IndicateServer * server, guint id, GErro
 static guint get_next_id (IndicateServer * server);
 static void set_property (GObject * obj, guint id, const GValue * value, GParamSpec * pspec);
 static void get_property (GObject * obj, guint id, GValue * value, GParamSpec * pspec);
+static gboolean show_interest (IndicateServer * server, gchar * sender, IndicateInterests interest);
+static gboolean remove_interest (IndicateServer * server, gchar * sender, IndicateInterests interest);
+static gboolean check_interest (IndicateServer * server, IndicateInterests intrest);
 
 /* DBus API */
 gboolean indicate_server_get_indicator_count (IndicateServer * server, guint * count, GError **error);
@@ -206,6 +209,9 @@ indicate_server_class_init (IndicateServerClass * class)
 	class->get_indicator_properties = get_indicator_properties;
 	class->show_indicator_to_user = show_indicator_to_user;
 	class->get_next_id = get_next_id;
+	class->show_interest = show_interest;
+	class->remove_interest = remove_interest;
+	class->check_interest = check_interest;
 
 	return;
 }
@@ -360,6 +366,29 @@ get_next_id (IndicateServer * server)
 	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
 	priv->current_id++;
 	return priv->current_id;
+}
+
+static gboolean
+show_interest (IndicateServer * server, gchar * sender, IndicateInterests interest)
+{
+
+
+	return FALSE;
+}
+
+static gboolean
+remove_interest (IndicateServer * server, gchar * sender, IndicateInterests interest)
+{
+
+	return FALSE;
+}
+
+static gboolean
+check_interest (IndicateServer * server, IndicateInterests intrest)
+{
+
+
+	return FALSE;
 }
 
 static void
