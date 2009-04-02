@@ -407,24 +407,75 @@ get_next_id (IndicateServer * server)
 static gboolean
 show_interest (IndicateServer * server, gchar * sender, IndicateInterests interest)
 {
+	IndicateServerInterestedFolk localfolk;
+	localfolk.sender = sender;
 
+	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
 
-	return FALSE;
+	GList * entry = g_list_find_custom(priv->interestedfolks, &localfolk, indicate_server_interested_folks_equal);
+	IndicateServerInterestedFolk * folkpointer = NULL;
+	if (entry == NULL) {
+		folkpointer = g_new(IndicateServerInterestedFolk, 1);
+		indicate_server_interested_folks_init(folkpointer);
+		priv->interestedfolks = g_list_append(priv->interestedfolks, folkpointer);
+	} else {
+		folkpointer = (IndicateServerInterestedFolk *)entry->data;
+	}
+
+	indicate_server_interested_folk_set(folkpointer, interest, TRUE);
+	if (!priv->interests[interest]) {
+		g_signal_emit(G_OBJECT(server), signals[INTEREST_ADDED], 0, interest, TRUE);
+		priv->interests[interest] = TRUE;
+	}
+
+	return TRUE;
 }
 
 static gboolean
 remove_interest (IndicateServer * server, gchar * sender, IndicateInterests interest)
 {
+	IndicateServerInterestedFolk localfolk;
+	localfolk.sender = sender;
 
-	return FALSE;
+	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
+
+	GList * entry = g_list_find_custom(priv->interestedfolks, &localfolk, indicate_server_interested_folks_equal);
+	IndicateServerInterestedFolk * folkpointer = NULL;
+	if (entry == NULL) {
+		folkpointer = g_new(IndicateServerInterestedFolk, 1);
+		indicate_server_interested_folks_init(folkpointer);
+		priv->interestedfolks = g_list_append(priv->interestedfolks, folkpointer);
+	} else {
+		folkpointer = (IndicateServerInterestedFolk *)entry->data;
+	}
+
+	indicate_server_interested_folk_set(folkpointer, interest, FALSE);
+
+	if (priv->interests[interest]) {
+		guint i;
+		for (i = INDICATE_INTEREST_NONE; i < INDICATE_INTEREST_LAST; i++) {
+			priv->interests[i] = FALSE;
+		}
+
+		GList * listi = NULL;
+		for (listi = priv->interestedfolks ; listi != NULL ; listi = listi->next) {
+			folkpointer = (IndicateServerInterestedFolk *)listi->data;
+			inkscape_server_interested_folk_copy(folkpointer, priv->interests);
+		}
+
+		if (!priv->interests[interest]) {
+			g_signal_emit(G_OBJECT(server), signals[INTEREST_REMOVED], 0, interest, TRUE);
+		}
+	}
+
+	return TRUE;
 }
 
 static gboolean
 check_interest (IndicateServer * server, IndicateInterests intrest)
 {
-
-
-	return FALSE;
+	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
+	return priv->interests[interest];
 }
 
 static void
