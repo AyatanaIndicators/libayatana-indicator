@@ -32,6 +32,7 @@ License version 3 and version 2.1 along with this program.  If not, see
 #include <dbus/dbus-glib-bindings.h>
 #include "dbus-indicate-client.h"
 #include "dbus-listener-client.h"
+#include "interests-priv.h"
 
 /* Errors */
 enum {
