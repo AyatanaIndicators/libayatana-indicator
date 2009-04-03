@@ -32,7 +32,6 @@ License version 3 and version 2.1 along with this program.  If not, see
 #include <dbus/dbus-glib-bindings.h>
 #include "dbus-indicate-client.h"
 #include "dbus-listener-client.h"
-#include "dbus-listener-server.h"
 
 /* Errors */
 enum {
@@ -129,6 +128,12 @@ static void proxy_indicator_modified (DBusGProxy * proxy, guint id, const gchar 
 static void proxy_get_indicator_list (DBusGProxy * proxy, GArray * indicators, GError * error, gpointer data);
 static void proxy_get_indicator_type (DBusGProxy * proxy, gchar * type, GError * error, gpointer data);
 static void proxy_indicators_free (gpointer data);
+
+/* DBus interface */
+gboolean _indicate_listener_get_indicator_servers (IndicateListener * listener, GList * servers);
+
+/* Need the above prototypes */
+#include "dbus-listener-server.h"
 
 /* Code */
 static void
@@ -824,7 +829,7 @@ indicate_listener_get_property_icon (IndicateListener * listener, IndicateListen
 }
 
 gboolean
-indicate_listener_get_indicator_servers (IndicateListener * listener, GList * servers)
+_indicate_listener_get_indicator_servers (IndicateListener * listener, GList * servers)
 {
 
 

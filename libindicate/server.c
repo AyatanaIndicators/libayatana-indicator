@@ -132,16 +132,16 @@ static void indicate_server_interested_folks_copy (IndicateServerInterestedFolk 
 static void indicate_server_interested_folks_destroy(IndicateServerInterestedFolk * folk);
 
 /* DBus API */
-gboolean indicate_server_get_indicator_count (IndicateServer * server, guint * count, GError **error);
-gboolean indicate_server_get_indicator_count_by_type (IndicateServer * server, gchar * type, guint * count, GError **error);
-gboolean indicate_server_get_indicator_list (IndicateServer * server, GArray ** indicators, GError ** error);
-gboolean indicate_server_get_indicator_list_by_type (IndicateServer * server, gchar * type, guint ** indicators, GError ** error);
-gboolean indicate_server_get_indicator_property (IndicateServer * server, guint id, gchar * property, gchar ** value, GError **error);
-gboolean indicate_server_get_indicator_property_group (IndicateServer * server, guint id, GPtrArray * properties, gchar *** value, GError **error);
-gboolean indicate_server_get_indicator_properties (IndicateServer * server, guint id, gchar *** properties, GError **error);
-gboolean indicate_server_show_indicator_to_user (IndicateServer * server, guint id, GError ** error);
-gboolean indicate_server_show_interest (IndicateServer * server, gchar * interest, DBusGMethodInvocation * method);
-gboolean indicate_server_remove_interest (IndicateServer * server, gchar * interest, DBusGMethodInvocation * method);
+gboolean _indicate_server_get_indicator_count (IndicateServer * server, guint * count, GError **error);
+gboolean _indicate_server_get_indicator_count_by_type (IndicateServer * server, gchar * type, guint * count, GError **error);
+gboolean _indicate_server_get_indicator_list (IndicateServer * server, GArray ** indicators, GError ** error);
+gboolean _indicate_server_get_indicator_list_by_type (IndicateServer * server, gchar * type, guint ** indicators, GError ** error);
+gboolean _indicate_server_get_indicator_property (IndicateServer * server, guint id, gchar * property, gchar ** value, GError **error);
+gboolean _indicate_server_get_indicator_property_group (IndicateServer * server, guint id, GPtrArray * properties, gchar *** value, GError **error);
+gboolean _indicate_server_get_indicator_properties (IndicateServer * server, guint id, gchar *** properties, GError **error);
+gboolean _indicate_server_show_indicator_to_user (IndicateServer * server, guint id, GError ** error);
+gboolean _indicate_server_show_interest (IndicateServer * server, gchar * interest, DBusGMethodInvocation * method);
+gboolean _indicate_server_remove_interest (IndicateServer * server, gchar * interest, DBusGMethodInvocation * method);
 
 /* Has to be after the dbus prototypes */
 #include "dbus-indicate-server.h"
@@ -231,7 +231,7 @@ indicate_server_class_init (IndicateServerClass * class)
 	                                              G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	dbus_g_object_type_install_info(INDICATE_TYPE_SERVER,
-	                                &dbus_glib_indicate_server_object_info);
+	                                &dbus_glib__indicate_server_object_info);
 
 	class->get_indicator_count = get_indicator_count;
 	class->get_indicator_count_by_type = get_indicator_count_by_type;
@@ -915,7 +915,7 @@ show_indicator_to_user (IndicateServer * server, guint id, GError ** error)
 
 /* Virtual Functions */
 gboolean 
-indicate_server_get_indicator_count (IndicateServer * server, guint * count, GError **error)
+_indicate_server_get_indicator_count (IndicateServer * server, guint * count, GError **error)
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
@@ -936,7 +936,7 @@ indicate_server_get_indicator_count (IndicateServer * server, guint * count, GEr
 }
 
 gboolean 
-indicate_server_get_indicator_count_by_type (IndicateServer * server, gchar * type, guint * count, GError **error)
+_indicate_server_get_indicator_count_by_type (IndicateServer * server, gchar * type, guint * count, GError **error)
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
@@ -957,7 +957,7 @@ indicate_server_get_indicator_count_by_type (IndicateServer * server, gchar * ty
 }
 
 gboolean 
-indicate_server_get_indicator_list (IndicateServer * server, GArray ** indicators, GError ** error)
+_indicate_server_get_indicator_list (IndicateServer * server, GArray ** indicators, GError ** error)
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
@@ -978,7 +978,7 @@ indicate_server_get_indicator_list (IndicateServer * server, GArray ** indicator
 }
 
 gboolean 
-indicate_server_get_indicator_list_by_type (IndicateServer * server, gchar * type, guint ** indicators, GError ** error)
+_indicate_server_get_indicator_list_by_type (IndicateServer * server, gchar * type, guint ** indicators, GError ** error)
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
@@ -999,7 +999,7 @@ indicate_server_get_indicator_list_by_type (IndicateServer * server, gchar * typ
 }
 
 gboolean 
-indicate_server_get_indicator_property (IndicateServer * server, guint id, gchar * property, gchar ** value, GError **error)
+_indicate_server_get_indicator_property (IndicateServer * server, guint id, gchar * property, gchar ** value, GError **error)
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
@@ -1020,7 +1020,7 @@ indicate_server_get_indicator_property (IndicateServer * server, guint id, gchar
 }
 
 gboolean 
-indicate_server_get_indicator_property_group (IndicateServer * server, guint id, GPtrArray * properties, gchar *** value, GError **error)
+_indicate_server_get_indicator_property_group (IndicateServer * server, guint id, GPtrArray * properties, gchar *** value, GError **error)
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
@@ -1041,7 +1041,7 @@ indicate_server_get_indicator_property_group (IndicateServer * server, guint id,
 }
 
 gboolean 
-indicate_server_get_indicator_properties (IndicateServer * server, guint id, gchar *** properties, GError **error)
+_indicate_server_get_indicator_properties (IndicateServer * server, guint id, gchar *** properties, GError **error)
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
@@ -1062,7 +1062,7 @@ indicate_server_get_indicator_properties (IndicateServer * server, guint id, gch
 }
 
 gboolean 
-indicate_server_show_indicator_to_user (IndicateServer * server, guint id, GError ** error)
+_indicate_server_show_indicator_to_user (IndicateServer * server, guint id, GError ** error)
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
@@ -1121,7 +1121,7 @@ interest_string_to_enum (gchar * interest_string)
 }
 
 gboolean
-indicate_server_show_interest (IndicateServer * server, gchar * interest, DBusGMethodInvocation * method)
+_indicate_server_show_interest (IndicateServer * server, gchar * interest, DBusGMethodInvocation * method)
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
@@ -1154,7 +1154,7 @@ indicate_server_show_interest (IndicateServer * server, gchar * interest, DBusGM
 }
 
 gboolean
-indicate_server_remove_interest (IndicateServer * server, gchar * interest, DBusGMethodInvocation * method)
+_indicate_server_remove_interest (IndicateServer * server, gchar * interest, DBusGMethodInvocation * method)
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 

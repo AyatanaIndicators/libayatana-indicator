@@ -58,28 +58,28 @@ libindicate_la_LIBADD = \
 
 dbus-indicate-server.h: indicate-interface.xml
 	dbus-binding-tool \
-		--prefix=indicate_server \
+		--prefix=_indicate_server \
 		--mode=glib-server \
 		--output=dbus-indicate-server.h \
 		$(srcdir)/indicate-interface.xml
 
 dbus-indicate-client.h: indicate-interface.xml
 	dbus-binding-tool \
-		--prefix=indicate_client \
+		--prefix=_indicate_client \
 		--mode=glib-client \
 		--output=dbus-indicate-client.h \
 		$(srcdir)/indicate-interface.xml
 
 dbus-listener-server.h: indicate-listener.xml
 	dbus-binding-tool \
-		--prefix=indicate_listener \
+		--prefix=_indicate_listener \
 		--mode=glib-server \
 		--output=dbus-listener-server.h \
 		$(srcdir)/indicate-listener.xml
 
 dbus-listener-client.h: indicate-listener.xml
 	dbus-binding-tool \
-		--prefix=indicate_listener \
+		--prefix=_indicate_listener \
 		--mode=glib-client \
 		--output=dbus-listener-client.h \
 		$(srcdir)/indicate-listener.xml

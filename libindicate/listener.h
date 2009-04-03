@@ -110,7 +110,6 @@ void                  indicate_listener_get_property_icon  (IndicateListener * l
 void                  indicate_listener_display            (IndicateListener * listener,
                                                             IndicateListenerServer * server,
                                                             IndicateListenerIndicator * indicator);
-gboolean              indicate_listener_get_indicator_servers (IndicateListener * listener, GList * servers);
 void                  indicate_listener_server_get_type    (IndicateListener * listener,
                                                             IndicateListenerServer * server,
                                                             indicate_listener_get_server_property_cb callback,
