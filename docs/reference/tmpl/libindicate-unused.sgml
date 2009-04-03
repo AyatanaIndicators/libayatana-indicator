@@ -1,3 +1,111 @@
+<!-- ##### FUNCTION dbus_glib_marshal_indicate_server_BOOLEAN__POINTER_POINTER ##### -->
+<para>
+
+</para>
+
+@closure: 
+@return_value: 
+@n_param_values: 
+@param_values: 
+@invocation_hint: 
+@marshal_data: 
+
+<!-- ##### FUNCTION dbus_glib_marshal_indicate_server_BOOLEAN__STRING_POINTER_POINTER ##### -->
+<para>
+
+</para>
+
+@closure: 
+@return_value: 
+@n_param_values: 
+@param_values: 
+@invocation_hint: 
+@marshal_data: 
+
+<!-- ##### FUNCTION dbus_glib_marshal_indicate_server_BOOLEAN__UINT_BOXED_POINTER_POINTER ##### -->
+<para>
+
+</para>
+
+@closure: 
+@return_value: 
+@n_param_values: 
+@param_values: 
+@invocation_hint: 
+@marshal_data: 
+
+<!-- ##### FUNCTION dbus_glib_marshal_indicate_server_BOOLEAN__UINT_POINTER ##### -->
+<para>
+
+</para>
+
+@closure: 
+@return_value: 
+@n_param_values: 
+@param_values: 
+@invocation_hint: 
+@marshal_data: 
+
+<!-- ##### FUNCTION dbus_glib_marshal_indicate_server_BOOLEAN__UINT_POINTER_POINTER ##### -->
+<para>
+
+</para>
+
+@closure: 
+@return_value: 
+@n_param_values: 
+@param_values: 
+@invocation_hint: 
+@marshal_data: 
+
+<!-- ##### FUNCTION dbus_glib_marshal_indicate_server_BOOLEAN__UINT_STRING_POINTER_POINTER ##### -->
+<para>
+
+</para>
+
+@closure: 
+@return_value: 
+@n_param_values: 
+@param_values: 
+@invocation_hint: 
+@marshal_data: 
+
+<!-- ##### FUNCTION indicate_listener_marshal_VOID__POINTER_POINTER_STRING ##### -->
+<para>
+
+</para>
+
+@closure: 
+@return_value: 
+@n_param_values: 
+@param_values: 
+@invocation_hint: 
+@marshal_data: 
+
+<!-- ##### FUNCTION indicate_listener_marshal_VOID__POINTER_POINTER_STRING_STRING ##### -->
+<para>
+
+</para>
+
+@closure: 
+@return_value: 
+@n_param_values: 
+@param_values: 
+@invocation_hint: 
+@marshal_data: 
+
+<!-- ##### FUNCTION indicate_listener_marshal_VOID__UINT_STRING ##### -->
+<para>
+
+</para>
+
+@closure: 
+@return_value: 
+@n_param_values: 
+@param_values: 
+@invocation_hint: 
+@marshal_data: 
+
 <!-- ##### FUNCTION indicate_server_get_indicator_count ##### -->
 <para>
 
