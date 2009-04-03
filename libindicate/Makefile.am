@@ -86,12 +86,12 @@ dbus-listener-client.h: indicate-listener.xml
 
 listener-marshal.h: $(srcdir)/listener-marshal.list
 	glib-genmarshal --header \
-		--prefix=indicate_listener_marshal $(srcdir)/listener-marshal.list \
+		--prefix=_indicate_listener_marshal $(srcdir)/listener-marshal.list \
 		> listener-marshal.h
 
 listener-marshal.c: $(srcdir)/listener-marshal.list
 	glib-genmarshal --body \
-		--prefix=indicate_listener_marshal $(srcdir)/listener-marshal.list \
+		--prefix=_indicate_listener_marshal $(srcdir)/listener-marshal.list \
 		> listener-marshal.c
 
 pkgconfig_DATA = indicate.pc
