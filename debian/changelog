@@ -1,3 +1,9 @@
+indicator-applet (0.1.4-0ubuntu2~ppa1) UNRELEASED; urgency=low
+
+  * Merging in dev stuff.  This'll break things.
+
+ -- Ted Gould <ted@ubuntu.com>  Fri, 03 Apr 2009 12:49:33 -0500
+
 indicator-applet (0.1.4-0ubuntu1) jaunty; urgency=low
 
   * New upstream version
