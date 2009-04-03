@@ -34,6 +34,7 @@ License version 3 and version 2.1 along with this program.  If not, see
 #include <glib-object.h>
 
 #include "indicator.h"
+#include "interests.h"
 
 G_BEGIN_DECLS
 
@@ -53,7 +54,8 @@ G_BEGIN_DECLS
 #define INDICATE_SERVER_SIGNAL_SERVER_SHOW          "server-show"
 #define INDICATE_SERVER_SIGNAL_SERVER_HIDE          "server-hide"
 #define INDICATE_SERVER_SIGNAL_SERVER_DISPLAY       "server-display"
-
+#define INDICATE_SERVER_SIGNAL_INTEREST_ADDED       "interest-added"
+#define INDICATE_SERVER_SIGNAL_INTEREST_REMOVED     "interest-removed"
 
 typedef struct _IndicateServer IndicateServer;
 struct _IndicateServer {
@@ -71,6 +73,8 @@ struct _IndicateServerClass {
 	void (* server_show) (IndicateServer * server, gchar * type);
 	void (* server_hide) (IndicateServer * server, gchar * type);
 	void (* server_display) (IndicateServer * server);
+	void (* interest_added) (IndicateServer * server, IndicateInterests interest);
+	void (* interest_removed) (IndicateServer * server, IndicateInterests interest);
 
 	/* Virtual Functions */
 	gboolean (*get_indicator_count) (IndicateServer * server, guint * count, GError **error);
@@ -82,6 +86,15 @@ struct _IndicateServerClass {
 	gboolean (*get_indicator_properties) (IndicateServer * server, guint id, gchar *** properties, GError **error);
 	gboolean (*show_indicator_to_user) (IndicateServer * server, guint id, GError ** error);
 	guint    (*get_next_id) (IndicateServer * server);
+	gboolean (*show_interest) (IndicateServer * server, gchar * sender, IndicateInterests interest);
+	gboolean (*remove_interest) (IndicateServer * server, gchar * sender, IndicateInterests interest);
+	gboolean (*check_interest) (IndicateServer * server, IndicateInterests interest);
+
+	/* Reserver for future use */
+	void (*indicate_server_reserved1)(void);
+	void (*indicate_server_reserved2)(void);
+	void (*indicate_server_reserved3)(void);
+	void (*indicate_server_reserved4)(void);
 };
 
 GType indicate_server_get_type (void) G_GNUC_CONST;
@@ -111,16 +124,9 @@ void indicate_server_remove_indicator (IndicateServer * server, IndicateIndicato
 IndicateServer * indicate_server_ref_default (void);
 void indicate_server_set_default (IndicateServer * server);
 
+/* Check to see if there is someone, out there, who likes this */
+gboolean indicate_server_check_interest (IndicateServer * server, IndicateInterests interest);
 
-/* DBus API */
-gboolean indicate_server_get_indicator_count (IndicateServer * server, guint * count, GError **error);
-gboolean indicate_server_get_indicator_count_by_type (IndicateServer * server, gchar * type, guint * count, GError **error);
-gboolean indicate_server_get_indicator_list (IndicateServer * server, GArray ** indicators, GError ** error);
-gboolean indicate_server_get_indicator_list_by_type (IndicateServer * server, gchar * type, guint ** indicators, GError ** error);
-gboolean indicate_server_get_indicator_property (IndicateServer * server, guint id, gchar * property, gchar ** value, GError **error);
-gboolean indicate_server_get_indicator_property_group (IndicateServer * server, guint id, GPtrArray * properties, gchar *** value, GError **error);
-gboolean indicate_server_get_indicator_properties (IndicateServer * server, guint id, gchar *** properties, GError **error);
-gboolean indicate_server_show_indicator_to_user (IndicateServer * server, guint id, GError ** error);
 
 /* Signal emission functions for sub-classes of the server */
 void indicate_server_emit_indicator_added (IndicateServer *server, guint id, const gchar *type);

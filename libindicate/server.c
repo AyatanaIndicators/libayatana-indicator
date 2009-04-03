@@ -28,7 +28,9 @@ License version 3 and version 2.1 along with this program.  If not, see
 */
  
 #include "server.h"
-#include "dbus-indicate-server.h"
+#include "interests-priv.h"
+#include <dbus/dbus-glib.h>
+#include <dbus/dbus-glib-lowlevel.h>
 
 /* Errors */
 enum {
@@ -42,6 +44,10 @@ enum {
 	NO_GET_INDICATOR_PROPERTIES,
 	NO_SHOW_INDICATOR_TO_USER,
 	INVALID_INDICATOR_ID,
+	NO_SHOW_INTEREST,
+	NO_REMOVE_INTEREST,
+	SHOW_INTEREST_FAILED,
+	REMOVE_INTEREST_FAILED,
 	LAST_ERROR
 };
 
@@ -53,6 +59,8 @@ enum {
 	SERVER_SHOW,
 	SERVER_HIDE,
 	SERVER_DISPLAY,
+	INTEREST_ADDED,
+	INTEREST_REMOVED,
 	LAST_SIGNAL
 };
 
@@ -70,6 +78,8 @@ typedef struct _IndicateServerPrivate IndicateServerPrivate;
 struct _IndicateServerPrivate
 {
 	DBusGConnection *connection;
+	DBusGProxy * dbus_proxy;
+
 	gchar * path;
 	GSList * indicators;
 	gboolean visible;
@@ -80,10 +90,19 @@ struct _IndicateServerPrivate
 
 	// TODO: Should have a more robust way to track this, but this'll work for now
 	guint num_hidden;
+
+	gboolean interests[INDICATE_INTEREST_LAST];
+	GList * interestedfolks;
 };
 
 #define INDICATE_SERVER_GET_PRIVATE(o) \
           (G_TYPE_INSTANCE_GET_PRIVATE ((o), INDICATE_TYPE_SERVER, IndicateServerPrivate))
+
+typedef struct _IndicateServerInterestedFolk IndicateServerInterestedFolk;
+struct _IndicateServerInterestedFolk {
+	gchar * sender;
+	gboolean interests[INDICATE_INTEREST_LAST];
+};
 
 
 /* Define Type */
@@ -99,9 +118,35 @@ static gboolean get_indicator_property (IndicateServer * server, guint id, gchar
 static gboolean get_indicator_property_group (IndicateServer * server, guint id, GPtrArray * properties, gchar *** value, GError **error);
 static gboolean get_indicator_properties (IndicateServer * server, guint id, gchar *** properties, GError **error);
 static gboolean show_indicator_to_user (IndicateServer * server, guint id, GError ** error);
+static void dbus_owner_change (DBusGProxy * proxy, const gchar * name, const gchar * prev, const gchar * new, IndicateServer * server);
 static guint get_next_id (IndicateServer * server);
 static void set_property (GObject * obj, guint id, const GValue * value, GParamSpec * pspec);
 static void get_property (GObject * obj, guint id, GValue * value, GParamSpec * pspec);
+static gboolean show_interest (IndicateServer * server, gchar * sender, IndicateInterests interest);
+static gboolean remove_interest (IndicateServer * server, gchar * sender, IndicateInterests interest);
+static gboolean check_interest (IndicateServer * server, IndicateInterests intrest);
+static gint indicate_server_interested_folks_equal (gconstpointer a, gconstpointer b);
+static void indicate_server_interested_folks_init (IndicateServerInterestedFolk * folk, gchar * sender);
+static void indicate_server_interested_folks_set (IndicateServerInterestedFolk * folk, IndicateInterests interest, gboolean value);
+static void indicate_server_interested_folks_copy (IndicateServerInterestedFolk * folk, gboolean * interests);
+static void indicate_server_interested_folks_destroy(IndicateServerInterestedFolk * folk);
+
+/* DBus API */
+gboolean _indicate_server_get_indicator_count (IndicateServer * server, guint * count, GError **error);
+gboolean _indicate_server_get_indicator_count_by_type (IndicateServer * server, gchar * type, guint * count, GError **error);
+gboolean _indicate_server_get_indicator_list (IndicateServer * server, GArray ** indicators, GError ** error);
+gboolean _indicate_server_get_indicator_list_by_type (IndicateServer * server, gchar * type, guint ** indicators, GError ** error);
+gboolean _indicate_server_get_indicator_property (IndicateServer * server, guint id, gchar * property, gchar ** value, GError **error);
+gboolean _indicate_server_get_indicator_property_group (IndicateServer * server, guint id, GPtrArray * properties, gchar *** value, GError **error);
+gboolean _indicate_server_get_indicator_properties (IndicateServer * server, guint id, gchar *** properties, GError **error);
+gboolean _indicate_server_show_indicator_to_user (IndicateServer * server, guint id, GError ** error);
+gboolean _indicate_server_show_interest (IndicateServer * server, gchar * interest, DBusGMethodInvocation * method);
+gboolean _indicate_server_remove_interest (IndicateServer * server, gchar * interest, DBusGMethodInvocation * method);
+
+/* Has to be after the dbus prototypes */
+#include "dbus-indicate-server.h"
+
+
 
 /* Code */
 static void
@@ -159,6 +204,20 @@ indicate_server_class_init (IndicateServerClass * class)
 	                                        NULL, NULL,
 	                                        g_cclosure_marshal_VOID__VOID,
 	                                        G_TYPE_NONE, 0);
+	signals[INTEREST_ADDED] = g_signal_new(INDICATE_SERVER_SIGNAL_INTEREST_ADDED,
+	                                        G_TYPE_FROM_CLASS (class),
+	                                        G_SIGNAL_RUN_LAST,
+	                                        G_STRUCT_OFFSET (IndicateServerClass, interest_added),
+	                                        NULL, NULL,
+	                                        g_cclosure_marshal_VOID__UINT,
+	                                        G_TYPE_NONE, 1, G_TYPE_UINT);
+	signals[INTEREST_REMOVED] = g_signal_new(INDICATE_SERVER_SIGNAL_INTEREST_REMOVED,
+	                                        G_TYPE_FROM_CLASS (class),
+	                                        G_SIGNAL_RUN_LAST,
+	                                        G_STRUCT_OFFSET (IndicateServerClass, interest_removed),
+	                                        NULL, NULL,
+	                                        g_cclosure_marshal_VOID__UINT,
+	                                        G_TYPE_NONE, 1, G_TYPE_UINT);
 
 	g_object_class_install_property (gobj, PROP_DESKTOP,
 	                                 g_param_spec_string("desktop", "Desktop File",
@@ -172,7 +231,7 @@ indicate_server_class_init (IndicateServerClass * class)
 	                                              G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	dbus_g_object_type_install_info(INDICATE_TYPE_SERVER,
-	                                &dbus_glib_indicate_server_object_info);
+	                                &dbus_glib__indicate_server_object_info);
 
 	class->get_indicator_count = get_indicator_count;
 	class->get_indicator_count_by_type = get_indicator_count_by_type;
@@ -183,6 +242,9 @@ indicate_server_class_init (IndicateServerClass * class)
 	class->get_indicator_properties = get_indicator_properties;
 	class->show_indicator_to_user = show_indicator_to_user;
 	class->get_next_id = get_next_id;
+	class->show_interest = show_interest;
+	class->remove_interest = remove_interest;
+	class->check_interest = check_interest;
 
 	return;
 }
@@ -201,6 +263,13 @@ indicate_server_init (IndicateServer * server)
 	priv->current_id = 0;
 	priv->type = NULL;
 	priv->desktop = NULL;
+
+	guint i;
+	for (i = INDICATE_INTEREST_NONE; i < INDICATE_INTEREST_LAST; i++) {
+		priv->interests[i] = FALSE;
+	}
+	priv->interestedfolks = NULL;
+
 
 	return;
 }
@@ -308,6 +377,17 @@ indicate_server_show (IndicateServer * server)
 	priv->visible = TRUE;
 
 	g_signal_emit(server, signals[SERVER_SHOW], 0, priv->type ? priv->type : "", TRUE);
+
+	priv->dbus_proxy = dbus_g_proxy_new_for_name_owner (priv->connection,
+	                                                    DBUS_SERVICE_DBUS,
+	                                                    DBUS_PATH_DBUS,
+	                                                    DBUS_INTERFACE_DBUS,
+	                                                    NULL);
+	dbus_g_proxy_add_signal(priv->dbus_proxy, "NameOwnerChanged",
+	                        G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
+	                        G_TYPE_INVALID);
+	dbus_g_proxy_connect_signal(priv->dbus_proxy, "NameOwnerChanged",
+	                            G_CALLBACK(dbus_owner_change), server, NULL);
 	
 	return;
 }
@@ -323,11 +403,77 @@ indicate_server_hide (IndicateServer * server)
 
 	priv->visible = FALSE;
 
+	/* Delete interested parties */
+	g_list_foreach(priv->interestedfolks, (GFunc)indicate_server_interested_folks_destroy, NULL);
+	g_list_free(priv->interestedfolks);
+	priv->interestedfolks = NULL;
+
+	/* Signal the lack of interest */
+	guint i;
+	for (i = INDICATE_INTEREST_NONE; i < INDICATE_INTEREST_LAST; i++) {
+		if (priv->interests[i]) {
+			g_signal_emit(G_OBJECT(server), signals[INTEREST_REMOVED], 0, i, TRUE);
+		}
+		priv->interests[i] = FALSE;
+	}
+
 	g_signal_emit(server, signals[SERVER_HIDE], 0, priv->type ? priv->type : "", TRUE);
 
+	g_object_unref(G_OBJECT(priv->dbus_proxy));
 	dbus_g_connection_unref (priv->connection);
 	priv->connection = NULL;
 	
+	return;
+}
+
+static void
+dbus_owner_change (DBusGProxy * proxy, const gchar * name, const gchar * prev, const gchar * new, IndicateServer * server)
+{
+	/* g_debug("DBus Owner change (%s, %s, %s)", name, prev, new); */
+	if (prev == NULL || prev[0] == '\0') {
+		/* We only care about people leaving the bus */
+		return;
+	}
+
+	/* g_debug("\tBeing removed, interesting"); */
+	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
+
+	IndicateServerInterestedFolk searchitem;
+	searchitem.sender = (gchar *)name;
+	GList * entry = g_list_find_custom(priv->interestedfolks, &searchitem, indicate_server_interested_folks_equal);
+
+	if (entry == NULL) {
+		/* g_debug("\tWe don't have it, not interesting"); */
+		return;
+	}
+
+	IndicateServerInterestedFolk * folk = (IndicateServerInterestedFolk *)entry->data;
+	priv->interestedfolks = g_list_remove(priv->interestedfolks, entry->data);
+
+	guint i;
+	for (i = INDICATE_INTEREST_NONE; i < INDICATE_INTEREST_LAST; i++) {
+		priv->interests[i] = FALSE;
+	}
+
+	GList * listi = NULL;
+	for (listi = priv->interestedfolks ; listi != NULL ; listi = listi->next) {
+		IndicateServerInterestedFolk * folkpointer = (IndicateServerInterestedFolk *)listi->data;
+		/* g_debug("\tRebuild list from folk: %s", folkpointer->sender); */
+		indicate_server_interested_folks_copy(folkpointer, priv->interests);
+	}
+
+	for (i = INDICATE_INTEREST_NONE; i < INDICATE_INTEREST_LAST; i++) {
+		/* g_debug("\tComparing interests.  Interest: %d  Folk: %d  Everyone: %d", i, folk->interests[i], priv->interests[i]); */
+		if (folk->interests[i] != priv->interests[i]) {
+			/* We can only remove interest here.  Think about it for a
+			   moment and I think you'll be cool with it. */
+			/* g_debug("\tOh, and it was interested in %d.  Not anymore.", i); */
+			g_signal_emit(G_OBJECT(server), signals[INTEREST_REMOVED], 0, i, TRUE);
+		}
+	}
+
+	g_free(folk);
+
 	return;
 }
 
@@ -337,6 +483,89 @@ get_next_id (IndicateServer * server)
 	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
 	priv->current_id++;
 	return priv->current_id;
+}
+
+static gboolean
+show_interest (IndicateServer * server, gchar * sender, IndicateInterests interest)
+{
+	if (!(interest > INDICATE_INTEREST_NONE && interest < INDICATE_INTEREST_LAST)) {
+		return FALSE;
+	}
+
+	/* g_debug("Someone is showing interest.  %s in %d", sender, interest); */
+	IndicateServerInterestedFolk localfolk;
+	localfolk.sender = sender;
+
+	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
+
+	GList * entry = g_list_find_custom(priv->interestedfolks, &localfolk, indicate_server_interested_folks_equal);
+	IndicateServerInterestedFolk * folkpointer = NULL;
+	if (entry == NULL) {
+		folkpointer = g_new(IndicateServerInterestedFolk, 1);
+		indicate_server_interested_folks_init(folkpointer, sender);
+		priv->interestedfolks = g_list_append(priv->interestedfolks, folkpointer);
+	} else {
+		folkpointer = (IndicateServerInterestedFolk *)entry->data;
+	}
+
+	indicate_server_interested_folks_set(folkpointer, interest, TRUE);
+	if (!priv->interests[interest]) {
+		g_signal_emit(G_OBJECT(server), signals[INTEREST_ADDED], 0, interest, TRUE);
+		priv->interests[interest] = TRUE;
+	}
+
+	return TRUE;
+}
+
+static gboolean
+remove_interest (IndicateServer * server, gchar * sender, IndicateInterests interest)
+{
+	if (!(interest > INDICATE_INTEREST_NONE && interest < INDICATE_INTEREST_LAST)) {
+		return FALSE;
+	}
+
+	IndicateServerInterestedFolk localfolk;
+	localfolk.sender = sender;
+
+	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
+
+	GList * entry = g_list_find_custom(priv->interestedfolks, &localfolk, indicate_server_interested_folks_equal);
+	IndicateServerInterestedFolk * folkpointer = NULL;
+	if (entry == NULL) {
+		folkpointer = g_new(IndicateServerInterestedFolk, 1);
+		indicate_server_interested_folks_init(folkpointer, sender);
+		priv->interestedfolks = g_list_append(priv->interestedfolks, folkpointer);
+	} else {
+		folkpointer = (IndicateServerInterestedFolk *)entry->data;
+	}
+
+	indicate_server_interested_folks_set(folkpointer, interest, FALSE);
+
+	if (priv->interests[interest]) {
+		guint i;
+		for (i = INDICATE_INTEREST_NONE; i < INDICATE_INTEREST_LAST; i++) {
+			priv->interests[i] = FALSE;
+		}
+
+		GList * listi = NULL;
+		for (listi = priv->interestedfolks ; listi != NULL ; listi = listi->next) {
+			folkpointer = (IndicateServerInterestedFolk *)listi->data;
+			indicate_server_interested_folks_copy(folkpointer, priv->interests);
+		}
+
+		if (!priv->interests[interest]) {
+			g_signal_emit(G_OBJECT(server), signals[INTEREST_REMOVED], 0, interest, TRUE);
+		}
+	}
+
+	return TRUE;
+}
+
+static gboolean
+check_interest (IndicateServer * server, IndicateInterests interest)
+{
+	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
+	return priv->interests[interest];
 }
 
 static void
@@ -686,11 +915,11 @@ show_indicator_to_user (IndicateServer * server, guint id, GError ** error)
 
 /* Virtual Functions */
 gboolean 
-indicate_server_get_indicator_count (IndicateServer * server, guint * count, GError **error)
+_indicate_server_get_indicator_count (IndicateServer * server, guint * count, GError **error)
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
-	if (class != NULL) {
+	if (class != NULL && class->get_indicator_count != NULL) {
 		return class->get_indicator_count (server, count, error);
 	}
 
@@ -707,11 +936,11 @@ indicate_server_get_indicator_count (IndicateServer * server, guint * count, GEr
 }
 
 gboolean 
-indicate_server_get_indicator_count_by_type (IndicateServer * server, gchar * type, guint * count, GError **error)
+_indicate_server_get_indicator_count_by_type (IndicateServer * server, gchar * type, guint * count, GError **error)
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
-	if (class != NULL) {
+	if (class != NULL && class->get_indicator_count_by_type != NULL) {
 		return class->get_indicator_count_by_type (server, type, count, error);
 	}
 
@@ -728,11 +957,11 @@ indicate_server_get_indicator_count_by_type (IndicateServer * server, gchar * ty
 }
 
 gboolean 
-indicate_server_get_indicator_list (IndicateServer * server, GArray ** indicators, GError ** error)
+_indicate_server_get_indicator_list (IndicateServer * server, GArray ** indicators, GError ** error)
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
-	if (class != NULL) {
+	if (class != NULL && class->get_indicator_list != NULL) {
 		return class->get_indicator_list (server, indicators, error);
 	}
 
@@ -749,11 +978,11 @@ indicate_server_get_indicator_list (IndicateServer * server, GArray ** indicator
 }
 
 gboolean 
-indicate_server_get_indicator_list_by_type (IndicateServer * server, gchar * type, guint ** indicators, GError ** error)
+_indicate_server_get_indicator_list_by_type (IndicateServer * server, gchar * type, guint ** indicators, GError ** error)
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
-	if (class != NULL) {
+	if (class != NULL && class->get_indicator_list_by_type != NULL) {
 		return class->get_indicator_list_by_type (server, type, indicators, error);
 	}
 
@@ -770,11 +999,11 @@ indicate_server_get_indicator_list_by_type (IndicateServer * server, gchar * typ
 }
 
 gboolean 
-indicate_server_get_indicator_property (IndicateServer * server, guint id, gchar * property, gchar ** value, GError **error)
+_indicate_server_get_indicator_property (IndicateServer * server, guint id, gchar * property, gchar ** value, GError **error)
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
-	if (class != NULL) {
+	if (class != NULL && class->get_indicator_property != NULL) {
 		return class->get_indicator_property (server, id, property, value, error);
 	}
 
@@ -791,11 +1020,11 @@ indicate_server_get_indicator_property (IndicateServer * server, guint id, gchar
 }
 
 gboolean 
-indicate_server_get_indicator_property_group (IndicateServer * server, guint id, GPtrArray * properties, gchar *** value, GError **error)
+_indicate_server_get_indicator_property_group (IndicateServer * server, guint id, GPtrArray * properties, gchar *** value, GError **error)
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
-	if (class != NULL) {
+	if (class != NULL && class->get_indicator_property_group != NULL) {
 		return class->get_indicator_property_group (server, id, properties, value, error);
 	}
 
@@ -812,11 +1041,11 @@ indicate_server_get_indicator_property_group (IndicateServer * server, guint id,
 }
 
 gboolean 
-indicate_server_get_indicator_properties (IndicateServer * server, guint id, gchar *** properties, GError **error)
+_indicate_server_get_indicator_properties (IndicateServer * server, guint id, gchar *** properties, GError **error)
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
-	if (class != NULL) {
+	if (class != NULL && class->get_indicator_properties != NULL) {
 		return class->get_indicator_properties (server, id, properties, error);
 	}
 
@@ -833,11 +1062,11 @@ indicate_server_get_indicator_properties (IndicateServer * server, guint id, gch
 }
 
 gboolean 
-indicate_server_show_indicator_to_user (IndicateServer * server, guint id, GError ** error)
+_indicate_server_show_indicator_to_user (IndicateServer * server, guint id, GError ** error)
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
-	if (class != NULL) {
+	if (class != NULL && class->show_indicator_to_user != NULL) {
 		return class->show_indicator_to_user (server, id, error);
 	}
 
@@ -858,11 +1087,103 @@ indicate_server_get_next_id (IndicateServer * server)
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
-	if (class != NULL) {
+	if (class != NULL && class->get_next_id != NULL) {
 		return class->get_next_id (server);
 	}
 
 	return 0;
+}
+
+static IndicateInterests
+interest_string_to_enum (gchar * interest_string)
+{
+	if (!g_strcmp0(interest_string, INDICATE_INTEREST_STRING_SERVER_DISPLAY)) {
+		return INDICATE_INTEREST_SERVER_DISPLAY;
+	}
+
+	if (!g_strcmp0(interest_string, INDICATE_INTEREST_STRING_SERVER_SIGNAL)) {
+		return INDICATE_INTEREST_SERVER_SIGNAL;
+	}
+
+	if (!g_strcmp0(interest_string, INDICATE_INTEREST_STRING_INDICATOR_DISPLAY)) {
+		return INDICATE_INTEREST_INDICATOR_DISPLAY;
+	}
+
+	if (!g_strcmp0(interest_string, INDICATE_INTEREST_STRING_INDICATOR_SIGNAL)) {
+		return INDICATE_INTEREST_INDICATOR_SIGNAL;
+	}
+
+	if (!g_strcmp0(interest_string, INDICATE_INTEREST_STRING_INDICATOR_COUNT)) {
+		return INDICATE_INTEREST_INDICATOR_COUNT;
+	}
+
+	return INDICATE_INTEREST_NONE;
+}
+
+gboolean
+_indicate_server_show_interest (IndicateServer * server, gchar * interest, DBusGMethodInvocation * method)
+{
+	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
+
+	if (class != NULL && class->show_interest != NULL) {
+		if (class->show_interest (server, dbus_g_method_get_sender(method), interest_string_to_enum(interest))){
+			dbus_g_method_return(method);
+			return TRUE;
+		} else {
+			GError * error;
+			g_set_error(&error,
+						indicate_server_error_quark(),
+						SHOW_INTEREST_FAILED,
+						"Unable to show interest: %s",
+						interest);
+			dbus_g_method_return_error(method, error);
+			g_error_free(error);
+			return FALSE;
+		}
+	}
+
+	GError * error;
+	g_set_error(&error,
+				indicate_server_error_quark(),
+				NO_SHOW_INTEREST,
+				"show_interest function doesn't exist for this server class: %s",
+				G_OBJECT_TYPE_NAME(server));
+	dbus_g_method_return_error(method, error);
+	g_error_free(error);
+	return FALSE;
+}
+
+gboolean
+_indicate_server_remove_interest (IndicateServer * server, gchar * interest, DBusGMethodInvocation * method)
+{
+	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
+
+	if (class != NULL && class->remove_interest != NULL) {
+		if (class->remove_interest (server, dbus_g_method_get_sender(method), interest_string_to_enum(interest))){
+			dbus_g_method_return(method);
+			return TRUE;
+		} else {
+			GError * error;
+			g_set_error(&error,
+						indicate_server_error_quark(),
+						REMOVE_INTEREST_FAILED,
+						"Unable to remove interest: %s",
+						interest);
+			dbus_g_method_return_error(method, error);
+			g_error_free(error);
+			return FALSE;
+		}
+	}
+
+	GError * error;
+	g_set_error(&error,
+				indicate_server_error_quark(),
+				NO_REMOVE_INTEREST,
+				"remove_interest function doesn't exist for this server class: %s",
+				G_OBJECT_TYPE_NAME(server));
+	dbus_g_method_return_error(method, error);
+	g_error_free(error);
+	return FALSE;
 }
 
 /* Signal emission functions for sub-classes of the server */
@@ -900,3 +1221,53 @@ indicate_server_emit_server_display (IndicateServer *server)
   
   g_signal_emit(server, signals[SERVER_DISPLAY], 0, TRUE);
 }
+
+/* *** Folks stuff *** */
+
+static gint
+indicate_server_interested_folks_equal (gconstpointer a, gconstpointer b)
+{
+	return g_strcmp0(((IndicateServerInterestedFolk *)a)->sender,((IndicateServerInterestedFolk *)b)->sender);
+}
+
+static void
+indicate_server_interested_folks_init (IndicateServerInterestedFolk * folk, gchar * sender)
+{
+	folk->sender = g_strdup(sender);
+
+	guint i;
+	for (i = INDICATE_INTEREST_NONE; i < INDICATE_INTEREST_LAST; i++) {
+		folk->interests[i] = FALSE;
+	}
+
+	return;
+}
+
+static void
+indicate_server_interested_folks_set (IndicateServerInterestedFolk * folk, IndicateInterests interest, gboolean value)
+{
+	folk->interests[interest] = value;
+	return;
+}
+
+static void
+indicate_server_interested_folks_copy (IndicateServerInterestedFolk * folk, gboolean * interests)
+{
+	guint i;
+	for (i = INDICATE_INTEREST_NONE; i < INDICATE_INTEREST_LAST; i++) {
+		if (folk->interests[i]) {
+			interests[i] = TRUE;
+		}
+	}
+
+	return;
+}
+
+static void
+indicate_server_interested_folks_destroy(IndicateServerInterestedFolk * folk)
+{
+	g_free(folk->sender);
+	g_free(folk);
+	return;
+}
+/* *** End Folks *** */

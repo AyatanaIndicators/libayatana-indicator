@@ -25,7 +25,8 @@ indicate_headers = \
 	indicator.h \
 	indicator-message.h \
 	listener.h \
-	server.h
+	server.h \
+	interests.h
 
 libindicateinclude_HEADERS = \
 	$(indicate_headers)
@@ -41,12 +42,13 @@ libindicate_la_SOURCES = \
 	listener-marshal.c \
 	listener-marshal.h \
 	indicator.c \
-	indicator-message.c
+	indicator-message.c \
+	interests-priv.h
 
 libindicate_la_LDFLAGS = \
 	-version-info $(LIBINDICATE_CURRENT):$(LIBINDICATE_REVISION):$(LIBINDICATE_AGE) \
 	-no-undefined \
-	-export-symbols-regex "^[^_].*"
+	-export-symbols-regex "^[^_d].*"
 
 libindicate_la_CFLAGS = \
 	$(LIBINDICATE_CFLAGS)
@@ -56,40 +58,40 @@ libindicate_la_LIBADD = \
 
 dbus-indicate-server.h: indicate-interface.xml
 	dbus-binding-tool \
-		--prefix=indicate_server \
+		--prefix=_indicate_server \
 		--mode=glib-server \
 		--output=dbus-indicate-server.h \
 		$(srcdir)/indicate-interface.xml
 
 dbus-indicate-client.h: indicate-interface.xml
 	dbus-binding-tool \
-		--prefix=indicate_client \
+		--prefix=_indicate_client \
 		--mode=glib-client \
 		--output=dbus-indicate-client.h \
 		$(srcdir)/indicate-interface.xml
 
 dbus-listener-server.h: indicate-listener.xml
 	dbus-binding-tool \
-		--prefix=indicate_listener \
+		--prefix=_indicate_listener \
 		--mode=glib-server \
 		--output=dbus-listener-server.h \
 		$(srcdir)/indicate-listener.xml
 
 dbus-listener-client.h: indicate-listener.xml
 	dbus-binding-tool \
-		--prefix=indicate_listener \
+		--prefix=_indicate_listener \
 		--mode=glib-client \
 		--output=dbus-listener-client.h \
 		$(srcdir)/indicate-listener.xml
 
 listener-marshal.h: $(srcdir)/listener-marshal.list
 	glib-genmarshal --header \
-		--prefix=indicate_listener_marshal $(srcdir)/listener-marshal.list \
+		--prefix=_indicate_listener_marshal $(srcdir)/listener-marshal.list \
 		> listener-marshal.h
 
 listener-marshal.c: $(srcdir)/listener-marshal.list
 	glib-genmarshal --body \
-		--prefix=indicate_listener_marshal $(srcdir)/listener-marshal.list \
+		--prefix=_indicate_listener_marshal $(srcdir)/listener-marshal.list \
 		> listener-marshal.c
 
 pkgconfig_DATA = indicate.pc
