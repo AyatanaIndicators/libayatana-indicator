@@ -48,7 +48,7 @@ libindicate_la_SOURCES = \
 libindicate_la_LDFLAGS = \
 	-version-info $(LIBINDICATE_CURRENT):$(LIBINDICATE_REVISION):$(LIBINDICATE_AGE) \
 	-no-undefined \
-	-export-symbols-regex "^[^_].*"
+	-export-symbols-regex "^[^_d].*"
 
 libindicate_la_CFLAGS = \
 	$(LIBINDICATE_CFLAGS)
