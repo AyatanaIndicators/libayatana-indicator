@@ -121,7 +121,7 @@ static void proxy_struct_destroy (gpointer data);
 static void build_todo_list_cb (DBusGProxy * proxy, char ** names, GError * error, void * data);
 static void todo_list_add (const gchar * name, DBusGProxy * proxy, IndicateListener * listener, gboolean startup);
 static gboolean todo_idle (gpointer data);
-void get_type_cb (IndicateListener * listener, IndicateListenerServer * server, gchar * type, gpointer data);
+static void get_type_cb (IndicateListener * listener, IndicateListenerServer * server, gchar * type, gpointer data);
 static void proxy_server_added (DBusGProxy * proxy, const gchar * type, proxy_t * proxyt);
 static void proxy_indicator_added (DBusGProxy * proxy, guint id, const gchar * type, proxy_t * proxyt);
 static void proxy_indicator_removed (DBusGProxy * proxy, guint id, const gchar * type, proxy_t * proxyt);
@@ -503,7 +503,7 @@ todo_idle (gpointer data)
 	return TRUE;
 }
 
-void
+static void
 get_type_cb (IndicateListener * listener, IndicateListenerServer * server, gchar * type, gpointer data)
 {
 	if (type == NULL) {
