@@ -127,7 +127,9 @@ void                  indicate_listener_server_show_interest     (IndicateListen
 void                  indicate_listener_server_remove_interest   (IndicateListener * listener,
                                                                   IndicateListenerServer * server,
                                                                   IndicateInterests interest);
-
+gboolean              indicate_listener_server_check_interest    (IndicateListener * listener,
+                                                                  IndicateListenerServer * server,
+                                                                  IndicateInterests interest);
 
 G_END_DECLS
 

@@ -55,6 +55,7 @@ struct _IndicateListenerServer {
 	gchar * name;
 	DBusGProxy * proxy;
 	DBusGConnection * connection;
+	gboolean interests[INDICATE_INTEREST_LAST];
 };
 
 struct _IndicateListenerIndicator {
@@ -462,7 +463,7 @@ todo_idle (gpointer data)
 
 	proxy_todo_t * todo = &g_array_index(priv->proxy_todo, proxy_todo_t, priv->proxy_todo->len - 1);
 
-	proxy_t * proxyt = g_new(proxy_t, 1);
+	proxy_t * proxyt = g_new0(proxy_t, 1);
 	proxyt->name = todo->name;
 	proxyt->type = NULL;
 	proxyt->proxy = dbus_g_proxy_new_for_name(todo->bus,
@@ -959,5 +960,60 @@ guint
 indicate_listener_indicator_get_id (IndicateListenerIndicator * indicator)
 {
 	return GPOINTER_TO_UINT(indicator);
+}
+
+static const gchar *
+interest_to_string (IndicateInterests interest)
+{
+	switch (interest) {
+	case INDICATE_INTEREST_SERVER_DISPLAY:
+		return INDICATE_INTEREST_STRING_SERVER_DISPLAY;
+	case INDICATE_INTEREST_SERVER_SIGNAL:
+		return INDICATE_INTEREST_STRING_SERVER_SIGNAL;
+	case INDICATE_INTEREST_INDICATOR_DISPLAY:
+		return INDICATE_INTEREST_STRING_INDICATOR_DISPLAY;
+	case INDICATE_INTEREST_INDICATOR_SIGNAL:
+		return INDICATE_INTEREST_STRING_INDICATOR_SIGNAL;
+	case INDICATE_INTEREST_INDICATOR_COUNT:
+		return INDICATE_INTEREST_STRING_INDICATOR_COUNT;
+	default:
+		return "";
+	}
+}
+
+static void
+interest_cb (DBusGProxy *proxy, GError *error, gpointer userdata)
+{
+	if (error != NULL) {
+		g_warning("Unable to configure interest on server %s because: %s", ((IndicateListenerServer *)userdata)->name, error->message);
+	}
+
+	return;
+}
+
+void
+indicate_listener_server_show_interest (IndicateListener * listener, IndicateListenerServer * server, IndicateInterests interest)
+{
+	if (!server->interests[interest]) {
+		org_freedesktop_indicator_show_interest_async (server->proxy, interest_to_string(interest), interest_cb, server);
+		server->interests[interest] = TRUE;
+	}
+	return;
+}
+
+void
+indicate_listener_server_remove_interest (IndicateListener * listener, IndicateListenerServer * server, IndicateInterests interest)
+{
+	if (server->interests[interest]) {
+		org_freedesktop_indicator_remove_interest_async (server->proxy, interest_to_string(interest), interest_cb, server);
+		server->interests[interest] = FALSE;
+	}
+	return;
+}
+
+gboolean
+indicate_listener_server_check_interest (IndicateListener * listener, IndicateListenerServer * server, IndicateInterests interest)
+{
+	return server->interests[interest];
 }
 
