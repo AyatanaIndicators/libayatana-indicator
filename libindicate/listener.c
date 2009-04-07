@@ -332,12 +332,12 @@ dbus_owner_change (DBusGProxy * proxy, const gchar * name, const gchar * prev, c
 		proxyt_item = g_list_find_custom(priv->proxies_working, &searchitem, proxy_t_equal);
 		if (proxyt_item != NULL) {
 			proxy_struct_destroy((proxy_t *)proxyt_item->data);
-			priv->proxies_working = g_list_remove(priv->proxies_working, proxyt_item);
+			priv->proxies_working = g_list_remove(priv->proxies_working, proxyt_item->data);
 		}
 		proxyt_item = g_list_find_custom(priv->proxies_possible, &searchitem, proxy_t_equal);
 		if (proxyt_item != NULL) {
 			proxy_struct_destroy((proxy_t *)proxyt_item->data);
-			priv->proxies_possible = g_list_remove(priv->proxies_possible, proxyt_item);
+			priv->proxies_possible = g_list_remove(priv->proxies_possible, proxyt_item->data);
 		}
 	}
 
@@ -379,11 +379,11 @@ proxy_struct_destroy (gpointer data)
 		proxy_data->indicators = NULL;
 	}
 
-	if (proxy_data->property_proxy) {
+	if (DBUS_IS_G_PROXY(proxy_data->property_proxy)) {
 		g_object_unref(G_OBJECT(proxy_data->property_proxy));
 	}
 
-	if (proxy_data->proxy) {
+	if (DBUS_IS_G_PROXY(proxy_data->proxy)) {
 		g_object_unref(G_OBJECT(proxy_data->proxy));
 	}
 
@@ -496,7 +496,7 @@ todo_idle (gpointer data)
 	dbus_g_proxy_connect_signal(proxyt->proxy, "ServerShow",
 	                            G_CALLBACK(proxy_server_added), proxyt, NULL);
 
-	priv->proxies_possible = g_list_append(priv->proxies_possible, proxyt);
+	priv->proxies_possible = g_list_prepend(priv->proxies_possible, proxyt);
 
 	/* I think that we need to have this as there is a race
 	 * condition here.  If someone comes on the bus and we get
@@ -581,9 +581,9 @@ proxy_server_added (DBusGProxy * proxy, const gchar * type, proxy_t * proxyt)
 		GList * proxyt_item;
 		proxyt_item = g_list_find_custom(priv->proxies_possible, proxyt, proxy_t_equal);
 		if (proxyt_item != NULL) {
-			priv->proxies_possible = g_list_remove(priv->proxies_possible, proxyt_item);
+			priv->proxies_possible = g_list_remove(priv->proxies_possible, proxyt_item->data);
 		}
-		priv->proxies_working = g_list_append(priv->proxies_working, proxyt);
+		priv->proxies_working = g_list_prepend(priv->proxies_working, proxyt);
 
 		dbus_g_proxy_add_signal(proxyt->proxy, "IndicatorAdded",
 								G_TYPE_UINT, G_TYPE_STRING, G_TYPE_INVALID);
@@ -959,6 +959,7 @@ indicate_listener_server_get_desktop (IndicateListener * listener, IndicateListe
 const gchar *
 indicate_listener_server_get_dbusname (IndicateListenerServer * server)
 {
+	if (server == NULL) return NULL;
 	return server->name;
 }
 
