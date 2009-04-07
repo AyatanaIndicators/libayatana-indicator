@@ -84,6 +84,7 @@ struct _IndicateServerPrivate
 	GSList * indicators;
 	gboolean visible;
 	guint current_id;
+	gboolean registered;
 
 	gchar * desktop;
 	gchar * type;
@@ -260,6 +261,7 @@ indicate_server_init (IndicateServer * server)
 	priv->indicators = NULL;
 	priv->num_hidden = 0;
 	priv->visible = FALSE;
+	priv->registered = FALSE;
 	priv->current_id = 0;
 	priv->type = NULL;
 	priv->desktop = NULL;
@@ -371,9 +373,13 @@ indicate_server_show (IndicateServer * server)
 
 	priv->connection = dbus_g_bus_get(DBUS_BUS_SESSION, NULL);
 
-	dbus_g_connection_register_g_object(priv->connection,
-	                                    priv->path,
-	                                    G_OBJECT(server));
+	if (!priv->registered) {
+		dbus_g_connection_register_g_object(priv->connection,
+											priv->path,
+											G_OBJECT(server));
+		priv->registered = TRUE;
+	}
+
 	priv->visible = TRUE;
 
 	g_signal_emit(server, signals[SERVER_SHOW], 0, priv->type ? priv->type : "", TRUE);
