@@ -992,7 +992,7 @@ static void
 interest_cb (DBusGProxy *proxy, GError *error, gpointer userdata)
 {
 	if (error != NULL) {
-		g_warning("Unable to configure interest on server %s because: %s", ((IndicateListenerServer *)userdata)->name, error->message);
+		g_warning("Unable to configure interest.");
 	}
 
 	return;

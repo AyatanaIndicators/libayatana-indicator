@@ -3,6 +3,8 @@ indicator-applet (0.1.4-0ubuntu2~ppa2) UNRELEASED; urgency=low
   * Merging in dev stuff.  This'll break things.
   * Header fixes 
   * Fixes for dev stuff.
+  * debian/control: Switching libindicate0 to libindicate1 to express
+    the fact that the binary compatibility is broken.
 
  -- Ted Gould <ted@ubuntu.com>  Fri, 03 Apr 2009 15:09:33 -0500
 
