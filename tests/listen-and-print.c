@@ -111,6 +111,11 @@ server_added (IndicateListener * listener, IndicateListenerServer * server, gcha
 	g_debug("Indicator Server Added:   %s %s", INDICATE_LISTENER_SERVER_DBUS_NAME(server), type);
 	indicate_listener_server_get_type(listener, server, type_cb, NULL);
 	indicate_listener_server_get_desktop(listener, server, desktop_cb, NULL);
+
+	indicate_listener_server_show_interest(listener, server, INDICATE_INTEREST_SERVER_DISPLAY);
+	indicate_listener_server_show_interest(listener, server, INDICATE_INTEREST_INDICATOR_DISPLAY);
+
+	return;
 }
 
 static void

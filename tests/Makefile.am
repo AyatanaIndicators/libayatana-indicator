@@ -3,7 +3,8 @@ libexec_PROGRAMS = \
 	indicate-and-crash \
 	indicate-alot \
 	listen-and-print \
-	im-client
+	im-client \
+	show-hide-server
 
 indicate_and_crash_SOURCES = \
 	indicate-and-crash.c
@@ -46,6 +47,17 @@ im_client_CFLAGS = \
 	$(LIBINDICATE_CFLAGS)
 
 im_client_LDADD = \
+	../libindicate/libindicate.la \
+	$(LIBINDICATE_LIBS)
+
+show_hide_server_SOURCES = \
+	show-hide-server.c
+
+show_hide_server_CFLAGS = \
+	-I $(srcdir)/.. \
+	$(LIBINDICATE_CFLAGS)
+
+show_hide_server_LDADD = \
 	../libindicate/libindicate.la \
 	$(LIBINDICATE_LIBS)
 

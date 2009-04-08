@@ -37,6 +37,7 @@ License version 3 and version 2.1 along with this program.  If not, see
 
 #include "indicator.h"
 #include "server.h"
+#include "interests.h"
 
 G_BEGIN_DECLS
 
@@ -54,11 +55,11 @@ G_BEGIN_DECLS
 #define INDICATE_LISTENER_SIGNAL_SERVER_ADDED          "server-added"
 #define INDICATE_LISTENER_SIGNAL_SERVER_REMOVED        "server-removed"
 
-#define INDICATE_LISTENER_SERVER_DBUS_NAME(server)   ((gchar *)server)
-#define INDICATE_LISTENER_INDICATOR_ID(indicator)    (GPOINTER_TO_UINT(indicator))
+#define INDICATE_LISTENER_SERVER_DBUS_NAME(server)   (indicate_listener_server_get_dbusname(server))
+#define INDICATE_LISTENER_INDICATOR_ID(indicator)    (indicate_listener_indicator_get_id(indicator))
 
-typedef gchar IndicateListenerServer;
-typedef guint IndicateListenerIndicator;
+typedef struct _IndicateListenerServer IndicateListenerServer;
+typedef struct _IndicateListenerIndicator IndicateListenerIndicator;
 
 typedef struct _IndicateListener IndicateListener;
 struct _IndicateListener {
@@ -109,7 +110,6 @@ void                  indicate_listener_get_property_icon  (IndicateListener * l
 void                  indicate_listener_display            (IndicateListener * listener,
                                                             IndicateListenerServer * server,
                                                             IndicateListenerIndicator * indicator);
-gboolean              indicate_listener_get_indicator_servers (IndicateListener * listener, GList * servers);
 void                  indicate_listener_server_get_type    (IndicateListener * listener,
                                                             IndicateListenerServer * server,
                                                             indicate_listener_get_server_property_cb callback,
@@ -118,10 +118,17 @@ void                  indicate_listener_server_get_desktop (IndicateListener * l
                                                             IndicateListenerServer * server,
                                                             indicate_listener_get_server_property_cb callback,
                                                             gpointer data);
-
-
-
-
+const gchar *         indicate_listener_server_get_dbusname      (IndicateListenerServer * server);
+guint                 indicate_listener_indicator_get_id         (IndicateListenerIndicator * indicator);
+void                  indicate_listener_server_show_interest     (IndicateListener * listener,
+                                                                  IndicateListenerServer * server,
+                                                                  IndicateInterests interest);
+void                  indicate_listener_server_remove_interest   (IndicateListener * listener,
+                                                                  IndicateListenerServer * server,
+                                                                  IndicateInterests interest);
+gboolean              indicate_listener_server_check_interest    (IndicateListener * listener,
+                                                                  IndicateListenerServer * server,
+                                                                  IndicateInterests interest);
 
 G_END_DECLS
 

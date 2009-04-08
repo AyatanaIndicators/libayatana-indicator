@@ -65,6 +65,18 @@ server_display (IndicateServer * server, gpointer data)
 	g_debug("Ah, my server has been displayed");
 }
 
+static void
+interest_added (IndicateServer * server, IndicateInterests interest)
+{
+	g_debug("Oh, someone is interested in my for: %d", interest);
+}
+
+void
+interest_removed (IndicateServer * server, IndicateInterests interest)
+{
+	g_debug("Someone is no longer interested in my for: %d", interest);
+}
+
 int
 main (int argc, char ** argv)
 {
@@ -74,6 +86,8 @@ main (int argc, char ** argv)
 	indicate_server_set_type(server, "message.im");
 	indicate_server_set_desktop_file(server, "/usr/share/applications/empathy.desktop");
 	g_signal_connect(G_OBJECT(server), INDICATE_SERVER_SIGNAL_SERVER_DISPLAY, G_CALLBACK(server_display), NULL);
+	g_signal_connect(G_OBJECT(server), INDICATE_SERVER_SIGNAL_INTEREST_ADDED, G_CALLBACK(interest_added), NULL);
+	g_signal_connect(G_OBJECT(server), INDICATE_SERVER_SIGNAL_INTEREST_REMOVED, G_CALLBACK(interest_removed), NULL);
 
 	IndicateIndicatorMessage * indicator;
 

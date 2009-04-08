@@ -28,7 +28,7 @@ Description: GNOME panel indicator applet
  Currently this includes support for messaging applications in the
  indicator-messages package.
 
-Package: libindicate0
+Package: libindicate1
 Section: libs
 Conflicts: libindicate
 Replaces: libindicate
@@ -46,7 +46,7 @@ Section: libdevel
 Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
-         libindicate0 (= ${binary:Version}),
+         libindicate1 (= ${binary:Version}),
          libdbus-glib-1-dev (>= 0.76),
          libgtk2.0-dev (>= 2.12.0)
 Description: GNOME panel indicator applet - shared library

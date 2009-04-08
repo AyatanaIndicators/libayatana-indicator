@@ -150,6 +150,7 @@ about_cb (BonoboUIComponent *ui_container,
 		"wrap-license", TRUE,
 		"translator-credits", _("translator-credits"),
 		"logo-icon-name", "indicator-applet",
+		"icon-name", "indicator-applet",
 		"website", "http://launchpad.net/indicator-applet",
 		"website-label", _("Indicator Applet Website"),
 		NULL
@@ -220,13 +221,30 @@ applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
         "    GtkWidget::focus-line-width = 0\n"
         "    GtkWidget::focus-padding = 0\n"
         "}\n"
-        "widget \"*.fast-user-switch-applet\" style \"indicator-applet-style\"");
+	    "style \"indicator-applet-menubar-style\"\n"
+        "{\n"
+        "    GtkMenuBar::shadow-type = none\n"
+        "    GtkMenuBar::internal-padding = 0\n"
+        "    GtkWidget::focus-line-width = 0\n"
+        "    GtkWidget::focus-padding = 0\n"
+        "    GtkMenuItem::horizontal-padding = 0\n"
+        "}\n"
+	    "style \"indicator-applet-menuitem-style\"\n"
+        "{\n"
+        "    GtkWidget::focus-line-width = 0\n"
+        "    GtkWidget::focus-padding = 0\n"
+        "    GtkMenuItem::horizontal-padding = 0\n"
+        "}\n"
+        "widget \"*.fast-user-switch-applet\" style \"indicator-applet-style\""
+        "widget \"*.fast-user-switch-menuitem\" style \"indicator-applet-menuitem-style\""
+        "widget \"*.fast-user-switch-menubar\" style \"indicator-applet-menubar-style\"");
 	//gtk_widget_set_name(GTK_WIDGET (applet), "indicator-applet-menubar");
 	gtk_widget_set_name(GTK_WIDGET (applet), "fast-user-switch-applet");
 
 	/* Build menubar */
 	menubar = gtk_menu_bar_new();
 	GTK_WIDGET_SET_FLAGS (menubar, GTK_WIDGET_FLAGS(menubar) | GTK_CAN_FOCUS);
+	gtk_widget_set_name(GTK_WIDGET (menubar), "fast-user-switch-menubar");
 	g_signal_connect(menubar, "button-press-event", G_CALLBACK(menubar_press), NULL);
 	g_signal_connect_after(menubar, "expose-event", G_CALLBACK(menubar_on_expose), menubar);
 	gtk_container_set_border_width(GTK_CONTAINER(menubar), 0);
