@@ -54,3 +54,4 @@ tests/im-client
 tests/indicate-alot
 tests/indicate-and-crash
 tests/listen-and-print
+tests/show-hide-server
