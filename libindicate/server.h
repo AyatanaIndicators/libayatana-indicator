@@ -80,7 +80,7 @@ struct _IndicateServerClass {
 	gboolean (*get_indicator_count) (IndicateServer * server, guint * count, GError **error);
 	gboolean (*get_indicator_count_by_type) (IndicateServer * server, gchar * type, guint * count, GError **error);
 	gboolean (*get_indicator_list) (IndicateServer * server, GArray ** indicators, GError ** error);
-	gboolean (*get_indicator_list_by_type) (IndicateServer * server, gchar * type, guint ** indicators, GError ** error);
+	gboolean (*get_indicator_list_by_type) (IndicateServer * server, gchar * type, GArray ** indicators, GError ** error);
 	gboolean (*get_indicator_property) (IndicateServer * server, guint id, gchar * property, gchar ** value, GError **error);
 	gboolean (*get_indicator_property_group) (IndicateServer * server, guint id, GPtrArray * properties, gchar *** value, GError **error);
 	gboolean (*get_indicator_properties) (IndicateServer * server, guint id, gchar *** properties, GError **error);

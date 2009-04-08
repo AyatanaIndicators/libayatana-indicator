@@ -114,7 +114,7 @@ static void indicate_server_finalize (GObject * obj);
 static gboolean get_indicator_count (IndicateServer * server, guint * count, GError **error);
 static gboolean get_indicator_count_by_type (IndicateServer * server, gchar * type, guint * count, GError **error);
 static gboolean get_indicator_list (IndicateServer * server, GArray ** indicators, GError ** error);
-static gboolean get_indicator_list_by_type (IndicateServer * server, gchar * type, guint ** indicators, GError ** error);
+static gboolean get_indicator_list_by_type (IndicateServer * server, gchar * type, GArray ** indicators, GError ** error);
 static gboolean get_indicator_property (IndicateServer * server, guint id, gchar * property, gchar ** value, GError **error);
 static gboolean get_indicator_property_group (IndicateServer * server, guint id, GPtrArray * properties, gchar *** value, GError **error);
 static gboolean get_indicator_properties (IndicateServer * server, guint id, gchar *** properties, GError **error);
@@ -136,7 +136,7 @@ static void indicate_server_interested_folks_destroy(IndicateServerInterestedFol
 gboolean _indicate_server_get_indicator_count (IndicateServer * server, guint * count, GError **error);
 gboolean _indicate_server_get_indicator_count_by_type (IndicateServer * server, gchar * type, guint * count, GError **error);
 gboolean _indicate_server_get_indicator_list (IndicateServer * server, GArray ** indicators, GError ** error);
-gboolean _indicate_server_get_indicator_list_by_type (IndicateServer * server, gchar * type, guint ** indicators, GError ** error);
+gboolean _indicate_server_get_indicator_list_by_type (IndicateServer * server, gchar * type, GArray ** indicators, GError ** error);
 gboolean _indicate_server_get_indicator_property (IndicateServer * server, guint id, gchar * property, gchar ** value, GError **error);
 gboolean _indicate_server_get_indicator_property_group (IndicateServer * server, guint id, GPtrArray * properties, gchar *** value, GError **error);
 gboolean _indicate_server_get_indicator_properties (IndicateServer * server, guint id, gchar *** properties, GError **error);
@@ -798,7 +798,7 @@ get_indicator_list (IndicateServer * server, GArray ** indicators, GError ** err
 }
 
 static gboolean
-get_indicator_list_by_type (IndicateServer * server, gchar * type, guint ** indicators, GError ** error)
+get_indicator_list_by_type (IndicateServer * server, gchar * type, GArray ** indicators, GError ** error)
 {
 	g_return_val_if_fail(INDICATE_IS_SERVER(server), TRUE);
 
@@ -994,7 +994,7 @@ _indicate_server_get_indicator_list (IndicateServer * server, GArray ** indicato
 }
 
 gboolean 
-_indicate_server_get_indicator_list_by_type (IndicateServer * server, gchar * type, guint ** indicators, GError ** error)
+_indicate_server_get_indicator_list_by_type (IndicateServer * server, gchar * type, GArray ** indicators, GError ** error)
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 
