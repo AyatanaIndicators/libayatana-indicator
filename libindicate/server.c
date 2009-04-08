@@ -610,8 +610,10 @@ indicate_server_add_indicator (IndicateServer * server, IndicateIndicator * indi
 {
 	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
 
-	g_object_ref(indicator);
-	priv->indicators = g_slist_prepend(priv->indicators, indicator);
+    if (g_slist_find (priv->indicators, indicator) != NULL)
+            return;
+
+    priv->indicators = g_slist_prepend(priv->indicators, indicator);
 
 	if (!indicate_indicator_is_visible(indicator)) {
 		priv->num_hidden++;
@@ -631,6 +633,9 @@ indicate_server_remove_indicator (IndicateServer * server, IndicateIndicator * i
 {
 	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
 
+    if (g_slist_find (priv->indicators, indicator) == NULL)
+            return;
+
 	priv->indicators = g_slist_remove(priv->indicators, indicator);
 	if (indicate_indicator_is_visible(indicator)) {
 		g_signal_emit(server, signals[INDICATOR_REMOVED], 0, indicate_indicator_get_id(indicator), indicate_indicator_get_indicator_type(indicator), TRUE);
@@ -642,7 +647,6 @@ indicate_server_remove_indicator (IndicateServer * server, IndicateIndicator * i
 	g_signal_handlers_disconnect_by_func(indicator, indicator_hide_cb, server);
 	g_signal_handlers_disconnect_by_func(indicator, indicator_modified_cb, server);
 
-	g_object_unref(indicator);
 	return;
 }
 
