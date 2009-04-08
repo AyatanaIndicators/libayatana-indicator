@@ -5,7 +5,10 @@ indicator-applet (0.1.4-0ubuntu2~ppa2) UNRELEASED; urgency=low
   * debian/libindicate0.install changed to debian/libindicate1.install
   * New upstream version: 
     * Adds new API for detecting interests of various listeners.  Implemented
-      on both client and server side.  (LP: 353112)
+      on both client and server side.  (LP: #353112)
+    * Makes it so that all objects down to the menu now use the gtkstyle
+      naming from FUSA to ensure that they all pick up the theme hacks that
+      are set for FUSA.  (LP: #334490)
 
  -- Ted Gould <ted@ubuntu.com>  Fri, 03 Apr 2009 15:09:33 -0500
 
