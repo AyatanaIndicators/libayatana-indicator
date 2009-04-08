@@ -31,7 +31,7 @@ indicator-applet (0.1.4-0ubuntu1) jaunty; urgency=low
   * debian/control: Adding libgnomeui-dev as a dependency as it was added
     upstream.
 
- -- Ted Gould <ted@ubuntu.com>  Fri, 27 Mar 2009 23:41:21 -0500
+ -- Ted Gould <ted@ubuntu.com>  Mon, 30 Mar 2009 09:31:44 +0200
 
 indicator-applet (0.1.3-0ubuntu2) jaunty; urgency=low
 
