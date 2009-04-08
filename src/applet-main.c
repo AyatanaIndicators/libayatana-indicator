@@ -150,6 +150,7 @@ about_cb (BonoboUIComponent *ui_container,
 		"wrap-license", TRUE,
 		"translator-credits", _("translator-credits"),
 		"logo-icon-name", "indicator-applet",
+		"icon-name", "indicator-applet",
 		"website", "http://launchpad.net/indicator-applet",
 		"website-label", _("Indicator Applet Website"),
 		NULL

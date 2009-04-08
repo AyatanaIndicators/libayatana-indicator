@@ -84,6 +84,7 @@ struct _IndicateServerPrivate
 	GSList * indicators;
 	gboolean visible;
 	guint current_id;
+	gboolean registered;
 
 	gchar * desktop;
 	gchar * type;
@@ -113,7 +114,7 @@ static void indicate_server_finalize (GObject * obj);
 static gboolean get_indicator_count (IndicateServer * server, guint * count, GError **error);
 static gboolean get_indicator_count_by_type (IndicateServer * server, gchar * type, guint * count, GError **error);
 static gboolean get_indicator_list (IndicateServer * server, GArray ** indicators, GError ** error);
-static gboolean get_indicator_list_by_type (IndicateServer * server, gchar * type, guint ** indicators, GError ** error);
+static gboolean get_indicator_list_by_type (IndicateServer * server, gchar * type, GArray ** indicators, GError ** error);
 static gboolean get_indicator_property (IndicateServer * server, guint id, gchar * property, gchar ** value, GError **error);
 static gboolean get_indicator_property_group (IndicateServer * server, guint id, GPtrArray * properties, gchar *** value, GError **error);
 static gboolean get_indicator_properties (IndicateServer * server, guint id, gchar *** properties, GError **error);
@@ -135,7 +136,7 @@ static void indicate_server_interested_folks_destroy(IndicateServerInterestedFol
 gboolean _indicate_server_get_indicator_count (IndicateServer * server, guint * count, GError **error);
 gboolean _indicate_server_get_indicator_count_by_type (IndicateServer * server, gchar * type, guint * count, GError **error);
 gboolean _indicate_server_get_indicator_list (IndicateServer * server, GArray ** indicators, GError ** error);
-gboolean _indicate_server_get_indicator_list_by_type (IndicateServer * server, gchar * type, guint ** indicators, GError ** error);
+gboolean _indicate_server_get_indicator_list_by_type (IndicateServer * server, gchar * type, GArray ** indicators, GError ** error);
 gboolean _indicate_server_get_indicator_property (IndicateServer * server, guint id, gchar * property, gchar ** value, GError **error);
 gboolean _indicate_server_get_indicator_property_group (IndicateServer * server, guint id, GPtrArray * properties, gchar *** value, GError **error);
 gboolean _indicate_server_get_indicator_properties (IndicateServer * server, guint id, gchar *** properties, GError **error);
@@ -260,6 +261,7 @@ indicate_server_init (IndicateServer * server)
 	priv->indicators = NULL;
 	priv->num_hidden = 0;
 	priv->visible = FALSE;
+	priv->registered = FALSE;
 	priv->current_id = 0;
 	priv->type = NULL;
 	priv->desktop = NULL;
@@ -371,9 +373,13 @@ indicate_server_show (IndicateServer * server)
 
 	priv->connection = dbus_g_bus_get(DBUS_BUS_SESSION, NULL);
 
-	dbus_g_connection_register_g_object(priv->connection,
-	                                    priv->path,
-	                                    G_OBJECT(server));
+	if (!priv->registered) {
+		dbus_g_connection_register_g_object(priv->connection,
+											priv->path,
+											G_OBJECT(server));
+		priv->registered = TRUE;
+	}
+
 	priv->visible = TRUE;
 
 	g_signal_emit(server, signals[SERVER_SHOW], 0, priv->type ? priv->type : "", TRUE);
@@ -604,8 +610,10 @@ indicate_server_add_indicator (IndicateServer * server, IndicateIndicator * indi
 {
 	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
 
-	g_object_ref(indicator);
-	priv->indicators = g_slist_prepend(priv->indicators, indicator);
+    if (g_slist_find (priv->indicators, indicator) != NULL)
+            return;
+
+    priv->indicators = g_slist_prepend(priv->indicators, indicator);
 
 	if (!indicate_indicator_is_visible(indicator)) {
 		priv->num_hidden++;
@@ -625,6 +633,9 @@ indicate_server_remove_indicator (IndicateServer * server, IndicateIndicator * i
 {
 	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(server);
 
+    if (g_slist_find (priv->indicators, indicator) == NULL)
+            return;
+
 	priv->indicators = g_slist_remove(priv->indicators, indicator);
 	if (indicate_indicator_is_visible(indicator)) {
 		g_signal_emit(server, signals[INDICATOR_REMOVED], 0, indicate_indicator_get_id(indicator), indicate_indicator_get_indicator_type(indicator), TRUE);
@@ -636,7 +647,6 @@ indicate_server_remove_indicator (IndicateServer * server, IndicateIndicator * i
 	g_signal_handlers_disconnect_by_func(indicator, indicator_hide_cb, server);
 	g_signal_handlers_disconnect_by_func(indicator, indicator_modified_cb, server);
 
-	g_object_unref(indicator);
 	return;
 }
 
@@ -788,7 +798,7 @@ get_indicator_list (IndicateServer * server, GArray ** indicators, GError ** err
 }
 
 static gboolean
-get_indicator_list_by_type (IndicateServer * server, gchar * type, guint ** indicators, GError ** error)
+get_indicator_list_by_type (IndicateServer * server, gchar * type, GArray ** indicators, GError ** error)
 {
 	g_return_val_if_fail(INDICATE_IS_SERVER(server), TRUE);
 
@@ -984,7 +994,7 @@ _indicate_server_get_indicator_list (IndicateServer * server, GArray ** indicato
 }
 
 gboolean 
-_indicate_server_get_indicator_list_by_type (IndicateServer * server, gchar * type, guint ** indicators, GError ** error)
+_indicate_server_get_indicator_list_by_type (IndicateServer * server, gchar * type, GArray ** indicators, GError ** error)
 {
 	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
 

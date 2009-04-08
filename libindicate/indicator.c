@@ -249,7 +249,7 @@ indicate_indicator_set_property_icon (IndicateIndicator * indicator, const gchar
 	gchar * png_data;
 	gsize png_data_len;
 
-	if (!gdk_pixbuf_save_to_buffer(data, &png_data, &png_data_len, "png", &error, NULL)) {
+	if (!gdk_pixbuf_save_to_buffer((GdkPixbuf *)data, &png_data, &png_data_len, "png", &error, NULL)) {
 		if (error == NULL) {
 			g_warning("Unable to create pixbuf data stream: %d", png_data_len);
 		} else {
