@@ -153,36 +153,36 @@ indicate_listener_class_init (IndicateListenerClass * class)
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateListenerClass, indicator_added),
 	                                        NULL, NULL,
-	                                        _indicate_listener_marshal_VOID__POINTER_POINTER_STRING,
-	                                        G_TYPE_NONE, 3, G_TYPE_POINTER, G_TYPE_POINTER, G_TYPE_STRING);
+	                                        _indicate_listener_marshal_VOID__BOXED_POINTER_STRING,
+	                                        G_TYPE_NONE, 3, INDICATE_TYPE_LISTENER_SERVER, G_TYPE_POINTER, G_TYPE_STRING);
 	signals[INDICATOR_REMOVED] = g_signal_new(INDICATE_LISTENER_SIGNAL_INDICATOR_REMOVED,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateListenerClass, indicator_removed),
 	                                        NULL, NULL,
-	                                        _indicate_listener_marshal_VOID__POINTER_POINTER_STRING,
-	                                        G_TYPE_NONE, 3, G_TYPE_POINTER, G_TYPE_POINTER, G_TYPE_STRING);
+	                                        _indicate_listener_marshal_VOID__BOXED_POINTER_STRING,
+	                                        G_TYPE_NONE, 3, INDICATE_TYPE_LISTENER_SERVER, G_TYPE_POINTER, G_TYPE_STRING);
 	signals[INDICATOR_MODIFIED] = g_signal_new(INDICATE_LISTENER_SIGNAL_INDICATOR_MODIFIED,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateListenerClass, indicator_modified),
 	                                        NULL, NULL,
-	                                        _indicate_listener_marshal_VOID__POINTER_POINTER_STRING_STRING,
-	                                        G_TYPE_NONE, 4, G_TYPE_POINTER, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING);
+	                                        _indicate_listener_marshal_VOID__BOXED_POINTER_STRING_STRING,
+	                                        G_TYPE_NONE, 4, INDICATE_TYPE_LISTENER_SERVER, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING);
 	signals[SERVER_ADDED] = g_signal_new(INDICATE_LISTENER_SIGNAL_SERVER_ADDED,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateListenerClass, server_added),
 	                                        NULL, NULL,
-	                                        _indicate_listener_marshal_VOID__POINTER_STRING,
-	                                        G_TYPE_NONE, 2, G_TYPE_POINTER, G_TYPE_STRING);
+	                                        _indicate_listener_marshal_VOID__BOXED_STRING,
+	                                        G_TYPE_NONE, 2, INDICATE_TYPE_LISTENER_SERVER, G_TYPE_STRING);
 	signals[SERVER_REMOVED] = g_signal_new(INDICATE_LISTENER_SIGNAL_SERVER_REMOVED,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateListenerClass, server_removed),
 	                                        NULL, NULL,
-	                                        _indicate_listener_marshal_VOID__POINTER_STRING,
-	                                        G_TYPE_NONE, 2, G_TYPE_POINTER, G_TYPE_STRING);
+	                                        _indicate_listener_marshal_VOID__BOXED_STRING,
+	                                        G_TYPE_NONE, 2, INDICATE_TYPE_LISTENER_SERVER, G_TYPE_STRING);
 
 	dbus_g_object_register_marshaller(_indicate_listener_marshal_VOID__UINT_STRING,
 	                                  G_TYPE_NONE,
@@ -686,7 +686,7 @@ proxy_indicator_modified (DBusGProxy * proxy, guint id, const gchar * property, 
 		return;
 	}
 
-	g_signal_emit(proxyt->listener, signals[INDICATOR_MODIFIED], 0, &proxyt->server, GUINT_TO_POINTER(id), type, property, TRUE);
+	g_signal_emit(proxyt->listener, signals[INDICATOR_MODIFIED], 0, proxyt->server, GUINT_TO_POINTER(id), type, property, TRUE);
 
 	return;
 }
@@ -1040,24 +1040,10 @@ indicate_listener_server_get_gtype (void)
 IndicateListenerServer *
 indicate_listener_server_copy (const IndicateListenerServer *listener_server)
 {
-        IndicateListenerServer *retval;
-        retval = (IndicateListenerServer *)g_memdup (
-                listener_server,
-                sizeof (IndicateListenerServer));
-
-        g_object_ref (retval->proxy);
-        dbus_g_connection_ref (retval->connection);
-        g_stpcpy (retval->name, listener_server->name);
-
-        return retval;
+        return listener_server;
 }
 
 void
 indicate_listener_server_free (IndicateListenerServer *listener_server)
 {
-        g_free (listener_server->name);
-        g_object_unref (listener_server->proxy);
-        dbus_g_connection_unref (listener_server->connection);
-
-        g_free (listener_server);
 }
