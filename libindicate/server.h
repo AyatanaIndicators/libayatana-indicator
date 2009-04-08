@@ -124,10 +124,6 @@ void indicate_server_remove_indicator (IndicateServer * server, IndicateIndicato
 IndicateServer * indicate_server_ref_default (void);
 void indicate_server_set_default (IndicateServer * server);
 
-/* Check to see if there is someone, out there, who likes this */
-gboolean indicate_server_check_interest (IndicateServer * server, IndicateInterests interest);
-
-
 /* Signal emission functions for sub-classes of the server */
 void indicate_server_emit_indicator_added (IndicateServer *server, guint id, const gchar *type);
 void indicate_server_emit_indicator_removed (IndicateServer *server, guint id, const gchar *type);
