@@ -1024,3 +1024,40 @@ indicate_listener_server_check_interest (IndicateListener * listener, IndicateLi
 	return server->interests[interest];
 }
 
+GType
+indicate_listener_server_get_gtype (void)
+{
+  static GType our_type = 0;
+  
+  if (our_type == 0)
+    our_type = g_boxed_type_register_static ("IndicateListenerServer",
+					     (GBoxedCopyFunc) indicate_listener_server_copy,
+					     (GBoxedFreeFunc) indicate_listener_server_free);
+
+  return our_type;
+}
+
+IndicateListenerServer *
+indicate_listener_server_copy (const IndicateListenerServer *listener_server)
+{
+        IndicateListenerServer *retval;
+        retval = (IndicateListenerServer *)g_memdup (
+                listener_server,
+                sizeof (IndicateListenerServer));
+
+        g_object_ref (retval->proxy);
+        dbus_g_connection_ref (retval->connection);
+        g_stpcpy (retval->name, listener_server->name);
+
+        return retval;
+}
+
+void
+indicate_listener_server_free (IndicateListenerServer *listener_server)
+{
+        g_free (listener_server->name);
+        g_object_unref (listener_server->proxy);
+        dbus_g_connection_unref (listener_server->connection);
+
+        g_free (listener_server);
+}
