@@ -28,8 +28,8 @@
 # IndicatorAdded, IndicatorRemoved, IndicatorModified
 VOID:UINT,STRING
 # Local indicator_added, indicator_removed
-VOID:BOXED,POINTER,STRING
+VOID:POINTER,POINTER,STRING
 # Local indicator_modified
-VOID:BOXED,POINTER,STRING,STRING
+VOID:POINTER,POINTER,STRING,STRING
 # Local server_added and server_removed
-VOID:BOXED,STRING
+VOID:POINTER,STRING

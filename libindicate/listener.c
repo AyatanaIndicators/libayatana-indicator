@@ -153,35 +153,35 @@ indicate_listener_class_init (IndicateListenerClass * class)
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateListenerClass, indicator_added),
 	                                        NULL, NULL,
-	                                        _indicate_listener_marshal_VOID__BOXED_POINTER_STRING,
+	                                        _indicate_listener_marshal_VOID__POINTER_POINTER_STRING,
 	                                        G_TYPE_NONE, 3, INDICATE_TYPE_LISTENER_SERVER, G_TYPE_POINTER, G_TYPE_STRING);
 	signals[INDICATOR_REMOVED] = g_signal_new(INDICATE_LISTENER_SIGNAL_INDICATOR_REMOVED,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateListenerClass, indicator_removed),
 	                                        NULL, NULL,
-	                                        _indicate_listener_marshal_VOID__BOXED_POINTER_STRING,
+	                                        _indicate_listener_marshal_VOID__POINTER_POINTER_STRING,
 	                                        G_TYPE_NONE, 3, INDICATE_TYPE_LISTENER_SERVER, G_TYPE_POINTER, G_TYPE_STRING);
 	signals[INDICATOR_MODIFIED] = g_signal_new(INDICATE_LISTENER_SIGNAL_INDICATOR_MODIFIED,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateListenerClass, indicator_modified),
 	                                        NULL, NULL,
-	                                        _indicate_listener_marshal_VOID__BOXED_POINTER_STRING_STRING,
+	                                        _indicate_listener_marshal_VOID__POINTER_POINTER_STRING_STRING,
 	                                        G_TYPE_NONE, 4, INDICATE_TYPE_LISTENER_SERVER, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING);
 	signals[SERVER_ADDED] = g_signal_new(INDICATE_LISTENER_SIGNAL_SERVER_ADDED,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateListenerClass, server_added),
 	                                        NULL, NULL,
-	                                        _indicate_listener_marshal_VOID__BOXED_STRING,
+	                                        _indicate_listener_marshal_VOID__POINTER_STRING,
 	                                        G_TYPE_NONE, 2, INDICATE_TYPE_LISTENER_SERVER, G_TYPE_STRING);
 	signals[SERVER_REMOVED] = g_signal_new(INDICATE_LISTENER_SIGNAL_SERVER_REMOVED,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateListenerClass, server_removed),
 	                                        NULL, NULL,
-	                                        _indicate_listener_marshal_VOID__BOXED_STRING,
+	                                        _indicate_listener_marshal_VOID__POINTER_STRING,
 	                                        G_TYPE_NONE, 2, INDICATE_TYPE_LISTENER_SERVER, G_TYPE_STRING);
 
 	dbus_g_object_register_marshaller(_indicate_listener_marshal_VOID__UINT_STRING,
@@ -686,7 +686,7 @@ proxy_indicator_modified (DBusGProxy * proxy, guint id, const gchar * property, 
 		return;
 	}
 
-	g_signal_emit(proxyt->listener, signals[INDICATOR_MODIFIED], 0, proxyt->server, GUINT_TO_POINTER(id), type, property, TRUE);
+	g_signal_emit(proxyt->listener, signals[INDICATOR_MODIFIED], 0, &proxyt->server, GUINT_TO_POINTER(id), type, property, TRUE);
 
 	return;
 }
@@ -1030,20 +1030,8 @@ indicate_listener_server_get_gtype (void)
   static GType our_type = 0;
   
   if (our_type == 0)
-    our_type = g_boxed_type_register_static ("IndicateListenerServer",
-					     (GBoxedCopyFunc) indicate_listener_server_copy,
-					     (GBoxedFreeFunc) indicate_listener_server_free);
+    our_type = g_pointer_type_register_static ("IndicateListenerServer");
 
   return our_type;
 }
 
-IndicateListenerServer *
-indicate_listener_server_copy (const IndicateListenerServer *listener_server)
-{
-        return listener_server;
-}
-
-void
-indicate_listener_server_free (IndicateListenerServer *listener_server)
-{
-}
