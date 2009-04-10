@@ -59,7 +59,12 @@ G_BEGIN_DECLS
 #define INDICATE_LISTENER_INDICATOR_ID(indicator)    (indicate_listener_indicator_get_id(indicator))
 
 typedef struct _IndicateListenerServer IndicateListenerServer;
+#define INDICATE_TYPE_LISTENER_SERVER (indicate_listener_server_get_gtype ())
+GType                   indicate_listener_server_get_gtype (void) G_GNUC_CONST;
+
 typedef struct _IndicateListenerIndicator IndicateListenerIndicator;
+#define INDICATE_TYPE_LISTENER_INDICATOR (indicate_listener_indicator_get_gtype ())
+GType                   indicate_listener_indicator_get_gtype (void) G_GNUC_CONST;
 
 typedef struct _IndicateListener IndicateListener;
 struct _IndicateListener {

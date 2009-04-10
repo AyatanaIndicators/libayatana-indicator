@@ -1,3 +1,6 @@
+MARSHAL_PREFIX = indicate_marshal
+MARSHAL_FILE = indicate-marshal
+ENUM_FILE = indicate-enum-types
 
 INCLUDES= \
 	-DG_LOG_DOMAIN=\"libindicate\"
@@ -14,7 +17,9 @@ BUILT_SOURCES = \
 	dbus-listener-server.h \
 	dbus-listener-client.h \
 	listener-marshal.c \
-	listener-marshal.h
+	listener-marshal.h \
+	$(ENUM_FILE).h \
+	$(ENUM_FILE).c
 
 lib_LTLIBRARIES = \
 	libindicate.la
@@ -26,7 +31,8 @@ indicate_headers = \
 	indicator-message.h \
 	listener.h \
 	server.h \
-	interests.h
+	interests.h \
+	$(ENUM_FILE).h
 
 libindicateinclude_HEADERS = \
 	$(indicate_headers)
@@ -37,6 +43,7 @@ libindicate_la_SOURCES = \
 	dbus-indicate-client.h \
 	dbus-listener-server.h \
 	dbus-listener-client.h \
+	indicate-enum-types.c \
 	server.c \
 	listener.c \
 	listener-marshal.c \
@@ -96,6 +103,39 @@ listener-marshal.c: $(srcdir)/listener-marshal.list
 
 pkgconfig_DATA = indicate.pc
 pkgconfigdir = $(libdir)/pkgconfig
+
+$(ENUM_FILE).h: s-enum-types-h
+	@true
+s-enum-types-h: $(indicate_headers) Makefile
+	( cd $(srcdir) && glib-mkenums \
+			--fhead "#ifndef _INDICATE_ENUM_TYPES_H_\n#define _INDICATE_ENUM_TYPES_H_\n\n#include <glib-object.h>\n\nG_BEGIN_DECLS\n" \
+			--fprod "/* enumerations from \"@filename@\" */\n" \
+			--vhead "GType @enum_name@_get_type(void);\n#define INDICATE_TYPE_@ENUMSHORT@ (@enum_name@_get_type())\n"	\
+			--ftail "G_END_DECLS\n\n#endif /* _INDICATE_ENUM_TYPES_H_ */" \
+		interests.h ) > tmp-$(ENUM_FILE).h \
+	&& (cmp -s tmp-$(ENUM_FILE).h $(ENUM_FILE).h || cp tmp-$(ENUM_FILE).h $(ENUM_FILE).h ) \
+	&& rm -f tmp-$(ENUM_FILE).h	\
+	&& echo timestamp > $(@F)
+
+$(ENUM_FILE).c: s-enum-types-c
+	@true
+s-enum-types-c: $(indicate_headers) Makefile
+	( cd $(srcdir) && glib-mkenums \
+			--fhead "#include <libindicate/interests.h>\n#include <glib-object.h>" \
+			--fprod "\n/* enumerations from \"@filename@\" */" \
+			--vhead "GType\n@enum_name@_get_type (void)\n{\n  static GType etype = 0;\n  if (etype == 0) {\n    static const G@Type@Value values[] = {" 	\
+			--vprod "      { @VALUENAME@, \"@VALUENAME@\", \"@valuenick@\" }," \
+			--vtail "      { 0, NULL, NULL }\n    };\n    etype = g_@type@_register_static (\"@EnumName@\", values);\n  }\n  return etype;\n}\n" \
+		interests.h ) > tmp-$(ENUM_FILE).c \
+	&& (cmp -s tmp-$(ENUM_FILE).c $(ENUM_FILE).c || cp tmp-$(ENUM_FILE).c $(ENUM_FILE).c ) \
+	&& rm -f tmp-$(ENUM_FILE).c \
+	&& echo timestamp > $(@F)
+
+CLEANFILES = \
+	$(ENUM_FILE).c \
+	$(ENUM_FILE).h \
+	s-enum-types-c \
+	s-enum-types-h
 
 if USE_GIR
 
