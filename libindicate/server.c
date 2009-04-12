@@ -307,6 +307,9 @@ set_property (GObject * obj, guint id, const GValue * value, GParamSpec * pspec)
 	g_return_if_fail(id == PROP_DESKTOP || id == PROP_TYPE);
 
 	gchar ** outstr;
+	gchar * tempstr = NULL;
+	outstr = &tempstr;
+
 	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(obj);
 	switch (id) {
 	case PROP_DESKTOP:
@@ -331,7 +334,7 @@ get_property (GObject * obj, guint id, GValue * value, GParamSpec * pspec)
 {
 	g_return_if_fail(id == PROP_DESKTOP || id == PROP_TYPE);
 
-	gchar * outstr;
+	gchar * outstr = NULL;
 	IndicateServerPrivate * priv = INDICATE_SERVER_GET_PRIVATE(obj);
 	switch (id) {
 	case PROP_DESKTOP:
@@ -743,7 +746,7 @@ count_by_type (IndicateIndicator * indicator, count_by_t * cbt)
 	if (type == NULL && cbt->type == NULL) {
 		cbt->count++;
 	} else if (type == NULL || cbt->type == NULL) {
-	} else if (!strcmp(type, cbt->type)) {
+	} else if (!g_strcmp0(type, cbt->type)) {
 		cbt->count++;
 	}
 
@@ -826,7 +829,7 @@ get_indicator_list_by_type (IndicateServer * server, gchar * type, GArray ** ind
 			if (type == NULL && itype == NULL) {
 				g_array_insert_val(*indicators, i++, id);
 			} else if (type == NULL || itype == NULL) {
-			} else if (!strcmp(type, itype)) {
+			} else if (!g_strcmp0(type, itype)) {
 				g_array_insert_val(*indicators, i++, id);
 			}
 		}
