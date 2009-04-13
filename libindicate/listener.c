@@ -272,7 +272,7 @@ indicate_listener_init (IndicateListener * listener)
 static void
 indicate_listener_finalize (GObject * obj)
 {
-	IndicateListener * listener = INDICATE_LISTENER(obj);
+	/* IndicateListener * listener = INDICATE_LISTENER(obj); */
 
 	return;
 }
@@ -833,7 +833,7 @@ gboolean
 _indicate_listener_get_indicator_servers (IndicateListener * listener, GList * servers)
 {
 
-
+	return TRUE;
 }
 
 static void 
