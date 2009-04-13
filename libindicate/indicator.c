@@ -141,6 +141,7 @@ indicate_indicator_finalize (GObject * obj)
 	g_object_unref(priv->server);
 	priv->server = NULL;
 
+	G_OBJECT_CLASS (indicate_indicator_parent_class)->finalize (obj);
 	return;
 }
 
