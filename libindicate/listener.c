@@ -1059,6 +1059,16 @@ introspect_this (DBusGProxy * proxy, char * OUT_data, GError * error, gpointer d
 {
 	g_debug("Introspect this:\n%s", OUT_data);
 	proxy_t * server = (proxy_t *)data;
+	if (proxy != NULL) {
+		g_object_unref(proxy);
+	}
+	if (error != NULL) {
+		/* We probably couldn't introspect that far up.  That's
+		   life, it happens. */
+		g_debug("Introspection error on %s object %s: %s", server->name, _introspector_fullpath[server->introspect_level], error->message);
+		return;
+	}
+
 	if (OUT_data != NULL) {
 		xmlDocPtr xmldoc;
 		/* Parse the XML */
