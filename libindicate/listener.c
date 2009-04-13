@@ -1046,3 +1046,34 @@ indicate_listener_indicator_get_gtype (void)
   return our_type;
 }
 
+static const gchar * _introspector_path[] = ["", "org", "freedesktop", "indicate", NULL];
+static const gchar * _introspector_interface = "org.freedesktop.indicator";
+
+void
+introspect_this (gchar * xml, IndicateServer * server)
+{
+	if (xml != NULL) {
+		/* Parse the XML */
+
+		/* Check for root being "node" */
+
+		const gchar * nodename = NULL;
+		const gchar * nameval = NULL;
+		if (_introspector_path[server->introspect_level] == NULL) {
+			/* We're looking for our interface */
+			nodename = "interface";
+			nameval = _introspector_interface;
+		} else {
+			/* We're looking for our next node */
+			nodename = "node";
+			nameval = _introspector_path[server->introspect_level];
+		}
+
+	} else {
+		server->introspect_level = 0;
+	}
+
+	dbus_proxy_create();
+	dbus_proxy_call(intropsect_this);
+
+}
