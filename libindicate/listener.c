@@ -1061,8 +1061,9 @@ introspect_this (DBusGProxy * proxy, char * OUT_data, GError * error, gpointer d
 	}
 	if (error != NULL) {
 		/* We probably couldn't introspect that far up.  That's
-		   life, it happens. */
-		g_debug("Introspection error on %s object %s: %s", server->name, _introspector_fullpath[server->introspect_level], error->message);
+		   life, it happens. Or there's a timeout, that happens
+		   too, I guess some apps are too busy for us. */
+		/* g_debug("Introspection error on %s object %s: %s", server->name, _introspector_fullpath[server->introspect_level], error->message); */
 		return;
 	}
 
