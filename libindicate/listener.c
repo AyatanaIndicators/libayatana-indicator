@@ -27,6 +27,9 @@ License version 3 and version 2.1 along with this program.  If not, see
 <http://www.gnu.org/licenses/>
 */
 
+#include <libxml/parser.h>
+#include <libxml/tree.h>
+
 #include "listener.h"
 #include "listener-marshal.h"
 #include <dbus/dbus-glib-bindings.h>
@@ -89,6 +92,7 @@ typedef struct {
 	gchar * type;
 	IndicateListener * listener;
 	GHashTable * indicators;
+	guint introspect_level;
 
 	IndicateListenerServer server;
 } proxy_t;
@@ -1046,17 +1050,29 @@ indicate_listener_indicator_get_gtype (void)
   return our_type;
 }
 
-static const gchar * _introspector_path[] = ["", "org", "freedesktop", "indicate", NULL];
+static const gchar * _introspector_path[] = {"", "org", "freedesktop", "indicate", NULL};
+static const gchar * _introspector_fullpath[] = {"/", "/org", "/org/freedesktop", "/org/freedesktop/indicate", NULL};
 static const gchar * _introspector_interface = "org.freedesktop.indicator";
 
-void
-introspect_this (gchar * xml, IndicateServer * server)
+static void
+introspect_this (DBusGProxy * proxy, char * OUT_data, GError * error, gpointer data)
 {
-	if (xml != NULL) {
+	g_debug("Introspect this:\n%s", OUT_data);
+	proxy_t * server = (proxy_t *)data;
+	if (OUT_data != NULL) {
+		xmlDocPtr xmldoc;
 		/* Parse the XML */
+		xmldoc = xmlReadMemory(OUT_data, g_utf8_strlen(OUT_data, 16*1024), "introspection.xml", NULL, 0);
 
 		/* Check for root being "node" */
+		xmlNodePtr root = xmlDocGetRootElement(xmldoc);
+		if (g_strcmp(root->name, "node") != 0) {
+			xmlFreeDoc(xmldoc);
+			g_warning("Introspection data from %s is not valid: %s", server->name, OUT_data);
+			return;
+		}
 
+		server->introspect_level += 1;
 		const gchar * nodename = NULL;
 		const gchar * nameval = NULL;
 		if (_introspector_path[server->introspect_level] == NULL) {
@@ -1069,11 +1085,44 @@ introspect_this (gchar * xml, IndicateServer * server)
 			nameval = _introspector_path[server->introspect_level];
 		}
 
+		gboolean found = FALSE;
+		xmlNodePtr children;
+		for (children = root->children; children != NULL; children = children->next) {
+			gchar * xmlnameval = NULL;
+			if (g_strcmp0(children->name, nodename) == 0) {
+				xmlAttrPtr attrib;
+				for (attrib = children->properties; attrib != NULL; attrib = attrib->next) {
+					if (g_strcmp0(attrib->name, "name") == 0) {
+						if (attrib->children != NULL) {
+							xmlnameval = attrib->children->content;
+						}
+						break;
+					}
+				}
+
+				if (!g_strcmp0(nameval, xmlnameval)) {
+					found = TRUE;
+					break;
+				}
+			}
+		}
+
+		xmlFreeDoc(xmldoc);
+
+		if (!found) {
+			/* Ah, nothing we're interested in */
+			return;
+		}
 	} else {
 		server->introspect_level = 0;
 	}
 
-	dbus_proxy_create();
-	dbus_proxy_call(intropsect_this);
+	DBusGProxy * newproxy = dbus_g_proxy_new_for_name(server->connection,
+	                                                  server->name,
+	                                                  _introspector_fullpath[server->introspect_level],
+	                                                  DBUS_INTERFACE_INTROSPECTABLE);
 
+	org_freedesktop_DBus_Introspectable_introspect_async(newproxy, introspect_this, server);
+
+	return;
 }
