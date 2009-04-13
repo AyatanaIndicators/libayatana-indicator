@@ -133,6 +133,7 @@ static void proxy_indicator_modified (DBusGProxy * proxy, guint id, const gchar 
 static void proxy_get_indicator_list (DBusGProxy * proxy, GArray * indicators, GError * error, gpointer data);
 static void proxy_get_indicator_type (DBusGProxy * proxy, gchar * type, GError * error, gpointer data);
 static void proxy_indicators_free (gpointer data);
+static void introspect_this (DBusGProxy * proxy, char * OUT_data, GError * error, gpointer data);
 
 /* DBus interface */
 gboolean _indicate_listener_get_indicator_servers (IndicateListener * listener, GList * servers);
@@ -502,13 +503,9 @@ todo_idle (gpointer data)
 
 	priv->proxies_possible = g_list_prepend(priv->proxies_possible, proxyt);
 
-	/* I think that we need to have this as there is a race
-	 * condition here.  If someone comes on the bus and we get
-	 * that message, but before we set up the handler for the ServerShow
-	 * signal it gets sent, we wouldn't get it.  So then we would
-	 * miss an indicator server coming on the bus.  I'd like to not
-	 * generate a warning in every app with DBus though. */
-	indicate_listener_server_get_type(listener, &proxyt->server, get_type_cb, proxyt);
+	/* Look through the introspection data to see if this
+	   is already a server */
+	introspect_this (NULL, NULL, NULL, proxyt);
 
 	return TRUE;
 }
@@ -1121,6 +1118,13 @@ introspect_this (DBusGProxy * proxy, char * OUT_data, GError * error, gpointer d
 
 		if (!found) {
 			/* Ah, nothing we're interested in */
+			return;
+		}
+
+		if (_introspector_path[server->introspect_level] == NULL) {
+			/* If we've found the interface at the end of the tree, whoo! hoo! */
+			/* Now we know it's safe to get the type on it */
+			indicate_listener_server_get_type(server->listener, &server->server, get_type_cb, server);
 			return;
 		}
 	} else {
