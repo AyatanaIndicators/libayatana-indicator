@@ -1073,7 +1073,7 @@ introspect_this (DBusGProxy * proxy, char * OUT_data, GError * error, gpointer d
 
 		/* Check for root being "node" */
 		xmlNodePtr root = xmlDocGetRootElement(xmldoc);
-		if (g_strcmp(root->name, "node") != 0) {
+		if (g_strcmp0(root->name, "node") != 0) {
 			xmlFreeDoc(xmldoc);
 			g_warning("Introspection data from %s is not valid: %s", server->name, OUT_data);
 			return;
