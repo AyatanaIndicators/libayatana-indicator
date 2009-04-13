@@ -274,6 +274,7 @@ indicate_listener_finalize (GObject * obj)
 {
 	/* IndicateListener * listener = INDICATE_LISTENER(obj); */
 
+	G_OBJECT_CLASS (indicate_listener_parent_class)->finalize (obj);
 	return;
 }
 

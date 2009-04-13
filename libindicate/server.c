@@ -297,6 +297,8 @@ indicate_server_finalize (GObject * obj)
 		g_free(priv->type);
 	}
 
+	G_OBJECT_CLASS (indicate_server_parent_class)->finalize (obj);
+
 	return;
 }
 
