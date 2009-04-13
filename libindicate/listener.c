@@ -1054,7 +1054,7 @@ static const gchar * _introspector_interface = "org.freedesktop.indicator";
 static void
 introspect_this (DBusGProxy * proxy, char * OUT_data, GError * error, gpointer data)
 {
-	g_debug("Introspect this:\n%s", OUT_data);
+	/* g_debug("Introspect this:\n%s", OUT_data); */
 	proxy_t * server = (proxy_t *)data;
 	if (proxy != NULL) {
 		g_object_unref(proxy);
