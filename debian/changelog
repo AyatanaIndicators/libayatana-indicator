@@ -1,4 +1,4 @@
-indicator-applet (0.1.5-0ubuntu1) UNRELEASED; urgency=low
+indicator-applet (0.1.5-0ubuntu1) jaunty; urgency=low
 
   * debian/control: Switching libindicate0 to libindicate1 to express
     the fact that the binary compatibility is broken.
