@@ -141,6 +141,7 @@ indicate_indicator_finalize (GObject * obj)
 	g_object_unref(priv->server);
 	priv->server = NULL;
 
+	G_OBJECT_CLASS (indicate_indicator_parent_class)->finalize (obj);
 	return;
 }
 
@@ -261,7 +262,7 @@ indicate_indicator_set_property_icon (IndicateIndicator * indicator, const gchar
 		return;
 	}
 
-	gchar * prop_str = g_base64_encode(png_data, png_data_len);
+	gchar * prop_str = g_base64_encode((guchar *)png_data, png_data_len);
 	indicate_indicator_set_property(indicator, key, prop_str);
 
 	g_free(prop_str);
@@ -308,7 +309,7 @@ set_property (IndicateIndicator * indicator, const gchar * key, const gchar * da
 {
 	g_return_if_fail(INDICATE_IS_INDICATOR(indicator));
 
-	if (key != NULL && !strcmp(key, "type")) {
+	if (key != NULL && !g_strcmp0(key, "type")) {
 		g_warning("Trying to set the 'type' of an indicator which should be done through subclassing.");
 		return;
 	}
@@ -316,7 +317,7 @@ set_property (IndicateIndicator * indicator, const gchar * key, const gchar * da
 	IndicateIndicatorPrivate * priv = INDICATE_INDICATOR_GET_PRIVATE(indicator);
 
 	gchar * current = g_hash_table_lookup(priv->properties, key);
-	if (current == NULL || strcmp(current, data)) {
+	if (current == NULL || g_strcmp0(current, data)) {
 		/* If the value has changed or there is no value */
 		gchar * newkey = g_strdup(key);
 		/* g_debug("What is newkey? %s", newkey); */
@@ -335,7 +336,7 @@ get_property (IndicateIndicator * indicator, const gchar * key)
 {
 	g_return_val_if_fail(INDICATE_IS_INDICATOR(indicator), NULL);
 
-	if (key != NULL && !strcmp(key, "type")) {
+	if (key != NULL && !g_strcmp0(key, "type")) {
 		return indicate_indicator_get_indicator_type(indicator);
 	}
 
