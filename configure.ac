@@ -161,7 +161,7 @@ Makefile
 src/Makefile
 libindicate/Makefile
 libindicate/indicate.pc
-tests/Makefile
+examples/Makefile
 data/Makefile
 po/Makefile.in
 docs/Makefile
