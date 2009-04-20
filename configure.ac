@@ -162,6 +162,7 @@ src/Makefile
 libindicate/Makefile
 libindicate/indicate.pc
 examples/Makefile
+tests/Makefile
 data/Makefile
 po/Makefile.in
 docs/Makefile

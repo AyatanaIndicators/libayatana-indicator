@@ -3,6 +3,7 @@ SUBDIRS = \
 	src \
 	libindicate \
 	examples \
+	tests \
 	data \
 	po \
 	docs
