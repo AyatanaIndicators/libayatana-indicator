@@ -10,8 +10,8 @@ server_added (IndicateListener * listener, IndicateListenerServer * server, gcha
 {
 	g_debug("Indicator Server Added:   %s %s", INDICATE_LISTENER_SERVER_DBUS_NAME(server), type);
 
-	guint i;
-	for (i = INDICATE_INTEREST_NONE; i < INDICATE_INTEREST_LAST; i++) {
+	gint i;
+	for (i = INDICATE_INTEREST_NONE - 2; i < INDICATE_INTEREST_LAST + 2; i++) {
 		g_debug("Indicating Interests: %d", i);
 		indicate_listener_server_show_interest(listener, server, i);
 	}

@@ -12,7 +12,7 @@ static gboolean
 check_interests (void)
 {
 	guint i;
-	for (i = INDICATE_INTEREST_NONE; i < INDICATE_INTEREST_LAST; i++) {
+	for (i = INDICATE_INTEREST_NONE + 1; i < INDICATE_INTEREST_LAST; i++) {
 		if (!interests[i]) {
 			return FALSE;
 		}
@@ -54,7 +54,7 @@ main (int argc, char * argv)
 	IndicateServer * server = indicate_server_ref_default();
 	g_signal_connect(G_OBJECT(server), INDICATE_SERVER_SIGNAL_INTEREST_ADDED, G_CALLBACK(interest_added), NULL);
 
-	g_timeout_add_seconds(10, done_timeout_cb, indicator);
+	g_timeout_add_seconds(2, done_timeout_cb, indicator);
 
 	mainloop = g_main_loop_new(NULL, FALSE);
 	g_main_loop_run(mainloop);
