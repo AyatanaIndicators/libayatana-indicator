@@ -6,6 +6,9 @@ libexec_PROGRAMS = \
 	test-simple-client \
 	test-simple-server
 
+EXTRA_DIST = \
+	$(TESTS)
+
 test_simple: test-simple-client test-simple-server
 
 test_simple_client_SOURCES = \
