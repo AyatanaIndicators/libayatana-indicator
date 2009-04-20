@@ -1,0 +1,5 @@
+#!/bin/sh
+
+DBUS_RUNNER="/home/ted/Development/dbus-play/dbus-test-runner --dbus-config /home/ted/Development/dbus-play/session.conf"
+
+${DBUS_RUNNER} --task ./test-thousand-indicators-client --task-name Client --task ./test-thousand-indicators-server --task-name Server

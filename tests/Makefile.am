@@ -2,7 +2,8 @@
 TESTS = \
 	test_simple \
 	test_interests \
-	test_interests_multi
+	test_interests_multi \
+	test_thousand_indicators
 
 libexec_PROGRAMS = \
 	test-interests-client \
@@ -12,6 +13,8 @@ libexec_PROGRAMS = \
 	test-interests-server3 \
 	test-interests-server4 \
 	test-interests-server5 \
+	test-thousand-indicators-client \
+	test-thousand-indicators-server
 	test-simple-client \
 	test-simple-server
 
@@ -111,6 +114,28 @@ test_interests_server5_CFLAGS = \
 	$(LIBINDICATE_CFLAGS) -I$(srcdir)/..
 
 test_interests_server5_LDADD = \
+	../libindicate/libindicate.la \
+	$(LIBINDICATE_LIBS)
+
+test_thousand_indicators: test-thousand-indicators-client test-thousand-indicators-server
+
+test_thousand_indicators_client_SOURCES = \
+	test-thousand-indicators-client.c
+
+test_thousand_indicators_client_CFLAGS = \
+	$(LIBINDICATE_CFLAGS) -I$(srcdir)/..
+
+test_thousand_indicators_client_LDADD = \
+	../libindicate/libindicate.la \
+	$(LIBINDICATE_LIBS)
+
+test_thousand_indicators_server_SOURCES = \
+	test-thousand-indicators-server.c
+
+test_thousand_indicators_server_CFLAGS = \
+	$(LIBINDICATE_CFLAGS) -I$(srcdir)/..
+
+test_thousand_indicators_server_LDADD = \
 	../libindicate/libindicate.la \
 	$(LIBINDICATE_LIBS)
 
