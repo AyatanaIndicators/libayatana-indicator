@@ -1003,6 +1003,10 @@ interest_cb (DBusGProxy *proxy, GError *error, gpointer userdata)
 void
 indicate_listener_server_show_interest (IndicateListener * listener, IndicateListenerServer * server, IndicateInterests interest)
 {
+	if (!(interest > INDICATE_INTEREST_NONE && interest < INDICATE_INTEREST_LAST)) {
+		return;
+	}
+
 	if (!server->interests[interest]) {
 		org_freedesktop_indicator_show_interest_async (server->proxy, interest_to_string(interest), interest_cb, server);
 		server->interests[interest] = TRUE;
