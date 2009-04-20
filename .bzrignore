@@ -67,3 +67,5 @@ examples/indicate-alot
 examples/indicate-and-crash
 examples/listen-and-print
 examples/show-hide-server
+test-simple-client
+test-simple-server
