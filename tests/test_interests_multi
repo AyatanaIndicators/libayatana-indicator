@@ -1,0 +1,5 @@
+#!/bin/sh
+
+DBUS_RUNNER="/home/ted/Development/dbus-play/dbus-test-runner --dbus-config /home/ted/Development/dbus-play/session.conf"
+
+${DBUS_RUNNER} --task ./test-interests-client --task-name Client --task ./test-interests-server1 --task-name Server1 --task ./test-interests-server2 --task-name Server2 --task ./test-interests-server3 --task-name Server3 --task ./test-interests-server4 --task-name Server4 --task ./test-interests-server5 --task-name Server5
