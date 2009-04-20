@@ -121,7 +121,7 @@ $(ENUM_FILE).c: s-enum-types-c
 	@true
 s-enum-types-c: $(indicate_headers) Makefile
 	( cd $(srcdir) && glib-mkenums \
-			--fhead "#include <libindicate/interests.h>\n#include <glib-object.h>" \
+			--fhead "#include \"interests.h\"\n#include <glib-object.h>" \
 			--fprod "\n/* enumerations from \"@filename@\" */" \
 			--vhead "GType\n@enum_name@_get_type (void)\n{\n  static GType etype = 0;\n  if (etype == 0) {\n    static const G@Type@Value values[] = {" 	\
 			--vprod "      { @VALUENAME@, \"@VALUENAME@\", \"@valuenick@\" }," \
