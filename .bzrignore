@@ -69,3 +69,5 @@ examples/listen-and-print
 examples/show-hide-server
 test-simple-client
 test-simple-server
+test-interests-client
+test-interests-server
