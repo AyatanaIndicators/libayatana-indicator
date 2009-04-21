@@ -4,7 +4,7 @@ AC_INIT(src/applet-main.c)
 AC_PREREQ(2.53)
 
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(indicator-applet, 0.1.6)
+AM_INIT_AUTOMAKE(indicator-applet, 0.2.0dev)
 
 AM_MAINTAINER_MODE
 
@@ -50,11 +50,13 @@ AM_GCONF_SOURCE_2
 GLIB_REQUIRED_VERSION=2.18
 GIO_REQUIRED_VERSION=2.18
 GDK_PIXBUF_REQUIRED_VERSION=2.12
+XML_REQUIRED_VERSION=2.6
 
 PKG_CHECK_MODULES(LIBINDICATE, glib-2.0 >= $GLIB_REQUIRED_VERSION
                                gio-2.0 >= $GIO_REQUIRED_VERSION
                                gdk-pixbuf-2.0 >= $GDK_PIXBUF_REQUIRED_VERSION
-                               dbus-glib-1 >= $DBUS_REQUIRED_VERSION)
+                               dbus-glib-1 >= $DBUS_REQUIRED_VERSION
+                               libxml-2.0 >= $XML_REQUIRED_VERSION)
 AC_SUBST(LIBINDICATE_CFLAGS)
 AC_SUBST(LIBINDICATE_LIBS)
 
@@ -159,6 +161,8 @@ Makefile
 src/Makefile
 libindicate/Makefile
 libindicate/indicate.pc
+libindicator/Makefile
+libindicator/indicator.pc
 tests/Makefile
 data/Makefile
 po/Makefile.in

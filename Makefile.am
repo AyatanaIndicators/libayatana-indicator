@@ -2,6 +2,7 @@
 SUBDIRS = \
 	src \
 	libindicate \
+	libindicator \
 	tests \
 	data \
 	po \

@@ -1207,6 +1207,19 @@ _indicate_server_remove_interest (IndicateServer * server, gchar * interest, DBu
 	return FALSE;
 }
 
+gboolean
+indicate_server_check_interest (IndicateServer * server, IndicateInterests interest)
+{
+	IndicateServerClass * class = INDICATE_SERVER_GET_CLASS(server);
+
+	if (class != NULL && class->check_interest != NULL) {
+		return class->check_interest (server, interest);
+	}
+
+	g_warning("check_interest function not implemented in this server class: %s", G_OBJECT_TYPE_NAME(server));
+	return FALSE;
+}
+
 /* Signal emission functions for sub-classes of the server */
 void 
 indicate_server_emit_indicator_added (IndicateServer *server, guint id, const gchar *type)

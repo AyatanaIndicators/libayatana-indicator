@@ -24,7 +24,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <panel-applet.h>
 #include <libgnomeui/gnome-ui-init.h>
 
-#define SYMBOL_NAME  "get_menu_item"
+#include "libindicator/indicator.h"
+
 #define ICONS_DIR  (DATADIR G_DIR_SEPARATOR_S "indicator-applet" G_DIR_SEPARATOR_S "icons")
 
 static gboolean     applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data);
@@ -79,12 +80,43 @@ load_module (const gchar * name, GtkWidget * menu)
 	g_free(fullpath);
 	g_return_val_if_fail(module != NULL, FALSE);
 
-	GtkWidget * (*make_item)(void);
-	g_return_val_if_fail(g_module_symbol(module, SYMBOL_NAME, (gpointer *)(&make_item)), FALSE);
-	g_return_val_if_fail(make_item != NULL, FALSE);
+	gchar * version;
+	g_return_val_if_fail(g_module_symbol(module, INDICATOR_VERSION_S, (gpointer *)(&version)), FALSE);
+	g_return_val_if_fail(INDICATOR_VERSION_CHECK(version), FALSE);
 
-	GtkWidget * menuitem = make_item();
-	g_return_val_if_fail(GTK_MENU_ITEM(menuitem), FALSE);
+	get_label_t lget_label;
+	g_return_val_if_fail(g_module_symbol(module, INDICATOR_GET_LABEL_S, (gpointer *)(&lget_label)), FALSE);
+	g_return_val_if_fail(lget_label != NULL, FALSE);
+	GtkLabel * label = lget_label();
+
+	get_icon_t lget_icon;
+	g_return_val_if_fail(g_module_symbol(module, INDICATOR_GET_LABEL_S, (gpointer *)(&lget_icon)), FALSE);
+	g_return_val_if_fail(lget_icon != NULL, FALSE);
+	GtkImage * icon = lget_icon();
+
+	get_menu_t lget_menu;
+	g_return_val_if_fail(g_module_symbol(module, INDICATOR_GET_LABEL_S, (gpointer *)(&lget_menu)), FALSE);
+	g_return_val_if_fail(lget_menu != NULL, FALSE);
+	GtkMenu * lmenu = lget_menu();
+
+	if (label == NULL && icon == NULL) {
+		/* This is the case where there is nothing to display,
+		   kinda odd that we'd have a module with nothing. */
+		return FALSE;
+	}
+
+	GtkWidget * menuitem = gtk_menu_item_new();
+	GtkWidget * hbox = gtk_hbox_new(FALSE, 3);
+	if (icon != NULL) {
+		gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(icon), FALSE, FALSE, 0);
+	}
+	if (label != NULL) {
+		gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(label), FALSE, FALSE, 0);
+	}
+
+	if (menu != NULL) {
+		gtk_menu_shell_append(GTK_MENU_SHELL(menuitem), GTK_WIDGET(lmenu));
+	}
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 

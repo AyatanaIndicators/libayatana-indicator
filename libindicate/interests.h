@@ -34,8 +34,7 @@ License version 3 and version 2.1 along with this program.  If not, see
 
 G_BEGIN_DECLS
 
-typedef enum _IndicateInterests IndicateInterests;
-enum _IndicateInterests {
+typedef enum {
 	INDICATE_INTEREST_NONE,              /**< We're of no interest */
 	INDICATE_INTEREST_SERVER_DISPLAY,    /**< Displays the server's existance to the user */
 	INDICATE_INTEREST_SERVER_SIGNAL,     /**< Will send signals to the server to be displayed */
@@ -43,7 +42,7 @@ enum _IndicateInterests {
 	INDICATE_INTEREST_INDICATOR_SIGNAL,  /**< Will return signals based on individual indicators being responded to */
 	INDICATE_INTEREST_INDICATOR_COUNT,   /**< Only displays a count of the indicators */
 	INDICATE_INTEREST_LAST               /**< Makes merges and counting easier */
-};
+} IndicateInterests;
 
 G_END_DECLS
 
