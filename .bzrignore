@@ -60,3 +60,4 @@ libindicate/indicate-enum-types.h
 libindicate/libindicate_la-indicate-enum-types.lo
 libindicate/s-enum-types-c
 libindicate/s-enum-types-h
+indicator.pc

@@ -161,6 +161,8 @@ Makefile
 src/Makefile
 libindicate/Makefile
 libindicate/indicate.pc
+libindicator/Makefile
+libindicator/indicator.pc
 tests/Makefile
 data/Makefile
 po/Makefile.in
