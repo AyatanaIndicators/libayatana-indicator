@@ -4,7 +4,7 @@ libdir=@libdir@
 bindir=@bindir@
 includedir=@includedir@
 
-indicatordir=@indicatordir@
+indicatordir=${libdir}/indicators/2/
 
 Cflags: -I${includedir}/libindicator-0.1
 Requires: gtk-2.0
