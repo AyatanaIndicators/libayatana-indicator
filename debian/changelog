@@ -1,11 +1,11 @@
-indicator-applet (0.1.6-0ubuntu1) UNRELEASED; urgency=low
+indicator-applet (0.1.6-0ubuntu1) jaunty; urgency=low
 
   * New upstream version
     * Applied the same fixes as Cody Russell's patch to indicator-messages
       to the finalize functions here.  Should fix LP: #359018 completely.
     * Minor warnings fixes in search of solution to above.
 
- -- Ted Gould <ted@ubuntu.com>  Mon, 13 Apr 2009 11:29:58 -0500
+ -- Ted Gould <ted@ubuntu.com>  Tue, 14 Apr 2009 11:36:12 +0200
 
 indicator-applet (0.1.5-0ubuntu1) jaunty; urgency=low
 
