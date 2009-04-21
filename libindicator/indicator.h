@@ -16,5 +16,10 @@ get_icon_t get_icon;
 typedef GtkMenu * (*get_menu_t) (void);
 get_menu_t get_menu;
 
+#define INDICATOR_VERSION "0.2.0"
+#define INDICATOR_SET_VERSION  static gchar * indicator_version_symbol = INDICATOR_VERSION;
+#define INDICATOR_VERSION_S "indicator_version_symbol"
+#define INDICATOR_VERSION_CHECK(x)  (!g_strcmp0(x, INDICATOR_VERSION))
+
 #endif /* __LIBINDICATOR_INDICATOR_H_SEEN__ */
 
