@@ -1,9 +1,9 @@
-indicator-applet (0.2.0~bzr302-0ubuntu1) UNRELEASED; urgency=low
+indicator-applet (0.2.0~bzr302-0ubuntu1) jaunty; urgency=low
 
   * Upstream snapshot, turning version getting feature into a
     function and adding a name symbol outline.
 
- -- Ted Gould <ted@ubuntu.com>  Wed, 22 Apr 2009 17:08:29 -0500
+ -- Ted Gould <ted@ubuntu.com>  Wed, 22 Apr 2009 17:09:07 -0500
 
 indicator-applet (0.2.0~bzr301-0ubuntu1) jaunty; urgency=low
 
