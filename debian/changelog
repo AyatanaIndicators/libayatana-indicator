@@ -1,8 +1,8 @@
-indicator-applet (0.2.0~bzr300-0ubuntu1) UNRELEASED; urgency=low
+indicator-applet (0.2.0~bzr300-0ubuntu1) jaunty; urgency=low
 
   * Upstream snapshot, fixing indicator.h
 
- -- Ted Gould <ted@ubuntu.com>  Wed, 22 Apr 2009 15:22:52 -0500
+ -- Ted Gould <ted@ubuntu.com>  Wed, 22 Apr 2009 15:23:15 -0500
 
 indicator-applet (0.2.0~bzr299-0ubuntu1) jaunty; urgency=low
 
