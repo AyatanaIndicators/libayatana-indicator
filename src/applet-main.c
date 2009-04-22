@@ -80,9 +80,12 @@ load_module (const gchar * name, GtkWidget * menu)
 	g_free(fullpath);
 	g_return_val_if_fail(module != NULL, FALSE);
 
-	gchar * version;
-	g_return_val_if_fail(g_module_symbol(module, INDICATOR_VERSION_S, (gpointer *)(&version)), FALSE);
-	g_return_val_if_fail(INDICATOR_VERSION_CHECK(version), FALSE);
+	get_version_t lget_version;
+	g_return_val_if_fail(g_module_symbol(module, INDICATOR_GET_VERSION_S, (gpointer *)(&lget_version)), FALSE);
+	if (!INDICATOR_VERSION_CHECK(lget_version())) {
+		g_warning("Indicator using API version '%s' we're expecting '%s'", lget_version(), INDICATOR_VERSION);
+		return FALSE;
+	}
 
 	get_label_t lget_label;
 	g_return_val_if_fail(g_module_symbol(module, INDICATOR_GET_LABEL_S, (gpointer *)(&lget_label)), FALSE);
