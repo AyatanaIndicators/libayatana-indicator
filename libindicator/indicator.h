@@ -16,10 +16,19 @@ GtkImage * get_icon (void);
 typedef GtkMenu * (*get_menu_t) (void);
 GtkMenu * get_menu (void);
 
+#define INDICATOR_GET_VERSION_S "get_version"
+typedef gchar * (*get_version_t) (void);
+gchar * get_version (void);
+
 #define INDICATOR_VERSION "0.2.0"
-#define INDICATOR_SET_VERSION  gchar * indicator_version_symbol = INDICATOR_VERSION;
-#define INDICATOR_VERSION_S "indicator_version_symbol"
+#define INDICATOR_SET_VERSION  gchar * get_version(void) { return INDICATOR_VERSION; }
 #define INDICATOR_VERSION_CHECK(x)  (!g_strcmp0(x, INDICATOR_VERSION))
+
+#define INDICATOR_GET_NAME_S "get_name"
+typedef gchar * (*get_name_t) (void);
+gchar * get_name (void);
+#define INDICATOR_SET_NAME(x)  gchar * get_name(void) {return (x); }
+
 
 #endif /* __LIBINDICATOR_INDICATOR_H_SEEN__ */
 
