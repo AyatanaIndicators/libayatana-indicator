@@ -7,7 +7,7 @@ includedir=@includedir@
 indicatordir=${libdir}/indicators/2/
 
 Cflags: -I${includedir}/libindicator-0.1
-Requires: gtk-2.0
+Requires: gtk+-2.0
 Libs: 
 
 Name: libindicator
