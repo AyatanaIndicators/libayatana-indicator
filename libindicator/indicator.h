@@ -6,15 +6,15 @@
 
 #define INDICATOR_GET_LABEL_S  "get_label"
 typedef GtkLabel * (*get_label_t)(void);
-get_label_t get_label;
+GtkLabel * get_label (void);
 
 #define INDICATOR_GET_ICON_S   "get_icon"
 typedef GtkImage * (*get_icon_t)  (void);
-get_icon_t get_icon;
+GtkImage * get_icon (void);
 
 #define INDICATOR_GET_MENU_S   "get_menu"
 typedef GtkMenu * (*get_menu_t) (void);
-get_menu_t get_menu;
+GtkMenu * get_menu (void);
 
 #define INDICATOR_VERSION "0.2.0"
 #define INDICATOR_SET_VERSION  static gchar * indicator_version_symbol = INDICATOR_VERSION;
