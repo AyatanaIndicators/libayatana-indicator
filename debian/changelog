@@ -1,29 +1,4 @@
-indicator-applet (0.2.0~bzr302-0ubuntu1) jaunty; urgency=low
-
-  * Upstream snapshot, turning version getting feature into a
-    function and adding a name symbol outline.
-
- -- Ted Gould <ted@ubuntu.com>  Wed, 22 Apr 2009 17:09:07 -0500
-
-indicator-applet (0.2.0~bzr301-0ubuntu1) jaunty; urgency=low
-
-  * Upstream snapshot, fixing indicator.h
-
- -- Ted Gould <ted@ubuntu.com>  Wed, 22 Apr 2009 15:55:55 -0500
-
-indicator-applet (0.2.0~bzr300-0ubuntu1) jaunty; urgency=low
-
-  * Upstream snapshot, fixing indicator.h
-
- -- Ted Gould <ted@ubuntu.com>  Wed, 22 Apr 2009 15:23:15 -0500
-
-indicator-applet (0.2.0~bzr299-0ubuntu1) jaunty; urgency=low
-
-  * Upstream snapshot, forgot a + on GTK
-
- -- Ted Gould <ted@ubuntu.com>  Wed, 22 Apr 2009 14:52:11 -0500
-
-indicator-applet (0.2.0~bzr298-0ubuntu1) jaunty; urgency=low
+indicator-applet (0.2.0~bzr305-0ubuntu2) UNRELEASED; urgency=low
 
   * Upstream snapshot
   * debian/control:
@@ -34,7 +9,7 @@ indicator-applet (0.2.0~bzr298-0ubuntu1) jaunty; urgency=low
   * debian/libindicator-dev.install: Specify which files should be
     put into the development package.
 
- -- Ted Gould <ted@ubuntu.com>  Tue, 21 Apr 2009 22:31:23 -0500
+ -- Ted Gould <ted@ubuntu.com>  Wed, 22 Apr 2009 23:45:27 -0500
 
 indicator-applet (0.1.6-0ubuntu1) jaunty; urgency=low
 

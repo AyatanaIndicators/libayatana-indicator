@@ -80,31 +80,32 @@ load_module (const gchar * name, GtkWidget * menu)
 	g_free(fullpath);
 	g_return_val_if_fail(module != NULL, FALSE);
 
-	get_version_t lget_version;
+	get_version_t lget_version = NULL;
 	g_return_val_if_fail(g_module_symbol(module, INDICATOR_GET_VERSION_S, (gpointer *)(&lget_version)), FALSE);
 	if (!INDICATOR_VERSION_CHECK(lget_version())) {
 		g_warning("Indicator using API version '%s' we're expecting '%s'", lget_version(), INDICATOR_VERSION);
 		return FALSE;
 	}
 
-	get_label_t lget_label;
+	get_label_t lget_label = NULL;
 	g_return_val_if_fail(g_module_symbol(module, INDICATOR_GET_LABEL_S, (gpointer *)(&lget_label)), FALSE);
 	g_return_val_if_fail(lget_label != NULL, FALSE);
 	GtkLabel * label = lget_label();
 
-	get_icon_t lget_icon;
-	g_return_val_if_fail(g_module_symbol(module, INDICATOR_GET_LABEL_S, (gpointer *)(&lget_icon)), FALSE);
+	get_icon_t lget_icon = NULL;
+	g_return_val_if_fail(g_module_symbol(module, INDICATOR_GET_ICON_S, (gpointer *)(&lget_icon)), FALSE);
 	g_return_val_if_fail(lget_icon != NULL, FALSE);
 	GtkImage * icon = lget_icon();
 
-	get_menu_t lget_menu;
-	g_return_val_if_fail(g_module_symbol(module, INDICATOR_GET_LABEL_S, (gpointer *)(&lget_menu)), FALSE);
+	get_menu_t lget_menu = NULL;
+	g_return_val_if_fail(g_module_symbol(module, INDICATOR_GET_MENU_S, (gpointer *)(&lget_menu)), FALSE);
 	g_return_val_if_fail(lget_menu != NULL, FALSE);
 	GtkMenu * lmenu = lget_menu();
 
 	if (label == NULL && icon == NULL) {
 		/* This is the case where there is nothing to display,
 		   kinda odd that we'd have a module with nothing. */
+		g_warning("No label or icon.  Odd.");
 		return FALSE;
 	}
 
@@ -116,12 +117,15 @@ load_module (const gchar * name, GtkWidget * menu)
 	if (label != NULL) {
 		gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(label), FALSE, FALSE, 0);
 	}
+	gtk_container_add(GTK_CONTAINER(menuitem), hbox);
+	gtk_widget_show(hbox);
 
-	if (menu != NULL) {
-		gtk_menu_shell_append(GTK_MENU_SHELL(menuitem), GTK_WIDGET(lmenu));
+	if (lmenu != NULL) {
+		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), GTK_WIDGET(lmenu));
 	}
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+	gtk_widget_show(menuitem);
 
 	return TRUE;
 }
