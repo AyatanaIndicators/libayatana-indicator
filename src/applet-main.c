@@ -120,8 +120,8 @@ load_module (const gchar * name, GtkWidget * menu)
 	gtk_container_add(GTK_CONTAINER(menuitem), hbox);
 	gtk_widget_show(hbox);
 
-	if (menu != NULL) {
-		gtk_menu_shell_append(GTK_MENU_SHELL(menuitem), GTK_WIDGET(lmenu));
+	if (lmenu != NULL) {
+		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), GTK_WIDGET(lmenu));
 	}
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
