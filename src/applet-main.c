@@ -117,12 +117,15 @@ load_module (const gchar * name, GtkWidget * menu)
 	if (label != NULL) {
 		gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(label), FALSE, FALSE, 0);
 	}
+	gtk_container_add(GTK_CONTAINER(menuitem), hbox);
+	gtk_widget_show(hbox);
 
 	if (menu != NULL) {
 		gtk_menu_shell_append(GTK_MENU_SHELL(menuitem), GTK_WIDGET(lmenu));
 	}
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+	gtk_widget_show(menuitem);
 
 	return TRUE;
 }
