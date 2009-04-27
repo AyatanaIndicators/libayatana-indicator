@@ -1,3 +1,9 @@
+indicator-applet (0.2.0~bzr307-0ubuntu2) UNRELEASED; urgency=low
+
+  * Increment for PPA.  Forgot to autogen.sh
+
+ -- Ted Gould <ted@ubuntu.com>  Mon, 27 Apr 2009 11:06:28 -0500
+
 indicator-applet (0.2.0~bzr307-0ubuntu1) jaunty; urgency=low
 
   * Upstream Snapshot: Adding in a test suite.
