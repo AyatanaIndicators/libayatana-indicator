@@ -14,7 +14,7 @@ libexec_PROGRAMS = \
 	test-interests-server4 \
 	test-interests-server5 \
 	test-thousand-indicators-client \
-	test-thousand-indicators-server
+	test-thousand-indicators-server \
 	test-simple-client \
 	test-simple-server
 
