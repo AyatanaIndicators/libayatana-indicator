@@ -1,6 +1,7 @@
 indicator-applet (0.2.0~bzr307-0ubuntu1) UNRELEASED; urgency=low
 
   * Upstream Snapshot: Adding in a test suite.
+  * debian/control: Adding a build-dep on dbus-test-runner
 
  -- Ted Gould <ted@ubuntu.com>  Mon, 27 Apr 2009 10:50:10 -0500
 
