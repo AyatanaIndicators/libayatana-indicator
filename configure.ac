@@ -163,6 +163,7 @@ libindicate/Makefile
 libindicate/indicate.pc
 libindicator/Makefile
 libindicator/indicator.pc
+examples/Makefile
 tests/Makefile
 data/Makefile
 po/Makefile.in
