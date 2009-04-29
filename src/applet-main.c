@@ -251,6 +251,7 @@ applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 			if (load_module(name, menubar))
 				indicators_loaded++;
 		}
+		g_dir_close (dir);
 	}
 
 	if (indicators_loaded == 0) {
