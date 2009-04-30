@@ -181,7 +181,7 @@ indicate_indicator_finalize (GObject * obj)
 /**
 	indicate_indicator_new:
 
-	Builds a new indicator object using #g_object_new.
+	Builds a new indicator object using g_object_new().
 
 	Return value: A pointer to a new #IndicateIndicator object.
 */

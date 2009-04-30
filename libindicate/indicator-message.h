@@ -47,18 +47,44 @@ G_BEGIN_DECLS
 typedef struct _IndicateIndicatorMessage      IndicateIndicatorMessage;
 typedef struct _IndicateIndicatorMessageClass IndicateIndicatorMessageClass;
 
-struct _IndicateIndicatorMessageClass
-{
-IndicateIndicatorClass parent_class;
+/**
+	IndicateIndicatorMessageClass:
+
+	Subclass of #IndicateIndicator with no new functions or signals.
+*/
+struct _IndicateIndicatorMessageClass {
+	IndicateIndicatorClass parent_class;
 };
 
-struct _IndicateIndicatorMessage
-{
-IndicateIndicator parent;
+/**
+	IndicateIndicatorMessage:
+
+	A class to represent indicators who's 'type' is "message".  These
+	are basically indicators that represent messages from humans to
+	humans via computers.  Things like instance messages, micro blogging
+	entries or e-mails.  All of these qualify as messages.
+
+	TODO: This should include a list of properties that are supported.
+*/
+struct _IndicateIndicatorMessage {
+	IndicateIndicator parent;
 };
 
 GType indicate_indicator_message_get_type (void);
 IndicateIndicatorMessage * indicate_indicator_message_new (void);
+
+/**
+	SECTION:indicator-message
+	@short_description: A representation of human generated messages
+	@stability: Unstable
+	@include: libindicate/indicator-message.h
+
+	The message indicators represent messages that come from humans
+	to humans using computers.  They come in all different forms with
+	various different interaction protocols, but they all want the human
+	at the computer to interact back with the human that sent the
+	message.
+*/
 
 G_END_DECLS
 
