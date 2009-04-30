@@ -76,7 +76,7 @@ indicate_indicator_class_init (IndicateIndicatorClass * class)
 
 	gobj->finalize = indicate_indicator_finalize;
 
-	/** IndicateIndicator::dispaly:
+	/** IndicateIndicator::display:
 
 		Emitted when the user has clicked on this indicator.  In the
 		messaging indicator this would be when someone clicks on the
