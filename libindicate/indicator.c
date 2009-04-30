@@ -171,6 +171,14 @@ indicate_indicator_finalize (GObject * obj)
 }
 
 /**
+	indicate_indicator_get_type:
+
+	Gets a unique #GType for the #IndicateIndicator objects.
+
+	Return value: A unique #GType value.
+*/
+
+/**
 	indicate_indicator_new:
 
 	Builds a new indicator object using #g_object_new.
@@ -397,6 +405,16 @@ indicate_indicator_set_property_time (IndicateIndicator * indicator, const gchar
 	return;
 }
 
+/**
+	indicate_indicator_get_property:
+	@indicator: a #IndicateIndicator to act on
+	@key: name of the property
+
+	Returns the value that is set for a property or %NULL if that
+	property is not set.
+
+	Return value: A constant string or NULL.
+*/
 const gchar *
 indicate_indicator_get_property (IndicateIndicator * indicator, const gchar * key)
 {
@@ -408,6 +426,17 @@ indicate_indicator_get_property (IndicateIndicator * indicator, const gchar * ke
 	return class->get_property(indicator, key);
 }
 
+/**
+	indicate_indicator_list_properties:
+	@indicator: a #IndicateIndicator to act on
+
+	This function gets a list of all the properties that exist
+	on a @indicator.  The array may have zero entries but almost
+	always at least has 'type' in it.
+
+	Return value: An array of strings that is the keys of all
+		the properties on this indicator.
+*/
 GPtrArray *
 indicate_indicator_list_properties (IndicateIndicator * indicator)
 {
