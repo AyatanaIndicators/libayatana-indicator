@@ -57,7 +57,7 @@ typedef struct _IndicateIndicator IndicateIndicator;
 typedef struct _IndicateIndicatorClass IndicateIndicatorClass;
 
 /**
-	IndicateInidcator:
+	IndicateIndicator:
 
 	The indicator object represents a single item that is shared over the
 	indicator bus.  This could be something like one IM, one e-mail or 
