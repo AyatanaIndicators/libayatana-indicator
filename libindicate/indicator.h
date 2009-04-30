@@ -68,6 +68,37 @@ struct _IndicateIndicator {
 	GObject parent;
 };
 
+/**
+	IndicateIndicatorClass:
+
+	All of the functions that are used to modify or change data that is
+	in the indicator.  Typically gets subclassed by other types of 
+	indicators, for example #IndicateIndicatorMessages.
+
+	@hide: #IndicateIndicator::hide
+
+	@show: #IndicateIndicator::show
+
+	@user_display: #IndicateIndicator::user-display
+
+	@modified: #IndicateIndicator::modified
+
+	@get_type: Returns a constant string for the type of this indicator.
+		Typically gets overridden by subclasses and defines the type of
+		the indicator.
+
+	@set_property: Called when #indicate_indicator_set_property is called
+		and should set the value.  While typically it is overridden by
+		subclasses they usually handle special properties themselves and
+		then call the superclass for storage.
+
+	@get_property: Called when #indicate_indicator_get_property is called
+		and should return the value requested.  Many times this is left alone.
+
+	@list_properties: Called when #indicate_indicator_list_properties is called
+		and returns a list of the properties available.  Again this can be
+		overridden by subclasses to handle special properties.
+*/
 struct _IndicateIndicatorClass {
 	GObjectClass parent_class;
 
