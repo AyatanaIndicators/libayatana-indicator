@@ -76,7 +76,8 @@ indicate_indicator_class_init (IndicateIndicatorClass * class)
 
 	gobj->finalize = indicate_indicator_finalize;
 
-	/** IndicateIndicator::display:
+	/** 
+		IndicateIndicator::display:
 
 		Emitted when the user has clicked on this indicator.  In the
 		messaging indicator this would be when someone clicks on the
@@ -89,7 +90,8 @@ indicate_indicator_class_init (IndicateIndicatorClass * class)
 	                                     NULL, NULL,
 	                                     g_cclosure_marshal_VOID__VOID,
 	                                     G_TYPE_NONE, 0);
-	/** IndicateIndicator::hide:
+	/**
+		IndicateIndicator::hide:
 
 		Emitted every time this indicator is hidden.  This
 		is mostly used by #IndicateServer.
@@ -101,7 +103,8 @@ indicate_indicator_class_init (IndicateIndicatorClass * class)
 	                                     NULL, NULL,
 	                                     g_cclosure_marshal_VOID__VOID,
 	                                     G_TYPE_NONE, 0);
-	/** IndicateIndicator::hide:
+	/**
+		IndicateIndicator::hide:
 
 		Emitted every time this indicator is shown.  This
 		is mostly used by #IndicateServer.
@@ -113,7 +116,8 @@ indicate_indicator_class_init (IndicateIndicatorClass * class)
 	                                     NULL, NULL,
 	                                     g_cclosure_marshal_VOID__VOID,
 	                                     G_TYPE_NONE, 0);
-	/** IndicateIndicator::modified:
+	/**
+		IndicateIndicator::modified:
 
 		Emitted every time an indicator property is changed.
 		This is mostly used by #IndicateServer.
@@ -166,9 +170,12 @@ indicate_indicator_finalize (GObject * obj)
 	return;
 }
 
-/** indicate_indicator_new:
+/**
+	indicate_indicator_new:
 
 	Builds a new indicator object using #g_object_new.
+
+	Return value: A pointer to a new #IndicateIndicator object.
 */
 IndicateIndicator *
 indicate_indicator_new (void)
@@ -177,7 +184,8 @@ indicate_indicator_new (void)
 	return indicator;
 }
 
-/** indicate_indicator_show:
+/**
+	indicate_indicator_show:
 	@indicator: a #IndicateIndicator to act on
 
 	Shows this indicator on the bus.  If the #IndicateServer that it's
@@ -203,7 +211,8 @@ indicate_indicator_show (IndicateIndicator * indicator)
 	return;
 }
 
-/** indicate_indicator_hide:
+/**
+	indicate_indicator_hide:
 	@indicator: a #IndicateIndicator to act on
 
 	Hides the indicator from the bus.  Does not effect the
@@ -224,7 +233,8 @@ indicate_indicator_hide (IndicateIndicator * indicator)
 	return;
 }
 
-/** indicate_indicator_is_visible:
+/**
+	indicate_indicator_is_visible:
 	@indicator: a #IndicateIndicator to act on
 
 	Checkes the visibility status of @indicator.
@@ -239,7 +249,8 @@ indicate_indicator_is_visible (IndicateIndicator * indicator)
 	return priv->is_visible;
 }
 
-/** indicate_indicator_get_id:
+/**
+	indicate_indicator_get_id:
 	@indicator: a #IndicateIndicator to act on
 
 	Gets the ID value of the @indicator.
@@ -255,7 +266,8 @@ indicate_indicator_get_id (IndicateIndicator * indicator)
 	return priv->id;
 }
 
-/** indicate_indicator_get_indicator_type:
+/**
+	indicate_indicator_get_indicator_type:
 	@indicator: a #IndicateIndicator to act on
 
 	Returns the type of @indicator.  This is largely set by the subclass
@@ -276,7 +288,8 @@ indicate_indicator_get_indicator_type (IndicateIndicator * indicator)
 	return NULL;
 }
 
-/** indicate_indicator_user_display:
+/**
+	indicate_indicator_user_display:
 	@indicator: a #IndicateIndicator to act on
 
 	Emits the #IndicateIndicator::user-display signal simliar to a user
@@ -295,7 +308,8 @@ indicate_indicator_user_display (IndicateIndicator * indicator)
 	return;
 }
 
-/** indicate_indicator_set_property:
+/**
+	indicate_indicator_set_property:
 	@indicator: a #IndicateIndicator to act on
 	@key: name of the property
 	@data: value of the property
@@ -317,7 +331,8 @@ indicate_indicator_set_property (IndicateIndicator * indicator, const gchar * ke
 	return class->set_property(indicator, key, data);
 }
 
-/** indicate_indicator_set_property_icon:
+/**
+	indicate_indicator_set_property_icon:
 	@indicator: a #IndicateIndicator to act on
 	@key: name of the property
 	@data: icon to set property with
@@ -360,7 +375,8 @@ indicate_indicator_set_property_icon (IndicateIndicator * indicator, const gchar
 	return;
 }
 
-/** indicate_indicator_set_property_time:
+/**
+	indicate_indicator_set_property_time:
 	@indicator: a #IndicateIndicator to act on
 	@key: name of the property
 	@data: time to set property with
