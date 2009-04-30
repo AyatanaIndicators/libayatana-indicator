@@ -56,6 +56,14 @@ G_BEGIN_DECLS
 typedef struct _IndicateIndicator IndicateIndicator;
 typedef struct _IndicateIndicatorClass IndicateIndicatorClass;
 
+/**
+	IndicateInidcator:
+
+	The indicator object represents a single item that is shared over the
+	indicator bus.  This could be something like one IM, one e-mail or 
+	a single system update.  It should be accessed only through its
+	accessors.
+*/
 struct _IndicateIndicator {
 	GObject parent;
 };
