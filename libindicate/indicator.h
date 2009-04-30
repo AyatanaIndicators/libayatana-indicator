@@ -75,13 +75,13 @@ struct _IndicateIndicator {
 	in the indicator.  Typically gets subclassed by other types of 
 	indicators, for example #IndicateIndicatorMessages.
 
-	@hide: #IndicateIndicator::hide
+	@hide: Slot for #IndicateIndicator::hide.
 
-	@show: #IndicateIndicator::show
+	@show: Slot for #IndicateIndicator::show.
 
-	@user_display: #IndicateIndicator::user-display
+	@user_display: Slot for #IndicateIndicator::user-display.
 
-	@modified: #IndicateIndicator::modified
+	@modified: Slot for #IndicateIndicator::modified.
 
 	@get_type: Returns a constant string for the type of this indicator.
 		Typically gets overridden by subclasses and defines the type of
