@@ -133,6 +133,37 @@ void indicate_indicator_set_property_time (IndicateIndicator * indicator, const 
 const gchar * indicate_indicator_get_property (IndicateIndicator * indicator, const gchar * key);
 GPtrArray * indicate_indicator_list_properties (IndicateIndicator * indicator);
 
+/**
+	SECTION:indicator
+	@short_description: A representation of state for applications
+	@stability: Unstable
+	@include: libindicate/indicator.h
+
+	An indicator is designed to represent a single instance of something
+	in your application.  So this might be an IM or Email using #IndicateIndicatorMessage
+	or any other thing that is a small unit of information to pass on
+	to the user.
+
+	Indicators make no promises about how they are preceived by the
+	user, it's up to the listener to represent them in an intutive and
+	visually appealling way.  But, what we can do is provide information
+	on the indicator to provide enough information for the listener
+	to do that.
+
+	Mostly this is done through properties.  The only property that is
+	defined for the base indicator is the 'type' property.  And this
+	is only available to set by creating a subclass of the 
+	#IndicateIndicator object.  It is assumed that you can look at the
+	definitions of the various subtypes to determine which properties
+	they support.
+
+	It may be that some users don't want to create objects for every
+	indicator as it could be a lot of overhead if there are large numbers
+	and there is already a data structure representing them all.  In that
+	case it is recommended that you ignore the #IndicateIndicator object
+	tree in general and move to subclassing #IndicateServer directly.
+*/
+
 G_END_DECLS
 
 #endif /* INDICATE_INDICATOR_H_INCLUDED__ */
