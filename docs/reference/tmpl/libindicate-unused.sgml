@@ -1,3 +1,235 @@
+<!-- ##### MACRO INDICATE_INDICATOR ##### -->
+<para>
+
+</para>
+
+@object: 
+
+<!-- ##### MACRO INDICATE_INDICATOR_CLASS ##### -->
+<para>
+
+</para>
+
+@klass: 
+
+<!-- ##### MACRO INDICATE_INDICATOR_GET_CLASS ##### -->
+<para>
+
+</para>
+
+@object: 
+
+<!-- ##### MACRO INDICATE_INDICATOR_MESSAGE ##### -->
+<para>
+
+</para>
+
+@obj: 
+
+<!-- ##### MACRO INDICATE_INDICATOR_MESSAGE_CLASS ##### -->
+<para>
+
+</para>
+
+@klass: 
+
+<!-- ##### MACRO INDICATE_INDICATOR_MESSAGE_GET_CLASS ##### -->
+<para>
+
+</para>
+
+@obj: 
+
+<!-- ##### MACRO INDICATE_INDICATOR_SIGNAL_DISPLAY ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO INDICATE_INDICATOR_SIGNAL_HIDE ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO INDICATE_INDICATOR_SIGNAL_MODIFIED ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO INDICATE_INDICATOR_SIGNAL_SHOW ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO INDICATE_IS_INDICATOR ##### -->
+<para>
+
+</para>
+
+@object: 
+
+<!-- ##### MACRO INDICATE_IS_INDICATOR_CLASS ##### -->
+<para>
+
+</para>
+
+@klass: 
+
+<!-- ##### MACRO INDICATE_IS_INDICATOR_MESSAGE ##### -->
+<para>
+
+</para>
+
+@obj: 
+
+<!-- ##### MACRO INDICATE_IS_INDICATOR_MESSAGE_CLASS ##### -->
+<para>
+
+</para>
+
+@klass: 
+
+<!-- ##### MACRO INDICATE_IS_LISTENER ##### -->
+<para>
+
+</para>
+
+@object: 
+
+<!-- ##### MACRO INDICATE_IS_LISTENER_CLASS ##### -->
+<para>
+
+</para>
+
+@klass: 
+
+<!-- ##### MACRO INDICATE_IS_SERVER ##### -->
+<para>
+
+</para>
+
+@object: 
+
+<!-- ##### MACRO INDICATE_IS_SERVER_CLASS ##### -->
+<para>
+
+</para>
+
+@klass: 
+
+<!-- ##### MACRO INDICATE_LISTENER ##### -->
+<para>
+
+</para>
+
+@object: 
+
+<!-- ##### MACRO INDICATE_LISTENER_CLASS ##### -->
+<para>
+
+</para>
+
+@klass: 
+
+<!-- ##### MACRO INDICATE_LISTENER_GET_CLASS ##### -->
+<para>
+
+</para>
+
+@object: 
+
+<!-- ##### MACRO INDICATE_LISTENER_INDICATOR_ID ##### -->
+<para>
+
+</para>
+
+@indicator: 
+
+<!-- ##### MACRO INDICATE_LISTENER_SERVER_DBUS_NAME ##### -->
+<para>
+
+</para>
+
+@server: 
+
+<!-- ##### MACRO INDICATE_LISTENER_SIGNAL_INDICATOR_ADDED ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO INDICATE_LISTENER_SIGNAL_INDICATOR_MODIFIED ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO INDICATE_LISTENER_SIGNAL_INDICATOR_REMOVED ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO INDICATE_LISTENER_SIGNAL_SERVER_ADDED ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO INDICATE_LISTENER_SIGNAL_SERVER_REMOVED ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO INDICATE_SERVER ##### -->
+<para>
+
+</para>
+
+@object: 
+
+<!-- ##### MACRO INDICATE_SERVER_CLASS ##### -->
+<para>
+
+</para>
+
+@klass: 
+
+<!-- ##### MACRO INDICATE_SERVER_GET_CLASS ##### -->
+<para>
+
+</para>
+
+@object: 
+
+<!-- ##### MACRO INDICATE_TYPE_INDICATOR ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO INDICATE_TYPE_INDICATOR_MESSAGE ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO INDICATE_TYPE_LISTENER ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO INDICATE_TYPE_SERVER ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### FUNCTION dbus_g_proxy_begin_call ##### -->
 <para>
 
@@ -204,6 +436,27 @@
 
 @v: 
 
+<!-- ##### FUNCTION indicate_indicator_get_type ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+<!-- ##### FUNCTION indicate_indicator_message_get_type ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+<!-- ##### FUNCTION indicate_listener_get_type ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
 <!-- ##### FUNCTION indicate_listener_marshal_VOID__POINTER_POINTER_STRING ##### -->
 <para>
 
@@ -315,6 +568,13 @@
 @properties: 
 @value: 
 @error: 
+@Returns: 
+
+<!-- ##### FUNCTION indicate_server_get_type ##### -->
+<para>
+
+</para>
+
 @Returns: 
 
 <!-- ##### FUNCTION indicate_server_show_indicator_to_user ##### -->
