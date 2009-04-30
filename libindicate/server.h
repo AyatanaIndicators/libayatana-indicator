@@ -57,6 +57,16 @@ G_BEGIN_DECLS
 #define INDICATE_SERVER_SIGNAL_INTEREST_ADDED       "interest-added"
 #define INDICATE_SERVER_SIGNAL_INTEREST_REMOVED     "interest-removed"
 
+/**
+	IndicateServer:
+
+	This is the object that represents the overall connection
+	between this application and DBus.  It acts as the proxy for
+	incomming DBus calls and also sends the appropriate signals
+	on DBus for events happening on other objects locally.  It
+	provides some settings that effection how the application as
+	a whole is perceived by listeners of the indicator protocol.
+*/
 typedef struct _IndicateServer IndicateServer;
 struct _IndicateServer {
 	GObject parent;
