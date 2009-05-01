@@ -398,7 +398,7 @@ indicate_indicator_set_property_icon (IndicateIndicator * indicator, const gchar
 	indicate_indicator_set_property_time:
 	@indicator: a #IndicateIndicator to act on
 	@key: name of the property
-	@data: time to set property with
+	@time: time to set property with
 
 	This is a helper function that wraps around #indicate_indicator_set_property
 	but takes an #GTimeVal parameter.  It then takes the @data
