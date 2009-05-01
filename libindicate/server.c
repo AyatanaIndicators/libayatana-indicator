@@ -163,6 +163,12 @@ indicate_server_class_init (IndicateServerClass * class)
 	gobj->set_property = set_property;
 	gobj->get_property = get_property;
 
+	/**
+		IndicateServer::indicator-added:
+
+		Emitted every time that a new indicator is made visible to
+		the world.  This results in a signal on DBus.
+	*/
 	signals[INDICATOR_ADDED] = g_signal_new(INDICATE_SERVER_SIGNAL_INDICATOR_ADDED,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
@@ -170,6 +176,12 @@ indicate_server_class_init (IndicateServerClass * class)
 	                                        NULL, NULL,
 	                                        g_cclosure_marshal_VOID__UINT_POINTER,
 	                                        G_TYPE_NONE, 2, G_TYPE_UINT, G_TYPE_STRING);
+	/**
+		IndicateServer::indicator-removed:
+
+		Emitted every time that a new indicator is made invisible to
+		the world.  This results in a signal on DBus.
+	*/
 	signals[INDICATOR_REMOVED] = g_signal_new(INDICATE_SERVER_SIGNAL_INDICATOR_REMOVED,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
@@ -177,6 +189,12 @@ indicate_server_class_init (IndicateServerClass * class)
 	                                        NULL, NULL,
 	                                        g_cclosure_marshal_VOID__UINT_POINTER,
 	                                        G_TYPE_NONE, 2, G_TYPE_UINT, G_TYPE_STRING);
+	/**
+		IndicateServer::indicator-modified:
+
+		Emitted every time that a property on an indicator changes
+		and it is visible to the world.  This results in a signal on DBus.
+	*/
 	signals[INDICATOR_MODIFIED] = g_signal_new(INDICATE_SERVER_SIGNAL_INDICATOR_MODIFIED,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
@@ -184,6 +202,13 @@ indicate_server_class_init (IndicateServerClass * class)
 	                                        NULL, NULL,
 	                                        g_cclosure_marshal_VOID__UINT_POINTER,
 	                                        G_TYPE_NONE, 2, G_TYPE_UINT, G_TYPE_STRING);
+	/**
+		IndicateServer::server-show:
+
+		Emitted when a server comes onto DBus by being shown.  This
+		is typically when listeners start reacting to the application's
+		indicators.  This results in a signal on DBus.
+	*/
 	signals[SERVER_SHOW] = g_signal_new(INDICATE_SERVER_SIGNAL_SERVER_SHOW,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
@@ -191,6 +216,12 @@ indicate_server_class_init (IndicateServerClass * class)
 	                                        NULL, NULL,
 	                                        g_cclosure_marshal_VOID__POINTER,
 	                                        G_TYPE_NONE, 1, G_TYPE_STRING);
+	/**
+		IndicateServer::server-hide:
+
+		Emitted when a server removes itself from DBus.  This results
+		in a signal on DBus.
+	*/
 	signals[SERVER_HIDE] = g_signal_new(INDICATE_SERVER_SIGNAL_SERVER_HIDE,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
@@ -198,6 +229,13 @@ indicate_server_class_init (IndicateServerClass * class)
 	                                        NULL, NULL,
 	                                        g_cclosure_marshal_VOID__POINTER,
 	                                        G_TYPE_NONE, 1, G_TYPE_STRING);
+	/**
+		IndicateServer::server-display:
+
+		Emitted when a listener signals that the server itself should be
+		displayed.  This signal is caused by a user clicking on the application
+		item in the Messaging Menu.  This signal is emitted by DBus.
+	*/
 	signals[SERVER_DISPLAY] = g_signal_new(INDICATE_SERVER_SIGNAL_SERVER_DISPLAY,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
@@ -205,6 +243,12 @@ indicate_server_class_init (IndicateServerClass * class)
 	                                        NULL, NULL,
 	                                        g_cclosure_marshal_VOID__VOID,
 	                                        G_TYPE_NONE, 0);
+	/**
+		IndicateServer::interest-added:
+
+		Emitted when a listener signals that they are interested in
+		this server for a particular reason.  This signal is emitted by DBus.
+	*/
 	signals[INTEREST_ADDED] = g_signal_new(INDICATE_SERVER_SIGNAL_INTEREST_ADDED,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
@@ -212,6 +256,12 @@ indicate_server_class_init (IndicateServerClass * class)
 	                                        NULL, NULL,
 	                                        g_cclosure_marshal_VOID__UINT,
 	                                        G_TYPE_NONE, 1, G_TYPE_UINT);
+	/**
+		IndicateServer::interest-removed:
+
+		Emitted when a listener signals that they are no longer interested in
+		this server for a particular reason.  This signal is emitted by DBus.
+	*/
 	signals[INTEREST_REMOVED] = g_signal_new(INDICATE_SERVER_SIGNAL_INTEREST_REMOVED,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
