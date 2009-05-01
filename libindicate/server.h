@@ -75,14 +75,14 @@ struct _IndicateServer {
 /**
 	IndicateServerClass:
 	@parent: Parent Class
-	@indicator_added: Slot for #IndicatorServer::indicator-added
-	@indicator_removed: Slot for #IndicatorServer::indicator-removed
-	@indicator_modified: Slot for #IndicatorServer::indicator-modified
-	@server_show: Slot for #IndicatorServer::server-show
-	@server_hide: Slot for #IndicatorServer::server-hide
-	@server_display: Slot for #IndicatorServer::server-display
-	@interest_added: Slot for #IndicatorServer::interest-added
-	@interest_removed: Slot for #IndicatorServer::interest-removed
+	@indicator_added: Slot for #IndicateServer::indicator-added.
+	@indicator_removed: Slot for #IndicateServer::indicator-removed.
+	@indicator_modified: Slot for #IndicateServer::indicator-modified.
+	@server_show: Slot for #IndicateServer::server-show.
+	@server_hide: Slot for #IndicateServer::server-hide.
+	@server_display: Slot for #IndicateServer::server-display.
+	@interest_added: Slot for #IndicateServer::interest-added.
+	@interest_removed: Slot for #IndicateServer::interest-removed.
 	@get_indicator_count: Returns the number of indicators that are visible
 		on the bus.  Hidden indicators should not be counted.
 	@get_indciator_count_by_type: Returns the number of indicators that are
