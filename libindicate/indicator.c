@@ -78,6 +78,7 @@ indicate_indicator_class_init (IndicateIndicatorClass * class)
 
 	/** 
 		IndicateIndicator::display:
+		@arg0: The #IndicateIndicator object
 
 		Emitted when the user has clicked on this indicator.  In the
 		messaging indicator this would be when someone clicks on the
@@ -92,9 +93,12 @@ indicate_indicator_class_init (IndicateIndicatorClass * class)
 	                                     G_TYPE_NONE, 0);
 	/**
 		IndicateIndicator::hide:
+		@arg0: The #IndicateIndicator object
 
 		Emitted every time this indicator is hidden.  This
 		is mostly used by #IndicateServer.
+
+		Typically this results in an emition of #IndicateServer::indicator-removed.
 	*/
 	signals[HIDE] = g_signal_new(INDICATE_INDICATOR_SIGNAL_HIDE,
 	                                     G_TYPE_FROM_CLASS(class),
@@ -104,10 +108,13 @@ indicate_indicator_class_init (IndicateIndicatorClass * class)
 	                                     g_cclosure_marshal_VOID__VOID,
 	                                     G_TYPE_NONE, 0);
 	/**
-		IndicateIndicator::hide:
+		IndicateIndicator::show:
+		@arg0: The #IndicateIndicator object
 
 		Emitted every time this indicator is shown.  This
 		is mostly used by #IndicateServer.
+
+		Typically this results in an emition of #IndicateServer::indicator-added.
 	*/
 	signals[SHOW] = g_signal_new(INDICATE_INDICATOR_SIGNAL_SHOW,
 	                                     G_TYPE_FROM_CLASS(class),
@@ -118,9 +125,13 @@ indicate_indicator_class_init (IndicateIndicatorClass * class)
 	                                     G_TYPE_NONE, 0);
 	/**
 		IndicateIndicator::modified:
+		@arg0: The #IndicateIndicator object
+		@arg1: The name of the property that changed.
 
 		Emitted every time an indicator property is changed.
 		This is mostly used by #IndicateServer.
+
+		Typically this results in an emition of #IndicateServer::indicator-modified.
 	*/
 	signals[MODIFIED] = g_signal_new(INDICATE_INDICATOR_SIGNAL_MODIFIED,
 	                                     G_TYPE_FROM_CLASS(class),
