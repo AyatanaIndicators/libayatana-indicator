@@ -442,7 +442,17 @@ indicate_server_error_quark (void)
 	return quark;
 }
 
+/**
+	indicate_server_show:
+	@server: The #IndicateServer to be shown
 
+	This function exports the object onto DBus and shows it
+	to the world.  This will be the start of it receiving external
+	signals from DBus.  It is likely that, if there are listeners
+	running, there will several #IndicateServer::interest-added
+	signals coming shortly after this function.  This function
+	emits the #IndicateServer::server-added signal across the bus.
+*/
 void
 indicate_server_show (IndicateServer * server)
 {
@@ -479,6 +489,16 @@ indicate_server_show (IndicateServer * server)
 	return;
 }
 
+/**
+	indicate_server_hide:
+	@server: The #IndicateServer to hide.
+
+	This function hides the server from DBus so that it does
+	not get signals anymore.  This causes the signal #IndicateServer::server-hide
+	to be sent across the bus for all listeners.  Also internally
+	it will signal #IndicateServer::interest-removed for all the
+	interests that were currently set for this server.
+*/
 void
 indicate_server_hide (IndicateServer * server)
 {
@@ -686,6 +706,16 @@ indicator_modified_cb (IndicateIndicator * indicator, gchar * property, Indicate
 	g_signal_emit(server, signals[INDICATOR_MODIFIED], 0, indicate_indicator_get_id(indicator), property, TRUE);
 }
 
+/**
+	indicate_server_add_indicator:
+	@server: The #IndicateServer to add the #IndicateIndictor to.
+	@indicator: The #IndicateIndicator to add.
+
+	This function adds an indicator @indicator to the list that are
+	watched by the server @server.  This means that signals that are
+	emitted by the indicator will be picked up and passed via DBus onto
+	listeners of the application.
+*/
 void
 indicate_server_add_indicator (IndicateServer * server, IndicateIndicator * indicator)
 {
@@ -709,6 +739,14 @@ indicate_server_add_indicator (IndicateServer * server, IndicateIndicator * indi
 	return;
 }
 
+/**
+	indicate_server_remove_indicator:
+	@server: The #IndicateServer to remove the #IndicateIndictor from.
+	@indicator: The #IndicateIndicator to remove.
+
+	Removes an indicator @indicator from being watched by the server @server
+	so it's signals are no longer watched and set over DBus.
+*/
 void
 indicate_server_remove_indicator (IndicateServer * server, IndicateIndicator * indicator)
 {
@@ -739,6 +777,15 @@ indicate_server_set_dbus_object (const gchar * obj)
 	return;
 }
 
+/**
+	indicate_server_set_desktop_file:
+	@server: The #IndicateServer to set the type of
+	@type: The new desktop file representing the server
+
+	This is a convience function to set the #IndicateServer:desktop
+	property of the @server object.  The property can also be set
+	via traditional means, but this one is easier to read.
+*/
 void
 indicate_server_set_desktop_file (IndicateServer * server, const gchar * path)
 {
@@ -749,6 +796,15 @@ indicate_server_set_desktop_file (IndicateServer * server, const gchar * path)
 	return;
 }
 
+/**
+	indicate_server_set_type:
+	@server: The #IndicateServer to set the type of
+	@type: The new type of the server
+
+	This is a convience function to set the #IndicateServer:type
+	property of the @server object.  The property can also be set
+	via traditional means, but this one is easier to read.
+*/
 void
 indicate_server_set_type (IndicateServer * server, const gchar * type)
 {
@@ -761,6 +817,17 @@ indicate_server_set_type (IndicateServer * server, const gchar * type)
 
 static IndicateServer * default_indicate_server = NULL;
 
+/**
+	indicate_server_ref_default:
+
+	This function will return a reference to the default #IndicateServer
+	reference if there is one, or it will create one if one had not
+	previously been created.  It is recommended that all applications
+	use this function to create a #IndicateServer as it ensure that there
+	is only one per application.
+
+	Return value: A reference to the default #IndicateServer instance.
+*/
 IndicateServer *
 indicate_server_ref_default (void)
 {
@@ -775,6 +842,16 @@ indicate_server_ref_default (void)
 	return default_indicate_server;
 }
 
+/**
+	indicate_server_set_default:
+	@server: The #IndicateServer that should be used
+
+	This function is used to set the default #IndicateServer that will
+	be used when creating #IndicateIndicators or for anyone else that
+	calls indicate_server_ref_default().  Typically this is just an
+	instance of #IndicateServer but applications that create a subclass
+	of #IndicateServer should set this as well.
+*/
 void
 indicate_server_set_default (IndicateServer * server)
 {
@@ -1179,6 +1256,15 @@ _indicate_server_show_indicator_to_user (IndicateServer * server, guint id, GErr
 	return TRUE;
 }
 
+/**
+	indicate_server_get_next_id:
+	@server: The #IndicateServer the ID will be on
+
+	Returns the next available unused ID that an indicator
+	can have.
+
+	Return value: A valid indicator ID.
+*/
 guint 
 indicate_server_get_next_id (IndicateServer * server)
 {
@@ -1283,6 +1369,17 @@ _indicate_server_remove_interest (IndicateServer * server, gchar * interest, DBu
 	return FALSE;
 }
 
+/**
+	indicate_server_check_interest:
+	@server: The #IndicateServer being checked
+	@interest: Which interest type we're checking for
+
+	This function looks at all the interest that various listeners
+	have specified that they have for this server and returns whether
+	there is a listener that has the interest specified in @interest.
+
+	Return value: %TRUE if a listener as the interest otherwise %FALSE
+*/
 gboolean
 indicate_server_check_interest (IndicateServer * server, IndicateInterests interest)
 {
@@ -1297,6 +1394,16 @@ indicate_server_check_interest (IndicateServer * server, IndicateInterests inter
 }
 
 /* Signal emission functions for sub-classes of the server */
+
+/**
+	indicate_server_emit_indicator_added:
+	@server: The #IndicateServer being represented
+	@id: The ID of the indicator being added
+	@type: The type of the indicator
+
+	This function emits the #IndicateServer::indicator-added signal and is
+	used by subclasses.
+*/
 void 
 indicate_server_emit_indicator_added (IndicateServer *server, guint id, const gchar *type)
 {
@@ -1306,6 +1413,15 @@ indicate_server_emit_indicator_added (IndicateServer *server, guint id, const gc
   g_signal_emit(server, signals[INDICATOR_ADDED], 0, id, type);
 }
 
+/**
+	indicate_server_emit_indicator_removed:
+	@server: The #IndicateServer being represented
+	@id: The ID of the indicator being removed
+	@type: The type of the indicator
+
+	This function emits the #IndicateServer::indicator-removed signal and is
+	used by subclasses.
+*/
 void 
 indicate_server_emit_indicator_removed (IndicateServer *server, guint id, const gchar *type)
 {
@@ -1315,6 +1431,15 @@ indicate_server_emit_indicator_removed (IndicateServer *server, guint id, const 
   g_signal_emit(server, signals[INDICATOR_REMOVED], 0, id, type);
 }
 
+/**
+	indicate_server_emit_indicator_modified:
+	@server: The #IndicateServer being represented
+	@id: The ID of the indicator with the modified property
+	@proprerty: The name of the property being modified
+
+	This function emits the #IndicateServer::indicator-modified signal and is
+	used by subclasses.
+*/
 void 
 indicate_server_emit_indicator_modified (IndicateServer *server, guint id, const gchar *property)
 {
@@ -1324,6 +1449,13 @@ indicate_server_emit_indicator_modified (IndicateServer *server, guint id, const
   g_signal_emit(server, signals[INDICATOR_MODIFIED], 0, id, property);
 }
 
+/**
+	indicate_server_emit_server_display:
+	@server: The #IndicateServer being displayed
+
+	This function emits the #IndicateServer::server-display signal and is
+	used by subclasses.
+*/
 void 
 indicate_server_emit_server_display (IndicateServer *server)
 {
