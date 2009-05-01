@@ -165,9 +165,14 @@ indicate_server_class_init (IndicateServerClass * class)
 
 	/**
 		IndicateServer::indicator-added:
+		@arg0: The #IndicateServer object
+		@arg1: The #IndicateIndicator ID number
+		@arg2: The type of the indicator
 
 		Emitted every time that a new indicator is made visible to
 		the world.  This results in a signal on DBus.
+
+		Can be emitted by subclasses using indicate_server_emit_indicator_added()
 	*/
 	signals[INDICATOR_ADDED] = g_signal_new(INDICATE_SERVER_SIGNAL_INDICATOR_ADDED,
 	                                        G_TYPE_FROM_CLASS (class),
@@ -178,9 +183,14 @@ indicate_server_class_init (IndicateServerClass * class)
 	                                        G_TYPE_NONE, 2, G_TYPE_UINT, G_TYPE_STRING);
 	/**
 		IndicateServer::indicator-removed:
+		@arg0: The #IndicateServer object
+		@arg1: The #IndicateIndicator ID number
+		@arg2: The type of the indicator
 
 		Emitted every time that a new indicator is made invisible to
 		the world.  This results in a signal on DBus.
+
+		Can be emitted by subclasses using indicate_server_emit_indicator_removed()
 	*/
 	signals[INDICATOR_REMOVED] = g_signal_new(INDICATE_SERVER_SIGNAL_INDICATOR_REMOVED,
 	                                        G_TYPE_FROM_CLASS (class),
@@ -191,9 +201,14 @@ indicate_server_class_init (IndicateServerClass * class)
 	                                        G_TYPE_NONE, 2, G_TYPE_UINT, G_TYPE_STRING);
 	/**
 		IndicateServer::indicator-modified:
+		@arg0: The #IndicateServer object
+		@arg1: The #IndicateIndicator ID number
+		@arg2: The name of the property modified
 
 		Emitted every time that a property on an indicator changes
 		and it is visible to the world.  This results in a signal on DBus.
+
+		Can be emitted by subclasses using indicate_server_emit_indicator_modified()
 	*/
 	signals[INDICATOR_MODIFIED] = g_signal_new(INDICATE_SERVER_SIGNAL_INDICATOR_MODIFIED,
 	                                        G_TYPE_FROM_CLASS (class),
@@ -204,6 +219,8 @@ indicate_server_class_init (IndicateServerClass * class)
 	                                        G_TYPE_NONE, 2, G_TYPE_UINT, G_TYPE_STRING);
 	/**
 		IndicateServer::server-show:
+		@arg0: The #IndicateServer object
+		@arg1: The type of the server
 
 		Emitted when a server comes onto DBus by being shown.  This
 		is typically when listeners start reacting to the application's
@@ -218,6 +235,8 @@ indicate_server_class_init (IndicateServerClass * class)
 	                                        G_TYPE_NONE, 1, G_TYPE_STRING);
 	/**
 		IndicateServer::server-hide:
+		@arg0: The #IndicateServer object
+		@arg1: The type of the server
 
 		Emitted when a server removes itself from DBus.  This results
 		in a signal on DBus.
@@ -231,10 +250,13 @@ indicate_server_class_init (IndicateServerClass * class)
 	                                        G_TYPE_NONE, 1, G_TYPE_STRING);
 	/**
 		IndicateServer::server-display:
+		@arg0: The #IndicateServer object
 
 		Emitted when a listener signals that the server itself should be
 		displayed.  This signal is caused by a user clicking on the application
 		item in the Messaging Menu.  This signal is emitted by DBus.
+
+		Can be emitted by subclasses using indicate_server_emit_server_display()
 	*/
 	signals[SERVER_DISPLAY] = g_signal_new(INDICATE_SERVER_SIGNAL_SERVER_DISPLAY,
 	                                        G_TYPE_FROM_CLASS (class),
@@ -245,6 +267,8 @@ indicate_server_class_init (IndicateServerClass * class)
 	                                        G_TYPE_NONE, 0);
 	/**
 		IndicateServer::interest-added:
+		@arg0: The #IndicateServer object
+		@arg1: The interest that was added from #IndicateInterests
 
 		Emitted when a listener signals that they are interested in
 		this server for a particular reason.  This signal is emitted by DBus.
@@ -258,6 +282,8 @@ indicate_server_class_init (IndicateServerClass * class)
 	                                        G_TYPE_NONE, 1, G_TYPE_UINT);
 	/**
 		IndicateServer::interest-removed:
+		@arg0: The #IndicateServer object
+		@arg1: The interest that was removed from #IndicateInterests
 
 		Emitted when a listener signals that they are no longer interested in
 		this server for a particular reason.  This signal is emitted by DBus.
