@@ -780,7 +780,7 @@ indicate_server_set_dbus_object (const gchar * obj)
 /**
 	indicate_server_set_desktop_file:
 	@server: The #IndicateServer to set the type of
-	@type: The new desktop file representing the server
+	@path: The new desktop file representing the server
 
 	This is a convience function to set the #IndicateServer:desktop
 	property of the @server object.  The property can also be set
@@ -1435,7 +1435,7 @@ indicate_server_emit_indicator_removed (IndicateServer *server, guint id, const 
 	indicate_server_emit_indicator_modified:
 	@server: The #IndicateServer being represented
 	@id: The ID of the indicator with the modified property
-	@proprerty: The name of the property being modified
+	@property: The name of the property being modified
 
 	This function emits the #IndicateServer::indicator-modified signal and is
 	used by subclasses.

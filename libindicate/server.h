@@ -85,7 +85,7 @@ struct _IndicateServer {
 	@interest_removed: Slot for #IndicateServer::interest-removed.
 	@get_indicator_count: Returns the number of indicators that are visible
 		on the bus.  Hidden indicators should not be counted.
-	@get_indciator_count_by_type: Returns the number of indicators that are
+	@get_indicator_count_by_type: Returns the number of indicators that are
 		of a given type and visible on the bus.
 	@get_indicator_list: List all of the indicators that are visible.
 	@get_indicator_list_by_type: List all of the indicators of a given

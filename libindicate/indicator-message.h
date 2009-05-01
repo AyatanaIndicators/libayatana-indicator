@@ -49,6 +49,7 @@ typedef struct _IndicateIndicatorMessageClass IndicateIndicatorMessageClass;
 
 /**
 	IndicateIndicatorMessageClass:
+	@parent_class: Parent Class
 
 	Subclass of #IndicateIndicator with no new functions or signals.
 */
