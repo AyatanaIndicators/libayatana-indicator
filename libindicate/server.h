@@ -186,6 +186,35 @@ void indicate_server_emit_indicator_removed (IndicateServer *server, guint id, c
 void indicate_server_emit_indicator_modified (IndicateServer *server, guint id, const gchar *property);
 void indicate_server_emit_server_display (IndicateServer *server);
 
+/**
+	SECTION:server
+	@short_description: The representation of the application on DBus.
+	@stability: Unstable
+	@include: libindicate/server.h
+
+	The server object is the object that provides the functions on
+	to DBus for other applications to call.  It does this by implementing
+	the DBus indicator spec, but it also allows for subclassing so that
+	subclasses don't have to worry about the DBus-isms as much as
+	the functionality that they're trying to express.
+
+	For simple applications there is limited need to set anything
+	more than the desktop file and the type of the server using
+	indicate_server_set_desktop_file() and indicate_server_set_type().
+	Each of these function sets the respective value and expresses
+	it in a way that other applications on the bus can read it.
+
+	More advanced applications might find the need to subclass the
+	#IndicateServer object and make their own.  This is likely the
+	case where applications have complex data stores that they don't
+	want to turn into a large set of #GObjects that can take up a
+	significant amount of memory in the program.
+
+	In general, it is recommended that application authors go with
+	the high memory path first, and then optimize by implementing
+	their server on a second pass.
+*/
+
 G_END_DECLS
 
 #endif /* INDICATE_SERVER_H_INCLUDED__ */
