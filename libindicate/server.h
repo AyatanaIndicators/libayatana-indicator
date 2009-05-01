@@ -72,6 +72,48 @@ struct _IndicateServer {
 	GObject parent;
 };
 
+/**
+	IndicateServerClass:
+	@parent: Parent Class
+	@indicator_added: Slot for #IndicatorServer::indicator-added
+	@indicator_removed: Slot for #IndicatorServer::indicator-removed
+	@indicator_modified: Slot for #IndicatorServer::indicator-modified
+	@server_show: Slot for #IndicatorServer::server-show
+	@server_hide: Slot for #IndicatorServer::server-hide
+	@server_display: Slot for #IndicatorServer::server-display
+	@interest_added: Slot for #IndicatorServer::interest-added
+	@interest_removed: Slot for #IndicatorServer::interest-removed
+	@get_indicator_count: Returns the number of indicators that are visible
+		on the bus.  Hidden indicators should not be counted.
+	@get_indciator_count_by_type: Returns the number of indicators that are
+		of a given type and visible on the bus.
+	@get_indicator_list: List all of the indicators that are visible.
+	@get_indicator_list_by_type: List all of the indicators of a given
+		type that are visible.
+	@get_indicator_property: Get a property from a particular indicator.
+	@get_indicator_property_group: Get the values for a set of properties
+		as an array of entries, returning an array as well.
+	@get_indicator_properties: Get a list of all the properties that are
+		on a particular indicator.
+	@show_indicator_to_user: Respond to someone on the bus asking to show
+		a particular indicator to the user.
+	@get_next_id: Get the next unused indicator ID.
+	@show_interest: React to someone signifying that they are interested
+		in this server.
+	@remove_interest: Someone on the bus is no longer interest in this
+		server, remove it's interest.
+	@check_interest: Check to see if anyone on the bus is interested in this
+		server for a particular feature.
+	@indicate_server_reserved1: Reserved for future use
+	@indicate_server_reserved2: Reserved for future use
+	@indicate_server_reserved3: Reserved for future use
+	@indicate_server_reserved4: Reserved for future use
+
+	All of the functions and signals that make up the server class
+	including those that are public API to the application and those
+	that are public API to all of DBus.  Subclasses may need to
+	implement a large portion of these.
+*/
 typedef struct _IndicateServerClass IndicateServerClass;
 struct _IndicateServerClass {
 	GObjectClass parent;
