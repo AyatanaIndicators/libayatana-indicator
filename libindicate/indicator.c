@@ -76,6 +76,14 @@ indicate_indicator_class_init (IndicateIndicatorClass * class)
 
 	gobj->finalize = indicate_indicator_finalize;
 
+	/** 
+		IndicateIndicator::display:
+		@arg0: The #IndicateIndicator object
+
+		Emitted when the user has clicked on this indicator.  In the
+		messaging indicator this would be when someone clicks on the
+		menu item for the indicator.
+	*/
 	signals[USER_DISPLAY] = g_signal_new(INDICATE_INDICATOR_SIGNAL_DISPLAY,
 	                                     G_TYPE_FROM_CLASS(class),
 	                                     G_SIGNAL_RUN_LAST,
@@ -83,6 +91,15 @@ indicate_indicator_class_init (IndicateIndicatorClass * class)
 	                                     NULL, NULL,
 	                                     g_cclosure_marshal_VOID__VOID,
 	                                     G_TYPE_NONE, 0);
+	/**
+		IndicateIndicator::hide:
+		@arg0: The #IndicateIndicator object
+
+		Emitted every time this indicator is hidden.  This
+		is mostly used by #IndicateServer.
+
+		Typically this results in an emition of #IndicateServer::indicator-removed.
+	*/
 	signals[HIDE] = g_signal_new(INDICATE_INDICATOR_SIGNAL_HIDE,
 	                                     G_TYPE_FROM_CLASS(class),
 	                                     G_SIGNAL_RUN_LAST,
@@ -90,6 +107,15 @@ indicate_indicator_class_init (IndicateIndicatorClass * class)
 	                                     NULL, NULL,
 	                                     g_cclosure_marshal_VOID__VOID,
 	                                     G_TYPE_NONE, 0);
+	/**
+		IndicateIndicator::show:
+		@arg0: The #IndicateIndicator object
+
+		Emitted every time this indicator is shown.  This
+		is mostly used by #IndicateServer.
+
+		Typically this results in an emition of #IndicateServer::indicator-added.
+	*/
 	signals[SHOW] = g_signal_new(INDICATE_INDICATOR_SIGNAL_SHOW,
 	                                     G_TYPE_FROM_CLASS(class),
 	                                     G_SIGNAL_RUN_LAST,
@@ -97,6 +123,16 @@ indicate_indicator_class_init (IndicateIndicatorClass * class)
 	                                     NULL, NULL,
 	                                     g_cclosure_marshal_VOID__VOID,
 	                                     G_TYPE_NONE, 0);
+	/**
+		IndicateIndicator::modified:
+		@arg0: The #IndicateIndicator object
+		@arg1: The name of the property that changed.
+
+		Emitted every time an indicator property is changed.
+		This is mostly used by #IndicateServer.
+
+		Typically this results in an emition of #IndicateServer::indicator-modified.
+	*/
 	signals[MODIFIED] = g_signal_new(INDICATE_INDICATOR_SIGNAL_MODIFIED,
 	                                     G_TYPE_FROM_CLASS(class),
 	                                     G_SIGNAL_RUN_LAST,
@@ -145,6 +181,21 @@ indicate_indicator_finalize (GObject * obj)
 	return;
 }
 
+/**
+	indicate_indicator_get_type:
+
+	Gets a unique #GType for the #IndicateIndicator objects.
+
+	Return value: A unique #GType value.
+*/
+
+/**
+	indicate_indicator_new:
+
+	Builds a new indicator object using g_object_new().
+
+	Return value: A pointer to a new #IndicateIndicator object.
+*/
 IndicateIndicator *
 indicate_indicator_new (void)
 {
@@ -152,6 +203,14 @@ indicate_indicator_new (void)
 	return indicator;
 }
 
+/**
+	indicate_indicator_show:
+	@indicator: a #IndicateIndicator to act on
+
+	Shows this indicator on the bus.  If the #IndicateServer that it's
+	connected to is not shown itself this function will show the server
+	as well using #indicate_server_show.
+*/
 void
 indicate_indicator_show (IndicateIndicator * indicator)
 {
@@ -171,6 +230,13 @@ indicate_indicator_show (IndicateIndicator * indicator)
 	return;
 }
 
+/**
+	indicate_indicator_hide:
+	@indicator: a #IndicateIndicator to act on
+
+	Hides the indicator from the bus.  Does not effect the
+	indicator's #IndicateServer in any way.
+*/
 void
 indicate_indicator_hide (IndicateIndicator * indicator)
 {
@@ -186,6 +252,14 @@ indicate_indicator_hide (IndicateIndicator * indicator)
 	return;
 }
 
+/**
+	indicate_indicator_is_visible:
+	@indicator: a #IndicateIndicator to act on
+
+	Checkes the visibility status of @indicator.
+
+	Return value: %TRUE if the indicator is visible else %FALSE.
+*/
 gboolean
 indicate_indicator_is_visible (IndicateIndicator * indicator)
 {
@@ -194,6 +268,15 @@ indicate_indicator_is_visible (IndicateIndicator * indicator)
 	return priv->is_visible;
 }
 
+/**
+	indicate_indicator_get_id:
+	@indicator: a #IndicateIndicator to act on
+
+	Gets the ID value of the @indicator.
+
+	Return value: The ID of the indicator.  Can not be zero.
+		Zero represents an error.
+*/
 guint
 indicate_indicator_get_id (IndicateIndicator * indicator)
 {
@@ -202,6 +285,15 @@ indicate_indicator_get_id (IndicateIndicator * indicator)
 	return priv->id;
 }
 
+/**
+	indicate_indicator_get_indicator_type:
+	@indicator: a #IndicateIndicator to act on
+
+	Returns the type of @indicator.  This is largely set by the subclass
+	that the indicator was built with and should not be free'd.
+
+	Return value: A string defining the type or NULL for no type.
+*/
 const gchar *
 indicate_indicator_get_indicator_type (IndicateIndicator * indicator)
 {
@@ -215,6 +307,14 @@ indicate_indicator_get_indicator_type (IndicateIndicator * indicator)
 	return NULL;
 }
 
+/**
+	indicate_indicator_user_display:
+	@indicator: a #IndicateIndicator to act on
+
+	Emits the #IndicateIndicator::user-display signal simliar to a user
+	clicking on @indicator over the bus.  Signal will not be sent if the
+	@indicator is not visible.
+*/
 void
 indicate_indicator_user_display (IndicateIndicator * indicator)
 {
@@ -227,6 +327,18 @@ indicate_indicator_user_display (IndicateIndicator * indicator)
 	return;
 }
 
+/**
+	indicate_indicator_set_property:
+	@indicator: a #IndicateIndicator to act on
+	@key: name of the property
+	@data: value of the property
+
+	Sets a simple string property on @indicator.  If the property
+	had previously been set it will replace it with the new value,
+	otherwise it will create the property.  This will include an
+	emition of #IndicateIndicator::modified if the property value
+	was changed.
+*/
 void
 indicate_indicator_set_property (IndicateIndicator * indicator, const gchar * key, const gchar * data)
 {
@@ -238,6 +350,17 @@ indicate_indicator_set_property (IndicateIndicator * indicator, const gchar * ke
 	return class->set_property(indicator, key, data);
 }
 
+/**
+	indicate_indicator_set_property_icon:
+	@indicator: a #IndicateIndicator to act on
+	@key: name of the property
+	@data: icon to set property with
+
+	This is a helper function that wraps around #indicate_indicator_set_property
+	but takes an #GdkPixbuf parameter.  It then takes the @data
+	parameter, turns it into a PNG, base64 encodes it and then
+	uses that data to call #indicate_indicator_set_property.
+*/
 void
 indicate_indicator_set_property_icon (IndicateIndicator * indicator, const gchar * key, const GdkPixbuf * data)
 {
@@ -271,6 +394,17 @@ indicate_indicator_set_property_icon (IndicateIndicator * indicator, const gchar
 	return;
 }
 
+/**
+	indicate_indicator_set_property_time:
+	@indicator: a #IndicateIndicator to act on
+	@key: name of the property
+	@time: time to set property with
+
+	This is a helper function that wraps around #indicate_indicator_set_property
+	but takes an #GTimeVal parameter.  It then takes the @data
+	parameter converts it to an ISO 8601 time string and
+	uses that data to call #indicate_indicator_set_property.
+*/
 void
 indicate_indicator_set_property_time (IndicateIndicator * indicator, const gchar * key, GTimeVal * time)
 {
@@ -282,6 +416,16 @@ indicate_indicator_set_property_time (IndicateIndicator * indicator, const gchar
 	return;
 }
 
+/**
+	indicate_indicator_get_property:
+	@indicator: a #IndicateIndicator to act on
+	@key: name of the property
+
+	Returns the value that is set for a property or %NULL if that
+	property is not set.
+
+	Return value: A constant string or NULL.
+*/
 const gchar *
 indicate_indicator_get_property (IndicateIndicator * indicator, const gchar * key)
 {
@@ -293,6 +437,17 @@ indicate_indicator_get_property (IndicateIndicator * indicator, const gchar * ke
 	return class->get_property(indicator, key);
 }
 
+/**
+	indicate_indicator_list_properties:
+	@indicator: a #IndicateIndicator to act on
+
+	This function gets a list of all the properties that exist
+	on a @indicator.  The array may have zero entries but almost
+	always at least has 'type' in it.
+
+	Return value: An array of strings that is the keys of all
+		the properties on this indicator.
+*/
 GPtrArray *
 indicate_indicator_list_properties (IndicateIndicator * indicator)
 {
