@@ -56,10 +56,43 @@ G_BEGIN_DECLS
 typedef struct _IndicateIndicator IndicateIndicator;
 typedef struct _IndicateIndicatorClass IndicateIndicatorClass;
 
+/**
+	IndicateIndicator:
+
+	The indicator object represents a single item that is shared over the
+	indicator bus.  This could be something like one IM, one e-mail or 
+	a single system update.  It should be accessed only through its
+	accessors.
+*/
 struct _IndicateIndicator {
 	GObject parent;
 };
 
+/**
+	IndicateIndicatorClass:
+	@parent_class: Parent class #GObjectClass.
+	@hide: Slot for #IndicateIndicator::hide.
+	@show: Slot for #IndicateIndicator::show.
+	@user_display: Slot for #IndicateIndicator::user-display.
+	@modified: Slot for #IndicateIndicator::modified.
+	@get_type: Returns a constant string for the type of this indicator.
+		Typically gets overridden by subclasses and defines the type of
+		the indicator.  Is called by indicate_indicator_get_indicator_type().
+	@set_property: Called when indicate_indicator_set_property() is called
+		and should set the value.  While typically it is overridden by
+		subclasses they usually handle special properties themselves and
+		then call the superclass for storage.
+	@get_property: Called when indicate_indicator_get_property() is called
+		and should return the value requested.  Many times this is left alone.
+	@list_properties: Called when indicate_indicator_list_properties() is called
+		and returns a list of the properties available.  Again this can be
+		overridden by subclasses to handle special properties.
+
+	All of the functions that are used to modify or change data that is
+	in the indicator.  Typically gets subclassed by other types of 
+	indicators, for example #IndicateIndicatorMessages.
+
+*/
 struct _IndicateIndicatorClass {
 	GObjectClass parent_class;
 
@@ -99,6 +132,37 @@ void indicate_indicator_set_property_icon (IndicateIndicator * indicator, const 
 void indicate_indicator_set_property_time (IndicateIndicator * indicator, const gchar * key, GTimeVal * time);
 const gchar * indicate_indicator_get_property (IndicateIndicator * indicator, const gchar * key);
 GPtrArray * indicate_indicator_list_properties (IndicateIndicator * indicator);
+
+/**
+	SECTION:indicator
+	@short_description: A representation of state for applications
+	@stability: Unstable
+	@include: libindicate/indicator.h
+
+	An indicator is designed to represent a single instance of something
+	in your application.  So this might be an IM or Email using #IndicateIndicatorMessage
+	or any other thing that is a small unit of information to pass on
+	to the user.
+
+	Indicators make no promises about how they are preceived by the
+	user, it's up to the listener to represent them in an intutive and
+	visually appealling way.  But, what we can do is provide information
+	on the indicator to provide enough information for the listener
+	to do that.
+
+	Mostly this is done through properties.  The only property that is
+	defined for the base indicator is the 'type' property.  And this
+	is only available to set by creating a subclass of the 
+	#IndicateIndicator object.  It is assumed that you can look at the
+	definitions of the various subtypes to determine which properties
+	they support.
+
+	It may be that some users don't want to create objects for every
+	indicator as it could be a lot of overhead if there are large numbers
+	and there is already a data structure representing them all.  In that
+	case it is recommended that you ignore the #IndicateIndicator object
+	tree in general and move to subclassing #IndicateServer directly.
+*/
 
 G_END_DECLS
 

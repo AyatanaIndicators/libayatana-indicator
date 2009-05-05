@@ -1,3 +1,9 @@
+indicator-applet (0.2.0~bzr309-0ubuntu1) jaunty; urgency=low
+
+  * Merge from upstream, includes documentation.
+
+ -- Ted Gould <ted@ubuntu.com>  Tue, 05 May 2009 16:44:29 +0100
+
 indicator-applet (0.2.0~bzr307-0ubuntu2) jaunty; urgency=low
 
   * Increment for PPA.  Forgot to autogen.sh
