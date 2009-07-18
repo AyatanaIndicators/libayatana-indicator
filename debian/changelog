@@ -1,9 +1,9 @@
-indicator-applet (0.2.0~bzr309-0ubuntu2) UNRELEASED; urgency=low
+indicator-applet (0.2.0~bzr309-0ubuntu2) jaunty; urgency=low
 
   * debian/control, debian/libindicate-doc.install: Merging in Ken
     Vandine's work on making a -doc package for libindicate.
 
- -- Ted Gould <ted@ubuntu.com>  Wed, 13 May 2009 15:00:18 -0500
+ -- Ted Gould <ted@ubuntu.com>  Fri, 17 Jul 2009 21:23:41 -0500
 
 indicator-applet (0.2.0~bzr309-0ubuntu1) jaunty; urgency=low
 
