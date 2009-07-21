@@ -151,9 +151,6 @@ struct _IndicateServerClass {
 
 GType indicate_server_get_type (void) G_GNUC_CONST;
 
-/* Create a new server */
-IndicateServer * indicate_server_new (void);
-
 /* Sets the object.  By default this is /org/freedesktop/indicators */
 void indicate_server_set_dbus_object (const gchar * obj);
 
