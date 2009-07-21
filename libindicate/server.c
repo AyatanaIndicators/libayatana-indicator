@@ -29,6 +29,7 @@ License version 3 and version 2.1 along with this program.  If not, see
  
 #include "server.h"
 #include "interests-priv.h"
+#include "server-marshal.h"
 #include <dbus/dbus-glib.h>
 #include <dbus/dbus-glib-lowlevel.h>
 
@@ -179,7 +180,7 @@ indicate_server_class_init (IndicateServerClass * class)
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateServerClass, indicator_added),
 	                                        NULL, NULL,
-	                                        g_cclosure_marshal_VOID__UINT_POINTER,
+	                                        _indicate_server_marshal_VOID__UINT_STRING,
 	                                        G_TYPE_NONE, 2, G_TYPE_UINT, G_TYPE_STRING);
 	/**
 		IndicateServer::indicator-removed:
