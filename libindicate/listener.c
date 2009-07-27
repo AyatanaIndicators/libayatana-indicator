@@ -277,8 +277,19 @@ indicate_listener_init (IndicateListener * listener)
 static void
 indicate_listener_finalize (GObject * obj)
 {
-	/* IndicateListener * listener = INDICATE_LISTENER(obj); */
-
+	IndicateListener * listener = INDICATE_LISTENER(obj);
+	IndicateListenerPrivate * priv = INDICATE_LISTENER_GET_PRIVATE(listener);
+	
+	if (priv->todo_idle != 0) {
+		g_idle_remove_by_data(obj);
+	}
+	/* Hack: proxy_struct_destroy() lacks a user_data parameter, but since the
+	 * caller is responsible for handling params on the stack, it works
+	 */
+	g_list_foreach(priv->proxies_possible, (GFunc)proxy_struct_destroy, NULL);
+	g_list_free(priv->proxies_possible);
+	g_list_foreach(priv->proxies_working, (GFunc)proxy_struct_destroy, NULL);
+	g_list_free(priv->proxies_working);
 	G_OBJECT_CLASS (indicate_listener_parent_class)->finalize (obj);
 	return;
 }
