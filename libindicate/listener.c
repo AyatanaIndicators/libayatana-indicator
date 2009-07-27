@@ -297,8 +297,6 @@ indicate_listener_finalize (GObject * obj)
 IndicateListener *
 indicate_listener_new (void)
 {
-	g_warning("Creating a new listener is generally discouraged, please use indicate_listener_ref_default");
-
 	IndicateListener * listener;
 	listener = g_object_new(INDICATE_TYPE_LISTENER, NULL);
 	return listener;
