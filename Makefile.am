@@ -2,6 +2,7 @@
 SUBDIRS = \
 	src \
 	libindicate \
+	libindicate-gtk \
 	libindicator \
 	examples \
 	tests \

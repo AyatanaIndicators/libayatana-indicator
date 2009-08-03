@@ -33,8 +33,6 @@ License version 3 and version 2.1 along with this program.  If not, see
 #include <glib.h>
 #include <glib-object.h>
 
-#include <gdk-pixbuf/gdk-pixbuf.h>
-
 G_BEGIN_DECLS
 
 /* Boilerplate */
@@ -67,6 +65,8 @@ typedef struct _IndicateIndicatorClass IndicateIndicatorClass;
 struct _IndicateIndicator {
 	GObject parent;
 };
+
+#include "server.h"
 
 /**
 	IndicateIndicatorClass:
@@ -109,7 +109,9 @@ struct _IndicateIndicatorClass {
 
 GType indicate_indicator_get_type(void) G_GNUC_CONST;
 
+/* New Indicator Functions */
 IndicateIndicator * indicate_indicator_new (void);
+IndicateIndicator * indicate_indicator_new_with_server (IndicateServer * server);
 
 /* Show and hide this indicator */
 void indicate_indicator_show (IndicateIndicator * indicator);
@@ -128,7 +130,6 @@ void indicate_indicator_user_display (IndicateIndicator * indicator);
 
 /* Properties handling */
 void indicate_indicator_set_property (IndicateIndicator * indicator, const gchar * key, const gchar * data);
-void indicate_indicator_set_property_icon (IndicateIndicator * indicator, const gchar * key, const GdkPixbuf * data);
 void indicate_indicator_set_property_time (IndicateIndicator * indicator, const gchar * key, GTimeVal * time);
 const gchar * indicate_indicator_get_property (IndicateIndicator * indicator, const gchar * key);
 GPtrArray * indicate_indicator_list_properties (IndicateIndicator * indicator);
@@ -167,4 +168,3 @@ GPtrArray * indicate_indicator_list_properties (IndicateIndicator * indicator);
 G_END_DECLS
 
 #endif /* INDICATE_INDICATOR_H_INCLUDED__ */
-
