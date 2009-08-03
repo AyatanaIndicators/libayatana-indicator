@@ -90,3 +90,4 @@ libindicate_gtk_la-listener.o
 indicate-gtk.pc
 .deps
 .libs
+indicator-applet-*.tar.gz
