@@ -1,3 +1,12 @@
+<!-- ##### FUNCTION indicate_indicator_set_property_icon ##### -->
+<para>
+
+</para>
+
+@indicator: 
+@key: 
+@data: 
+
 <!-- ##### FUNCTION indicate_server_new ##### -->
 <para>
 
