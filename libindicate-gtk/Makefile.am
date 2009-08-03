@@ -11,14 +11,16 @@ lib_LTLIBRARIES = \
 libindicate_gtkincludedir=$(includedir)/libindicate-0.1/libindicate-gtk
 
 indicate_gtk_headers = \
-	indicator.h
+	indicator.h \
+	listener.h
 
 libindicate_gtkinclude_HEADERS = \
 	$(indicate_gtk_headers)
 
 libindicate_gtk_la_SOURCES = \
 	$(indicate_gtk_headers) \
-	indicator.c
+	indicator.c \
+	listener.c
 
 libindicate_gtk_la_LDFLAGS = \
 	-version-info $(LIBINDICATE_CURRENT):$(LIBINDICATE_REVISION):$(LIBINDICATE_AGE) \
