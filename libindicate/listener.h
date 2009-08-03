@@ -33,8 +33,6 @@ License version 3 and version 2.1 along with this program.  If not, see
 #include <glib.h>
 #include <glib-object.h>
 
-#include <gdk-pixbuf/gdk-pixbuf.h>
-
 #include "indicator.h"
 #include "server.h"
 #include "interests.h"
