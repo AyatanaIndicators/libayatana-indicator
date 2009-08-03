@@ -61,6 +61,14 @@ PKG_CHECK_MODULES(LIBINDICATE, glib-2.0 >= $GLIB_REQUIRED_VERSION
 AC_SUBST(LIBINDICATE_CFLAGS)
 AC_SUBST(LIBINDICATE_LIBS)
 
+PKG_CHECK_MODULES(LIBINDICATEGTK, glib-2.0 >= $GLIB_REQUIRED_VERSION
+                                  gio-2.0 >= $GIO_REQUIRED_VERSION
+                                  gdk-pixbuf-2.0 >= $GDK_PIXBUF_REQUIRED_VERSION
+                                  dbus-glib-1 >= $DBUS_REQUIRED_VERSION
+                                  libxml-2.0 >= $XML_REQUIRED_VERSION)
+AC_SUBST(LIBINDICATEGTK_CFLAGS)
+AC_SUBST(LIBINDICATEGTK_LIBS)
+
 ###########################
 # GObject Introspection
 ###########################
@@ -162,6 +170,8 @@ Makefile
 src/Makefile
 libindicate/Makefile
 libindicate/indicate.pc
+libindicate-gtk/Makefile
+libindicate-gtk/indicate-gtk.pc
 libindicator/Makefile
 libindicator/indicator.pc
 examples/Makefile

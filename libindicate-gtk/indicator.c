@@ -1,0 +1,5 @@
+
+void var (void) {
+
+	return;
+}
