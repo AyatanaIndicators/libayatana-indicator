@@ -68,6 +68,8 @@ struct _IndicateIndicator {
 	GObject parent;
 };
 
+#include "server.h"
+
 /**
 	IndicateIndicatorClass:
 	@parent_class: Parent class #GObjectClass.
@@ -109,7 +111,9 @@ struct _IndicateIndicatorClass {
 
 GType indicate_indicator_get_type(void) G_GNUC_CONST;
 
+/* New Indicator Functions */
 IndicateIndicator * indicate_indicator_new (void);
+IndicateIndicator * indicate_indicator_new_with_server (IndicateServer * server);
 
 /* Show and hide this indicator */
 void indicate_indicator_show (IndicateIndicator * indicator);
@@ -167,4 +171,3 @@ GPtrArray * indicate_indicator_list_properties (IndicateIndicator * indicator);
 G_END_DECLS
 
 #endif /* INDICATE_INDICATOR_H_INCLUDED__ */
-

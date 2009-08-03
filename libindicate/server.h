@@ -33,7 +33,6 @@ License version 3 and version 2.1 along with this program.  If not, see
 #include <glib.h>
 #include <glib-object.h>
 
-#include "indicator.h"
 #include "interests.h"
 
 G_BEGIN_DECLS
@@ -71,6 +70,8 @@ typedef struct _IndicateServer IndicateServer;
 struct _IndicateServer {
 	GObject parent;
 };
+
+#include "indicator.h"
 
 /**
 	IndicateServerClass:

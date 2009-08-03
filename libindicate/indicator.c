@@ -204,6 +204,36 @@ indicate_indicator_new (void)
 }
 
 /**
+	indicate_indicator_new_with_server:
+	@server: The server that should be associated with this indicator.
+
+	Builds a new indicator object using g_object_new() and sets
+	the server to the specified server.  Also, adds a reference
+	to the server.
+
+	Return value: A pointer to a new #IndicateIndicator object.
+*/
+IndicateIndicator *
+indicate_indicator_new_with_server (IndicateServer * server)
+{
+	g_return_val_if_fail(server != NULL, NULL);
+
+	IndicateIndicator * indicator = g_object_new(INDICATE_TYPE_INDICATOR, NULL);
+
+	IndicateIndicatorPrivate * priv = INDICATE_INDICATOR_GET_PRIVATE(indicator);
+	if (priv->server != NULL) {
+		g_object_unref(priv->server);
+		priv->server = NULL;
+	}
+
+	priv->server = server;
+	g_object_ref(priv->server);
+
+	return indicator;
+}
+
+
+/**
 	indicate_indicator_show:
 	@indicator: a #IndicateIndicator to act on
 
