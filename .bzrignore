@@ -79,3 +79,6 @@ test-interests-server4
 test-interests-server5
 test-thousand-indicators-server
 test-thousand-indicators-client
+libindicate_la-server-marshal.lo
+server-marshal.c
+server-marshal.h
