@@ -22,6 +22,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <glib.h>
 #include "libindicate/server.h"
 #include "libindicate/indicator-message.h"
+#include "libindicate-gtk/indicator.h"
 
 gchar * patha = "/usr/share/icons/hicolor/16x16/apps/empathy.png";
 gchar * pathb = "/usr/share/icons/hicolor/22x22/apps/empathy.png";
