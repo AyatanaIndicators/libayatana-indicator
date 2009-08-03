@@ -87,6 +87,6 @@ libindicate_gtk_la-indicator.lo
 libindicate_gtk_la-indicator.o
 libindicate_gtk_la-listener.lo
 libindicate_gtk_la-listener.o
-libindicate-gtk.pc
+indicate-gtk.pc
 .deps
 .libs
