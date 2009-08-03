@@ -91,3 +91,11 @@ indicate-gtk.pc
 .deps
 .libs
 indicator-applet-*.tar.gz
+docs/reference/tmpl/indicator-message.sgml
+docs/reference/tmpl/indicator-message.sgml.bak
+docs/reference/tmpl/indicator.sgml.bak
+docs/reference/tmpl/libindicate-unused.sgml.bak
+docs/reference/tmpl/listener.sgml
+docs/reference/tmpl/listener.sgml.bak
+docs/reference/tmpl/server.sgml
+docs/reference/tmpl/server.sgml.bak
