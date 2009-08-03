@@ -82,3 +82,11 @@ test-thousand-indicators-client
 libindicate_la-server-marshal.lo
 server-marshal.c
 server-marshal.h
+libindicate-gtk.la
+libindicate_gtk_la-indicator.lo
+libindicate_gtk_la-indicator.o
+libindicate_gtk_la-listener.lo
+libindicate_gtk_la-listener.o
+libindicate-gtk.pc
+.deps
+.libs
