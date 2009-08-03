@@ -1,12 +1,18 @@
-indicator-applet (0.2.0~bzr309-0ubuntu4~ppa2) UNRELEASED; urgency=low
+indicator-applet (0.2.0~bzr309-0ubuntu4~ppa3) UNRELEASED; urgency=low
 
   * Merging in upstream code to split out libindicate-gtk
   * debian/control:
     * Changing the version number of libindcate to 2 to match
       the .so numbering.
     * Creating packages for libindicate-gtk
+  * Added libindicate-gtk-dev.install and libindicate-gtk0.install
+    for the new library.
+  * Renamed libindicate1.install to libindicate2.install to match
+    the package name change.
+  * Modified libindicate-dev to be more specific about the header
+    files that it grabs.
 
- -- Ted Gould <ted@ubuntu.com>  Tue, 04 Aug 2009 00:26:22 +0100
+ -- Ted Gould <ted@ubuntu.com>  Tue, 04 Aug 2009 00:30:55 +0100
 
 indicator-applet (0.2.0~bzr309-0ubuntu3) karmic; urgency=low
 
