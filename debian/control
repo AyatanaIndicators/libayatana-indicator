@@ -29,7 +29,7 @@ Description: GNOME panel indicator applet
  Currently this includes support for messaging applications in the
  indicator-messages package.
 
-Package: libindicate1
+Package: libindicate2
 Section: libs
 Conflicts: libindicate
 Replaces: libindicate
@@ -48,6 +48,31 @@ Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
          libindicate1 (= ${binary:Version}),
+         libdbus-glib-1-dev (>= 0.76)
+Description: GNOME panel indicator applet - shared library
+ indicator-applet is an applet to display information from
+ various applications consistently in the GNOME panel. 
+ .
+ This package contains files that are needed to build applications.
+
+Package: libindicate-gtk0
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends},
+         ${misc:Depends}
+Description: GNOME panel indicator applet - shared library
+ indicator-applet is an applet to display information from
+ various applications consistently in the GNOME panel. 
+ .
+ This package contains shared libraries to be used by applications.
+
+Package: libindicate-gtk-dev
+Section: libdevel
+Architecture: any
+Depends: ${shlibs:Depends},
+         ${misc:Depends},
+         libindicate-gtk (= ${binary:Version}),
+         libindicate-dev,
          libdbus-glib-1-dev (>= 0.76),
          libgtk2.0-dev (>= 2.12.0)
 Description: GNOME panel indicator applet - shared library
