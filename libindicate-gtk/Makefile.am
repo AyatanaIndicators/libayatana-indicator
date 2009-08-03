@@ -14,10 +14,10 @@ indicate_gtk_headers = \
 	indicator.h
 
 libindicate_gtkinclude_HEADERS = \
-	$(indicate_headers)
+	$(indicate_gtk_headers)
 
 libindicate_gtk_la_SOURCES = \
-	$(indicate_headers) \
+	$(indicate_gtk_headers) \
 	indicator.c
 
 libindicate_gtk_la_LDFLAGS = \

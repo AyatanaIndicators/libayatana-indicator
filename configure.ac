@@ -64,6 +64,7 @@ AC_SUBST(LIBINDICATE_LIBS)
 PKG_CHECK_MODULES(LIBINDICATEGTK, glib-2.0 >= $GLIB_REQUIRED_VERSION
                                   gio-2.0 >= $GIO_REQUIRED_VERSION
                                   gdk-pixbuf-2.0 >= $GDK_PIXBUF_REQUIRED_VERSION
+                                  gtk+-2.0 >= $GTK_REQUIRED_VERSION
                                   dbus-glib-1 >= $DBUS_REQUIRED_VERSION
                                   libxml-2.0 >= $XML_REQUIRED_VERSION)
 AC_SUBST(LIBINDICATEGTK_CFLAGS)
