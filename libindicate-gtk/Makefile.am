@@ -28,6 +28,7 @@ libindicate_gtk_la_LDFLAGS = \
 	-export-symbols-regex "^[^_d].*"
 
 libindicate_gtk_la_CFLAGS = \
+	-I $(srcdir)/.. \
 	$(LIBINDICATEGTK_CFLAGS)
 
 libindicate_gtk_la_LIBADD = \
