@@ -32,6 +32,18 @@ AC_SUBST(LIBINDICATE_REVISION)
 AC_SUBST(LIBINDICATE_AGE)
 
 ###########################
+# Libindicate versioning 
+###########################
+
+LIBINDICATEGTK_CURRENT=0
+LIBINDICATEGTK_REVISION=0
+LIBINDICATEGTK_AGE=0
+
+AC_SUBST(LIBINDICATEGTK_CURRENT)
+AC_SUBST(LIBINDICATEGTK_REVISION)
+AC_SUBST(LIBINDICATEGTK_AGE)
+
+###########################
 # Dependencies 
 ###########################
 

@@ -23,7 +23,7 @@ libindicate_gtk_la_SOURCES = \
 	listener.c
 
 libindicate_gtk_la_LDFLAGS = \
-	-version-info $(LIBINDICATE_CURRENT):$(LIBINDICATE_REVISION):$(LIBINDICATE_AGE) \
+	-version-info $(LIBINDICATEGTK_CURRENT):$(LIBINDICATEGTK_REVISION):$(LIBINDICATEGTK_AGE) \
 	-no-undefined \
 	-export-symbols-regex "^[^_d].*"
 
