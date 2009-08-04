@@ -1,24 +1,6 @@
-indicator-applet (0.2.0~bzr319-0ubuntu1~ppa4) karmic; urgency=low
+indicator-applet (0.2.0~bzr319-0ubuntu1) karmic; urgency=low
 
-  * Upstream fix to PC file.
-
- -- Ted Gould <ted@ubuntu.com>  Tue, 04 Aug 2009 12:29:39 +0100
-
-indicator-applet (0.2.0~bzr319-0ubuntu1~ppa3) karmic; urgency=low
-
-  * debian/control: Fixing the library reference of
-    libindicate-gtk-dev
-
- -- Ted Gould <ted@ubuntu.com>  Tue, 04 Aug 2009 10:53:48 +0100
-
-indicator-applet (0.2.0~bzr319-0ubuntu1~ppa2) karmic; urgency=low
-
-  * Forgot to autogen.sh
-
- -- Ted Gould <ted@ubuntu.com>  Tue, 04 Aug 2009 10:51:47 +0100
-
-indicator-applet (0.2.0~bzr319-0ubuntu1~ppa1) karmic; urgency=low
-
+  [ Ted Gould ]
   * Merging in upstream code to split out libindicate-gtk
   * debian/control:
     * Changing the version number of libindcate to 2 to match
@@ -31,7 +13,7 @@ indicator-applet (0.2.0~bzr319-0ubuntu1~ppa1) karmic; urgency=low
   * Modified libindicate-dev to be more specific about the header
     files that it grabs.
 
- -- Ted Gould <ted@ubuntu.com>  Tue, 04 Aug 2009 10:27:31 +0100
+ -- Jonathan Riddell <jriddell@ubuntu.com>  Wed, 05 Aug 2009 00:22:54 +0100
 
 indicator-applet (0.2.0~bzr309-0ubuntu3) karmic; urgency=low
 
