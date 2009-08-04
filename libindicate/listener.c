@@ -27,6 +27,9 @@ License version 3 and version 2.1 along with this program.  If not, see
 <http://www.gnu.org/licenses/>
 */
 
+#include <libxml/parser.h>
+#include <libxml/tree.h>
+
 #include "listener.h"
 #include "listener-marshal.h"
 #include <dbus/dbus-glib-bindings.h>
@@ -51,35 +54,7 @@ enum {
 
 static guint signals[LAST_SIGNAL] = { 0 };
 
-struct _IndicateListenerServer {
-	gchar * name;
-	DBusGProxy * proxy;
-	DBusGConnection * connection;
-	gboolean interests[INDICATE_INTEREST_LAST];
-};
-
-struct _IndicateListenerIndicator {
-	guint id;
-};
-
-typedef struct _IndicateListenerPrivate IndicateListenerPrivate;
-struct _IndicateListenerPrivate
-{
-	DBusGConnection * session_bus;
-	DBusGConnection * system_bus;
-
-	DBusGProxy * dbus_proxy_session;
-	DBusGProxy * dbus_proxy_system;
-
-	GList * proxies_working;
-	GList * proxies_possible;
-
-	GArray * proxy_todo;
-	guint todo_idle;
-};
-
-#define INDICATE_LISTENER_GET_PRIVATE(o) \
-		(G_TYPE_INSTANCE_GET_PRIVATE ((o), INDICATE_TYPE_LISTENER, IndicateListenerPrivate))
+#include "listener-private.h"
 
 typedef struct {
 	DBusGProxy * proxy;
@@ -89,6 +64,7 @@ typedef struct {
 	gchar * type;
 	IndicateListener * listener;
 	GHashTable * indicators;
+	guint introspect_level;
 
 	IndicateListenerServer server;
 } proxy_t;
@@ -129,6 +105,7 @@ static void proxy_indicator_modified (DBusGProxy * proxy, guint id, const gchar 
 static void proxy_get_indicator_list (DBusGProxy * proxy, GArray * indicators, GError * error, gpointer data);
 static void proxy_get_indicator_type (DBusGProxy * proxy, gchar * type, GError * error, gpointer data);
 static void proxy_indicators_free (gpointer data);
+static void introspect_this (DBusGProxy * proxy, char * OUT_data, GError * error, gpointer data);
 
 /* DBus interface */
 gboolean _indicate_listener_get_indicator_servers (IndicateListener * listener, GList * servers);
@@ -154,35 +131,35 @@ indicate_listener_class_init (IndicateListenerClass * class)
 	                                        G_STRUCT_OFFSET (IndicateListenerClass, indicator_added),
 	                                        NULL, NULL,
 	                                        _indicate_listener_marshal_VOID__POINTER_POINTER_STRING,
-	                                        G_TYPE_NONE, 3, G_TYPE_POINTER, G_TYPE_POINTER, G_TYPE_STRING);
+	                                        G_TYPE_NONE, 3, INDICATE_TYPE_LISTENER_SERVER, INDICATE_TYPE_LISTENER_INDICATOR, G_TYPE_STRING);
 	signals[INDICATOR_REMOVED] = g_signal_new(INDICATE_LISTENER_SIGNAL_INDICATOR_REMOVED,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateListenerClass, indicator_removed),
 	                                        NULL, NULL,
 	                                        _indicate_listener_marshal_VOID__POINTER_POINTER_STRING,
-	                                        G_TYPE_NONE, 3, G_TYPE_POINTER, G_TYPE_POINTER, G_TYPE_STRING);
+	                                        G_TYPE_NONE, 3, INDICATE_TYPE_LISTENER_SERVER, INDICATE_TYPE_LISTENER_INDICATOR, G_TYPE_STRING);
 	signals[INDICATOR_MODIFIED] = g_signal_new(INDICATE_LISTENER_SIGNAL_INDICATOR_MODIFIED,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateListenerClass, indicator_modified),
 	                                        NULL, NULL,
 	                                        _indicate_listener_marshal_VOID__POINTER_POINTER_STRING_STRING,
-	                                        G_TYPE_NONE, 4, G_TYPE_POINTER, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING);
+	                                        G_TYPE_NONE, 4, INDICATE_TYPE_LISTENER_SERVER, INDICATE_TYPE_LISTENER_INDICATOR, G_TYPE_STRING, G_TYPE_STRING);
 	signals[SERVER_ADDED] = g_signal_new(INDICATE_LISTENER_SIGNAL_SERVER_ADDED,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateListenerClass, server_added),
 	                                        NULL, NULL,
 	                                        _indicate_listener_marshal_VOID__POINTER_STRING,
-	                                        G_TYPE_NONE, 2, G_TYPE_POINTER, G_TYPE_STRING);
+	                                        G_TYPE_NONE, 2, INDICATE_TYPE_LISTENER_SERVER, G_TYPE_STRING);
 	signals[SERVER_REMOVED] = g_signal_new(INDICATE_LISTENER_SIGNAL_SERVER_REMOVED,
 	                                        G_TYPE_FROM_CLASS (class),
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateListenerClass, server_removed),
 	                                        NULL, NULL,
 	                                        _indicate_listener_marshal_VOID__POINTER_STRING,
-	                                        G_TYPE_NONE, 2, G_TYPE_POINTER, G_TYPE_STRING);
+	                                        G_TYPE_NONE, 2, INDICATE_TYPE_LISTENER_SERVER, G_TYPE_STRING);
 
 	dbus_g_object_register_marshaller(_indicate_listener_marshal_VOID__UINT_STRING,
 	                                  G_TYPE_NONE,
@@ -272,8 +249,19 @@ indicate_listener_init (IndicateListener * listener)
 static void
 indicate_listener_finalize (GObject * obj)
 {
-	/* IndicateListener * listener = INDICATE_LISTENER(obj); */
-
+	IndicateListener * listener = INDICATE_LISTENER(obj);
+	IndicateListenerPrivate * priv = INDICATE_LISTENER_GET_PRIVATE(listener);
+	
+	if (priv->todo_idle != 0) {
+		g_idle_remove_by_data(obj);
+	}
+	/* Hack: proxy_struct_destroy() lacks a user_data parameter, but since the
+	 * caller is responsible for handling params on the stack, it works
+	 */
+	g_list_foreach(priv->proxies_possible, (GFunc)proxy_struct_destroy, NULL);
+	g_list_free(priv->proxies_possible);
+	g_list_foreach(priv->proxies_working, (GFunc)proxy_struct_destroy, NULL);
+	g_list_free(priv->proxies_working);
 	G_OBJECT_CLASS (indicate_listener_parent_class)->finalize (obj);
 	return;
 }
@@ -281,8 +269,6 @@ indicate_listener_finalize (GObject * obj)
 IndicateListener *
 indicate_listener_new (void)
 {
-	g_warning("Creating a new listener is generally discouraged, please use indicate_listener_ref_default");
-
 	IndicateListener * listener;
 	listener = g_object_new(INDICATE_TYPE_LISTENER, NULL);
 	return listener;
@@ -499,13 +485,9 @@ todo_idle (gpointer data)
 
 	priv->proxies_possible = g_list_prepend(priv->proxies_possible, proxyt);
 
-	/* I think that we need to have this as there is a race
-	 * condition here.  If someone comes on the bus and we get
-	 * that message, but before we set up the handler for the ServerShow
-	 * signal it gets sent, we wouldn't get it.  So then we would
-	 * miss an indicator server coming on the bus.  I'd like to not
-	 * generate a warning in every app with DBus though. */
-	indicate_listener_server_get_type(listener, &proxyt->server, get_type_cb, proxyt);
+	/* Look through the introspection data to see if this
+	   is already a server */
+	introspect_this (NULL, NULL, NULL, proxyt);
 
 	return TRUE;
 }
@@ -708,8 +690,7 @@ proxy_indicators_free (gpointer data)
 typedef enum _get_property_type get_property_type;
 enum _get_property_type {
 	PROPERTY_TYPE_STRING,
-	PROPERTY_TYPE_TIME,
-	PROPERTY_TYPE_ICON
+	PROPERTY_TYPE_TIME
 };
 
 typedef struct _get_property_t get_property_t;
@@ -738,44 +719,6 @@ get_property_cb (DBusGProxy *proxy, char * OUT_value, GError *error, gpointer us
 	case PROPERTY_TYPE_STRING: {
 		indicate_listener_get_property_cb cb = (indicate_listener_get_property_cb)get_property_data->cb;
 		cb(get_property_data->listener, get_property_data->server, get_property_data->indicator, get_property_data->property, OUT_value, get_property_data->data);
-		break;
-	}
-	case PROPERTY_TYPE_ICON: {
-		indicate_listener_get_property_icon_cb cb = (indicate_listener_get_property_icon_cb)get_property_data->cb;
-
-		/* There is no icon */
-		if (OUT_value == NULL || OUT_value[0] == '\0') {
-			break;
-		}
-
-		gsize length = 0;
-		guchar * icondata = g_base64_decode(OUT_value, &length);
-		
-		GInputStream * input = g_memory_input_stream_new_from_data(icondata, length, NULL);
-		if (input == NULL) {
-			g_warning("Cound not create input stream from icon property data");
-			g_free(icondata);
-			break;
-		}
-
-		GError * error = NULL;
-		GdkPixbuf * icon = gdk_pixbuf_new_from_stream(input, NULL, &error);
-		if (icon != NULL) {
-			cb(get_property_data->listener, get_property_data->server, get_property_data->indicator, get_property_data->property, icon, get_property_data->data);
-		}
-
-		if (error != NULL) {
-			g_warning("Unable to build Pixbuf from icon data: %s", error->message);
-			g_error_free(error);
-		}
-
-		error = NULL;
-		g_input_stream_close(input, NULL, &error);
-		if (error != NULL) {
-			g_warning("Unable to close input stream: %s", error->message);
-			g_error_free(error);
-		}
-		g_free(icondata);
 		break;
 	}
 	case PROPERTY_TYPE_TIME: {
@@ -822,12 +765,6 @@ void
 indicate_listener_get_property_time (IndicateListener * listener, IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * property, indicate_listener_get_property_time_cb callback, gpointer data)
 {
 	return get_property_helper(listener, server, indicator, property, G_CALLBACK(callback), data, PROPERTY_TYPE_TIME);
-}
-
-void
-indicate_listener_get_property_icon (IndicateListener * listener, IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * property, indicate_listener_get_property_icon_cb callback, gpointer data)
-{
-	return get_property_helper(listener, server, indicator, property, G_CALLBACK(callback), data, PROPERTY_TYPE_ICON);
 }
 
 gboolean
@@ -1002,6 +939,10 @@ interest_cb (DBusGProxy *proxy, GError *error, gpointer userdata)
 void
 indicate_listener_server_show_interest (IndicateListener * listener, IndicateListenerServer * server, IndicateInterests interest)
 {
+	if (!(interest > INDICATE_INTEREST_NONE && interest < INDICATE_INTEREST_LAST)) {
+		return;
+	}
+
 	if (!server->interests[interest]) {
 		org_freedesktop_indicator_show_interest_async (server->proxy, interest_to_string(interest), interest_cb, server);
 		server->interests[interest] = TRUE;
@@ -1025,3 +966,119 @@ indicate_listener_server_check_interest (IndicateListener * listener, IndicateLi
 	return server->interests[interest];
 }
 
+GType
+indicate_listener_server_get_gtype (void)
+{
+  static GType our_type = 0;
+  
+  if (our_type == 0)
+    our_type = g_pointer_type_register_static ("IndicateListenerServer");
+
+  return our_type;
+}
+
+GType
+indicate_listener_indicator_get_gtype (void)
+{
+  static GType our_type = 0;
+  
+  if (our_type == 0)
+    our_type = g_pointer_type_register_static ("IndicateListenerIndicator");
+
+  return our_type;
+}
+
+static const gchar * _introspector_path[] = {"", "org", "freedesktop", "indicate", NULL};
+static const gchar * _introspector_fullpath[] = {"/", "/org", "/org/freedesktop", "/org/freedesktop/indicate", NULL};
+static const gchar * _introspector_interface = "org.freedesktop.indicator";
+
+static void
+introspect_this (DBusGProxy * proxy, char * OUT_data, GError * error, gpointer data)
+{
+	/* g_debug("Introspect this:\n%s", OUT_data); */
+	proxy_t * server = (proxy_t *)data;
+	if (proxy != NULL) {
+		g_object_unref(proxy);
+	}
+	if (error != NULL) {
+		/* We probably couldn't introspect that far up.  That's
+		   life, it happens. Or there's a timeout, that happens
+		   too, I guess some apps are too busy for us. */
+		/* g_debug("Introspection error on %s object %s: %s", server->name, _introspector_fullpath[server->introspect_level], error->message); */
+		return;
+	}
+
+	if (OUT_data != NULL) {
+		xmlDocPtr xmldoc;
+		/* Parse the XML */
+		xmldoc = xmlReadMemory(OUT_data, g_utf8_strlen(OUT_data, 16*1024), "introspection.xml", NULL, 0);
+
+		/* Check for root being "node" */
+		xmlNodePtr root = xmlDocGetRootElement(xmldoc);
+		if (g_strcmp0(root->name, "node") != 0) {
+			xmlFreeDoc(xmldoc);
+			g_warning("Introspection data from %s is not valid: %s", server->name, OUT_data);
+			return;
+		}
+
+		server->introspect_level += 1;
+		const gchar * nodename = NULL;
+		const gchar * nameval = NULL;
+		if (_introspector_path[server->introspect_level] == NULL) {
+			/* We're looking for our interface */
+			nodename = "interface";
+			nameval = _introspector_interface;
+		} else {
+			/* We're looking for our next node */
+			nodename = "node";
+			nameval = _introspector_path[server->introspect_level];
+		}
+
+		gboolean found = FALSE;
+		xmlNodePtr children;
+		for (children = root->children; children != NULL; children = children->next) {
+			gchar * xmlnameval = NULL;
+			if (g_strcmp0(children->name, nodename) == 0) {
+				xmlAttrPtr attrib;
+				for (attrib = children->properties; attrib != NULL; attrib = attrib->next) {
+					if (g_strcmp0(attrib->name, "name") == 0) {
+						if (attrib->children != NULL) {
+							xmlnameval = attrib->children->content;
+						}
+						break;
+					}
+				}
+
+				if (!g_strcmp0(nameval, xmlnameval)) {
+					found = TRUE;
+					break;
+				}
+			}
+		}
+
+		xmlFreeDoc(xmldoc);
+
+		if (!found) {
+			/* Ah, nothing we're interested in */
+			return;
+		}
+
+		if (_introspector_path[server->introspect_level] == NULL) {
+			/* If we've found the interface at the end of the tree, whoo! hoo! */
+			/* Now we know it's safe to get the type on it */
+			indicate_listener_server_get_type(server->listener, &server->server, get_type_cb, server);
+			return;
+		}
+	} else {
+		server->introspect_level = 0;
+	}
+
+	DBusGProxy * newproxy = dbus_g_proxy_new_for_name(server->connection,
+	                                                  server->name,
+	                                                  _introspector_fullpath[server->introspect_level],
+	                                                  DBUS_INTERFACE_INTROSPECTABLE);
+
+	org_freedesktop_DBus_Introspectable_introspect_async(newproxy, introspect_this, server);
+
+	return;
+}

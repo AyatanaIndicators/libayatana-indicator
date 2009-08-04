@@ -4,9 +4,10 @@ AC_INIT(src/applet-main.c)
 AC_PREREQ(2.53)
 
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(indicator-applet, 0.1.6)
+AM_INIT_AUTOMAKE(indicator-applet, 0.2.0dev)
 
 AM_MAINTAINER_MODE
+m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES])
 
 IT_PROG_INTLTOOL([0.35.0])
 AC_ISC_POSIX
@@ -22,13 +23,25 @@ AC_CONFIG_MACRO_DIR([m4])
 # Libindicate versioning 
 ###########################
 
-LIBINDICATE_CURRENT=1
+LIBINDICATE_CURRENT=2
 LIBINDICATE_REVISION=0
 LIBINDICATE_AGE=0
 
 AC_SUBST(LIBINDICATE_CURRENT)
 AC_SUBST(LIBINDICATE_REVISION)
 AC_SUBST(LIBINDICATE_AGE)
+
+###########################
+# Libindicate versioning 
+###########################
+
+LIBINDICATEGTK_CURRENT=0
+LIBINDICATEGTK_REVISION=0
+LIBINDICATEGTK_AGE=0
+
+AC_SUBST(LIBINDICATEGTK_CURRENT)
+AC_SUBST(LIBINDICATEGTK_REVISION)
+AC_SUBST(LIBINDICATEGTK_AGE)
 
 ###########################
 # Dependencies 
@@ -49,14 +62,24 @@ AM_GCONF_SOURCE_2
 
 GLIB_REQUIRED_VERSION=2.18
 GIO_REQUIRED_VERSION=2.18
-GDK_PIXBUF_REQUIRED_VERSION=2.12
+XML_REQUIRED_VERSION=2.6
 
 PKG_CHECK_MODULES(LIBINDICATE, glib-2.0 >= $GLIB_REQUIRED_VERSION
                                gio-2.0 >= $GIO_REQUIRED_VERSION
-                               gdk-pixbuf-2.0 >= $GDK_PIXBUF_REQUIRED_VERSION
-                               dbus-glib-1 >= $DBUS_REQUIRED_VERSION)
+                               dbus-glib-1 >= $DBUS_REQUIRED_VERSION
+                               libxml-2.0 >= $XML_REQUIRED_VERSION)
 AC_SUBST(LIBINDICATE_CFLAGS)
 AC_SUBST(LIBINDICATE_LIBS)
+
+GDK_PIXBUF_REQUIRED_VERSION=2.12
+
+PKG_CHECK_MODULES(LIBINDICATEGTK, glib-2.0 >= $GLIB_REQUIRED_VERSION
+                                  gio-2.0 >= $GIO_REQUIRED_VERSION
+                                  gdk-pixbuf-2.0 >= $GDK_PIXBUF_REQUIRED_VERSION
+                                  gtk+-2.0 >= $GTK_REQUIRED_VERSION
+                                  dbus-glib-1 >= $DBUS_REQUIRED_VERSION)
+AC_SUBST(LIBINDICATEGTK_CFLAGS)
+AC_SUBST(LIBINDICATEGTK_LIBS)
 
 ###########################
 # GObject Introspection
@@ -159,6 +182,11 @@ Makefile
 src/Makefile
 libindicate/Makefile
 libindicate/indicate.pc
+libindicate-gtk/Makefile
+libindicate-gtk/indicate-gtk.pc
+libindicator/Makefile
+libindicator/indicator.pc
+examples/Makefile
 tests/Makefile
 data/Makefile
 po/Makefile.in

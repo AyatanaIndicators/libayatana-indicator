@@ -27,24 +27,18 @@ License version 3 and version 2.1 along with this program.  If not, see
 <http://www.gnu.org/licenses/>
 */
 
-#ifndef INDICATE_INTERESTS_H_INCLUDED__
-#define INDICATE_INTERESTS_H_INCLUDED__ 1
+#ifndef INDICATE_GTK_INDICATOR_H_INCLUDED__
+#define INDICATE_GTK_INDICATOR_H_INCLUDED__ 1
 
 #include <glib.h>
+#include <gdk-pixbuf/gdk-pixbuf.h>
+#include "libindicate/indicator.h"
 
 G_BEGIN_DECLS
 
-typedef enum {
-	INDICATE_INTEREST_NONE,              /**< We're of no interest */
-	INDICATE_INTEREST_SERVER_DISPLAY,    /**< Displays the server's existance to the user */
-	INDICATE_INTEREST_SERVER_SIGNAL,     /**< Will send signals to the server to be displayed */
-	INDICATE_INTEREST_INDICATOR_DISPLAY, /**< Displays indicators to the user */
-	INDICATE_INTEREST_INDICATOR_SIGNAL,  /**< Will return signals based on individual indicators being responded to */
-	INDICATE_INTEREST_INDICATOR_COUNT,   /**< Only displays a count of the indicators */
-	INDICATE_INTEREST_LAST               /**< Makes merges and counting easier */
-} IndicateInterests;
+/* Properties handling */
+void indicate_indicator_set_property_icon (IndicateIndicator * indicator, const gchar * key, const GdkPixbuf * data);
 
 G_END_DECLS
 
-#endif /* INDICATE_INTERESTS_H_INCLUDED__ */
-
+#endif /* INDICATE_GTK_INDICATOR_H_INCLUDED__ */

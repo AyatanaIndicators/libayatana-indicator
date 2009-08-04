@@ -24,7 +24,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <panel-applet.h>
 #include <libgnomeui/gnome-ui-init.h>
 
-#define SYMBOL_NAME  "get_menu_item"
+#include "libindicator/indicator.h"
+
 #define ICONS_DIR  (DATADIR G_DIR_SEPARATOR_S "indicator-applet" G_DIR_SEPARATOR_S "icons")
 
 static gboolean     applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data);
@@ -61,16 +62,10 @@ load_module (const gchar * name, GtkWidget * menu)
 	g_debug("Looking at Module: %s", name);
 	g_return_val_if_fail(name != NULL, FALSE);
 
-	guint suffix_len = strlen(G_MODULE_SUFFIX);
-	guint name_len = strlen(name);
-
-	g_return_val_if_fail(name_len > suffix_len, FALSE);
-
-	int i;
-	for (i = 0; i < suffix_len; i++) {
-		if (name[(name_len - suffix_len) + i] != (G_MODULE_SUFFIX)[i])
-			return FALSE;
+	if (!g_str_has_suffix(name, G_MODULE_SUFFIX)) {
+		return FALSE;
 	}
+
 	g_debug("Loading Module: %s", name);
 
 	gchar * fullpath = g_build_filename(INDICATOR_DIR, name, NULL);
@@ -79,14 +74,52 @@ load_module (const gchar * name, GtkWidget * menu)
 	g_free(fullpath);
 	g_return_val_if_fail(module != NULL, FALSE);
 
-	GtkWidget * (*make_item)(void);
-	g_return_val_if_fail(g_module_symbol(module, SYMBOL_NAME, (gpointer *)(&make_item)), FALSE);
-	g_return_val_if_fail(make_item != NULL, FALSE);
+	get_version_t lget_version = NULL;
+	g_return_val_if_fail(g_module_symbol(module, INDICATOR_GET_VERSION_S, (gpointer *)(&lget_version)), FALSE);
+	if (!INDICATOR_VERSION_CHECK(lget_version())) {
+		g_warning("Indicator using API version '%s' we're expecting '%s'", lget_version(), INDICATOR_VERSION);
+		return FALSE;
+	}
 
-	GtkWidget * menuitem = make_item();
-	g_return_val_if_fail(GTK_MENU_ITEM(menuitem), FALSE);
+	get_label_t lget_label = NULL;
+	g_return_val_if_fail(g_module_symbol(module, INDICATOR_GET_LABEL_S, (gpointer *)(&lget_label)), FALSE);
+	g_return_val_if_fail(lget_label != NULL, FALSE);
+	GtkLabel * label = lget_label();
+
+	get_icon_t lget_icon = NULL;
+	g_return_val_if_fail(g_module_symbol(module, INDICATOR_GET_ICON_S, (gpointer *)(&lget_icon)), FALSE);
+	g_return_val_if_fail(lget_icon != NULL, FALSE);
+	GtkImage * icon = lget_icon();
+
+	get_menu_t lget_menu = NULL;
+	g_return_val_if_fail(g_module_symbol(module, INDICATOR_GET_MENU_S, (gpointer *)(&lget_menu)), FALSE);
+	g_return_val_if_fail(lget_menu != NULL, FALSE);
+	GtkMenu * lmenu = lget_menu();
+
+	if (label == NULL && icon == NULL) {
+		/* This is the case where there is nothing to display,
+		   kinda odd that we'd have a module with nothing. */
+		g_warning("No label or icon.  Odd.");
+		return FALSE;
+	}
+
+	GtkWidget * menuitem = gtk_menu_item_new();
+	GtkWidget * hbox = gtk_hbox_new(FALSE, 3);
+	if (icon != NULL) {
+		gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(icon), FALSE, FALSE, 0);
+	}
+	if (label != NULL) {
+		gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(label), FALSE, FALSE, 0);
+	}
+	gtk_container_add(GTK_CONTAINER(menuitem), hbox);
+	gtk_widget_show(hbox);
+
+	if (lmenu != NULL) {
+		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), GTK_WIDGET(lmenu));
+	}
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+	gtk_widget_show(menuitem);
 
 	return TRUE;
 }
@@ -258,6 +291,7 @@ applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 			if (load_module(name, menubar))
 				indicators_loaded++;
 		}
+		g_dir_close (dir);
 	}
 
 	if (indicators_loaded == 0) {

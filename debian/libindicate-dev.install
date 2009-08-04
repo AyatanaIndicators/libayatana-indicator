@@ -1,4 +1,4 @@
-debian/tmp/usr/include/
-debian/tmp/usr/lib/pkgconfig
+debian/tmp/usr/include/libindicate-0.1/libindicate/*
+debian/tmp/usr/lib/pkgconfig/indicate.pc
 debian/tmp/usr/lib/libindicate.a
 debian/tmp/usr/lib/libindicate.so

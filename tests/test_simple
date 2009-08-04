@@ -1,0 +1,5 @@
+#!/bin/sh
+
+DBUS_RUNNER="dbus-test-runner --dbus-config /usr/share/dbus-test-runner/session.conf"
+
+${DBUS_RUNNER} --task ./test-simple-client --task-name Client --task ./test-simple-server --task-name Server

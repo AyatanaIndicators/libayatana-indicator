@@ -5,10 +5,10 @@ bindir=@bindir@
 includedir=@includedir@
 
 Cflags: -I${includedir}/libindicate-0.1
-Requires: gobject-2.0 glib-2.0 dbus-glib-1
-Libs: -L${libdir} -lindicate
+Requires: gtk+-2.0 indicate
+Libs: -L${libdir} -lindicate-gtk
 
-Name: libindicate
-Description: libindicate.
+Name: libindicate-gtk
+Description: libindicate GTK stuff.
 Version: @VERSION@
 

@@ -27,24 +27,37 @@ License version 3 and version 2.1 along with this program.  If not, see
 <http://www.gnu.org/licenses/>
 */
 
-#ifndef INDICATE_INTERESTS_H_INCLUDED__
-#define INDICATE_INTERESTS_H_INCLUDED__ 1
+#ifndef INDICATE_LISTENER_PRIVATE_H__ 
+#define INDICATE_LISTENER_PRIVATE_H__ 1
 
-#include <glib.h>
+struct _IndicateListenerServer {
+	gchar * name;
+	DBusGProxy * proxy;
+	DBusGConnection * connection;
+	gboolean interests[INDICATE_INTEREST_LAST];
+};
 
-G_BEGIN_DECLS
+struct _IndicateListenerIndicator {
+	guint id;
+};
 
-typedef enum {
-	INDICATE_INTEREST_NONE,              /**< We're of no interest */
-	INDICATE_INTEREST_SERVER_DISPLAY,    /**< Displays the server's existance to the user */
-	INDICATE_INTEREST_SERVER_SIGNAL,     /**< Will send signals to the server to be displayed */
-	INDICATE_INTEREST_INDICATOR_DISPLAY, /**< Displays indicators to the user */
-	INDICATE_INTEREST_INDICATOR_SIGNAL,  /**< Will return signals based on individual indicators being responded to */
-	INDICATE_INTEREST_INDICATOR_COUNT,   /**< Only displays a count of the indicators */
-	INDICATE_INTEREST_LAST               /**< Makes merges and counting easier */
-} IndicateInterests;
+typedef struct _IndicateListenerPrivate IndicateListenerPrivate;
+struct _IndicateListenerPrivate
+{
+	DBusGConnection * session_bus;
+	DBusGConnection * system_bus;
 
-G_END_DECLS
+	DBusGProxy * dbus_proxy_session;
+	DBusGProxy * dbus_proxy_system;
 
-#endif /* INDICATE_INTERESTS_H_INCLUDED__ */
+	GList * proxies_working;
+	GList * proxies_possible;
 
+	GArray * proxy_todo;
+	guint todo_idle;
+};
+
+#define INDICATE_LISTENER_GET_PRIVATE(o) \
+		(G_TYPE_INSTANCE_GET_PRIVATE ((o), INDICATE_TYPE_LISTENER, IndicateListenerPrivate))
+
+#endif /* INDICATE_LISTENER_PRIVATE_H__ */

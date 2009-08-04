@@ -85,6 +85,13 @@ indicate_indicator_message_finalize (GObject *object)
 G_OBJECT_CLASS (indicate_indicator_message_parent_class)->finalize (object);
 }
 
+/**
+	indicate_indicator_message_new:
+
+	Builds a new indicator message object using #g_object_new.
+
+	Return value: A pointer to a new #IndicateIndicatorMessage object.
+*/
 static const gchar *
 get_indicator_type (IndicateIndicator * indicator)
 {

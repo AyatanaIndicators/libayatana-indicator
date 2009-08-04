@@ -1,24 +1,32 @@
 <?xml version="1.0"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
                "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
-<book id="index" xmlns:xi="http://www.w3.org/2003/XInclude">
+<book id="libindicatebook" xmlns:xi="http://www.w3.org/2003/XInclude">
+
   <bookinfo>
     <title>libindicate Reference Manual</title>
-    <releaseinfo>
-      for libindicate [VERSION]
-      The latest version of this documentation can be found on-line at
-      <ulink role="online-location" url="http://[SERVER]/libindicate/index.html">http://[SERVER]/libindicate/</ulink>.
-    </releaseinfo>
   </bookinfo>
 
-  <chapter>
-    <title>[Insert title here]</title>
-  </chapter>
+<part id="base">
+	<title>Base Classes for Applications</title>
+	<xi:include href="xml/indicator.xml" />
+	<xi:include href="xml/server.xml" />
+</part>
 
-	<chapter>
-		<title>libindicate Indicator</title>
-		<xi:include href="xml/indicator.xml" />
-	</chapter>
+<part id="subclass">
+	<title>Subclasses for specific indicators</title>
+	<xi:include href="xml/indicator-message.xml" />
+</part>
 
+<part id="listeners">
+	<title>Classes for Listeners</title>
+	<xi:include href="xml/listener.xml" />
+</part>
+
+<part id="index">
+	<index>
+		<title>Index of all Symbols</title>
+	</index>
+</part>
 
 </book>
