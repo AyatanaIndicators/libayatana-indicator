@@ -53,6 +53,7 @@ libindicate_la_SOURCES = \
 	listener.c \
 	listener-marshal.c \
 	listener-marshal.h \
+	listener-private.h \
 	indicator.c \
 	indicator-message.c \
 	interests-priv.h
