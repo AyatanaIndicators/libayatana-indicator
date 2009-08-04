@@ -1,8 +1,8 @@
-indicator-applet (0.2.0~bzr319-0ubuntu1~ppa4) UNRELEASED; urgency=low
+indicator-applet (0.2.0~bzr319-0ubuntu1~ppa4) karmic; urgency=low
 
   * Upstream fix to PC file.
 
- -- Ted Gould <ted@ubuntu.com>  Tue, 04 Aug 2009 12:25:47 +0100
+ -- Ted Gould <ted@ubuntu.com>  Tue, 04 Aug 2009 12:29:39 +0100
 
 indicator-applet (0.2.0~bzr319-0ubuntu1~ppa3) karmic; urgency=low
 

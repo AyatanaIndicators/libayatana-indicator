@@ -1,3 +1,383 @@
+<!-- ##### MACRO INDICATE_INDICATOR ##### -->
+<para>
+
+</para>
+
+@object: 
+
+<!-- ##### MACRO INDICATE_INDICATOR_CLASS ##### -->
+<para>
+
+</para>
+
+@klass: 
+
+<!-- ##### MACRO INDICATE_INDICATOR_GET_CLASS ##### -->
+<para>
+
+</para>
+
+@object: 
+
+<!-- ##### MACRO INDICATE_INDICATOR_MESSAGE ##### -->
+<para>
+
+</para>
+
+@obj: 
+
+<!-- ##### MACRO INDICATE_INDICATOR_MESSAGE_CLASS ##### -->
+<para>
+
+</para>
+
+@klass: 
+
+<!-- ##### MACRO INDICATE_INDICATOR_MESSAGE_GET_CLASS ##### -->
+<para>
+
+</para>
+
+@obj: 
+
+<!-- ##### MACRO INDICATE_INDICATOR_SIGNAL_DISPLAY ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO INDICATE_INDICATOR_SIGNAL_HIDE ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO INDICATE_INDICATOR_SIGNAL_MODIFIED ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO INDICATE_INDICATOR_SIGNAL_SHOW ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO INDICATE_IS_INDICATOR ##### -->
+<para>
+
+</para>
+
+@object: 
+
+<!-- ##### MACRO INDICATE_IS_INDICATOR_CLASS ##### -->
+<para>
+
+</para>
+
+@klass: 
+
+<!-- ##### MACRO INDICATE_IS_INDICATOR_MESSAGE ##### -->
+<para>
+
+</para>
+
+@obj: 
+
+<!-- ##### MACRO INDICATE_IS_INDICATOR_MESSAGE_CLASS ##### -->
+<para>
+
+</para>
+
+@klass: 
+
+<!-- ##### MACRO INDICATE_IS_LISTENER ##### -->
+<para>
+
+</para>
+
+@object: 
+
+<!-- ##### MACRO INDICATE_IS_LISTENER_CLASS ##### -->
+<para>
+
+</para>
+
+@klass: 
+
+<!-- ##### MACRO INDICATE_IS_SERVER ##### -->
+<para>
+
+</para>
+
+@object: 
+
+<!-- ##### MACRO INDICATE_IS_SERVER_CLASS ##### -->
+<para>
+
+</para>
+
+@klass: 
+
+<!-- ##### MACRO INDICATE_LISTENER ##### -->
+<para>
+
+</para>
+
+@object: 
+
+<!-- ##### MACRO INDICATE_LISTENER_CLASS ##### -->
+<para>
+
+</para>
+
+@klass: 
+
+<!-- ##### MACRO INDICATE_LISTENER_GET_CLASS ##### -->
+<para>
+
+</para>
+
+@object: 
+
+<!-- ##### MACRO INDICATE_LISTENER_INDICATOR_ID ##### -->
+<para>
+
+</para>
+
+@indicator: 
+
+<!-- ##### MACRO INDICATE_LISTENER_SERVER_DBUS_NAME ##### -->
+<para>
+
+</para>
+
+@server: 
+
+<!-- ##### MACRO INDICATE_LISTENER_SIGNAL_INDICATOR_ADDED ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO INDICATE_LISTENER_SIGNAL_INDICATOR_MODIFIED ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO INDICATE_LISTENER_SIGNAL_INDICATOR_REMOVED ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO INDICATE_LISTENER_SIGNAL_SERVER_ADDED ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO INDICATE_LISTENER_SIGNAL_SERVER_REMOVED ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO INDICATE_SERVER ##### -->
+<para>
+
+</para>
+
+@object: 
+
+<!-- ##### MACRO INDICATE_SERVER_CLASS ##### -->
+<para>
+
+</para>
+
+@klass: 
+
+<!-- ##### MACRO INDICATE_SERVER_GET_CLASS ##### -->
+<para>
+
+</para>
+
+@object: 
+
+<!-- ##### MACRO INDICATE_TYPE_INDICATOR ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO INDICATE_TYPE_INDICATOR_MESSAGE ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO INDICATE_TYPE_LISTENER ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO INDICATE_TYPE_SERVER ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION dbus_g_proxy_begin_call ##### -->
+<para>
+
+</para>
+
+@Param1: 
+@Returns: 
+
+<!-- ##### MACRO g_marshal_value_peek_boolean ##### -->
+<para>
+
+</para>
+
+@v: 
+
+<!-- ##### MACRO g_marshal_value_peek_boxed ##### -->
+<para>
+
+</para>
+
+@v: 
+
+<!-- ##### MACRO g_marshal_value_peek_char ##### -->
+<para>
+
+</para>
+
+@v: 
+
+<!-- ##### MACRO g_marshal_value_peek_double ##### -->
+<para>
+
+</para>
+
+@v: 
+
+<!-- ##### MACRO g_marshal_value_peek_enum ##### -->
+<para>
+
+</para>
+
+@v: 
+
+<!-- ##### MACRO g_marshal_value_peek_flags ##### -->
+<para>
+
+</para>
+
+@v: 
+
+<!-- ##### MACRO g_marshal_value_peek_float ##### -->
+<para>
+
+</para>
+
+@v: 
+
+<!-- ##### MACRO g_marshal_value_peek_int ##### -->
+<para>
+
+</para>
+
+@v: 
+
+<!-- ##### MACRO g_marshal_value_peek_int64 ##### -->
+<para>
+
+</para>
+
+@v: 
+
+<!-- ##### MACRO g_marshal_value_peek_long ##### -->
+<para>
+
+</para>
+
+@v: 
+
+<!-- ##### MACRO g_marshal_value_peek_object ##### -->
+<para>
+
+</para>
+
+@v: 
+
+<!-- ##### MACRO g_marshal_value_peek_param ##### -->
+<para>
+
+</para>
+
+@v: 
+
+<!-- ##### MACRO g_marshal_value_peek_pointer ##### -->
+<para>
+
+</para>
+
+@v: 
+
+<!-- ##### MACRO g_marshal_value_peek_string ##### -->
+<para>
+
+</para>
+
+@v: 
+
+<!-- ##### MACRO g_marshal_value_peek_uchar ##### -->
+<para>
+
+</para>
+
+@v: 
+
+<!-- ##### MACRO g_marshal_value_peek_uint ##### -->
+<para>
+
+</para>
+
+@v: 
+
+<!-- ##### MACRO g_marshal_value_peek_uint64 ##### -->
+<para>
+
+</para>
+
+@v: 
+
+<!-- ##### MACRO g_marshal_value_peek_ulong ##### -->
+<para>
+
+</para>
+
+@v: 
+
+<!-- ##### FUNCTION indicate_indicator_get_type ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+<!-- ##### FUNCTION indicate_indicator_message_get_type ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
 <!-- ##### FUNCTION indicate_indicator_set_property_icon ##### -->
 <para>
 
@@ -6,6 +386,20 @@
 @indicator: 
 @key: 
 @data: 
+
+<!-- ##### FUNCTION indicate_listener_get_type ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+<!-- ##### FUNCTION indicate_server_get_type ##### -->
+<para>
+
+</para>
+
+@Returns: 
 
 <!-- ##### FUNCTION indicate_server_new ##### -->
 <para>
@@ -20,4 +414,242 @@
 </para>
 
 @obj: 
+
+<!-- ##### FUNCTION org_freedesktop_indicator_get_indicator_count ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@OUT_indicator_count: 
+@Returns: 
+
+<!-- ##### FUNCTION org_freedesktop_indicator_get_indicator_count_async ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@callback: 
+@Returns: 
+
+<!-- ##### FUNCTION org_freedesktop_indicator_get_indicator_count_by_type ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@IN_type: 
+@OUT_indicator_count: 
+@Returns: 
+
+<!-- ##### FUNCTION org_freedesktop_indicator_get_indicator_count_by_type_async ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@IN_type: 
+@callback: 
+@Returns: 
+
+<!-- ##### USER_FUNCTION org_freedesktop_indicator_get_indicator_count_by_type_reply ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@OUT_indicator_count: 
+@error: 
+@userdata: 
+
+<!-- ##### USER_FUNCTION org_freedesktop_indicator_get_indicator_count_reply ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@OUT_indicator_count: 
+@error: 
+@userdata: 
+
+<!-- ##### FUNCTION org_freedesktop_indicator_get_indicator_list ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@OUT_indicators: 
+@Returns: 
+
+<!-- ##### FUNCTION org_freedesktop_indicator_get_indicator_list_async ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@callback: 
+@Returns: 
+
+<!-- ##### FUNCTION org_freedesktop_indicator_get_indicator_list_by_type ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@IN_type: 
+@OUT_indicators: 
+@Returns: 
+
+<!-- ##### FUNCTION org_freedesktop_indicator_get_indicator_list_by_type_async ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@IN_type: 
+@callback: 
+@Returns: 
+
+<!-- ##### USER_FUNCTION org_freedesktop_indicator_get_indicator_list_by_type_reply ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@OUT_indicators: 
+@error: 
+@userdata: 
+
+<!-- ##### USER_FUNCTION org_freedesktop_indicator_get_indicator_list_reply ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@OUT_indicators: 
+@error: 
+@userdata: 
+
+<!-- ##### FUNCTION org_freedesktop_indicator_get_indicator_properties ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@IN_id: 
+@OUT_properties: 
+@Returns: 
+
+<!-- ##### FUNCTION org_freedesktop_indicator_get_indicator_properties_async ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@IN_id: 
+@callback: 
+@Returns: 
+
+<!-- ##### USER_FUNCTION org_freedesktop_indicator_get_indicator_properties_reply ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@OUT_properties: 
+@error: 
+@userdata: 
+
+<!-- ##### FUNCTION org_freedesktop_indicator_get_indicator_property ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@IN_id: 
+@IN_property: 
+@OUT_value: 
+@Returns: 
+
+<!-- ##### FUNCTION org_freedesktop_indicator_get_indicator_property_async ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@IN_id: 
+@IN_property: 
+@callback: 
+@Returns: 
+
+<!-- ##### FUNCTION org_freedesktop_indicator_get_indicator_property_group ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@IN_id: 
+@IN_properties: 
+@OUT_values: 
+@Returns: 
+
+<!-- ##### FUNCTION org_freedesktop_indicator_get_indicator_property_group_async ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@IN_id: 
+@IN_properties: 
+@callback: 
+@Returns: 
+
+<!-- ##### USER_FUNCTION org_freedesktop_indicator_get_indicator_property_group_reply ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@OUT_values: 
+@error: 
+@userdata: 
+
+<!-- ##### USER_FUNCTION org_freedesktop_indicator_get_indicator_property_reply ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@OUT_value: 
+@error: 
+@userdata: 
+
+<!-- ##### FUNCTION org_freedesktop_indicator_show_indicator_to_user ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@IN_id: 
+@Returns: 
+
+<!-- ##### FUNCTION org_freedesktop_indicator_show_indicator_to_user_async ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@IN_id: 
+@callback: 
+@Returns: 
+
+<!-- ##### USER_FUNCTION org_freedesktop_indicator_show_indicator_to_user_reply ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@error: 
+@userdata: 
 
