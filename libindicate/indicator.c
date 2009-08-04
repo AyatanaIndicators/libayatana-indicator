@@ -204,6 +204,36 @@ indicate_indicator_new (void)
 }
 
 /**
+	indicate_indicator_new_with_server:
+	@server: The server that should be associated with this indicator.
+
+	Builds a new indicator object using g_object_new() and sets
+	the server to the specified server.  Also, adds a reference
+	to the server.
+
+	Return value: A pointer to a new #IndicateIndicator object.
+*/
+IndicateIndicator *
+indicate_indicator_new_with_server (IndicateServer * server)
+{
+	g_return_val_if_fail(server != NULL, NULL);
+
+	IndicateIndicator * indicator = g_object_new(INDICATE_TYPE_INDICATOR, NULL);
+
+	IndicateIndicatorPrivate * priv = INDICATE_INDICATOR_GET_PRIVATE(indicator);
+	if (priv->server != NULL) {
+		g_object_unref(priv->server);
+		priv->server = NULL;
+	}
+
+	priv->server = server;
+	g_object_ref(priv->server);
+
+	return indicator;
+}
+
+
+/**
 	indicate_indicator_show:
 	@indicator: a #IndicateIndicator to act on
 
@@ -348,50 +378,6 @@ indicate_indicator_set_property (IndicateIndicator * indicator, const gchar * ke
 	}
 
 	return class->set_property(indicator, key, data);
-}
-
-/**
-	indicate_indicator_set_property_icon:
-	@indicator: a #IndicateIndicator to act on
-	@key: name of the property
-	@data: icon to set property with
-
-	This is a helper function that wraps around #indicate_indicator_set_property
-	but takes an #GdkPixbuf parameter.  It then takes the @data
-	parameter, turns it into a PNG, base64 encodes it and then
-	uses that data to call #indicate_indicator_set_property.
-*/
-void
-indicate_indicator_set_property_icon (IndicateIndicator * indicator, const gchar * key, const GdkPixbuf * data)
-{
-	if (!GDK_IS_PIXBUF(data)) {
-		g_warning("Invalide GdkPixbuf");
-		return;
-	}
-
-	GError * error = NULL;
-	gchar * png_data;
-	gsize png_data_len;
-
-	if (!gdk_pixbuf_save_to_buffer((GdkPixbuf *)data, &png_data, &png_data_len, "png", &error, NULL)) {
-		if (error == NULL) {
-			g_warning("Unable to create pixbuf data stream: %d", png_data_len);
-		} else {
-			g_warning("Unable to create pixbuf data stream: %s", error->message);
-			g_error_free(error);
-			error = NULL;
-		}
-
-		return;
-	}
-
-	gchar * prop_str = g_base64_encode((guchar *)png_data, png_data_len);
-	indicate_indicator_set_property(indicator, key, prop_str);
-
-	g_free(prop_str);
-	g_free(png_data);
-
-	return;
 }
 
 /**

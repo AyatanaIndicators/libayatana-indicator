@@ -9,6 +9,7 @@ EXTRA_DIST = \
 	indicate-interface.xml \
 	indicate-listener.xml \
 	listener-marshal.list \
+	server-marshal.list \
 	indicate.pc.in
 
 BUILT_SOURCES = \
@@ -18,6 +19,8 @@ BUILT_SOURCES = \
 	dbus-listener-client.h \
 	listener-marshal.c \
 	listener-marshal.h \
+	server-marshal.c \
+	server-marshal.h \
 	$(ENUM_FILE).h \
 	$(ENUM_FILE).c
 
@@ -45,9 +48,12 @@ libindicate_la_SOURCES = \
 	dbus-listener-client.h \
 	indicate-enum-types.c \
 	server.c \
+	server-marshal.c \
+	server-marshal.h \
 	listener.c \
 	listener-marshal.c \
 	listener-marshal.h \
+	listener-private.h \
 	indicator.c \
 	indicator-message.c \
 	interests-priv.h
@@ -100,6 +106,16 @@ listener-marshal.c: $(srcdir)/listener-marshal.list
 	glib-genmarshal --body \
 		--prefix=_indicate_listener_marshal $(srcdir)/listener-marshal.list \
 		> listener-marshal.c
+
+server-marshal.h: $(srcdir)/server-marshal.list
+	glib-genmarshal --header \
+		--prefix=_indicate_server_marshal $(srcdir)/server-marshal.list \
+		> server-marshal.h
+
+server-marshal.c: $(srcdir)/server-marshal.list
+	glib-genmarshal --body \
+		--prefix=_indicate_server_marshal $(srcdir)/server-marshal.list \
+		> server-marshal.c
 
 pkgconfig_DATA = indicate.pc
 pkgconfigdir = $(libdir)/pkgconfig

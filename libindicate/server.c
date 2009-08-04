@@ -29,6 +29,7 @@ License version 3 and version 2.1 along with this program.  If not, see
  
 #include "server.h"
 #include "interests-priv.h"
+#include "server-marshal.h"
 #include <dbus/dbus-glib.h>
 #include <dbus/dbus-glib-lowlevel.h>
 
@@ -179,7 +180,7 @@ indicate_server_class_init (IndicateServerClass * class)
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateServerClass, indicator_added),
 	                                        NULL, NULL,
-	                                        g_cclosure_marshal_VOID__UINT_POINTER,
+	                                        _indicate_server_marshal_VOID__UINT_STRING,
 	                                        G_TYPE_NONE, 2, G_TYPE_UINT, G_TYPE_STRING);
 	/**
 		IndicateServer::indicator-removed:
@@ -197,7 +198,7 @@ indicate_server_class_init (IndicateServerClass * class)
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateServerClass, indicator_removed),
 	                                        NULL, NULL,
-	                                        g_cclosure_marshal_VOID__UINT_POINTER,
+	                                        _indicate_server_marshal_VOID__UINT_STRING,
 	                                        G_TYPE_NONE, 2, G_TYPE_UINT, G_TYPE_STRING);
 	/**
 		IndicateServer::indicator-modified:
@@ -215,7 +216,7 @@ indicate_server_class_init (IndicateServerClass * class)
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateServerClass, indicator_modified),
 	                                        NULL, NULL,
-	                                        g_cclosure_marshal_VOID__UINT_POINTER,
+	                                        _indicate_server_marshal_VOID__UINT_STRING,
 	                                        G_TYPE_NONE, 2, G_TYPE_UINT, G_TYPE_STRING);
 	/**
 		IndicateServer::server-show:
@@ -231,7 +232,7 @@ indicate_server_class_init (IndicateServerClass * class)
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateServerClass, server_show),
 	                                        NULL, NULL,
-	                                        g_cclosure_marshal_VOID__POINTER,
+	                                        g_cclosure_marshal_VOID__STRING,
 	                                        G_TYPE_NONE, 1, G_TYPE_STRING);
 	/**
 		IndicateServer::server-hide:
@@ -246,7 +247,7 @@ indicate_server_class_init (IndicateServerClass * class)
 	                                        G_SIGNAL_RUN_LAST,
 	                                        G_STRUCT_OFFSET (IndicateServerClass, server_hide),
 	                                        NULL, NULL,
-	                                        g_cclosure_marshal_VOID__POINTER,
+	                                        g_cclosure_marshal_VOID__STRING,
 	                                        G_TYPE_NONE, 1, G_TYPE_STRING);
 	/**
 		IndicateServer::server-display:

@@ -21,6 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <glib.h>
 #include "libindicate/listener.h"
+#include "libindicate-gtk/listener.h"
 
 static void
 show_property_cb (IndicateListener * listener, IndicateListenerServer * server, IndicateListenerIndicator * indicator, gchar * property, gchar * propertydata, gpointer data)
