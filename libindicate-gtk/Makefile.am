@@ -32,6 +32,7 @@ libindicate_gtk_la_CFLAGS = \
 	$(LIBINDICATEGTK_CFLAGS)
 
 libindicate_gtk_la_LIBADD = \
+	../libindicate/libindicate.la \
 	$(LIBINDICATEGTK_LIBS)
 
 pkgconfig_DATA = indicate-gtk.pc
