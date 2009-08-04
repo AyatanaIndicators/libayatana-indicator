@@ -1,3 +1,11 @@
+indicator-applet (0.2.0~bzr309-0ubuntu4~ppa2) UNRELEASED; urgency=low
+
+  * debian/control: Fixing some libindicate1's that should be
+    libindicate2 and making everything dependent on the versions
+    that are built here in the package.
+
+ -- Ted Gould <ted@ubuntu.com>  Tue, 04 Aug 2009 01:35:47 +0100
+
 indicator-applet (0.2.0~bzr309-0ubuntu4~ppa1) karmic; urgency=low
 
   * Merging in upstream code to split out libindicate-gtk

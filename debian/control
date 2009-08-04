@@ -47,7 +47,7 @@ Section: libdevel
 Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
-         libindicate1 (= ${binary:Version}),
+         libindicate2 (= ${binary:Version}),
          libdbus-glib-1-dev (>= 0.76)
 Description: GNOME panel indicator applet - shared library
  indicator-applet is an applet to display information from
@@ -72,7 +72,7 @@ Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
          libindicate-gtk (= ${binary:Version}),
-         libindicate-dev,
+         libindicate-dev (= ${binary:Version}),
          libdbus-glib-1-dev (>= 0.76),
          libgtk2.0-dev (>= 2.12.0)
 Description: GNOME panel indicator applet - shared library
@@ -98,7 +98,8 @@ Section: doc
 Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
-         libindicate1 (= ${binary:Version}),
+         libindicate2 (= ${binary:Version}),
+         libindicate-gtk0 (= ${binary:Version}),
          libdbus-glib-1-dev (>= 0.76),
          libgtk2.0-dev (>= 2.12.0)
 Description: GNOME panel indicator applet - shared library
