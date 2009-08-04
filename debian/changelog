@@ -1,3 +1,9 @@
+indicator-applet (0.2.0~bzr319-0ubuntu2) karmic; urgency=low
+
+  * Run ./autogen.sh before upload
+
+ -- Jonathan Riddell <jriddell@ubuntu.com>  Wed, 05 Aug 2009 00:40:52 +0100
+
 indicator-applet (0.2.0~bzr319-0ubuntu1) karmic; urgency=low
 
   [ Ted Gould ]
