@@ -1,9 +1,9 @@
-indicator-applet (0.2.0~bzr319-0ubuntu1~ppa3) UNRELEASED; urgency=low
+indicator-applet (0.2.0~bzr319-0ubuntu1~ppa3) karmic; urgency=low
 
   * debian/control: Fixing the library reference of
     libindicate-gtk-dev
 
- -- Ted Gould <ted@ubuntu.com>  Tue, 04 Aug 2009 10:53:19 +0100
+ -- Ted Gould <ted@ubuntu.com>  Tue, 04 Aug 2009 10:53:48 +0100
 
 indicator-applet (0.2.0~bzr319-0ubuntu1~ppa2) karmic; urgency=low
 
