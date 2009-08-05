@@ -1,9 +1,9 @@
-indicator-applet (0.2.0~bzr319-0ubuntu1~ppa5) UNRELEASED; urgency=low
+indicator-applet (0.2.0~bzr319-0ubuntu1~ppa5) karmic; urgency=low
 
   * Upstream fix for server.c and get indicators with hidden
     indicators in the list.
 
- -- Ted Gould <ted@ubuntu.com>  Wed, 05 Aug 2009 01:26:11 +0100
+ -- Ted Gould <ted@ubuntu.com>  Wed, 05 Aug 2009 01:26:43 +0100
 
 indicator-applet (0.2.0~bzr319-0ubuntu1~ppa4) karmic; urgency=low
 
