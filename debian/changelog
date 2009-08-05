@@ -1,3 +1,9 @@
+indicator-applet (0.2.0~bzr319-0ubuntu4) karmic; urgency=low
+
+  * Add build-dep on gtk-doc-tools
+
+ -- Jonathan Riddell <jriddell@ubuntu.com>  Wed, 05 Aug 2009 11:28:57 +0100
+
 indicator-applet (0.2.0~bzr319-0ubuntu3) karmic; urgency=low
 
   * debian/rules
