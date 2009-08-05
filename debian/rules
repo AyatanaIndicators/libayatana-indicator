@@ -3,6 +3,6 @@
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/gnome.mk
 
-DEB_CONFIGURE_EXTRA_FLAGS += --disable-scrollkeeper --disable-gobject-introspection
+DEB_CONFIGURE_EXTRA_FLAGS += --disable-scrollkeeper --disable-gobject-introspection --enable-gtk-doc
 LDFLAGS += -Wl,-z,defs -Wl,--as-needed
 DEB_DH_MAKESHLIBS_ARGS_libindicate0 += -V 'libindicate0 (>= 0.1.2)'
