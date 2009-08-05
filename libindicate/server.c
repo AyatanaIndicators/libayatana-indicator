@@ -945,11 +945,11 @@ get_indicator_list (IndicateServer * server, GArray ** indicators, GError ** err
 
 	GSList * iter;
 	int i;
-	for (iter = priv->indicators, i = 0; iter != NULL; iter = iter->next, i++) {
+	for (iter = priv->indicators, i = 0; iter != NULL; iter = iter->next) {
 		IndicateIndicator * indicator = INDICATE_INDICATOR(iter->data);
 		if (indicate_indicator_is_visible(indicator)) {
 			guint id = indicate_indicator_get_id(indicator);
-			g_array_insert_val(*indicators, i, id);
+			g_array_insert_val(*indicators, i++, id);
 		}
 	}
 
