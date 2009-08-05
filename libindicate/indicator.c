@@ -220,16 +220,29 @@ indicate_indicator_new_with_server (IndicateServer * server)
 
 	IndicateIndicator * indicator = g_object_new(INDICATE_TYPE_INDICATOR, NULL);
 
+	indicate_indicator_set_server (indicator, server);
+
+	return indicator;
+}
+
+void
+indicate_indicator_set_server (IndicateIndicator * indicator, IndicateServer * server)
+{
 	IndicateIndicatorPrivate * priv = INDICATE_INDICATOR_GET_PRIVATE(indicator);
+
+	if (server != NULL) {
+		g_object_ref(server);
+	}
+
 	if (priv->server != NULL) {
+		indicate_server_remove_indicator (priv->server, indicator);
 		g_object_unref(priv->server);
-		priv->server = NULL;
 	}
 
 	priv->server = server;
-	g_object_ref(priv->server);
-
-	return indicator;
+	if (server != NULL) {
+		indicate_server_add_indicator (server, indicator);
+	}
 }
 
 
