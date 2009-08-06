@@ -225,6 +225,14 @@ indicate_indicator_new_with_server (IndicateServer * server)
 	return indicator;
 }
 
+/**
+	indicate_indicator_set_server:
+	@indicator: a #IndicateIndicator to act on
+	@server: the #IndicateServer which should be associated with @indicator
+
+	Defines which server this indicator must be associated to.  Also, adds a
+	reference to the server.
+*/
 void
 indicate_indicator_set_server (IndicateIndicator * indicator, IndicateServer * server)
 {
