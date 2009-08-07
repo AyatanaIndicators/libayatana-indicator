@@ -281,8 +281,12 @@ applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 
 		const gchar * name;
 		while ((name = g_dir_read_name(dir)) != NULL) {
-			if (load_module(name, menubar))
-				indicators_loaded++;
+			if (g_strcmp0(name, "libstatus-users-session.so")) {
+				continue;
+			}
+			if (load_module(name, menubar)) {
+ 				indicators_loaded++;
+			}
 		}
 		g_dir_close (dir);
 	}
