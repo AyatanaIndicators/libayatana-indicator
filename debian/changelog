@@ -1,4 +1,4 @@
-indicator-applet (0.2.0~bzr319-0ubuntu5~ppa1) UNRELEASED; urgency=low
+indicator-applet (0.2.0~bzr319-0ubuntu5~ppa1) karmic; urgency=low
 
   * Updating from upstream with two (count them) two applets
     installed in the source.
@@ -10,7 +10,7 @@ indicator-applet (0.2.0~bzr319-0ubuntu5~ppa1) UNRELEASED; urgency=low
   * debian/indicator-applet-sus.install: List files that are now
     used by the new binary package.
 
- -- Ted Gould <ted@ubuntu.com>  Fri, 07 Aug 2009 18:18:17 +0100
+ -- Ted Gould <ted@ubuntu.com>  Fri, 07 Aug 2009 18:39:59 +0100
 
 indicator-applet (0.2.0~bzr319-0ubuntu4) karmic; urgency=low
 
