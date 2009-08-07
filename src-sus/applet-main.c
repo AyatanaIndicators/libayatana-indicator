@@ -48,9 +48,9 @@ static GnomeProgram *program = NULL;
  * main
  * ***********/
 
-PANEL_APPLET_BONOBO_FACTORY ("OAFIID:GNOME_IndicatorApplet_Factory",
+PANEL_APPLET_BONOBO_FACTORY ("OAFIID:GNOME_FastUserSwitchApplet_Factory",
                PANEL_TYPE_APPLET,
-               "indicator-applet", "0",
+               "indicator-applet-sus", "0",
                applet_fill_cb, NULL);
 
 /*************
@@ -219,10 +219,10 @@ applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 	if (!first_time)
 	{
         gint argc = 1;
-        gchar *argv[2] = { "indicator-applet", NULL};
+        gchar *argv[2] = { "indicator-applet-sus", NULL};
 	    
 		first_time = TRUE;
-		program = gnome_program_init ("indicator-applet", "0.1",
+		program = gnome_program_init ("indicator-applet-sus", "0.1",
 				    LIBGNOMEUI_MODULE, argc, argv,
 				    GNOME_PROGRAM_STANDARD_PROPERTIES,
 				    NULL);
@@ -233,7 +233,7 @@ applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 	panel_applet_set_flags(applet, PANEL_APPLET_EXPAND_MINOR);
 	panel_applet_setup_menu(applet, menu_xml, menu_verbs, NULL);
     atk_object_set_name (gtk_widget_get_accessible (GTK_WIDGET (applet)),
-                         "indicator-applet");
+                         "indicator-applet-sus");
   
 	/* Init some theme/icon stuff */
 	gtk_icon_theme_append_search_path(gtk_icon_theme_get_default(),
