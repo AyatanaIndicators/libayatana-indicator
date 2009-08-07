@@ -180,6 +180,7 @@ AC_DEFINE_PATH(LIBDIR, "${libdir}", [system configuration dir])
 AC_OUTPUT([
 Makefile
 src/Makefile
+src-sus-only/Makefile
 libindicate/Makefile
 libindicate/indicate.pc
 libindicate-gtk/Makefile
