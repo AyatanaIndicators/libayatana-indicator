@@ -1,3 +1,10 @@
+indicator-applet (0.2.0~bzr319-0ubuntu5~ppa1) UNRELEASED; urgency=low
+
+  * Updating from upstream with two (count them) two applets
+    installed in the source.
+
+ -- Ted Gould <ted@ubuntu.com>  Fri, 07 Aug 2009 18:18:17 +0100
+
 indicator-applet (0.2.0~bzr319-0ubuntu4) karmic; urgency=low
 
   * Add build-dep on gtk-doc-tools

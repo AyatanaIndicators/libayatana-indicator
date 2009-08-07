@@ -119,6 +119,9 @@ void indicate_indicator_hide (IndicateIndicator * indicator);
 
 gboolean indicate_indicator_is_visible (IndicateIndicator * indicator);
 
+/* Define this indicator server */
+void indicate_indicator_set_server (IndicateIndicator * indicator, IndicateServer * server);
+
 /* Every entry has an ID, here's how to get it */
 guint indicate_indicator_get_id (IndicateIndicator * indicator);
 

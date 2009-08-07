@@ -214,13 +214,6 @@ applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 	GtkWidget *menubar;
 	gint i;
 	gint indicators_loaded = 0;
-
-	/* check if we are running stracciatella session */
-	if (g_strcmp0(g_getenv("GDMSESSION"), "gnome-stracciatella") == 0) {
-		g_debug("Running stracciatella GNOME session, disabling myself");
-		return TRUE;
-	}
-  
 	static gboolean first_time = FALSE;
 
 	if (!first_time)
@@ -288,11 +281,11 @@ applet_fill_cb (PanelApplet * applet, const gchar * iid, gpointer data)
 
 		const gchar * name;
 		while ((name = g_dir_read_name(dir)) != NULL) {
-			if (!g_strcmp0(name, "libstatus-users-session.so")) {
+			if (g_strcmp0(name, "libstatus-users-session.so")) {
 				continue;
 			}
 			if (load_module(name, menubar)) {
-				indicators_loaded++;
+ 				indicators_loaded++;
 			}
 		}
 		g_dir_close (dir);
