@@ -1,8 +1,8 @@
-indicator-applet (0.2.0~bzr319-0ubuntu5~ppa4) UNRELEASED; urgency=low
+indicator-applet (0.2.0~bzr319-0ubuntu5~ppa4) karmic; urgency=low
 
   * Merging onto the main packaging branch.
 
- -- Ted Gould <ted@ubuntu.com>  Fri, 07 Aug 2009 19:01:57 +0100
+ -- Ted Gould <ted@ubuntu.com>  Fri, 07 Aug 2009 19:02:17 +0100
 
 indicator-applet (0.2.0~bzr319-0ubuntu5~ppa3) karmic; urgency=low
 
