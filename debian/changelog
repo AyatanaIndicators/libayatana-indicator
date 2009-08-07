@@ -1,3 +1,10 @@
+indicator-applet (0.2.0~bzr319-0ubuntu5~ppa3) UNRELEASED; urgency=low
+
+  * Renaming the second Bonobo server description file to match that
+    of the FastUserSwitchApplet.
+
+ -- Ted Gould <ted@ubuntu.com>  Fri, 07 Aug 2009 18:50:02 +0100
+
 indicator-applet (0.2.0~bzr319-0ubuntu5~ppa2) karmic; urgency=low
 
   * Upstream merge for better naming of the applet.
