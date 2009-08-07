@@ -1,7 +1,7 @@
 
 SUBDIRS = \
 	src \
-	src-sus-only \
+	src-sus \
 	libindicate \
 	libindicate-gtk \
 	libindicator \
