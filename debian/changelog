@@ -1,3 +1,9 @@
+indicator-applet (0.2.0~bzr319-0ubuntu5~ppa2) UNRELEASED; urgency=low
+
+  * Upstream merge for better naming of the applet.
+
+ -- Ted Gould <ted@ubuntu.com>  Fri, 07 Aug 2009 18:40:07 +0100
+
 indicator-applet (0.2.0~bzr319-0ubuntu5~ppa1) karmic; urgency=low
 
   * Updating from upstream with two (count them) two applets
