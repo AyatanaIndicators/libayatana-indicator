@@ -7,7 +7,8 @@
 serverdir =					\
 	$(libdir)/bonobo/servers
 server_in_files =				\
-	GNOME_IndicatorApplet.server.in
+	GNOME_IndicatorApplet.server.in \
+	GNOME_FastUserSwitchApplet.server.in
 server_DATA =					\
 	$(server_in_files:.server.in=.server)
 
@@ -67,6 +68,7 @@ CLEANFILES =					\
 EXTRA_DIST =					\
 	$(icons_DATA) \
 	GNOME_IndicatorApplet.server.in.in	\
+	GNOME_FastUserSwitchApplet.server.in.in	\
 	$(schema_in_files)
 
 MAINTAINERCLEANFILES =				\
