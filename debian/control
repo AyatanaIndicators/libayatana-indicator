@@ -30,6 +30,19 @@ Description: GNOME panel indicator applet
  Currently this includes support for messaging applications in the
  indicator-messages package.
 
+Package: indicator-applet-sus
+Architecture: any
+Depends: ${shlibs:Depends},
+         ${misc:Depends},
+         gnome-panel,
+         indicator-applet (= ${binary:Version})
+Description: A clone of the GNOME panel indicator applet.
+ Indicator-applet is an applet to display information from
+ various applications consistently in the GNOME panel. 
+ .
+ This instance will only load the SUS indicator which provies
+ status changing, user choosing and session management.
+
 Package: libindicate2
 Section: libs
 Conflicts: libindicate

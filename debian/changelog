@@ -1,3 +1,36 @@
+indicator-applet (0.2.0~bzr319-0ubuntu5~ppa4) UNRELEASED; urgency=low
+
+  * Merging onto the main packaging branch.
+
+ -- Ted Gould <ted@ubuntu.com>  Fri, 07 Aug 2009 19:01:57 +0100
+
+indicator-applet (0.2.0~bzr319-0ubuntu5~ppa3) karmic; urgency=low
+
+  * Renaming the second Bonobo server description file to match that
+    of the FastUserSwitchApplet.
+
+ -- Ted Gould <ted@ubuntu.com>  Fri, 07 Aug 2009 18:50:33 +0100
+
+indicator-applet (0.2.0~bzr319-0ubuntu5~ppa2) karmic; urgency=low
+
+  * Upstream merge for better naming of the applet.
+
+ -- Ted Gould <ted@ubuntu.com>  Fri, 07 Aug 2009 18:40:22 +0100
+
+indicator-applet (0.2.0~bzr319-0ubuntu5~ppa1) karmic; urgency=low
+
+  * Updating from upstream with two (count them) two applets
+    installed in the source.
+  * debian/control: Adding information on indicator-applet-sus which
+    is a different applet for the SUS indicator.
+  * debian/indicator-applet.install: Making it more specific so that
+    it doesn't grab the directories that now have additional files
+    created by indicator-applet-sus existing.
+  * debian/indicator-applet-sus.install: List files that are now
+    used by the new binary package.
+
+ -- Ted Gould <ted@ubuntu.com>  Fri, 07 Aug 2009 18:39:59 +0100
+
 indicator-applet (0.2.0~bzr319-0ubuntu4) karmic; urgency=low
 
   * Add build-dep on gtk-doc-tools

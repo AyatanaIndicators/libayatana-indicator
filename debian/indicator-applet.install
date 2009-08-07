@@ -1,4 +1,4 @@
-debian/tmp/etc
-debian/tmp/usr/lib/bonobo
-debian/tmp/usr/lib/indicator-applet
+debian/tmp/usr/lib/bonobo/servers/GNOME_IndicatorApplet.server
+debian/tmp/usr/lib/indicator-applet/indicator-applet
+debian/tmp/usr/lib/indicator-applet/listen-and-print
 debian/tmp/usr/share/icons

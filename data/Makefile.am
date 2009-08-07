@@ -7,11 +7,12 @@
 serverdir =					\
 	$(libdir)/bonobo/servers
 server_in_files =				\
-	GNOME_IndicatorApplet.server.in
+	GNOME_IndicatorApplet.server.in \
+	GNOME_FastUserSwitchApplet.server.in
 server_DATA =					\
 	$(server_in_files:.server.in=.server)
 
-$(server_in_files): $(server_in_files:.server.in=.server.in.in)
+%.server.in: %.server.in.in
 	sed -e "s|\@LIBEXECDIR\@|$(libexecdir)|" -e "s|\@VERSION\@|$(VERSION)|" $< > $@
 
 @INTLTOOL_SERVER_RULE@
@@ -67,6 +68,7 @@ CLEANFILES =					\
 EXTRA_DIST =					\
 	$(icons_DATA) \
 	GNOME_IndicatorApplet.server.in.in	\
+	GNOME_FastUserSwitchApplet.server.in.in	\
 	$(schema_in_files)
 
 MAINTAINERCLEANFILES =				\
