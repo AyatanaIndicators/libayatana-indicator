@@ -100,3 +100,6 @@ docs/reference/tmpl/listener.sgml.bak
 docs/reference/tmpl/server.sgml
 docs/reference/tmpl/server.sgml.bak
 src-sus/indicator-applet-sus
+data/GNOME_IndicatorAppletSUS.server
+data/GNOME_IndicatorAppletSUS.server.in
+src-sus/indicator-applet-no-sus
