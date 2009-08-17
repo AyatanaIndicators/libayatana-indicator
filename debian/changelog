@@ -1,8 +1,8 @@
-indicator-applet (0.2.0~bzr319-0ubuntu5~ppa5) UNRELEASED; urgency=low
+indicator-applet (0.2.0~bzr319-0ubuntu5~ppa5) karmic; urgency=low
 
   * Setting the icon path in the .pc file.
 
- -- Ted Gould <ted@ubuntu.com>  Mon, 17 Aug 2009 09:14:42 -0500
+ -- Ted Gould <ted@ubuntu.com>  Mon, 17 Aug 2009 09:18:18 -0500
 
 indicator-applet (0.2.0~bzr319-0ubuntu5~ppa4) karmic; urgency=low
 
