@@ -1,9 +1,9 @@
-libindicator (0.2.0~bzr325-0ubuntu1~ppa1) UNRELEASED; urgency=low
+libindicator (0.2.0~bzr325-0ubuntu1~ppa1) karmic; urgency=low
 
   * Merging in the seperation from indicator-applet
   * debian/* Removing all of the indicator-applet stuff
 
- -- Ted Gould <ted@ubuntu.com>  Tue, 18 Aug 2009 13:39:35 -0500
+ -- Ted Gould <ted@ubuntu.com>  Tue, 18 Aug 2009 13:54:57 -0500
 
 indicator-applet (0.2.0~bzr319-0ubuntu5~ppa5) karmic; urgency=low
 
