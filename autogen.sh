@@ -1,6 +1,6 @@
 #!/bin/sh
 
-PKG_NAME="indicator-applet"
+PKG_NAME="libindicator"
 
 which gnome-autogen.sh || {
 	echo "You need gnome-common from GNOME SVN"
@@ -8,5 +8,4 @@ which gnome-autogen.sh || {
 }
 
 USE_GNOME2_MACROS=1 \
-USE_COMMON_DOC_BUILD=yes \
-gnome-autogen.sh --enable-gtk-doc
+gnome-autogen.sh
