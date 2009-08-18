@@ -1,5 +1,0 @@
-[encoding: UTF-8]
-data/GNOME_IndicatorApplet.server.in.in
-data/GNOME_IndicatorAppletSUS.server.in.in
-data/indicator-applet.schemas.in
-src/applet-main.c
