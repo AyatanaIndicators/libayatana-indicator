@@ -19,7 +19,11 @@ libindicator (0.2.0~bzr325-0ubuntu1) UNRELEASED; urgency=low
   * debian/indicator-applet-sus.install: List files that are now
     used by the new binary package.
 
- -- Ken VanDine <ken.vandine@canonical.com>  Mon, 24 Aug 2009 08:59:06 -0400
+  [ Ken VanDine ]
+  * debian/control:
+    - Set both Vcs-Bzr and Vcs-Bzr-Browser, with ~ubuntu-desktop 
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Mon, 24 Aug 2009 12:19:54 -0400
 
 indicator-applet (0.2.0~bzr319-0ubuntu4) karmic; urgency=low
 
