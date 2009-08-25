@@ -1,4 +1,4 @@
-libindicator (0.2.0~bzr325-0ubuntu1) UNRELEASED; urgency=low
+libindicator (0.2.0~bzr325-0ubuntu1) karmic; urgency=low
 
   [ Ted Gould ]
   * New version (LP: #417039)
@@ -27,4 +27,4 @@ libindicator (0.2.0~bzr325-0ubuntu1) UNRELEASED; urgency=low
   * Flush changelog.
   * debian/control: Fix Vcs-* links.
 
- -- Ken VanDine <ken.vandine@canonical.com>  Mon, 24 Aug 2009 12:19:54 -0400
+ -- Ken VanDine <ken.vandine@canonical.com>  Tue, 25 Aug 2009 08:35:00 +0200
