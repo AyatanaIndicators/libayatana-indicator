@@ -25,5 +25,6 @@ libindicator (0.2.0~bzr325-0ubuntu1) UNRELEASED; urgency=low
 
   [ Martin Pitt ]
   * Flush changelog.
+  * debian/control: Fix Vcs-* links.
 
  -- Ken VanDine <ken.vandine@canonical.com>  Mon, 24 Aug 2009 12:19:54 -0400
