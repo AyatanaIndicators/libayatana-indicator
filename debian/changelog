@@ -1,3 +1,9 @@
+libindicator (0.2.0-0ubuntu1~ppa1) UNRELEASED; urgency=low
+
+  * Upstream release 0.2.0
+
+ -- Ted Gould <ted@ubuntu.com>  Thu, 10 Sep 2009 11:04:31 -0500
+
 libindicator (0.2.0~bzr325-0ubuntu1~ppa1) karmic; urgency=low
 
   * Merging in the seperation from indicator-applet
