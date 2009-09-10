@@ -1,6 +1,8 @@
 libindicator (0.2.0-0ubuntu1) UNRELEASED; urgency=low
 
-  * Upstream release 0.2.0 (LP: #427443)
+  * Upstream release 0.2.0 (LP: #427443):
+    - Use silent automake mode.
+    - Tag for final release.
 
  -- Ted Gould <ted@ubuntu.com>  Thu, 10 Sep 2009 11:04:54 -0500
 
