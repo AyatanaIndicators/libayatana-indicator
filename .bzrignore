@@ -103,3 +103,4 @@ src-sus/indicator-applet-sus
 data/GNOME_IndicatorAppletSUS.server
 data/GNOME_IndicatorAppletSUS.server.in
 src-sus/indicator-applet-no-sus
+libindicator/libindicator.la
