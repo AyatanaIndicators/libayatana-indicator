@@ -106,3 +106,6 @@ src-sus/indicator-applet-no-sus
 libindicator/libindicator.la
 libindicator/libindicator_la-indicator-object.
 libindicator/libindicator_la-indicator-object.lo
+tests/loader-check-results.xml
+tests/loader-check-results.html
+tests/test-loader
