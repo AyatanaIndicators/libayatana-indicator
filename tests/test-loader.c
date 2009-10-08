@@ -6,7 +6,7 @@ void destroy_cb (gpointer data, GObject * object);
 void
 test_loader_filename_dummy_null (void)
 {
-	IndicatorObject * object = indicator_object_new_from_file("./.libs/libdummy-indicator-null.so");
+	IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/.libs/libdummy-indicator-null.so");
 	g_assert(object != NULL);
 
 	gboolean unreffed = FALSE;
