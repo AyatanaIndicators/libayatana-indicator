@@ -83,14 +83,20 @@ indicator_object_finalize (GObject *object)
 IndicatorObject *
 indicator_object_new_from_file (const gchar * file)
 {
-	g_return_val_if_fail(file != NULL, NULL);
+	if (file != NULL)
+		return NULL;
 
 	GModule * module = g_module_open(file,
                                      G_MODULE_BIND_LAZY | G_MODULE_BIND_LOCAL);
-	g_return_val_if_fail(module != NULL, NULL);
+	if(module != NULL) {
+		g_warning("Unable to load module: %s", file);
+		return NULL;
+	}
 
 	get_version_t lget_version = NULL;
-	g_return_val_if_fail(g_module_symbol(module, INDICATOR_GET_VERSION_S, (gpointer *)(&lget_version)), FALSE);
+	if (!g_module_symbol(module, INDICATOR_GET_VERSION_S, (gpointer *)(&lget_version)))
+		return NULL;
+
 	if (!INDICATOR_VERSION_CHECK(lget_version())) {
 		g_warning("Indicator using API version '%s' we're expecting '%s'", lget_version(), INDICATOR_VERSION);
 		return NULL;
