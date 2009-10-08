@@ -109,3 +109,5 @@ libindicator/libindicator_la-indicator-object.lo
 tests/loader-check-results.xml
 tests/loader-check-results.html
 tests/test-loader
+tests/libdummy-indicator-null.la
+tests/libdummy_indicator_null_la-dummy-indicator-null.lo

@@ -2,6 +2,13 @@
 check_PROGRAMS = \
 	test-loader
 
+check_LTLIBRARIES = \
+	libdummy-indicator-null.la
+
+#############################
+# Test Loader
+#############################
+
 test_loader_SOURCES = \
 	test-loader.c
 
@@ -12,10 +19,32 @@ test_loader_CFLAGS = \
 test_loader_LDADD = \
 	$(LIBINDICATOR_LIBS) $(top_builddir)/libindicator/.libs/libindicator.a
 
+#############################
+# Dummy Indicator
+#############################
+
+libdummy_indicator_null_la_SOURCES = \
+	dummy-indicator-null.c
+
+libdummy_indicator_null_la_CFLAGS = \
+	-Wall -Werror \
+	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
+
+libdummy_indicator_null_la_LIBADD = \
+	$(LIBINDICATOR_LIBS)
+
+libdummy_indicator_null_la_LDFLAGS = \
+	-module \
+	-avoid-version
+
+#############################
+# Test stuff
+#############################
+
 XML_REPORT  = loader-check-results.xml
 HTML_REPORT = loader-check-results.html
 
-loader-tester: test-loader
+loader-tester: test-loader libdummy-indicator-null.la
 	@gtester -o=$(XML_REPORT) ./test-loader
 
 check-local: loader-tester
