@@ -2,7 +2,7 @@
 check_PROGRAMS = \
 	test-loader
 
-check_LTLIBRARIES = \
+lib_LTLIBRARIES = \
 	libdummy-indicator-null.la
 
 #############################
