@@ -88,6 +88,11 @@ indicator_object_new_from_file (const gchar * file)
 		return NULL;
 	}
 
+	if (!g_file_test(file, G_FILE_TEST_EXISTS)) {
+		g_warning("File '%s' does not exist.", file);
+		return NULL;
+	}
+
 	GModule * module = g_module_open(file,
                                      G_MODULE_BIND_LAZY | G_MODULE_BIND_LOCAL);
 	if(module != NULL) {
