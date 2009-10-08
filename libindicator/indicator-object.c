@@ -83,7 +83,7 @@ indicator_object_finalize (GObject *object)
 IndicatorObject *
 indicator_object_new_from_file (const gchar * file)
 {
-	if (file != NULL) {
+	if (file == NULL) {
 		g_warning("Invalid filename.");
 		return NULL;
 	}
