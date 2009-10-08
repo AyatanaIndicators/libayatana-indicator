@@ -1,6 +1,23 @@
 #include <glib.h>
 #include "libindicator/indicator-object.h"
 
+void destroy_cb (gpointer data, GObject * object);
+
+void
+test_loader_filename_dummy_null (void)
+{
+	IndicatorObject * object = indicator_object_new_from_file("./.libs/libdummy-indicator-null.so");
+	g_assert(object != NULL);
+
+	gboolean unreffed = FALSE;
+	g_object_weak_ref(G_OBJECT(object), destroy_cb, &unreffed);
+
+	g_object_unref(object);
+	g_assert(unreffed == TRUE);
+
+	return;
+}
+
 void
 test_loader_filename_bad (void)
 {
@@ -37,6 +54,7 @@ test_loader_creation_deletion_suite (void)
 {
 	g_test_add_func ("/libindicator/loader/ref_and_unref", test_loader_refunref);
 	g_test_add_func ("/libindicator/loader/filename_bad",  test_loader_filename_bad);
+	g_test_add_func ("/libindicator/loader/dummy/null_load",  test_loader_filename_dummy_null);
 
 	return;
 }
