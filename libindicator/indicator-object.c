@@ -95,7 +95,7 @@ indicator_object_new_from_file (const gchar * file)
 
 	GModule * module = g_module_open(file,
                                      G_MODULE_BIND_LAZY | G_MODULE_BIND_LOCAL);
-	if(module != NULL) {
+	if(module == NULL) {
 		g_warning("Unable to load module: %s", file);
 		return NULL;
 	}
