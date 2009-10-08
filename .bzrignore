@@ -104,3 +104,5 @@ data/GNOME_IndicatorAppletSUS.server
 data/GNOME_IndicatorAppletSUS.server.in
 src-sus/indicator-applet-no-sus
 libindicator/libindicator.la
+libindicator/libindicator_la-indicator-object.
+libindicator/libindicator_la-indicator-object.lo
