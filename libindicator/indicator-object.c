@@ -157,8 +157,7 @@ indicator_object_new_from_file (const gchar * file)
 		/* This is the case where there is nothing to display,
 		   kinda odd that we'd have a module with nothing. */
 		g_warning("No label or icon.  Odd.");
-		g_object_unref(object);
-		return NULL;
+		goto unrefandout;
 	}
 
 	return INDICATOR_OBJECT(object);
