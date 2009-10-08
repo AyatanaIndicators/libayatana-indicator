@@ -54,3 +54,9 @@ indicator_object_finalize (GObject *object)
 	G_OBJECT_CLASS (indicator_object_parent_class)->finalize (object);
 	return;
 }
+
+IndicatorObject *
+indicator_object_new_from_file (const gchar * file)
+{
+	return NULL;
+}

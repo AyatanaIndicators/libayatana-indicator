@@ -27,6 +27,7 @@ struct _IndicatorObject {
 };
 
 GType indicator_object_get_type (void);
+IndicatorObject * indicator_object_new_from_file (const gchar * file);
 
 G_END_DECLS
 
