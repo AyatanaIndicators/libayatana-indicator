@@ -46,7 +46,7 @@ XML_REPORT  = loader-check-results.xml
 HTML_REPORT = loader-check-results.html
 
 loader-tester: test-loader libdummy-indicator-null.la
-	@gtester -k -o=$(XML_REPORT) ./test-loader
+	@gtester -k --verbose -o=$(XML_REPORT) ./test-loader
 
 check-local: loader-tester
 
