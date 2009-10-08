@@ -2,6 +2,14 @@
 #include "libindicator/indicator-object.h"
 
 void
+test_loader_filename_bad (void)
+{
+	IndicatorObject * object = indicator_object_new_from_file("/this/file/should/not/exist.so");
+	g_assert(object == NULL);
+	return;
+}
+
+void
 destroy_cb (gpointer data, GObject * object)
 {
 	gboolean * bob = (gboolean *)data;
@@ -28,6 +36,7 @@ void
 test_loader_creation_deletion_suite (void)
 {
 	g_test_add_func ("/libindicator/loader/ref_and_unref", test_loader_refunref);
+	g_test_add_func ("/libindicator/loader/filename_bad",  test_loader_filename_bad);
 
 	return;
 }
