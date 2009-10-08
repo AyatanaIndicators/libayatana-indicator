@@ -83,8 +83,10 @@ indicator_object_finalize (GObject *object)
 IndicatorObject *
 indicator_object_new_from_file (const gchar * file)
 {
-	if (file != NULL)
+	if (file != NULL) {
+		g_warning("Invalid filename.");
 		return NULL;
+	}
 
 	GModule * module = g_module_open(file,
                                      G_MODULE_BIND_LAZY | G_MODULE_BIND_LOCAL);
@@ -94,8 +96,10 @@ indicator_object_new_from_file (const gchar * file)
 	}
 
 	get_version_t lget_version = NULL;
-	if (!g_module_symbol(module, INDICATOR_GET_VERSION_S, (gpointer *)(&lget_version)))
+	if (!g_module_symbol(module, INDICATOR_GET_VERSION_S, (gpointer *)(&lget_version))) {
+		g_warning("Unable to get the symbol for getting the version.");
 		return NULL;
+	}
 
 	if (!INDICATOR_VERSION_CHECK(lget_version())) {
 		g_warning("Indicator using API version '%s' we're expecting '%s'", lget_version(), INDICATOR_VERSION);
@@ -105,19 +109,43 @@ indicator_object_new_from_file (const gchar * file)
 	GObject * object = g_object_new(INDICATOR_OBJECT_TYPE, NULL);
 	IndicatorObjectPrivate * priv = INDICATOR_OBJECT_GET_PRIVATE(object);
 
+	/* The function for grabbing a label from the module
+	   execute it, and make sure everything is a-okay */
 	get_label_t lget_label = NULL;
-	g_return_val_if_fail(g_module_symbol(module, INDICATOR_GET_LABEL_S, (gpointer *)(&lget_label)), FALSE);
-	g_return_val_if_fail(lget_label != NULL, FALSE);
+	if (!g_module_symbol(module, INDICATOR_GET_LABEL_S, (gpointer *)(&lget_label))) {
+		g_warning("Unable to get '" INDICATOR_GET_LABEL_S "' symbol from module: %s", file);
+		goto unrefandout;
+	}
+	if (lget_label == NULL) {
+		g_warning("Symbol '" INDICATOR_GET_LABEL_S "' is (null) in module: %s", file);
+		goto unrefandout;
+	}
 	priv->label = lget_label();
 
+	/* The function for grabbing an icon from the module
+	   execute it, and make sure everything is a-okay */
 	get_icon_t lget_icon = NULL;
-	g_return_val_if_fail(g_module_symbol(module, INDICATOR_GET_ICON_S, (gpointer *)(&lget_icon)), FALSE);
-	g_return_val_if_fail(lget_icon != NULL, FALSE);
+	if (!g_module_symbol(module, INDICATOR_GET_ICON_S, (gpointer *)(&lget_icon))) {
+		g_warning("Unable to get '" INDICATOR_GET_ICON_S "' symbol from module: %s", file);
+		goto unrefandout;
+	}
+	if (lget_icon == NULL) {
+		g_warning("Symbol '" INDICATOR_GET_ICON_S "' is (null) in module: %s", file);
+		goto unrefandout;
+	}
 	priv->icon = lget_icon();
 
+	/* The function for grabbing a menu from the module
+	   execute it, and make sure everything is a-okay */
 	get_menu_t lget_menu = NULL;
-	g_return_val_if_fail(g_module_symbol(module, INDICATOR_GET_MENU_S, (gpointer *)(&lget_menu)), FALSE);
-	g_return_val_if_fail(lget_menu != NULL, FALSE);
+	if (!g_module_symbol(module, INDICATOR_GET_MENU_S, (gpointer *)(&lget_menu))) {
+		g_warning("Unable to get '" INDICATOR_GET_MENU_S "' symbol from module: %s", file);
+		goto unrefandout;
+	}
+	if (lget_menu == NULL) {
+		g_warning("Symbol '" INDICATOR_GET_MENU_S "' is (null) in module: %s", file);
+		goto unrefandout;
+	}
 	priv->menu = lget_menu();
 
 	if (priv->label == NULL && priv->icon == NULL) {
@@ -129,4 +157,8 @@ indicator_object_new_from_file (const gchar * file)
 	}
 
 	return INDICATOR_OBJECT(object);
+
+unrefandout:
+	g_object_unref(object);
+	return NULL;
 }
