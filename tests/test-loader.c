@@ -2,7 +2,7 @@
 #include "libindicator/indicator-object.h"
 
 void
-destroy_cb (gpointer data)
+destroy_cb (gpointer data, GObject * object)
 {
 	gboolean * bob = (gboolean *)data;
 	*bob = TRUE;
@@ -15,7 +15,7 @@ test_loader_refunref (void)
 	GObject * object = g_object_new(INDICATOR_OBJECT_TYPE, NULL);
 
 	gboolean unreffed = FALSE;
-	g_signal_connect(object, "destroy", G_CALLBACK(destroy_cb), &unreffed);
+	g_object_weak_ref(object, destroy_cb, &unreffed);
 
 	g_object_unref(object);
 
