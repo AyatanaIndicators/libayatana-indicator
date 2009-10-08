@@ -86,6 +86,7 @@ AC_OUTPUT([
 Makefile
 libindicator/Makefile
 libindicator/indicator.pc
+tests/Makefile
 ])
 
 ###########################
