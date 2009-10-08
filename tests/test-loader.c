@@ -4,9 +4,9 @@
 void destroy_cb (gpointer data, GObject * object);
 
 void
-test_loader_filename_dummy_null (void)
+test_loader_filename_dummy_simple (void)
 {
-	IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/.libs/libdummy-indicator-null.so");
+	IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/.libs/libdummy-indicator-simple.so");
 	g_assert(object != NULL);
 
 	gboolean unreffed = FALSE;
@@ -15,6 +15,14 @@ test_loader_filename_dummy_null (void)
 	g_object_unref(object);
 	g_assert(unreffed == TRUE);
 
+	return;
+}
+
+void
+test_loader_filename_dummy_null (void)
+{
+	IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/.libs/libdummy-indicator-null.so");
+	g_assert(object == NULL);
 	return;
 }
 
@@ -67,6 +75,8 @@ main (int argc, char ** argv)
 	g_test_init (&argc, &argv, NULL);
 
 	test_loader_creation_deletion_suite();
+
+	g_log_set_always_fatal(G_LOG_LEVEL_CRITICAL);
 
 	return g_test_run();
 }
