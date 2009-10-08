@@ -6,6 +6,7 @@
 
 typedef struct _IndicatorObjectPrivate IndicatorObjectPrivate;
 struct _IndicatorObjectPrivate {
+	guint data;
 };
 
 #define INDICATOR_OBJECT_GET_PRIVATE(o) \
