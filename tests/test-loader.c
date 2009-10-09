@@ -4,6 +4,21 @@
 void destroy_cb (gpointer data, GObject * object);
 
 void
+test_loader_filename_dummy_simple_accessors (void)
+{
+	IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/.libs/libdummy-indicator-simple.so");
+	g_assert(object != NULL);
+
+	g_assert(indicator_object_get_label(object) != NULL);
+	g_assert(indicator_object_get_menu(object) != NULL);
+	g_assert(indicator_object_get_icon(object) != NULL);
+
+	g_object_unref(object);
+
+	return;
+}
+
+void
 test_loader_filename_dummy_simple (void)
 {
 	IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/.libs/libdummy-indicator-simple.so");
@@ -64,6 +79,7 @@ test_loader_creation_deletion_suite (void)
 	g_test_add_func ("/libindicator/loader/filename_bad",  test_loader_filename_bad);
 	g_test_add_func ("/libindicator/loader/dummy/null_load",  test_loader_filename_dummy_null);
 	g_test_add_func ("/libindicator/loader/dummy/simple_load",  test_loader_filename_dummy_simple);
+	g_test_add_func ("/libindicator/loader/dummy/simple_accessors", test_loader_filename_dummy_simple_accessors);
 
 	return;
 }
