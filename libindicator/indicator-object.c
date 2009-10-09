@@ -126,6 +126,9 @@ indicator_object_new_from_file (const gchar * file)
 		goto unrefandout;
 	}
 	priv->label = lget_label();
+	if (priv->label) {
+		g_object_ref(G_OBJECT(priv->label));
+	}
 
 	/* The function for grabbing an icon from the module
 	   execute it, and make sure everything is a-okay */
@@ -139,6 +142,9 @@ indicator_object_new_from_file (const gchar * file)
 		goto unrefandout;
 	}
 	priv->icon = lget_icon();
+	if (priv->icon) {
+		g_object_ref(G_OBJECT(priv->icon));
+	}
 
 	/* The function for grabbing a menu from the module
 	   execute it, and make sure everything is a-okay */
@@ -152,6 +158,9 @@ indicator_object_new_from_file (const gchar * file)
 		goto unrefandout;
 	}
 	priv->menu = lget_menu();
+	if (priv->menu) {
+		g_object_ref(G_OBJECT(priv->menu));
+	}
 
 	if (priv->label == NULL && priv->icon == NULL) {
 		/* This is the case where there is nothing to display,
