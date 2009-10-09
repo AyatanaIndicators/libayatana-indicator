@@ -63,6 +63,7 @@ test_loader_creation_deletion_suite (void)
 	g_test_add_func ("/libindicator/loader/ref_and_unref", test_loader_refunref);
 	g_test_add_func ("/libindicator/loader/filename_bad",  test_loader_filename_bad);
 	g_test_add_func ("/libindicator/loader/dummy/null_load",  test_loader_filename_dummy_null);
+	g_test_add_func ("/libindicator/loader/dummy/simple_load",  test_loader_filename_dummy_simple);
 
 	return;
 }

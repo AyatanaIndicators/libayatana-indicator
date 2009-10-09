@@ -111,3 +111,5 @@ tests/loader-check-results.html
 tests/test-loader
 tests/libdummy-indicator-null.la
 tests/libdummy_indicator_null_la-dummy-indicator-null.lo
+tests/libdummy-indicator-simple.la
+tests/libdummy_indicator_simple_la-dummy-indicator-simple.lo
