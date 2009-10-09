@@ -1,4 +1,4 @@
-#include <glib.h>
+#include <gtk/gtk.h>
 #include "libindicator/indicator-object.h"
 
 void destroy_cb (gpointer data, GObject * object);
@@ -74,6 +74,7 @@ main (int argc, char ** argv)
 {
 	g_type_init (); 
 	g_test_init (&argc, &argv, NULL);
+	gtk_init(&argc, &argv);
 
 	test_loader_creation_deletion_suite();
 
