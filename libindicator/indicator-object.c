@@ -175,3 +175,27 @@ unrefandout:
 	g_object_unref(object);
 	return NULL;
 }
+
+GtkLabel *
+indicator_object_get_label (IndicatorObject * io)
+{
+	g_return_val_if_fail(IS_INDICATOR_OBJECT(io), NULL);
+	IndicatorObjectPrivate * priv = INDICATOR_OBJECT_GET_PRIVATE(io);
+	return priv->label;
+}
+
+GtkImage *
+indicator_object_get_icon (IndicatorObject * io)
+{
+	g_return_val_if_fail(IS_INDICATOR_OBJECT(io), NULL);
+	IndicatorObjectPrivate * priv = INDICATOR_OBJECT_GET_PRIVATE(io);
+	return priv->icon;
+}
+
+GtkMenu *
+indicator_object_get_menu (IndicatorObject * io)
+{
+	g_return_val_if_fail(IS_INDICATOR_OBJECT(io), NULL);
+	IndicatorObjectPrivate * priv = INDICATOR_OBJECT_GET_PRIVATE(io);
+	return priv->menu;
+}

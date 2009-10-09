@@ -29,6 +29,10 @@ struct _IndicatorObject {
 GType indicator_object_get_type (void);
 IndicatorObject * indicator_object_new_from_file (const gchar * file);
 
+GtkLabel * indicator_object_get_label (IndicatorObject * io);
+GtkImage * indicator_object_get_icon (IndicatorObject * io);
+GtkMenu * indicator_object_get_menu (IndicatorObject * io);
+
 G_END_DECLS
 
 #endif
