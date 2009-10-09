@@ -19,5 +19,10 @@ get_icon (void)
 GtkMenu *
 get_menu (void)
 {
-	return GTK_MENU(gtk_menu_new());
+	GtkMenu * main_menu = GTK_MENU(gtk_menu_new());
+	GtkWidget * loading_item = gtk_menu_item_new_with_label("Loading...");
+	gtk_menu_shell_append(GTK_MENU_SHELL(main_menu), loading_item);
+	gtk_widget_show(GTK_WIDGET(loading_item));
+
+	return main_menu;
 }
