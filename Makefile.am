@@ -1,7 +1,8 @@
 
 SUBDIRS = \
 	libindicator \
-	tests
+	tests \
+	tools
 
 DISTCLEANFILES = \
 	libindicator-*.tar.gz
