@@ -34,6 +34,14 @@ test_loader_filename_dummy_simple (void)
 }
 
 void
+test_loader_filename_dummy_blank (void)
+{
+	IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/.libs/libdummy-indicator-blank.so");
+	g_assert(object == NULL);
+	return;
+}
+
+void
 test_loader_filename_dummy_null (void)
 {
 	IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/.libs/libdummy-indicator-null.so");
@@ -78,6 +86,7 @@ test_loader_creation_deletion_suite (void)
 	g_test_add_func ("/libindicator/loader/ref_and_unref", test_loader_refunref);
 	g_test_add_func ("/libindicator/loader/filename_bad",  test_loader_filename_bad);
 	g_test_add_func ("/libindicator/loader/dummy/null_load",  test_loader_filename_dummy_null);
+	g_test_add_func ("/libindicator/loader/dummy/blank_load",  test_loader_filename_dummy_null);
 	g_test_add_func ("/libindicator/loader/dummy/simple_load",  test_loader_filename_dummy_simple);
 	g_test_add_func ("/libindicator/loader/dummy/simple_accessors", test_loader_filename_dummy_simple_accessors);
 
