@@ -3,6 +3,7 @@ check_PROGRAMS = \
 	test-loader
 
 lib_LTLIBRARIES = \
+	libdummy-indicator-blank.la \
 	libdummy-indicator-null.la \
 	libdummy-indicator-simple.la
 
@@ -20,6 +21,24 @@ test_loader_CFLAGS = \
 
 test_loader_LDADD = \
 	$(LIBINDICATOR_LIBS) $(top_builddir)/libindicator/.libs/libindicator.a
+
+#############################
+# Dummy Indicator Blank
+#############################
+
+libdummy_indicator_blank_la_SOURCES = \
+	dummy-indicator-blank.c
+
+libdummy_indicator_blank_la_CFLAGS = \
+	-Wall -Werror \
+	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
+
+libdummy_indicator_blank_la_LIBADD = \
+	$(LIBINDICATOR_LIBS)
+
+libdummy_indicator_blank_la_LDFLAGS = \
+	-module \
+	-avoid-version
 
 #############################
 # Dummy Indicator NULL
