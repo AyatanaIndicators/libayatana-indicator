@@ -34,16 +34,6 @@ AC_SUBST(LIBINDICATOR_CFLAGS)
 AC_SUBST(LIBINDICATOR_LIBS)
 
 ##############################
-# Valgrind
-##############################
-
-PKG_CHECK_MODULES(VALGRIND, valgrind)
-
-AC_SUBST(VALGRIND_CFLAGS)
-AC_SUBST(VALGRIND_LIBS)
-
-
-##############################
 # Custom Junk
 ##############################
 
