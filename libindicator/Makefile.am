@@ -1,3 +1,5 @@
+BUILT_SOURCES = 
+CLEANFILES = 
 EXTRA_DIST = \
 	indicator.pc.in
 
@@ -27,3 +29,31 @@ libindicator_la_LIBADD = \
 pkgconfig_DATA = indicator.pc
 pkgconfigdir = $(libdir)/pkgconfig
 
+##################################
+# DBus Specs
+##################################
+
+DBUS_SPECS = \
+	indicator-service.xml
+
+%-client.h: %.xml
+	dbus-binding-tool \
+		--prefix=_$(subst -,_,$(<:.xml=))_client \
+		--mode=glib-client \
+		--output=$@ \
+		$<
+
+%-server.h: %.xml
+	dbus-binding-tool \
+		--prefix=_$(subst -,_,$(<:.xml=))_server \
+		--mode=glib-server \
+		--output=$@ \
+		$<
+
+BUILT_SOURCES += \
+	$(DBUS_SPECS:.xml=-client.h) \
+	$(DBUS_SPECS:.xml=-server.h)
+
+CLEANFILES += $(BUILT_SOURCES)
+
+EXTRA_DIST += $(DBUS_SPECS)
