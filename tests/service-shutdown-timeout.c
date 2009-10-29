@@ -18,6 +18,7 @@ void
 shutdown (void)
 {
 	g_debug("Shutdown");
+	passed = TRUE;
 	g_main_loop_quit(mainloop);
 	return;
 }
