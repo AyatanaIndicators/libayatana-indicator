@@ -9,6 +9,7 @@
 void _indicator_service_server_watch (void);
 
 #include "indicator-service-server.h"
+#include "dbus-shared.h"
 
 /* Private Stuff */
 typedef struct _IndicatorServicePrivate IndicatorServicePrivate;
@@ -129,7 +130,7 @@ indicator_service_init (IndicatorService *self)
 	}
 
 	dbus_g_connection_register_g_object(session_bus,
-	                                    "/need/a/path",
+	                                    INDICATOR_SERVICE_OBJECT,
 	                                    G_OBJECT(self));
 
 	return;

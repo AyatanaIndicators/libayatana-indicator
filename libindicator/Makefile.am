@@ -19,6 +19,7 @@ lib_LTLIBRARIES = \
 
 libindicator_la_SOURCES = \
 	$(indicator_headers) \
+	dbus-shared.h \
 	indicator-object.c \
 	indicator-service.c \
 	indicator-service-manager.c
