@@ -1,3 +1,5 @@
+TESTS =
+DISTCLEANFILES =
 
 check_PROGRAMS = \
 	test-loader \
@@ -99,10 +101,13 @@ service_shutdown_timeout_LDADD = \
 XML_REPORT  = loader-check-results.xml
 HTML_REPORT = loader-check-results.html
 
-loader-tester: test-loader libdummy-indicator-null.la libdummy-indicator-simple.la
-	@gtester -k --verbose -o=$(XML_REPORT) ./test-loader
+loader-tester: test-loader libdummy-indicator-null.la libdummy-indicator-simple.la Makefile
+	@echo "#!/bin/sh" > loader-tester
+	@echo gtester -k --verbose -o=$(XML_REPORT) ./test-loader >> loader-tester
+	@chmod +x loader-tester
 
-check-local: loader-tester
+TESTS += loader-tester
+DISTCLEANFILES += loader-tester
 
-DISTCLEANFILES = $(XML_REPORT) $(HTML_REPORT)
+DISTCLEANFILES += $(XML_REPORT) $(HTML_REPORT)
 
