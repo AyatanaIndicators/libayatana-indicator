@@ -55,3 +55,28 @@ indicator_service_manager_finalize (GObject *object)
 	G_OBJECT_CLASS (indicator_service_manager_parent_class)->finalize (object);
 	return;
 }
+
+/* API */
+IndicatorServiceManager *
+indicator_service_manager_new (gchar * dbus_name)
+{
+	GObject * obj = g_object_new(INDICATOR_SERVICE_MANAGER_TYPE,
+	                             "name", dbus_name,
+	                             NULL);
+
+	return INDICATOR_SERVICE_MANAGER(obj);
+}
+
+gboolean
+indicator_service_manager_connected (IndicatorServiceManager * sm)
+{
+
+	return FALSE;
+}
+
+void
+indicator_service_manager_set_refresh (IndicatorServiceManager * sm, guint time_in_ms)
+{
+
+	return;
+}
