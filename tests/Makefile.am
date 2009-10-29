@@ -1,6 +1,7 @@
 
 check_PROGRAMS = \
-	test-loader
+	test-loader \
+	service-shutdown-timeout
 
 lib_LTLIBRARIES = \
 	libdummy-indicator-blank.la \
@@ -75,6 +76,21 @@ libdummy_indicator_simple_la_LIBADD = \
 libdummy_indicator_simple_la_LDFLAGS = \
 	-module \
 	-avoid-version
+
+#############################
+# Service Shutdown Timeout
+#############################
+
+service_shutdown_timeout_SOURCES = \
+	service-shutdown-timeout.c
+
+service_shutdown_timeout_CFLAGS = \
+	-Wall -Werror \
+	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
+
+service_shutdown_timeout_LDADD = \
+	$(LIBINDICATOR_LIBS) \
+	$(top_builddir)/libindicator/.libs/libindicator.a
 
 #############################
 # Test stuff
