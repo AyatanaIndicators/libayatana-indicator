@@ -123,3 +123,4 @@ libindicator/libindicator_la-indicator-service.lo
 libindicator/libindicator_la-indicator-service-manager.lo
 tests/service-shutdown-timeout
 tests/loader-tester
+tests/service-shutdown-timeout-tester

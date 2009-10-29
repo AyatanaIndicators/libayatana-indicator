@@ -10,6 +10,8 @@ lib_LTLIBRARIES = \
 	libdummy-indicator-null.la \
 	libdummy-indicator-simple.la
 
+DBUS_RUNNER=dbus-test-runner --dbus-config /usr/share/dbus-test-runner/session.conf
+
 #############################
 # Test Loader
 #############################
@@ -93,6 +95,14 @@ service_shutdown_timeout_CFLAGS = \
 service_shutdown_timeout_LDADD = \
 	$(LIBINDICATOR_LIBS) \
 	$(top_builddir)/libindicator/.libs/libindicator.a
+
+service-shutdown-timeout-tester: service-shutdown-timeout Makefile
+	@echo "#!/bin/sh" > service-shutdown-timeout-tester
+	@echo $(DBUS_RUNNER) --task ./service-shutdown-timeout >> service-shutdown-timeout-tester
+	@chmod +x service-shutdown-timeout-tester
+
+TESTS += service-shutdown-timeout-tester
+DISTCLEANFILES += service-shutdown-timeout-tester
 
 #############################
 # Test stuff
