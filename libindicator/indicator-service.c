@@ -56,3 +56,11 @@ indicator_service_finalize (GObject *object)
 	G_OBJECT_CLASS (indicator_service_parent_class)->finalize (object);
 	return;
 }
+
+IndicatorService *
+indicator_service_new (gchar * name)
+{
+	GObject * obj = g_object_new(INDICATOR_SERVICE_TYPE, NULL);
+
+	return INDICATOR_SERVICE(obj);
+}

@@ -53,7 +53,7 @@ struct _IndicatorService {
 
 GType indicator_service_get_type (void);
 
-IndicatorService *   inidcator_service_new   (gchar * name);
+IndicatorService *   indicator_service_new   (gchar * name);
 
 G_END_DECLS
 
