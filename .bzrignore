@@ -119,3 +119,5 @@ libindicator-[0-9].[0-9].[0-9].tar.gz
 libindicator-[0-9].[0-9].[0-9].tar.gz.asc
 libindicator/indicator-service-client.h
 libindicator/indicator-service-server.h
+libindicator/libindicator_la-indicator-service.lo
+libindicator/libindicator_la-indicator-service-manager.lo
