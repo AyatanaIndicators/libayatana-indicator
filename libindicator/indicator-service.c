@@ -2,11 +2,12 @@
 #include "config.h"
 #endif
 #include <dbus/dbus-glib-bindings.h>
+#include <dbus/dbus-glib-lowlevel.h>
 
 #include "indicator-service.h"
 
 /* DBus Prototypes */
-void _indicator_service_server_watch (void);
+static gboolean _indicator_service_server_watch (IndicatorService * service, DBusGMethodInvocation * method);
 
 #include "indicator-service-server.h"
 #include "dbus-shared.h"
@@ -17,6 +18,8 @@ typedef struct _IndicatorServicePrivate IndicatorServicePrivate;
 struct _IndicatorServicePrivate {
 	gchar * name;
 	DBusGProxy * dbus_proxy;
+	guint timeout;
+	GList * watchers;
 };
 
 /* Signals Stuff */
@@ -108,6 +111,8 @@ indicator_service_init (IndicatorService *self)
 	/* Get the private variables in a decent state */
 	priv->name = NULL;
 	priv->dbus_proxy = NULL;
+	priv->timeout = 0;
+	priv->watchers = NULL;
 
 	/* Start talkin' dbus */
 	GError * error = NULL;
@@ -146,6 +151,11 @@ indicator_service_dispose (GObject *object)
 		priv->dbus_proxy = NULL;
 	}
 
+	if (priv->timeout != 0) {
+		g_source_remove(priv->timeout);
+		priv->timeout = 0;
+	}
+
 	G_OBJECT_CLASS (indicator_service_parent_class)->dispose (object);
 	return;
 }
@@ -155,8 +165,14 @@ indicator_service_finalize (GObject *object)
 {
 	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(object);
 
-	if (priv->name) {
+	if (priv->name != NULL) {
 		g_free(priv->name);
+	}
+
+	if (priv->watchers != NULL) {
+		g_list_foreach(priv->watchers, (GFunc)g_free, NULL);
+		g_list_free(priv->watchers);
+		priv->watchers = NULL;
 	}
 
 	G_OBJECT_CLASS (indicator_service_parent_class)->finalize (object);
@@ -255,7 +271,23 @@ try_and_get_name (IndicatorService * service)
 	return;
 }
 
-void _indicator_service_server_watch (void) { }
+static gboolean
+_indicator_service_server_watch (IndicatorService * service, DBusGMethodInvocation * method)
+{
+	g_return_val_if_fail(INDICATOR_IS_SERVICE(service), FALSE);
+	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(service);
+
+	priv->watchers = g_list_append(priv->watchers,
+	                               g_strdup(dbus_g_method_get_sender(method)));
+
+	if (priv->timeout != 0) {
+		g_source_remove(priv->timeout);
+		priv->timeout = 0;
+	}
+
+	dbus_g_method_return(method, 1);
+	return TRUE;
+}
 
 /* API */
 
