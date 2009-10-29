@@ -238,6 +238,13 @@ get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspe
 	return;
 }
 
+static gboolean
+timeout_no_watchers (gpointer data)
+{
+	g_signal_emit(G_OBJECT(data), signals[SHUTDOWN], 0, TRUE);
+	return FALSE;
+}
+
 static void
 try_and_get_name_cb (DBusGProxy * proxy, guint status, GError * error, gpointer data)
 {
@@ -251,6 +258,9 @@ try_and_get_name_cb (DBusGProxy * proxy, guint status, GError * error, gpointer 
 		g_signal_emit(G_OBJECT(data), signals[SHUTDOWN], 0, TRUE);
 		return;
 	}
+
+	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(service);
+	priv->timeout = g_timeout_add(500, timeout_no_watchers, service);
 
 	return;
 }
