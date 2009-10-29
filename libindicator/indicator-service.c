@@ -10,6 +10,7 @@ typedef struct _IndicatorServicePrivate IndicatorServicePrivate;
 
 struct _IndicatorServicePrivate {
 	gchar * name;
+	DBusGProxy * dbus_proxy;
 };
 
 /* Signals Stuff */
@@ -94,7 +95,29 @@ indicator_service_init (IndicatorService *self)
 {
 	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(self);
 
+	/* Get the private variables in a decent state */
 	priv->name = NULL;
+	priv->dbus_proxy = NULL;
+
+	/* Start talkin' dbus */
+	GError * error = NULL;
+	DBusGConnection * session_bus = dbus_g_bus_get(DBUS_BUS_SESSION, &error);
+	if (error != NULL) {
+		g_error("Unable to get session bus: %s", error->message);
+		g_error_free(error);
+		return;
+	}
+
+	priv->dbus_proxy = dbus_g_proxy_new_for_name_owner(session_bus,
+	                                                   DBUS_SERVICE_DBUS,
+	                                                   DBUS_PATH_DBUS,
+	                                                   DBUS_INTERFACE_DBUS,
+	                                                   &error);
+	if (error != NULL) {
+		g_error("Unable to get the proxy to DBus: %s", error->message);
+		g_error_free(error);
+		return;
+	}
 
 	return;
 }
@@ -102,6 +125,12 @@ indicator_service_init (IndicatorService *self)
 static void
 indicator_service_dispose (GObject *object)
 {
+	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(object);
+
+	if (priv->dbus_proxy != NULL) {
+		g_object_unref(G_OBJECT(priv->dbus_proxy));
+		priv->dbus_proxy = NULL;
+	}
 
 	G_OBJECT_CLASS (indicator_service_parent_class)->dispose (object);
 	return;
@@ -185,19 +214,27 @@ try_and_get_name_cb (DBusGProxy * proxy, guint status, GError * error, gpointer 
 	IndicatorService * service = INDICATOR_SERVICE(data);
 	g_return_if_fail(service != NULL);
 
+	if (status != DBUS_REQUEST_NAME_REPLY_PRIMARY_OWNER && status != DBUS_REQUEST_NAME_REPLY_ALREADY_OWNER) {
+		/* The already owner seems like it shouldn't ever
+		   happen, but I have a hard time throwing an error
+		   on it as we did achieve our goals. */
+		g_signal_emit(G_OBJECT(data), signals[SHUTDOWN], 0, TRUE);
+		return;
+	}
 
+	return;
 }
 
 static void
 try_and_get_name (IndicatorService * service)
 {
 	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(service);
-	/* g_return_if_fail(priv->dbus_proxy != NULL); */
+	g_return_if_fail(priv->dbus_proxy != NULL);
 	g_return_if_fail(priv->name != NULL);
 
-	org_freedesktop_DBus_request_name_async(/* priv->dbus_proxy, */ NULL,
+	org_freedesktop_DBus_request_name_async(priv->dbus_proxy,
 	                                        priv->name,
-	                                        0,
+	                                        DBUS_NAME_FLAG_DO_NOT_QUEUE,
 	                                        try_and_get_name_cb,
 	                                        service);
 
