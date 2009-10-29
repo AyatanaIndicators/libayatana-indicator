@@ -1,6 +1,7 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+#include <dbus/dbus-glib-bindings.h>
 
 #include "indicator-service.h"
 
@@ -8,7 +9,7 @@
 typedef struct _IndicatorServicePrivate IndicatorServicePrivate;
 
 struct _IndicatorServicePrivate {
-	int dummy;
+	gchar * name;
 };
 
 /* Signals Stuff */
@@ -42,6 +43,7 @@ static void indicator_service_finalize   (GObject *object);
 /* Other prototypes */
 static void set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec);
 static void get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec);
+static void try_and_get_name (IndicatorService * service);
 
 G_DEFINE_TYPE (IndicatorService, indicator_service, G_TYPE_OBJECT);
 
@@ -90,6 +92,9 @@ indicator_service_class_init (IndicatorServiceClass *klass)
 static void
 indicator_service_init (IndicatorService *self)
 {
+	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(self);
+
+	priv->name = NULL;
 
 	return;
 }
@@ -105,6 +110,11 @@ indicator_service_dispose (GObject *object)
 static void
 indicator_service_finalize (GObject *object)
 {
+	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(object);
+
+	if (priv->name) {
+		g_free(priv->name);
+	}
 
 	G_OBJECT_CLASS (indicator_service_parent_class)->finalize (object);
 	return;
@@ -122,6 +132,16 @@ set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec 
 	switch (prop_id) {
 	/* *********************** */
 	case PROP_NAME:
+		if (G_VALUE_HOLDS_STRING(value)) {
+			if (priv->name != NULL) {
+				g_error("Name can not be set twice!");
+				return;
+			}
+			priv->name = g_value_dup_string(value);
+			try_and_get_name(self);
+		} else {
+			g_warning("Name is a string bud.");
+		}
 		break;
 	/* *********************** */
 	default:
@@ -144,6 +164,11 @@ get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspe
 	switch (prop_id) {
 	/* *********************** */
 	case PROP_NAME:
+		if (G_VALUE_HOLDS_STRING(value)) {
+			g_value_set_string(value, priv->name);
+		} else {
+			g_warning("Name is a string bud.");
+		}
 		break;
 	/* *********************** */
 	default:
@@ -153,6 +178,33 @@ get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspe
 
 	return;
 }
+
+static void
+try_and_get_name_cb (DBusGProxy * proxy, guint status, GError * error, gpointer data)
+{
+	IndicatorService * service = INDICATOR_SERVICE(data);
+	g_return_if_fail(service != NULL);
+
+
+}
+
+static void
+try_and_get_name (IndicatorService * service)
+{
+	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(service);
+	/* g_return_if_fail(priv->dbus_proxy != NULL); */
+	g_return_if_fail(priv->name != NULL);
+
+	org_freedesktop_DBus_request_name_async(/* priv->dbus_proxy, */ NULL,
+	                                        priv->name,
+	                                        0,
+	                                        try_and_get_name_cb,
+	                                        service);
+
+	return;
+}
+
+/* API */
 
 /**
 	indicator_service_new:
