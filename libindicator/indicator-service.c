@@ -19,6 +19,18 @@ enum {
 
 static guint signals[LAST_SIGNAL] = { 0 };
 
+/* Properties */
+/* Enum for the properties so that they can be quickly
+   found and looked up. */
+enum {
+	PROP_0,
+	PROP_NAME,
+};
+
+/* The strings so that they can be slowly looked up. */
+#define PROP_NAME_S                    "name"
+
+/* GObject Stuff */
 #define INDICATOR_SERVICE_GET_PRIVATE(o) \
 			(G_TYPE_INSTANCE_GET_PRIVATE ((o), INDICATOR_SERVICE_TYPE, IndicatorServicePrivate))
 
@@ -26,6 +38,10 @@ static void indicator_service_class_init (IndicatorServiceClass *klass);
 static void indicator_service_init       (IndicatorService *self);
 static void indicator_service_dispose    (GObject *object);
 static void indicator_service_finalize   (GObject *object);
+
+/* Other prototypes */
+static void set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec);
+static void get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec);
 
 G_DEFINE_TYPE (IndicatorService, indicator_service, G_TYPE_OBJECT);
 
@@ -38,6 +54,18 @@ indicator_service_class_init (IndicatorServiceClass *klass)
 
 	object_class->dispose = indicator_service_dispose;
 	object_class->finalize = indicator_service_finalize;
+
+	/* Property funcs */
+	object_class->set_property = set_property;
+	object_class->get_property = get_property;
+
+	/* Properties */
+	g_object_class_install_property(object_class, PROP_NAME,
+	                                g_param_spec_string(PROP_NAME_S,
+	                                                    "The DBus name for this service",
+	                                                    "This is the name that should be used on DBus for this service.",
+	                                                    NULL,
+	                                                    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	/* Signals */
 
@@ -82,10 +110,68 @@ indicator_service_finalize (GObject *object)
 	return;
 }
 
+static void
+set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec)
+{
+	IndicatorService * self = INDICATOR_SERVICE(object);
+	g_return_if_fail(self != NULL);
+
+	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(self);
+	g_return_if_fail(priv != NULL);
+
+	switch (prop_id) {
+	/* *********************** */
+	case PROP_NAME:
+		break;
+	/* *********************** */
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+		break;
+	}
+
+	return;
+}
+
+static void
+get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec)
+{
+	IndicatorService * self = INDICATOR_SERVICE(object);
+	g_return_if_fail(self != NULL);
+
+	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(self);
+	g_return_if_fail(priv != NULL);
+
+	switch (prop_id) {
+	/* *********************** */
+	case PROP_NAME:
+		break;
+	/* *********************** */
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+		break;
+	}
+
+	return;
+}
+
+/**
+	indicator_service_new:
+	@name: The name for the service on dbus
+
+	This function creates the service on DBus and tries to
+	get a well-known name specified in @name.  If the name
+	can't be estabilished then the #IndicatorService::shutdown
+	signal will be sent.
+
+	Return value: A brand new #IndicatorService object or #NULL
+		if there is an error.
+*/
 IndicatorService *
 indicator_service_new (gchar * name)
 {
-	GObject * obj = g_object_new(INDICATOR_SERVICE_TYPE, NULL);
+	GObject * obj = g_object_new(INDICATOR_SERVICE_TYPE,
+	                             PROP_NAME_S, name,
+	                             NULL);
 
 	return INDICATOR_SERVICE(obj);
 }
