@@ -4,11 +4,20 @@
 
 #include "indicator-service.h"
 
+/* Private Stuff */
 typedef struct _IndicatorServicePrivate IndicatorServicePrivate;
 
 struct _IndicatorServicePrivate {
 	int dummy;
 };
+
+/* Signals Stuff */
+enum {
+	SHUTDOWN,
+	LAST_SIGNAL
+};
+
+static guint signals[LAST_SIGNAL] = { 0 };
 
 #define INDICATOR_SERVICE_GET_PRIVATE(o) \
 			(G_TYPE_INSTANCE_GET_PRIVATE ((o), INDICATOR_SERVICE_TYPE, IndicatorServicePrivate))
@@ -30,6 +39,22 @@ indicator_service_class_init (IndicatorServiceClass *klass)
 	object_class->dispose = indicator_service_dispose;
 	object_class->finalize = indicator_service_finalize;
 
+	/* Signals */
+
+	/**
+		IndicatorService::shutdown:
+		@arg0: The #IndicatorService object
+		
+		Signaled when the service should shutdown as no one
+		is listening anymore.
+	*/
+	signals[SHUTDOWN] = g_signal_new (INDICATOR_SERVICE_SIGNAL_SHUTDOWN,
+	                                  G_TYPE_FROM_CLASS(klass),
+	                                  G_SIGNAL_RUN_LAST,
+	                                  G_STRUCT_OFFSET (IndicatorServiceClass, shutdown),
+	                                  NULL, NULL,
+	                                  g_cclosure_marshal_VOID__VOID,
+	                                  G_TYPE_NONE, 0, G_TYPE_NONE);
 
 	return;
 }
