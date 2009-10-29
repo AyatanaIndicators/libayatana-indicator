@@ -5,6 +5,11 @@
 
 #include "indicator-service.h"
 
+/* DBus Prototypes */
+void _indicator_service_server_watch (void);
+
+#include "indicator-service-server.h"
+
 /* Private Stuff */
 typedef struct _IndicatorServicePrivate IndicatorServicePrivate;
 
@@ -87,6 +92,10 @@ indicator_service_class_init (IndicatorServiceClass *klass)
 	                                  g_cclosure_marshal_VOID__VOID,
 	                                  G_TYPE_NONE, 0, G_TYPE_NONE);
 
+	/* Initialize the object as a DBus type */
+	dbus_g_object_type_install_info(INDICATOR_SERVICE_TYPE,
+	                                &dbus_glib__indicator_service_server_object_info);
+
 	return;
 }
 
@@ -118,6 +127,10 @@ indicator_service_init (IndicatorService *self)
 		g_error_free(error);
 		return;
 	}
+
+	dbus_g_connection_register_g_object(session_bus,
+	                                    "/need/a/path",
+	                                    G_OBJECT(self));
 
 	return;
 }
@@ -240,6 +253,8 @@ try_and_get_name (IndicatorService * service)
 
 	return;
 }
+
+void _indicator_service_server_watch (void) { }
 
 /* API */
 
