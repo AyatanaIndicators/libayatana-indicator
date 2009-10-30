@@ -39,6 +39,11 @@ static void indicator_service_manager_init       (IndicatorServiceManager *self)
 static void indicator_service_manager_dispose    (GObject *object);
 static void indicator_service_manager_finalize   (GObject *object);
 
+/* Prototypes */
+static void set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec);
+static void get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec);
+static void start_service (IndicatorServiceManager * service);
+
 G_DEFINE_TYPE (IndicatorServiceManager, indicator_service_manager, G_TYPE_OBJECT);
 
 static void
@@ -50,6 +55,10 @@ indicator_service_manager_class_init (IndicatorServiceManagerClass *klass)
 
 	object_class->dispose = indicator_service_manager_dispose;
 	object_class->finalize = indicator_service_manager_finalize;
+
+	/* Property funcs */
+	object_class->set_property = set_property;
+	object_class->get_property = get_property;
 
 	/**
 		IndicatorServiceManager::connecton-change:
@@ -98,6 +107,73 @@ indicator_service_manager_finalize (GObject *object)
 {
 
 	G_OBJECT_CLASS (indicator_service_manager_parent_class)->finalize (object);
+	return;
+}
+
+static void
+set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec)
+{
+	IndicatorServiceManager * self = INDICATOR_SERVICE_MANAGER(object);
+	g_return_if_fail(self != NULL);
+
+	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(self);
+	g_return_if_fail(priv != NULL);
+
+	switch (prop_id) {
+	/* *********************** */
+	case PROP_NAME:
+		if (G_VALUE_HOLDS_STRING(value)) {
+			if (priv->name != NULL) {
+				g_error("Name can not be set twice!");
+				return;
+			}
+			priv->name = g_value_dup_string(value);
+			start_service(self);
+		} else {
+			g_warning("Name is a string bud.");
+		}
+		break;
+	/* *********************** */
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+		break;
+	}
+
+	return;
+}
+
+static void
+get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec)
+{
+	IndicatorServiceManager * self = INDICATOR_SERVICE_MANAGER(object);
+	g_return_if_fail(self != NULL);
+
+	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(self);
+	g_return_if_fail(priv != NULL);
+
+	switch (prop_id) {
+	/* *********************** */
+	case PROP_NAME:
+		if (G_VALUE_HOLDS_STRING(value)) {
+			g_value_set_string(value, priv->name);
+		} else {
+			g_warning("Name is a string bud.");
+		}
+		break;
+	/* *********************** */
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+		break;
+	}
+
+	return;
+}
+
+static void
+start_service (IndicatorServiceManager * service)
+{
+
+
 	return;
 }
 
