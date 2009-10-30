@@ -2,12 +2,16 @@
 #include "config.h"
 #endif
 
+#include <dbus/dbus-glib-bindings.h>
+#include <dbus/dbus-glib-lowlevel.h>
+
 #include "indicator-service-manager.h"
 
 /* Private Stuff */
 typedef struct _IndicatorServiceManagerPrivate IndicatorServiceManagerPrivate;
 struct _IndicatorServiceManagerPrivate {
 	gchar * name;
+	DBusGProxy * dbus_proxy;
 };
 
 /* Signals Stuff */
@@ -90,6 +94,31 @@ indicator_service_manager_class_init (IndicatorServiceManagerClass *klass)
 static void
 indicator_service_manager_init (IndicatorServiceManager *self)
 {
+	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(self);
+
+	/* Get the private variables in a decent state */
+	priv->name = NULL;
+	priv->dbus_proxy = NULL;
+
+	/* Start talkin' dbus */
+	GError * error = NULL;
+	DBusGConnection * session_bus = dbus_g_bus_get(DBUS_BUS_SESSION, &error);
+	if (error != NULL) {
+		g_error("Unable to get session bus: %s", error->message);
+		g_error_free(error);
+		return;
+	}
+
+	priv->dbus_proxy = dbus_g_proxy_new_for_name_owner(session_bus,
+	                                                   DBUS_SERVICE_DBUS,
+	                                                   DBUS_PATH_DBUS,
+	                                                   DBUS_INTERFACE_DBUS,
+	                                                   &error);
+	if (error != NULL) {
+		g_error("Unable to get the proxy to DBus: %s", error->message);
+		g_error_free(error);
+		return;
+	}
 
 	return;
 }
@@ -97,6 +126,12 @@ indicator_service_manager_init (IndicatorServiceManager *self)
 static void
 indicator_service_manager_dispose (GObject *object)
 {
+	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(object);
+
+	if (priv->dbus_proxy != NULL) {
+		g_object_unref(G_OBJECT(priv->dbus_proxy));
+		priv->dbus_proxy = NULL;
+	}
 
 	G_OBJECT_CLASS (indicator_service_manager_parent_class)->dispose (object);
 	return;
@@ -176,9 +211,36 @@ get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspe
 }
 
 static void
+start_service_cb (DBusGProxy * proxy, guint status, GError * error, gpointer user_data)
+{
+	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(user_data);
+
+	if (error != NULL) {
+		g_error("Unable to start service '%s': %s", priv->name, error->message);
+		return;
+	}
+
+	if (status != DBUS_START_REPLY_SUCCESS && status != DBUS_START_REPLY_ALREADY_RUNNING) {
+		g_error("Status of starting the process '%s' was an error: %d", priv->name, status);
+		return;
+	}
+
+	return;
+}
+
+static void
 start_service (IndicatorServiceManager * service)
 {
+	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(service);
 
+	g_return_if_fail(priv->dbus_proxy != NULL);
+	g_return_if_fail(priv->name != NULL);
+
+	org_freedesktop_DBus_start_service_by_name_async (priv->dbus_proxy,
+	                                                  priv->name,
+	                                                  0,
+	                                                  start_service_cb,
+	                                                  service);
 
 	return;
 }
