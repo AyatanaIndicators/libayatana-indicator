@@ -15,6 +15,7 @@ struct _IndicatorServiceManagerPrivate {
 	gchar * name;
 	DBusGProxy * dbus_proxy;
 	DBusGProxy * service_proxy;
+	gboolean connected;
 };
 
 /* Signals Stuff */
@@ -103,6 +104,7 @@ indicator_service_manager_init (IndicatorServiceManager *self)
 	priv->name = NULL;
 	priv->dbus_proxy = NULL;
 	priv->service_proxy = NULL;
+	priv->connected = FALSE;
 
 	/* Start talkin' dbus */
 	GError * error = NULL;
@@ -132,16 +134,26 @@ indicator_service_manager_dispose (GObject *object)
 {
 	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(object);
 
+	/* If we were connected we need to make sure to
+	   tell people that it's no longer the case. */
+	if (priv->connected) {
+		priv->connected = FALSE;
+		g_signal_emit(object, signals[CONNECTION_CHANGE], 0, FALSE, TRUE);
+	}
+
+	/* Destory our DBus proxy, we won't need it. */
 	if (priv->dbus_proxy != NULL) {
 		g_object_unref(G_OBJECT(priv->dbus_proxy));
 		priv->dbus_proxy = NULL;
 	}
 
+	/* Destory our service proxy, we won't need it. */
 	if (priv->service_proxy != NULL) {
 		g_object_unref(G_OBJECT(priv->service_proxy));
 		priv->service_proxy = NULL;
 	}
 
+	/* Let's see if our parents want to do anything. */
 	G_OBJECT_CLASS (indicator_service_manager_parent_class)->dispose (object);
 	return;
 }
@@ -228,6 +240,16 @@ watch_cb (DBusGProxy * proxy, gint version, GError * error, gpointer user_data)
 		g_error("Unable to set watch on '%s': '%s'", priv->name, error->message);
 		g_error_free(error);
 		return;
+	}
+
+	if (version != INDICATOR_SERVICE_VERSION) {
+		g_error("Service is using a different version of the service interface.  Expecting %d and got %d.", INDICATOR_SERVICE_VERSION, version);
+		return;
+	}
+
+	if (!priv->connected) {
+		priv->connected = TRUE;
+		g_signal_emit(G_OBJECT(user_data), signals[CONNECTION_CHANGE], 0, TRUE, TRUE);
 	}
 
 	return;
