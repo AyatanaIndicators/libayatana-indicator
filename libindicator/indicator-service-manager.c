@@ -6,12 +6,15 @@
 #include <dbus/dbus-glib-lowlevel.h>
 
 #include "indicator-service-manager.h"
+#include "indicator-service-client.h"
+#include "dbus-shared.h"
 
 /* Private Stuff */
 typedef struct _IndicatorServiceManagerPrivate IndicatorServiceManagerPrivate;
 struct _IndicatorServiceManagerPrivate {
 	gchar * name;
 	DBusGProxy * dbus_proxy;
+	DBusGProxy * service_proxy;
 };
 
 /* Signals Stuff */
@@ -99,6 +102,7 @@ indicator_service_manager_init (IndicatorServiceManager *self)
 	/* Get the private variables in a decent state */
 	priv->name = NULL;
 	priv->dbus_proxy = NULL;
+	priv->service_proxy = NULL;
 
 	/* Start talkin' dbus */
 	GError * error = NULL;
@@ -131,6 +135,11 @@ indicator_service_manager_dispose (GObject *object)
 	if (priv->dbus_proxy != NULL) {
 		g_object_unref(G_OBJECT(priv->dbus_proxy));
 		priv->dbus_proxy = NULL;
+	}
+
+	if (priv->service_proxy != NULL) {
+		g_object_unref(G_OBJECT(priv->service_proxy));
+		priv->service_proxy = NULL;
 	}
 
 	G_OBJECT_CLASS (indicator_service_manager_parent_class)->dispose (object);
@@ -211,6 +220,20 @@ get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspe
 }
 
 static void
+watch_cb (DBusGProxy * proxy, gint version, GError * error, gpointer user_data)
+{
+	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(user_data);
+
+	if (error != NULL) {
+		g_error("Unable to set watch on '%s': '%s'", priv->name, error->message);
+		g_error_free(error);
+		return;
+	}
+
+	return;
+}
+
+static void
 start_service_cb (DBusGProxy * proxy, guint status, GError * error, gpointer user_data)
 {
 	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(user_data);
@@ -224,6 +247,24 @@ start_service_cb (DBusGProxy * proxy, guint status, GError * error, gpointer use
 		g_error("Status of starting the process '%s' was an error: %d", priv->name, status);
 		return;
 	}
+
+	/* Woot! it's running.  Let's do it some more. */
+	DBusGConnection * session_bus = dbus_g_bus_get(DBUS_BUS_SESSION, &error);
+	if (error != NULL) {
+		g_error("Unable to get session bus: %s", error->message);
+		g_error_free(error);
+		return;
+	}
+
+	priv->service_proxy = dbus_g_proxy_new_for_name_owner(session_bus,
+	                                                  priv->name,
+	                                                  INDICATOR_SERVICE_OBJECT,
+	                                                  INDICATOR_SERVICE_INTERFACE,
+	                                                  &error);
+
+	org_ayatana_indicator_service_watch_async(priv->service_proxy,
+	                                          watch_cb,
+	                                          user_data);
 
 	return;
 }
