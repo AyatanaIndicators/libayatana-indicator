@@ -3,6 +3,7 @@ DISTCLEANFILES =
 
 check_PROGRAMS = \
 	test-loader \
+	service-manager-no-connect \
 	service-shutdown-timeout
 
 lib_LTLIBRARIES = \
@@ -103,6 +104,29 @@ service-shutdown-timeout-tester: service-shutdown-timeout Makefile
 
 TESTS += service-shutdown-timeout-tester
 DISTCLEANFILES += service-shutdown-timeout-tester
+
+#############################
+# Service Manager No Connect
+#############################
+
+service_manager_no_connect_SOURCES = \
+	service-manager-no-connect.c
+
+service_manager_no_connect_CFLAGS = \
+	-Wall -Werror \
+	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
+
+service_manager_no_connect_LDADD = \
+	$(LIBINDICATOR_LIBS) \
+	$(top_builddir)/libindicator/.libs/libindicator.a
+
+service-manager-no-connect-tester: service-manager-no-connect Makefile
+	@echo "#!/bin/sh" > service-manager-no-connect-tester
+	@echo $(DBUS_RUNNER) --task ./service-manager-no-connect >> service-manager-no-connect-tester
+	@chmod +x service-manager-no-connect-tester
+
+TESTS += service-manager-no-connect-tester
+DISTCLEANFILES += service-manager-no-connect-tester
 
 #############################
 # Test stuff
