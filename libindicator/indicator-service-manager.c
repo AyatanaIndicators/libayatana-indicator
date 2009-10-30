@@ -105,6 +105,12 @@ indicator_service_manager_dispose (GObject *object)
 static void
 indicator_service_manager_finalize (GObject *object)
 {
+	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(object);
+
+	if (priv->name != NULL) {
+		g_free(priv->name);
+		priv->name = NULL;
+	}
 
 	G_OBJECT_CLASS (indicator_service_manager_parent_class)->finalize (object);
 	return;
