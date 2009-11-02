@@ -8,8 +8,8 @@ static gboolean passed = FALSE;
 gboolean
 timeout (gpointer data)
 {
-	passed = TRUE;
-	g_debug("Timeout with no connection.");
+	passed = FALSE;
+	g_error("Timeout with no connection.");
 	g_main_loop_quit(mainloop);
 	return FALSE;
 }
@@ -18,7 +18,7 @@ void
 connection (void)
 {
 	g_debug("Connection");
-	passed = FALSE;
+	passed = TRUE;
 	g_main_loop_quit(mainloop);
 	return;
 }
