@@ -9,7 +9,7 @@ gboolean
 timeout (gpointer data)
 {
 	passed = TRUE;
-	g_error("Timeout with no connection.");
+	g_debug("Timeout with no connection.");
 	g_main_loop_quit(mainloop);
 	return FALSE;
 }
@@ -27,6 +27,7 @@ int
 main (int argc, char ** argv)
 {
 	g_type_init();
+	g_log_set_always_fatal(G_LOG_LEVEL_CRITICAL);
 
 	IndicatorServiceManager * is = indicator_service_manager_new("my.test.name");
 	g_signal_connect(G_OBJECT(is), INDICATOR_SERVICE_MANAGER_SIGNAL_CONNECTION_CHANGE, connection, NULL);
