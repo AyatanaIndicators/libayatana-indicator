@@ -4,6 +4,8 @@ DISTCLEANFILES =
 check_PROGRAMS = \
 	test-loader \
 	service-manager-no-connect \
+	service-manager-connect \
+	service-manager-connect-service \
 	service-shutdown-timeout
 
 lib_LTLIBRARIES = \
@@ -120,13 +122,50 @@ service_manager_no_connect_LDADD = \
 	$(LIBINDICATOR_LIBS) \
 	$(top_builddir)/libindicator/.libs/libindicator.a
 
-service-manager-no-connect-tester: service-manager-no-connect Makefile
+service-manager-no-connect-tester: service-manager-no-connect Makefile.am
 	@echo "#!/bin/sh" > service-manager-no-connect-tester
 	@echo $(DBUS_RUNNER) --task ./service-manager-no-connect >> service-manager-no-connect-tester
 	@chmod +x service-manager-no-connect-tester
 
 TESTS += service-manager-no-connect-tester
 DISTCLEANFILES += service-manager-no-connect-tester
+
+#############################
+# Service Manager Connect
+#############################
+
+session.conf: session.conf.in Makefile.am
+	sed -e "s|\@servicedir\@|$(abspath $(builddir))|" $< > $@
+
+service_manager_connect_SOURCES = \
+	service-manager-connect.c
+
+service_manager_connect_CFLAGS = \
+	-Wall -Werror \
+	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
+
+service_manager_connect_LDADD = \
+	$(LIBINDICATOR_LIBS) \
+	$(top_builddir)/libindicator/.libs/libindicator.a
+
+service_manager_connect_service_SOURCES = \
+	service-manager-connect-service.c
+
+service_manager_connect_service_CFLAGS = \
+	-Wall -Werror \
+	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
+
+service_manager_connect_service_LDADD = \
+	$(LIBINDICATOR_LIBS) \
+	$(top_builddir)/libindicator/.libs/libindicator.a
+
+service-manager-connect-tester: service-manager-connect service-manager-connect-service session.conf Makefile.am
+	@echo "#!/bin/sh" > service-manager-connect-tester
+	@echo dbus-test-runner --dbus-config $(builddir)/session.conf --task ./service-manager-connect >> service-manager-connect-tester
+	@chmod +x service-manager-connect-tester
+
+TESTS += service-manager-connect-tester
+DISTCLEANFILES += service-manager-connect-tester
 
 #############################
 # Test stuff

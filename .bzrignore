@@ -126,3 +126,7 @@ tests/loader-tester
 tests/service-shutdown-timeout-tester
 tests/service-manager-no-connect
 tests/service-manager-no-connect-tester
+tests/service-manager-connect
+tests/service-manager-connect-service
+tests/service-manager-connect-tester
+tests/session.conf
