@@ -130,3 +130,4 @@ tests/service-manager-connect
 tests/service-manager-connect-service
 tests/service-manager-connect-tester
 tests/session.conf
+tests/service-manager-connect.service

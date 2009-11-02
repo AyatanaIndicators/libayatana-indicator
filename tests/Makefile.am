@@ -137,6 +137,9 @@ DISTCLEANFILES += service-manager-no-connect-tester
 session.conf: session.conf.in Makefile.am
 	sed -e "s|\@servicedir\@|$(abspath $(builddir))|" $< > $@
 
+service-manager-connect.service: service-manager-connect.service.in Makefile.am
+	sed -e "s|\@builddir\@|$(abspath $(builddir))|" $< > $@
+
 service_manager_connect_SOURCES = \
 	service-manager-connect.c
 
@@ -159,7 +162,7 @@ service_manager_connect_service_LDADD = \
 	$(LIBINDICATOR_LIBS) \
 	$(top_builddir)/libindicator/.libs/libindicator.a
 
-service-manager-connect-tester: service-manager-connect service-manager-connect-service session.conf Makefile.am
+service-manager-connect-tester: service-manager-connect service-manager-connect-service session.conf service-manager-connect.service Makefile.am
 	@echo "#!/bin/sh" > service-manager-connect-tester
 	@echo dbus-test-runner --dbus-config $(builddir)/session.conf --task ./service-manager-connect >> service-manager-connect-tester
 	@chmod +x service-manager-connect-tester
