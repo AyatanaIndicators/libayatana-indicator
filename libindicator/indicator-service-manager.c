@@ -237,13 +237,13 @@ watch_cb (DBusGProxy * proxy, gint version, GError * error, gpointer user_data)
 	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(user_data);
 
 	if (error != NULL) {
-		g_error("Unable to set watch on '%s': '%s'", priv->name, error->message);
+		g_warning("Unable to set watch on '%s': '%s'", priv->name, error->message);
 		g_error_free(error);
 		return;
 	}
 
 	if (version != INDICATOR_SERVICE_VERSION) {
-		g_error("Service is using a different version of the service interface.  Expecting %d and got %d.", INDICATOR_SERVICE_VERSION, version);
+		g_warning("Service is using a different version of the service interface.  Expecting %d and got %d.", INDICATOR_SERVICE_VERSION, version);
 		return;
 	}
 
@@ -261,12 +261,12 @@ start_service_cb (DBusGProxy * proxy, guint status, GError * error, gpointer use
 	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(user_data);
 
 	if (error != NULL) {
-		g_error("Unable to start service '%s': %s", priv->name, error->message);
+		g_warning("Unable to start service '%s': %s", priv->name, error->message);
 		return;
 	}
 
 	if (status != DBUS_START_REPLY_SUCCESS && status != DBUS_START_REPLY_ALREADY_RUNNING) {
-		g_error("Status of starting the process '%s' was an error: %d", priv->name, status);
+		g_warning("Status of starting the process '%s' was an error: %d", priv->name, status);
 		return;
 	}
 
