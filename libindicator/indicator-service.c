@@ -116,14 +116,24 @@ indicator_service_init (IndicatorService *self)
 
 	/* Start talkin' dbus */
 	GError * error = NULL;
-	DBusGConnection * session_bus = dbus_g_bus_get(DBUS_BUS_SESSION, &error);
+	DBusGConnection * bus = dbus_g_bus_get(DBUS_BUS_STARTER, &error);
 	if (error != NULL) {
-		g_error("Unable to get session bus: %s", error->message);
+		g_error("Unable to get starter bus: %s", error->message);
 		g_error_free(error);
-		return;
+
+		/* Okay, fine let's try the session bus then. */
+		/* I think this should automatically, but I can't find confirmation
+		   of that, so we're putting the extra little code in here. */
+		error = NULL;
+		bus = dbus_g_bus_get(DBUS_BUS_SESSION, &error);
+		if (error != NULL) {
+			g_error("Unable to get session bus: %s", error->message);
+			g_error_free(error);
+			return;
+		}
 	}
 
-	priv->dbus_proxy = dbus_g_proxy_new_for_name_owner(session_bus,
+	priv->dbus_proxy = dbus_g_proxy_new_for_name_owner(bus,
 	                                                   DBUS_SERVICE_DBUS,
 	                                                   DBUS_PATH_DBUS,
 	                                                   DBUS_INTERFACE_DBUS,
@@ -134,7 +144,7 @@ indicator_service_init (IndicatorService *self)
 		return;
 	}
 
-	dbus_g_connection_register_g_object(session_bus,
+	dbus_g_connection_register_g_object(bus,
 	                                    INDICATOR_SERVICE_OBJECT,
 	                                    G_OBJECT(self));
 
