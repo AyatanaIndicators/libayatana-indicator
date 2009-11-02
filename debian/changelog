@@ -1,3 +1,9 @@
+libindicator (0.2.1-0ubuntu2~ppa1~sm2) UNRELEASED; urgency=low
+
+  * Fixing package config file to point to library
+
+ -- Ted Gould <ted@ubuntu.com>  Mon, 02 Nov 2009 17:12:39 -0600
+
 libindicator (0.2.1-0ubuntu2~ppa1~sm1) karmic; urgency=low
 
   * Adding in service management code.
