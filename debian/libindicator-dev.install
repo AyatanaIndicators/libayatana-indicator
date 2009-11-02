@@ -1,0 +1,4 @@
+debian/tmp/usr/include/libindicator-0.1/libindicate/*
+debian/tmp/usr/lib/pkgconfig/indicator.pc
+debian/tmp/usr/lib/libindicator.a
+debian/tmp/usr/lib/libindicator.so

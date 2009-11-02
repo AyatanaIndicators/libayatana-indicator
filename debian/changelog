@@ -1,6 +1,8 @@
 libindicator (0.2.1-0ubuntu2~ppa1~sm1) UNRELEASED; urgency=low
 
   * Adding in service management code.
+  * debian/control: Adding a target for libindicator0
+  * Adding libindicator0.install and libindicator-dev.install
 
  -- Ted Gould <ted@ubuntu.com>  Mon, 02 Nov 2009 16:30:36 -0600
 

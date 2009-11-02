@@ -10,6 +10,17 @@ Homepage: https://launchpad.net/libindicator
 Vcs-Bzr: https://code.launchpad.net/~ubuntu-desktop/libindicator/ubuntu
 Vcs-Browser: http://bazaar.launchpad.net/~ubuntu-desktop/libindicator/ubuntu
 
+Package: libindicator0
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends},
+         ${misc:Depends}
+Description: GNOME panel indicator applet - shared library
+ This library contains information to build indicators to go into
+ the indicator applet.
+ .
+ This package contains files that are needed to build applications.
+
 Package: libindicator-dev
 Section: libdevel
 Architecture: any
