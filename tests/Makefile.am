@@ -134,10 +134,10 @@ DISTCLEANFILES += service-manager-no-connect-tester
 # Service Manager Connect
 #############################
 
-session.conf: session.conf.in Makefile.am
+session.conf: $(srcdir)/session.conf.in Makefile.am
 	sed -e "s|\@servicedir\@|$(abspath $(builddir))|" $< > $@
 
-service-manager-connect.service: service-manager-connect.service.in Makefile.am
+service-manager-connect.service: $(srcdir)/service-manager-connect.service.in Makefile.am
 	sed -e "s|\@builddir\@|$(abspath $(builddir))|" $< > $@
 
 service_manager_connect_SOURCES = \
@@ -168,7 +168,7 @@ service-manager-connect-tester: service-manager-connect service-manager-connect-
 	@chmod +x service-manager-connect-tester
 
 TESTS += service-manager-connect-tester
-DISTCLEANFILES += service-manager-connect-tester
+DISTCLEANFILES += service-manager-connect-tester session.conf service-manager-connect.service
 
 #############################
 # Test stuff
