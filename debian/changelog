@@ -1,3 +1,9 @@
+libindicator (0.2.1-0ubuntu2~ppa1~sm1) UNRELEASED; urgency=low
+
+  * Adding in service management code.
+
+ -- Ted Gould <ted@ubuntu.com>  Mon, 02 Nov 2009 16:30:36 -0600
+
 libindicator (0.2.1-0ubuntu1) karmic; urgency=low
 
   * Upstream release 0.2.1 (LP: #446619)
