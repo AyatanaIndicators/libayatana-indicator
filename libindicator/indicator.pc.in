@@ -9,7 +9,7 @@ iconsdir=@datarootdir@/@PACKAGE@/icons/
 
 Cflags: -I${includedir}/libindicator-0.1
 Requires: gtk+-2.0
-Libs: 
+Libs: -lindicator
 
 Name: libindicator
 Description: libindicator.
