@@ -34,7 +34,8 @@ License along with this library. If not, see
 	@icon: The icon representing this indicator or #NULL if none.
 	@menu: The menu representing this indicator or #NULL if none.
 
-	Private data for the object.
+	Structure to define the memory for the private area
+	of the object instance.
 */
 typedef struct _IndicatorObjectPrivate IndicatorObjectPrivate;
 struct _IndicatorObjectPrivate {
