@@ -31,7 +31,7 @@ License along with this library. If not, see
 
 #define INDICATOR_GET_NAME_S "get_type"
 typedef GType (*get_type_t) (void);
-GType get_type (void);
+#define INDICATOR_SET_TYPE(x)  GType get_type (void) { return x; }
 
 #endif /* __LIBINDICATOR_INDICATOR_H_SEEN__ */
 
