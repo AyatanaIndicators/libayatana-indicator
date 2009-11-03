@@ -5,6 +5,7 @@ libindicatorincludedir=$(includedir)/libindicator-0.1/libindicator
 
 indicator_headers = \
 	indicator.h \
+	indicator-instance.h \
 	indicator-object.h
 
 libindicatorinclude_HEADERS = \
@@ -15,6 +16,7 @@ lib_LTLIBRARIES = \
 
 libindicator_la_SOURCES = \
 	$(indicator_headers) \
+	indicator-instance.c \
 	indicator-object.c
 
 libindicator_la_CFLAGS = \
