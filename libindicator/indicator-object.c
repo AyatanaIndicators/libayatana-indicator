@@ -32,11 +32,19 @@ License along with this library. If not, see
 	IndicatorObjectPrivate:
 	@module: The loaded module representing the object.  Note to
 		subclasses: This will not be set when you're initalized.
+	@entry: A default entry for objects that don't need all the
+		fancy stuff.  This works with #get_entries_default.
+	@gotten_entries: A check to see if the @entry has been
+		populated intelligently yet.
 
 	Private data for the object.
 */
 struct _IndicatorObjectPrivate {
 	GModule * module;
+
+	/* For get_entries_default */
+	IndicatorObjectEntry entry;
+	gboolean gotten_entries;
 };
 
 #define INDICATOR_OBJECT_GET_PRIVATE(o) (INDICATOR_OBJECT(o)->priv)
@@ -45,6 +53,8 @@ static void indicator_object_class_init (IndicatorObjectClass *klass);
 static void indicator_object_init       (IndicatorObject *self);
 static void indicator_object_dispose    (GObject *object);
 static void indicator_object_finalize   (GObject *object);
+
+static GList * get_entries_default (IndicatorObject * io);
 
 G_DEFINE_TYPE (IndicatorObject, indicator_object, G_TYPE_OBJECT);
 
@@ -60,9 +70,11 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 	object_class->dispose = indicator_object_dispose;
 	object_class->finalize = indicator_object_finalize;
 
-	klass->get_label = NULL;
-	klass->get_menu = NULL;
-	klass->get_image = NULL;
+	klass->get_label =  NULL;
+	klass->get_menu =   NULL;
+	klass->get_image =  NULL;
+
+	klass->get_entries = get_entries_default;
 
 	return;
 }
@@ -74,6 +86,12 @@ indicator_object_init (IndicatorObject *self)
 	self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self, INDICATOR_OBJECT_TYPE, IndicatorObjectPrivate);
 
 	self->priv->module = NULL;
+
+	self->priv->entry.menu = NULL;
+	self->priv->entry.label = NULL;
+	self->priv->entry.image = NULL;
+
+	self->priv->gotten_entries = FALSE;
 
 	return;
 }
@@ -135,7 +153,7 @@ indicator_object_new_from_file (const gchar * file)
 	   keep the symbols local to avoid conflicts. */
 	module = g_module_open(file,
                            G_MODULE_BIND_LAZY | G_MODULE_BIND_LOCAL);
-	if(module == NULL) {
+	if (module == NULL) {
 		g_warning("Unable to load module: %s", file);
 		return NULL;
 	}
@@ -198,3 +216,43 @@ unrefandout:
 	return NULL;
 }
 
+/* The default get entries function uses the other single
+   entries in the class to create an entry structure and
+   put it into a list.  This makes it simple for simple objects
+   to create the list.  Small changes from the way they 
+   previously were. */
+static GList *
+get_entries_default (IndicatorObject * io)
+{
+	IndicatorObjectPrivate * priv = INDICATOR_OBJECT_GET_PRIVATE(io);
+
+	if (!priv->gotten_entries) {
+		IndicatorObjectClass * class = INDICATOR_OBJECT_GET_CLASS(io);
+
+		if (class->get_label) {
+			priv->entry.label = class->get_label(io);
+		}
+
+		if (class->get_image) {
+			priv->entry.image = class->get_image(io);
+		}
+
+		if (priv->entry.image == NULL && priv->entry.label == NULL) {
+			g_warning("IndicatorObject class does not create an image or a label.  We need one of those.");
+			return NULL;
+		}
+
+		if (class->get_menu) {
+			priv->entry.menu = class->get_menu(io);
+		}
+
+		if (priv->entry.menu == NULL) {
+			g_warning("IndicatorObject class does not create a menu.  We need one of those.");
+			return NULL;
+		}
+
+		priv->gotten_entries = TRUE;
+	}
+
+	return g_list_append(NULL, &(priv->entry));
+}
