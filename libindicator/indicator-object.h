@@ -53,7 +53,7 @@ typedef struct _IndicatorObjectEntry   IndicatorObjectEntry;
 	@get_menu: Gets the image for this object.  Should be set
 		to #NULL if @get_entries is set.  Should NOT ref the
 		object.
-	@get_entires: Gets all of the entires for this object returning
+	@get_entries: Gets all of the entires for this object returning
 		a #GList of #IndicatorObjectEntries.  The list should be
 		under the ownership of the caller but the entires will
 		not be.
