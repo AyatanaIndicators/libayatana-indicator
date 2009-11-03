@@ -256,3 +256,29 @@ get_entries_default (IndicatorObject * io)
 
 	return g_list_append(NULL, &(priv->entry));
 }
+
+/**
+	indicator_object_get_entires:
+	@io: #IndicatorObject to query
+
+	This function looks on the class for the object and calls
+	it's #IndicatorObjectClass::get_entries function.  The
+	list should be owned by the caller, but the individual
+	enteries should not be.
+
+	Return value: A list if #IndicatorObjectEntry structures or
+		NULL if there is an error.
+*/
+GList *
+indicator_object_get_entries (IndicatorObject * io)
+{
+	g_return_val_if_fail(INDICATOR_IS_OBJECT(io), NULL);
+	IndicatorObjectClass * class = INDICATOR_OBJECT_GET_CLASS(io);
+
+	if (class->get_entries) {
+		return class->get_entries(io);
+	}
+
+	g_error("No get_entries function on object.  It must have been deleted?!?!");
+	return NULL;
+}
