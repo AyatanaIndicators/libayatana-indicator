@@ -68,7 +68,7 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 	return;
 }
 
-/* Inititalize an instance */
+/* Initialize an instance */
 static void
 indicator_object_init (IndicatorObject *self)
 {
