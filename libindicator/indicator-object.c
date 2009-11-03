@@ -30,21 +30,16 @@ License along with this library. If not, see
 
 /**
 	IndicatorObjectPrivate:
-	@label: The label representing this indicator or #NULL if none.
-	@icon: The icon representing this indicator or #NULL if none.
-	@menu: The menu representing this indicator or #NULL if none.
+	@module: The loaded module representing the object.  Note to
+		subclasses: This will not be set when you're initalized.
 
 	Private data for the object.
 */
-typedef struct _IndicatorObjectPrivate IndicatorObjectPrivate;
 struct _IndicatorObjectPrivate {
-	GtkLabel * label;
-	GtkImage * icon;
-	GtkMenu * menu;
+	GModule * module;
 };
 
-#define INDICATOR_OBJECT_GET_PRIVATE(o) \
-			(G_TYPE_INSTANCE_GET_PRIVATE ((o), INDICATOR_OBJECT_TYPE, IndicatorObjectPrivate))
+#define INDICATOR_OBJECT_GET_PRIVATE(o) (INDICATOR_OBJECT(o)->priv)
 
 static void indicator_object_class_init (IndicatorObjectClass *klass);
 static void indicator_object_init       (IndicatorObject *self);
@@ -65,6 +60,10 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 	object_class->dispose = indicator_object_dispose;
 	object_class->finalize = indicator_object_finalize;
 
+	klass->get_label = NULL;
+	klass->get_menu = NULL;
+	klass->get_image = NULL;
+
 	return;
 }
 
@@ -72,11 +71,9 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 static void
 indicator_object_init (IndicatorObject *self)
 {
-	IndicatorObjectPrivate * priv = INDICATOR_OBJECT_GET_PRIVATE(self);
+	self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self, INDICATOR_OBJECT_TYPE, IndicatorObjectPrivate);
 
-	priv->label = NULL;
-	priv->icon = NULL;
-	priv->menu = NULL;
+	self->priv->module = NULL;
 
 	return;
 }
@@ -87,19 +84,9 @@ indicator_object_dispose (GObject *object)
 {
 	IndicatorObjectPrivate * priv = INDICATOR_OBJECT_GET_PRIVATE(object);
 	
-	if (priv->label != NULL) {
-		g_object_unref(priv->label);
-		priv->label = NULL;
-	}
-
-	if (priv->icon != NULL) {
-		g_object_unref(priv->icon);
-		priv->icon = NULL;
-	}
-
-	if (priv->menu != NULL) {
-		g_object_unref(priv->menu);
-		priv->menu = NULL;
+	if (priv->module != NULL) {
+		g_object_unref(priv->module);
+		priv->module = NULL;
 	}
 
 	G_OBJECT_CLASS (indicator_object_parent_class)->dispose (object);
@@ -129,6 +116,9 @@ indicator_object_finalize (GObject *object)
 IndicatorObject *
 indicator_object_new_from_file (const gchar * file)
 {
+	GObject * object = NULL;
+	GModule * module = NULL;
+
 	/* Check to make sure the name exists and that the
 	   file itself exists */
 	if (file == NULL) {
@@ -143,8 +133,8 @@ indicator_object_new_from_file (const gchar * file)
 
 	/* Grab the g_module reference, pull it in but let's
 	   keep the symbols local to avoid conflicts. */
-	GModule * module = g_module_open(file,
-                                     G_MODULE_BIND_LAZY | G_MODULE_BIND_LOCAL);
+	module = g_module_open(file,
+                           G_MODULE_BIND_LAZY | G_MODULE_BIND_LOCAL);
 	if(module == NULL) {
 		g_warning("Unable to load module: %s", file);
 		return NULL;
@@ -164,126 +154,47 @@ indicator_object_new_from_file (const gchar * file)
 		return NULL;
 	}
 
+	/* The function for grabbing a label from the module
+	   execute it, and make sure everything is a-okay */
+	get_type_t lget_type = NULL;
+	if (!g_module_symbol(module, INDICATOR_GET_TYPE_S, (gpointer *)(&lget_type))) {
+		g_warning("Unable to get '" INDICATOR_GET_TYPE_S "' symbol from module: %s", file);
+		goto unrefandout;
+	}
+	if (lget_type == NULL) {
+		g_warning("Symbol '" INDICATOR_GET_TYPE_S "' is (null) in module: %s", file);
+		goto unrefandout;
+	}
+
 	/* A this point we allocate the object, any code beyond
 	   here needs to deallocate it if we're returning in an
 	   error'd state. */
-	GObject * object = g_object_new(INDICATOR_OBJECT_TYPE, NULL);
+	object = g_object_new(lget_type(), NULL);
+	if (object == NULL) {
+		g_warning("Unable to build an object if type '%d' in module: %s", lget_type(), file);
+		goto unrefandout;
+	}
+	if (!INDICATOR_IS_OBJECT(object)) {
+		g_warning("Type '%d' in file %s is not a subclass of IndicatorObject.", lget_type(), file);
+		goto unrefandout;
+	}
+
 	IndicatorObjectPrivate * priv = INDICATOR_OBJECT_GET_PRIVATE(object);
-
-	/* The function for grabbing a label from the module
-	   execute it, and make sure everything is a-okay */
-	get_label_t lget_label = NULL;
-	if (!g_module_symbol(module, INDICATOR_GET_LABEL_S, (gpointer *)(&lget_label))) {
-		g_warning("Unable to get '" INDICATOR_GET_LABEL_S "' symbol from module: %s", file);
-		goto unrefandout;
-	}
-	if (lget_label == NULL) {
-		g_warning("Symbol '" INDICATOR_GET_LABEL_S "' is (null) in module: %s", file);
-		goto unrefandout;
-	}
-	priv->label = lget_label();
-	if (priv->label) {
-		g_object_ref(G_OBJECT(priv->label));
-	}
-
-	/* The function for grabbing an icon from the module
-	   execute it, and make sure everything is a-okay */
-	get_icon_t lget_icon = NULL;
-	if (!g_module_symbol(module, INDICATOR_GET_ICON_S, (gpointer *)(&lget_icon))) {
-		g_warning("Unable to get '" INDICATOR_GET_ICON_S "' symbol from module: %s", file);
-		goto unrefandout;
-	}
-	if (lget_icon == NULL) {
-		g_warning("Symbol '" INDICATOR_GET_ICON_S "' is (null) in module: %s", file);
-		goto unrefandout;
-	}
-	priv->icon = lget_icon();
-	if (priv->icon) {
-		g_object_ref(G_OBJECT(priv->icon));
-	}
-
-	/* The function for grabbing a menu from the module
-	   execute it, and make sure everything is a-okay */
-	get_menu_t lget_menu = NULL;
-	if (!g_module_symbol(module, INDICATOR_GET_MENU_S, (gpointer *)(&lget_menu))) {
-		g_warning("Unable to get '" INDICATOR_GET_MENU_S "' symbol from module: %s", file);
-		goto unrefandout;
-	}
-	if (lget_menu == NULL) {
-		g_warning("Symbol '" INDICATOR_GET_MENU_S "' is (null) in module: %s", file);
-		goto unrefandout;
-	}
-	priv->menu = lget_menu();
-	if (priv->menu) {
-		g_object_ref(G_OBJECT(priv->menu));
-	}
-
-	if (priv->label == NULL && priv->icon == NULL) {
-		/* This is the case where there is nothing to display,
-		   kinda odd that we'd have a module with nothing. */
-		g_warning("No label or icon.  Odd.");
-		goto unrefandout;
-	}
+	/* Now we can track the module */
+	priv->module = module;
 
 	return INDICATOR_OBJECT(object);
 
 	/* Error, let's drop the object and return NULL.  Sad when
 	   this happens. */
 unrefandout:
-	g_object_unref(object);
+	if (object != NULL) {
+		g_object_unref(object);
+	}
+	if (module != NULL) {
+		g_object_unref(module);
+	}
+	g_warning("Error building IndicatorObject from file: %s", file);
 	return NULL;
 }
 
-/**
-	indicator_object_get_label:
-	@io: An #IndicatorObject.
-
-	A function to get the label for a particular object.  This
-	function does not increase the refcount.  That's your job
-	if you want to do it.
-
-	Return value: A #GtkLabel or #NULL if unavailable.
-*/
-GtkLabel *
-indicator_object_get_label (IndicatorObject * io)
-{
-	g_return_val_if_fail(IS_INDICATOR_OBJECT(io), NULL);
-	IndicatorObjectPrivate * priv = INDICATOR_OBJECT_GET_PRIVATE(io);
-	return priv->label;
-}
-
-/**
-	indicator_object_get_icon:
-	@io: An #IndicatorObject.
-
-	A function to get the icon for a particular object.  This
-	function does not increase the refcount.  That's your job
-	if you want to do it.
-
-	Return value: A #GtkImage or #NULL if unavailable.
-*/
-GtkImage *
-indicator_object_get_icon (IndicatorObject * io)
-{
-	g_return_val_if_fail(IS_INDICATOR_OBJECT(io), NULL);
-	IndicatorObjectPrivate * priv = INDICATOR_OBJECT_GET_PRIVATE(io);
-	return priv->icon;
-}
-
-/**
-	indicator_object_get_menu:
-	@io: An #IndicatorObject.
-
-	A function to get the menu for a particular object.  This
-	function does not increase the refcount.  That's your job
-	if you want to do it.
-
-	Return value: A #GtkMenu or #NULL if unavailable.
-*/
-GtkMenu *
-indicator_object_get_menu (IndicatorObject * io)
-{
-	g_return_val_if_fail(IS_INDICATOR_OBJECT(io), NULL);
-	IndicatorObjectPrivate * priv = INDICATOR_OBJECT_GET_PRIVATE(io);
-	return priv->menu;
-}

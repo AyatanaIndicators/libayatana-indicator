@@ -32,8 +32,8 @@ G_BEGIN_DECLS
 #define INDICATOR_OBJECT_TYPE            (indicator_object_get_type ())
 #define INDICATOR_OBJECT(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), INDICATOR_OBJECT_TYPE, IndicatorObject))
 #define INDICATOR_OBJECT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), INDICATOR_OBJECT_TYPE, IndicatorObjectClass))
-#define IS_INDICATOR_OBJECT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), INDICATOR_OBJECT_TYPE))
-#define IS_INDICATOR_OBJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), INDICATOR_OBJECT_TYPE))
+#define INDICATOR_IS_OBJECT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), INDICATOR_OBJECT_TYPE))
+#define INDICATOR_IS_OBJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), INDICATOR_OBJECT_TYPE))
 #define INDICATOR_OBJECT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), INDICATOR_OBJECT_TYPE, IndicatorObjectClass))
 
 typedef struct _IndicatorObject        IndicatorObject;
@@ -68,15 +68,15 @@ struct _IndicatorObjectClass {
 	GObjectClass parent_class;
 	
 	/* Virtual Functions */
-	GtkLabel * get_label (IndicatorObject * io);
-	GtkImage * get_image (IndicatorObject * io);
-	GtkMenu  * get_menu  (IndicatorObject * io);
+	GtkLabel * (*get_label) (IndicatorObject * io);
+	GtkImage * (*get_image) (IndicatorObject * io);
+	GtkMenu  * (*get_menu)  (IndicatorObject * io);
 
-	GList *    get_entries (IndicatorObject * io);
+	GList *    (*get_entries) (IndicatorObject * io);
 
 	/* Signals */
-	void       entry_added (IndicatorObject * io, IndicatorEntry * entry, gpointer user_data);
-	void       entry_removed (IndicatorObject * io, IndicatorEntry * entry, gpointer user_data);
+	void       (*entry_added) (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data);
+	void       (*entry_removed) (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data);
 
 	/* Reserved */
 	void (* indicator_object_reserved_1) (void);
