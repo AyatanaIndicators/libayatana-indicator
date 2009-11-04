@@ -209,7 +209,7 @@ set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec 
 			priv->name = g_value_dup_string(value);
 			try_and_get_name(self);
 		} else {
-			g_warning("Name is a string bud.");
+			g_warning("Name property requires a string value.");
 		}
 		break;
 	/* *********************** */
@@ -236,7 +236,7 @@ get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspe
 		if (G_VALUE_HOLDS_STRING(value)) {
 			g_value_set_string(value, priv->name);
 		} else {
-			g_warning("Name is a string bud.");
+			g_warning("Name property requires a string value.");
 		}
 		break;
 	/* *********************** */
