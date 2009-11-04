@@ -37,7 +37,8 @@ License along with this library. If not, see
 	@gotten_entries: A check to see if the @entry has been
 		populated intelligently yet.
 
-	Private data for the object.
+	Structure to define the memory for the private area
+	of the object instance.
 */
 struct _IndicatorObjectPrivate {
 	GModule * module;
