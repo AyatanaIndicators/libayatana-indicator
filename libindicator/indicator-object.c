@@ -50,6 +50,16 @@ struct _IndicatorObjectPrivate {
 
 #define INDICATOR_OBJECT_GET_PRIVATE(o) (INDICATOR_OBJECT(o)->priv)
 
+/* Signals Stuff */
+enum {
+	ENTRY_ADDED,
+	ENTRY_REMOVED,
+	LAST_SIGNAL
+};
+
+static guint signals[LAST_SIGNAL] = { 0 };
+
+/* GObject stuff */
 static void indicator_object_class_init (IndicatorObjectClass *klass);
 static void indicator_object_init       (IndicatorObject *self);
 static void indicator_object_dispose    (GObject *object);
@@ -76,6 +86,36 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 	klass->get_image =  NULL;
 
 	klass->get_entries = get_entries_default;
+
+	/**
+		IndicatorObject::entry-added:
+		@arg0: The #IndicatorObject object
+		
+		Signaled when a new entry is added and should
+		be shown by the person using this object.
+	*/
+	signals[ENTRY_ADDED] = g_signal_new (INDICATOR_OBJECT_SIGNAL_ENTRY_ADDED,
+	                                     G_TYPE_FROM_CLASS(klass),
+	                                     G_SIGNAL_RUN_LAST,
+	                                     G_STRUCT_OFFSET (IndicatorObjectClass, entry_added),
+	                                     NULL, NULL,
+	                                     g_cclosure_marshal_VOID__POINTER,
+	                                     G_TYPE_NONE, 1, G_TYPE_POINTER, G_TYPE_NONE);
+
+	/**
+		IndicatorObject::entry-removed:
+		@arg0: The #IndicatorObject object
+		
+		Signaled when an entry is removed and should
+		be removed by the person using this object.
+	*/
+	signals[ENTRY_REMOVED] = g_signal_new (INDICATOR_OBJECT_SIGNAL_ENTRY_REMOVED,
+	                                       G_TYPE_FROM_CLASS(klass),
+	                                       G_SIGNAL_RUN_LAST,
+	                                       G_STRUCT_OFFSET (IndicatorObjectClass, entry_removed),
+	                                       NULL, NULL,
+	                                       g_cclosure_marshal_VOID__POINTER,
+	                                       G_TYPE_NONE, 1, G_TYPE_POINTER, G_TYPE_NONE);
 
 	return;
 }

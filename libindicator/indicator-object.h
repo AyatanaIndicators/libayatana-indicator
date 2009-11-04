@@ -36,6 +36,9 @@ G_BEGIN_DECLS
 #define INDICATOR_IS_OBJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), INDICATOR_OBJECT_TYPE))
 #define INDICATOR_OBJECT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), INDICATOR_OBJECT_TYPE, IndicatorObjectClass))
 
+#define INDICATOR_OBJECT_SIGNAL_ENTRY_ADDED     "entry-added"
+#define INDICATOR_OBJECT_SIGNAL_ENTRY_REMOVED   "entry-removed"
+
 typedef struct _IndicatorObject        IndicatorObject;
 typedef struct _IndicatorObjectClass   IndicatorObjectClass;
 typedef struct _IndicatorObjectPrivate IndicatorObjectPrivate;
