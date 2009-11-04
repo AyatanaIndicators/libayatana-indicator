@@ -1,5 +1,6 @@
 /*
-An interface for indicators to link to for creation.
+An object to represent loadable indicator modules to make loading
+them easy and objectified.
 
 Copyright 2009 Canonical Ltd.
 
@@ -33,7 +34,8 @@ License along with this library. If not, see
 	@icon: The icon representing this indicator or #NULL if none.
 	@menu: The menu representing this indicator or #NULL if none.
 
-	Private data for the object.
+	Structure to define the memory for the private area
+	of the object instance.
 */
 typedef struct _IndicatorObjectPrivate IndicatorObjectPrivate;
 struct _IndicatorObjectPrivate {
@@ -67,7 +69,7 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 	return;
 }
 
-/* Inititalize an instance */
+/* Initialize an instance */
 static void
 indicator_object_init (IndicatorObject *self)
 {
