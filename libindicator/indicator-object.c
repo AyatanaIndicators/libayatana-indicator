@@ -146,12 +146,15 @@ indicator_object_dispose (GObject *object)
 	return;
 }
 
-/* A small helper function that unreferences an object but
+/* A small helper function that closes a module but
    in the function prototype of a GSourceFunc. */
 static gboolean
 module_unref (gpointer data)
 {
-	g_object_unref(G_OBJECT(data));
+	if (!g_module_close((GModule *)data)) {
+		/* All we can do is warn. */
+		g_warning("Unable to close module!");
+	}
 	return FALSE;
 }
 
