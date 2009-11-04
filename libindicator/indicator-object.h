@@ -1,5 +1,6 @@
 /*
-An interface for indicators to link to for creation.
+An object to represent loadable indicator modules to make loading
+them easy and objectified.
 
 Copyright 2009 Canonical Ltd.
 
