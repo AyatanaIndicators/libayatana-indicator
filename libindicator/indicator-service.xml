@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<node name="/">
+	<interface name="org.ayatana.indicator.service">
+<!-- Properties -->
+		<!-- None currently -->
+
+<!-- Methods -->
+		<method name="Watch">
+			<annotation name="org.freedesktop.DBus.GLib.Async" value="true" />
+			<arg type="i" name="version" direction="out" />
+		</method>
+
+<!-- Signals -->
+		<!-- None currently -->
+
+	</interface>
+</node>
