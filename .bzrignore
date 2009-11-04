@@ -117,3 +117,17 @@ tests/libdummy-indicator-blank.la
 tests/libdummy_indicator_blank_la-dummy-indicator-blank.lo
 libindicator-[0-9].[0-9].[0-9].tar.gz
 libindicator-[0-9].[0-9].[0-9].tar.gz.asc
+libindicator/indicator-service-client.h
+libindicator/indicator-service-server.h
+libindicator/libindicator_la-indicator-service.lo
+libindicator/libindicator_la-indicator-service-manager.lo
+tests/service-shutdown-timeout
+tests/loader-tester
+tests/service-shutdown-timeout-tester
+tests/service-manager-no-connect
+tests/service-manager-no-connect-tester
+tests/service-manager-connect
+tests/service-manager-connect-service
+tests/service-manager-connect-tester
+tests/session.conf
+tests/service-manager-connect.service

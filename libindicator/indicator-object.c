@@ -248,7 +248,7 @@ unrefandout:
 GtkLabel *
 indicator_object_get_label (IndicatorObject * io)
 {
-	g_return_val_if_fail(IS_INDICATOR_OBJECT(io), NULL);
+	g_return_val_if_fail(INDICATOR_IS_OBJECT(io), NULL);
 	IndicatorObjectPrivate * priv = INDICATOR_OBJECT_GET_PRIVATE(io);
 	return priv->label;
 }
@@ -266,7 +266,7 @@ indicator_object_get_label (IndicatorObject * io)
 GtkImage *
 indicator_object_get_icon (IndicatorObject * io)
 {
-	g_return_val_if_fail(IS_INDICATOR_OBJECT(io), NULL);
+	g_return_val_if_fail(INDICATOR_IS_OBJECT(io), NULL);
 	IndicatorObjectPrivate * priv = INDICATOR_OBJECT_GET_PRIVATE(io);
 	return priv->icon;
 }
@@ -284,7 +284,7 @@ indicator_object_get_icon (IndicatorObject * io)
 GtkMenu *
 indicator_object_get_menu (IndicatorObject * io)
 {
-	g_return_val_if_fail(IS_INDICATOR_OBJECT(io), NULL);
+	g_return_val_if_fail(INDICATOR_IS_OBJECT(io), NULL);
 	IndicatorObjectPrivate * priv = INDICATOR_OBJECT_GET_PRIVATE(io);
 	return priv->menu;
 }
