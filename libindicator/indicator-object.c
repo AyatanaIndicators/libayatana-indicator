@@ -100,21 +100,37 @@ indicator_object_init (IndicatorObject *self)
 static void
 indicator_object_dispose (GObject *object)
 {
-	IndicatorObjectPrivate * priv = INDICATOR_OBJECT_GET_PRIVATE(object);
-	
-	if (priv->module != NULL) {
-		g_object_unref(priv->module);
-		priv->module = NULL;
-	}
 
 	G_OBJECT_CLASS (indicator_object_parent_class)->dispose (object);
 	return;
+}
+
+/* A small helper function that unreferences an object but
+   in the function prototype of a GSourceFunc. */
+static gboolean
+module_unref (gpointer data)
+{
+	g_object_unref(G_OBJECT(data));
+	return FALSE;
 }
 
 /* Free memory */
 static void
 indicator_object_finalize (GObject *object)
 {
+	IndicatorObjectPrivate * priv = INDICATOR_OBJECT_GET_PRIVATE(object);
+	
+	if (priv->module != NULL) {
+		/* Wow, this is convoluted.  So basically we want to unref
+		   the module which will cause the code it included to be
+		   removed.  But, since it's finalize function is the function
+		   that called this one, we can't really remove it before
+		   it finishes being executed.  So we're putting the job into
+		   the main loop to remove it the next time it gets a chance.
+		   Slightly non-deterministic, but should work. */
+		g_idle_add(module_unref, priv->module);
+		priv->module = NULL;
+	}
 
 	G_OBJECT_CLASS (indicator_object_parent_class)->finalize (object);
 	return;
