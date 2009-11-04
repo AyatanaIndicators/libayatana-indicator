@@ -5,6 +5,7 @@ check_PROGRAMS = \
 lib_LTLIBRARIES = \
 	libdummy-indicator-blank.la \
 	libdummy-indicator-null.la \
+	libdummy-indicator-signaler.la \
 	libdummy-indicator-simple.la
 
 #############################
@@ -61,6 +62,26 @@ libdummy_indicator_null_la_LIBADD = \
 	-lindicator
 
 libdummy_indicator_null_la_LDFLAGS = \
+	-module \
+	-avoid-version
+
+#############################
+# Dummy Indicator Signaler
+#############################
+
+libdummy_indicator_signaler_la_SOURCES = \
+	dummy-indicator-signaler.c
+
+libdummy_indicator_signaler_la_CFLAGS = \
+	-Wall -Werror \
+	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
+
+libdummy_indicator_signaler_la_LIBADD = \
+	$(LIBINDICATOR_LIBS) \
+	-L$(top_builddir)/libindicator/.libs \
+	-lindicator
+
+libdummy_indicator_signaler_la_LDFLAGS = \
 	-module \
 	-avoid-version
 

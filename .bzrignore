@@ -118,3 +118,5 @@ tests/libdummy_indicator_blank_la-dummy-indicator-blank.lo
 libindicator-[0-9].[0-9].[0-9].tar.gz
 libindicator-[0-9].[0-9].[0-9].tar.gz.asc
 libindicator/libindicator_la-indicator-instance.lo
+tests/libdummy-indicator-signaler.la
+tests/libdummy_indicator_signaler_la-dummy-indicator-signaler.lo
