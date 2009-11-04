@@ -20,7 +20,9 @@ test_loader_CFLAGS = \
 	-DBUILD_DIR="\"$(builddir)\""
 
 test_loader_LDADD = \
-	$(LIBINDICATOR_LIBS) $(top_builddir)/libindicator/.libs/libindicator.a
+	$(LIBINDICATOR_LIBS) \
+	-L$(top_builddir)/libindicator/.libs \
+	-lindicator
 
 #############################
 # Dummy Indicator Blank
