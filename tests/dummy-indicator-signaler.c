@@ -79,8 +79,8 @@ idle_signal (gpointer data)
 {
 	DummyIndicatorSignaler * self = DUMMY_INDICATOR_SIGNALER(data);
 
-	g_signal_emit(G_OBJECT(self), INDICATOR_OBJECT_SIGNAL_ENTRY_ADDED_ID, 0, (gpointer)5, TRUE);
-	g_signal_emit(G_OBJECT(self), INDICATOR_OBJECT_SIGNAL_ENTRY_REMOVED_ID, 0, (gpointer)5, TRUE);
+	g_signal_emit(G_OBJECT(self), INDICATOR_OBJECT_SIGNAL_ENTRY_ADDED_ID, 0,   GUINT_TO_POINTER(5), TRUE);
+	g_signal_emit(G_OBJECT(self), INDICATOR_OBJECT_SIGNAL_ENTRY_REMOVED_ID, 0, GUINT_TO_POINTER(5), TRUE);
 
 	return FALSE; /* Don't queue again */
 }
