@@ -1,3 +1,10 @@
+libindicator (0.2.1-0ubuntu2~ppa2~multi1) UNRELEASED; urgency=low
+
+  * Changing the object interface to allow for multiple items
+    per module.
+
+ -- Ted Gould <ted@ubuntu.com>  Wed, 04 Nov 2009 13:06:39 -0600
+
 libindicator (0.2.1-0ubuntu2~ppa1) karmic; urgency=low
 
   * Adding in service management code.
