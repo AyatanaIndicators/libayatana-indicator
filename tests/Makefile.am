@@ -34,7 +34,9 @@ libdummy_indicator_blank_la_CFLAGS = \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
 
 libdummy_indicator_blank_la_LIBADD = \
-	$(LIBINDICATOR_LIBS)
+	$(LIBINDICATOR_LIBS) \
+	-L$(top_builddir)/libindicator/.libs \
+	-lindicator
 
 libdummy_indicator_blank_la_LDFLAGS = \
 	-module \
@@ -52,7 +54,9 @@ libdummy_indicator_null_la_CFLAGS = \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
 
 libdummy_indicator_null_la_LIBADD = \
-	$(LIBINDICATOR_LIBS)
+	$(LIBINDICATOR_LIBS) \
+	-L$(top_builddir)/libindicator/.libs \
+	-lindicator
 
 libdummy_indicator_null_la_LDFLAGS = \
 	-module \
@@ -70,7 +74,9 @@ libdummy_indicator_simple_la_CFLAGS = \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
 
 libdummy_indicator_simple_la_LIBADD = \
-	$(LIBINDICATOR_LIBS)
+	$(LIBINDICATOR_LIBS) \
+	-L$(top_builddir)/libindicator/.libs \
+	-lindicator
 
 libdummy_indicator_simple_la_LDFLAGS = \
 	-module \
