@@ -43,7 +43,9 @@ void
 test_loader_filename_dummy_null (void)
 {
 	IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/.libs/libdummy-indicator-null.so");
-	g_assert(object == NULL);
+	g_assert(object != NULL);
+	g_assert(indicator_object_get_entries(object) == NULL);
+	g_object_unref(G_OBJECT(object));
 	return;
 }
 
