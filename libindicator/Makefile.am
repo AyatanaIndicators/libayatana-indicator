@@ -3,7 +3,7 @@ CLEANFILES =
 EXTRA_DIST = \
 	indicator.pc.in
 
-libindicatorincludedir=$(includedir)/libindicator-0.1/libindicator
+libindicatorincludedir=$(includedir)/libindicator-0.3/libindicator
 
 indicator_headers = \
 	indicator.h \
