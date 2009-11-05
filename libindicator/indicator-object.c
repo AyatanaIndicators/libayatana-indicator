@@ -249,11 +249,11 @@ indicator_object_new_from_file (const gchar * file)
 	   error'd state. */
 	object = g_object_new(lget_type(), NULL);
 	if (object == NULL) {
-		g_warning("Unable to build an object if type '%d' in module: %s", lget_type(), file);
+		g_warning("Unable to build an object if type '%d' in module: %s", (gint)lget_type(), file);
 		goto unrefandout;
 	}
 	if (!INDICATOR_IS_OBJECT(object)) {
-		g_warning("Type '%d' in file %s is not a subclass of IndicatorObject.", lget_type(), file);
+		g_warning("Type '%d' in file %s is not a subclass of IndicatorObject.", (gint)lget_type(), file);
 		goto unrefandout;
 	}
 
