@@ -1,8 +1,8 @@
-libindicator (0.3.0~dev-0ubuntu1~ppa3) UNRELEASED; urgency=low
+libindicator (0.3.0~dev-0ubuntu1~ppa3) karmic; urgency=low
 
   * debian/control: Adding build deps dbus-glib as well.
 
- -- Ted Gould <ted@ubuntu.com>  Thu, 05 Nov 2009 10:24:54 -0600
+ -- Ted Gould <ted@ubuntu.com>  Thu, 05 Nov 2009 10:25:52 -0600
 
 libindicator (0.3.0~dev-0ubuntu1~ppa2) karmic; urgency=low
 
