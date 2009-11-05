@@ -11,6 +11,7 @@ check_PROGRAMS = \
 lib_LTLIBRARIES = \
 	libdummy-indicator-blank.la \
 	libdummy-indicator-null.la \
+	libdummy-indicator-signaler.la \
 	libdummy-indicator-simple.la
 
 DBUS_RUNNER=dbus-test-runner --dbus-config /usr/share/dbus-test-runner/session.conf
@@ -28,7 +29,9 @@ test_loader_CFLAGS = \
 	-DBUILD_DIR="\"$(builddir)\""
 
 test_loader_LDADD = \
-	$(LIBINDICATOR_LIBS) $(top_builddir)/libindicator/.libs/libindicator.a
+	$(LIBINDICATOR_LIBS) \
+	-L$(top_builddir)/libindicator/.libs \
+	-lindicator
 
 #############################
 # Dummy Indicator Blank
@@ -42,7 +45,9 @@ libdummy_indicator_blank_la_CFLAGS = \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
 
 libdummy_indicator_blank_la_LIBADD = \
-	$(LIBINDICATOR_LIBS)
+	$(LIBINDICATOR_LIBS) \
+	-L$(top_builddir)/libindicator/.libs \
+	-lindicator
 
 libdummy_indicator_blank_la_LDFLAGS = \
 	-module \
@@ -60,9 +65,31 @@ libdummy_indicator_null_la_CFLAGS = \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
 
 libdummy_indicator_null_la_LIBADD = \
-	$(LIBINDICATOR_LIBS)
+	$(LIBINDICATOR_LIBS) \
+	-L$(top_builddir)/libindicator/.libs \
+	-lindicator
 
 libdummy_indicator_null_la_LDFLAGS = \
+	-module \
+	-avoid-version
+
+#############################
+# Dummy Indicator Signaler
+#############################
+
+libdummy_indicator_signaler_la_SOURCES = \
+	dummy-indicator-signaler.c
+
+libdummy_indicator_signaler_la_CFLAGS = \
+	-Wall -Werror \
+	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
+
+libdummy_indicator_signaler_la_LIBADD = \
+	$(LIBINDICATOR_LIBS) \
+	-L$(top_builddir)/libindicator/.libs \
+	-lindicator
+
+libdummy_indicator_signaler_la_LDFLAGS = \
 	-module \
 	-avoid-version
 
@@ -78,7 +105,9 @@ libdummy_indicator_simple_la_CFLAGS = \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
 
 libdummy_indicator_simple_la_LIBADD = \
-	$(LIBINDICATOR_LIBS)
+	$(LIBINDICATOR_LIBS) \
+	-L$(top_builddir)/libindicator/.libs \
+	-lindicator
 
 libdummy_indicator_simple_la_LDFLAGS = \
 	-module \

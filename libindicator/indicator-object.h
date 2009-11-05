@@ -36,25 +36,87 @@ G_BEGIN_DECLS
 #define INDICATOR_IS_OBJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), INDICATOR_OBJECT_TYPE))
 #define INDICATOR_OBJECT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), INDICATOR_OBJECT_TYPE, IndicatorObjectClass))
 
-typedef struct _IndicatorObject      IndicatorObject;
-typedef struct _IndicatorObjectClass IndicatorObjectClass;
+#define INDICATOR_OBJECT_SIGNAL_ENTRY_ADDED       "entry-added"
+#define INDICATOR_OBJECT_SIGNAL_ENTRY_ADDED_ID    (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_ENTRY_ADDED, INDICATOR_OBJECT_TYPE))
+#define INDICATOR_OBJECT_SIGNAL_ENTRY_REMOVED     "entry-removed"
+#define INDICATOR_OBJECT_SIGNAL_ENTRY_REMOVED_ID  (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_ENTRY_REMOVED, INDICATOR_OBJECT_TYPE))
 
+typedef struct _IndicatorObject        IndicatorObject;
+typedef struct _IndicatorObjectClass   IndicatorObjectClass;
+typedef struct _IndicatorObjectPrivate IndicatorObjectPrivate;
+typedef struct _IndicatorObjectEntry   IndicatorObjectEntry;
+
+/**
+	IndicatorObjectClass:
+	@parent_class: #GObjectClass
+	@get_label: Gets the label for this object.  Should be set
+		to #NULL if @get_entries is set.  Should NOT ref the
+		object.
+	@get_image: Gets the image for this object.  Should be set
+		to #NULL if @get_entries is set.  Should NOT ref the
+		object.
+	@get_menu: Gets the image for this object.  Should be set
+		to #NULL if @get_entries is set.  Should NOT ref the
+		object.
+	@get_entries: Gets all of the entires for this object returning
+		a #GList of #IndicatorObjectEntries.  The list should be
+		under the ownership of the caller but the entires will
+		not be.
+	@entry_added: Slot for #IndicatorObject::entry-added
+	@entry_removed: Slot for #IndicatorObject::entry-removed
+	@indicator_object_reserved_1: Reserved for future use
+	@indicator_object_reserved_2: Reserved for future use
+	@indicator_object_reserved_3: Reserved for future use
+	@indicator_object_reserved_4: Reserved for future use
+*/
 struct _IndicatorObjectClass {
 	GObjectClass parent_class;
+	
+	/* Virtual Functions */
+	GtkLabel * (*get_label) (IndicatorObject * io);
+	GtkImage * (*get_image) (IndicatorObject * io);
+	GtkMenu  * (*get_menu)  (IndicatorObject * io);
 
+	GList *    (*get_entries) (IndicatorObject * io);
+
+	/* Signals */
+	void       (*entry_added) (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data);
+	void       (*entry_removed) (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data);
+
+	/* Reserved */
+	void (* indicator_object_reserved_1) (void);
+	void (* indicator_object_reserved_2) (void);
+	void (* indicator_object_reserved_3) (void);
+	void (* indicator_object_reserved_4) (void);
 };
 
+/**
+	IndicatorObject:
+	@parent: #GObject
+	@priv: A cached reference to the private data for the
+		instance.
+*/
 struct _IndicatorObject {
 	GObject parent;
+	IndicatorObjectPrivate * priv;
+};
 
+/**
+	IndicatorObjectEntry:
+	@label: The label to be shown on the panel
+	@image: The image to be shown on the panel
+	@menu: The menu to be added to the menubar
+*/
+struct _IndicatorObjectEntry {
+	GtkLabel * label;
+	GtkImage * image;
+	GtkMenu  * menu;
 };
 
 GType indicator_object_get_type (void);
 IndicatorObject * indicator_object_new_from_file (const gchar * file);
 
-GtkLabel * indicator_object_get_label (IndicatorObject * io);
-GtkImage * indicator_object_get_icon (IndicatorObject * io);
-GtkMenu * indicator_object_get_menu (IndicatorObject * io);
+GList * indicator_object_get_entries (IndicatorObject * io);
 
 G_END_DECLS
 
