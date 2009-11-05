@@ -1,11 +1,11 @@
-libindicator (0.3.0~dev-0ubuntu1~ppa1) UNRELEASED; urgency=low
+libindicator (0.3.0~dev-0ubuntu1~ppa1) karmic; urgency=low
 
   * Changing the object interface to allow for multiple items
     per module.
   * Changing debian/libindicator-dev.install for the adjusted
     include path.
 
- -- Ted Gould <ted@ubuntu.com>  Thu, 05 Nov 2009 09:14:43 -0600
+ -- Ted Gould <ted@ubuntu.com>  Thu, 05 Nov 2009 09:16:22 -0600
 
 libindicator (0.2.1-0ubuntu2~ppa1) karmic; urgency=low
 
