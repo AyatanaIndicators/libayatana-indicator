@@ -2,7 +2,7 @@ libindicator (0.3.0~dev-0ubuntu1~ppa4) karmic; urgency=low
 
   * 64-bit fix for printf's
 
- -- Ted Gould <ted@ubuntu.com>  Mon, 16 Nov 2009 15:25:03 -0600
+ -- Ted Gould <ted@ubuntu.com>  Mon, 16 Nov 2009 15:26:23 -0600
 
 libindicator (0.3.0~dev-0ubuntu1~ppa3) karmic; urgency=low
 
