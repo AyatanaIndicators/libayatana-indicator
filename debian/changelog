@@ -1,3 +1,10 @@
+libindicator (0.3.0~dev-0ubuntu1~ppa5) UNRELEASED; urgency=low
+
+  * debian/control: Adding a depend for the -dev package on the
+    base library to stop users from linking staticly.
+
+ -- Ted Gould <ted@ubuntu.com>  Mon, 16 Nov 2009 23:17:50 -0600
+
 libindicator (0.3.0~dev-0ubuntu1~ppa4) karmic; urgency=low
 
   * 64-bit fix for printf's
