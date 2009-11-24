@@ -69,6 +69,13 @@ load_module (const gchar * name, GtkWidget * menu)
 	return TRUE;
 }
 
+static void
+destroy (gpointer data)
+{
+	gtk_main_quit();
+	return;
+}
+
 int
 main (int argc, char ** argv)
 {
@@ -86,6 +93,8 @@ main (int argc, char ** argv)
 	}
 
 	GtkWidget * window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(destroy), NULL);
+
 	gtk_container_add(GTK_CONTAINER(window), menubar);
 
 	gtk_widget_show(menubar);
