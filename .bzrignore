@@ -134,3 +134,4 @@ tests/service-manager-connect-service
 tests/service-manager-connect-tester
 tests/session.conf
 tests/service-manager-connect.service
+tools/indicator-loader
