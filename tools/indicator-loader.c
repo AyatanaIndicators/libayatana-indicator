@@ -6,6 +6,26 @@ static void
 entry_added (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data)
 {
 	g_debug("Signal: Entry Added");
+
+	GtkWidget * menuitem = gtk_menu_item_new();
+	GtkWidget * hbox = gtk_hbox_new(FALSE, 3);
+
+	if (entry->image != NULL) {
+		gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(entry->image), FALSE, FALSE, 0);
+	}
+	if (entry->label != NULL) {
+		gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(entry->label), FALSE, FALSE, 0);
+	}
+	gtk_container_add(GTK_CONTAINER(menuitem), hbox);
+	gtk_widget_show(hbox);
+
+	if (entry->menu != NULL) {
+		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), GTK_WIDGET(entry->menu));
+	}
+
+	gtk_menu_shell_append(GTK_MENU_SHELL(user_data), menuitem);
+	gtk_widget_show(menuitem);
+
 	return;
 }
 
