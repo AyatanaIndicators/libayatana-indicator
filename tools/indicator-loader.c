@@ -68,6 +68,9 @@ main (int argc, char ** argv)
 	GtkWidget * window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_container_add(GTK_CONTAINER(window), menubar);
 
+	gtk_widget_show(menubar);
+	gtk_widget_show(window);
+
 	gtk_main();
 
 	return 0;
