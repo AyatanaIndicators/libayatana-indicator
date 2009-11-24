@@ -1,3 +1,9 @@
+libindicator (0.3.0~dev-0ubuntu1~ppa6~tl2) UNRELEASED; urgency=low
+
+  * Adding support for remove.
+
+ -- Ted Gould <ted@ubuntu.com>  Tue, 24 Nov 2009 14:51:09 -0600
+
 libindicator (0.3.0~dev-0ubuntu1~ppa6~tl1) karmic; urgency=low
 
   * Adding a new tool to load indicators from the command line.
