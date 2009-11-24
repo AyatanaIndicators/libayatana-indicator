@@ -38,3 +38,11 @@ Description: GNOME panel indicator applet - shared library
  .
  This package contains files that are needed to build applications.
 
+Package: libindicator-tools
+Section: devel
+Architecture: any
+Depends: ${shlibs:Depends},
+         ${misc:Depends},
+         libindicator0 (= ${binary:Version})
+Description: Need a better description
+
