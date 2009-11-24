@@ -2,6 +2,8 @@
 #include <gtk/gtk.h>
 #include <libindicator/indicator-object.h>
 
+#define ENTRY_DATA_NAME "indicator-custom-entry-data"
+
 static void
 entry_added (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data)
 {
@@ -26,6 +28,21 @@ entry_added (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_d
 	gtk_menu_shell_append(GTK_MENU_SHELL(user_data), menuitem);
 	gtk_widget_show(menuitem);
 
+	g_object_set_data(G_OBJECT(menuitem), ENTRY_DATA_NAME, entry);
+
+	return;
+}
+
+static void
+entry_removed_cb (GtkWidget * widget, gpointer userdata)
+{
+	gpointer data = g_object_get_data(G_OBJECT(widget), ENTRY_DATA_NAME);
+
+	if (data != userdata) {
+		return;
+	}
+
+	gtk_widget_destroy(widget);
 	return;
 }
 
@@ -33,6 +50,9 @@ static void
 entry_removed (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data)
 {
 	g_debug("Signal: Entry Removed");
+
+	gtk_container_foreach(GTK_CONTAINER(user_data), entry_removed_cb, entry);
+
 	return;
 }
 
