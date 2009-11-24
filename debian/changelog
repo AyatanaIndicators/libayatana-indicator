@@ -1,6 +1,8 @@
 libindicator (0.3.0~dev-0ubuntu1~ppa6~tl1) UNRELEASED; urgency=low
 
   * Adding a new tool to load indicators from the command line.
+  * debian/control, debian/libindicator-tools: Adding in a new
+    package for the tools of libindicator.
 
  -- Ted Gould <ted@ubuntu.com>  Tue, 24 Nov 2009 10:28:21 -0600
 
