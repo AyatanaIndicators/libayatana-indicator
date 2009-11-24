@@ -42,6 +42,7 @@ Package: libindicator-tools
 Section: devel
 Architecture: any
 Depends: ${shlibs:Depends},
-         ${misc:Depends}
+         ${misc:Depends},
+         libindicator0 (= ${binary:Version})
 Description: Need a better description
 
