@@ -1,3 +1,9 @@
+libindicator (0.3.0~dev-0ubuntu1~ppa6~tl1) UNRELEASED; urgency=low
+
+  * Adding a new tool to load indicators from the command line.
+
+ -- Ted Gould <ted@ubuntu.com>  Tue, 24 Nov 2009 10:28:21 -0600
+
 libindicator (0.3.0~dev-0ubuntu1~ppa5) karmic; urgency=low
 
   * debian/control: Adding a depend for the -dev package on the
