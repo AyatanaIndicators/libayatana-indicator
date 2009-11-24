@@ -1,9 +1,9 @@
-libindicator (0.3.0~dev-0ubuntu1~ppa6~tl3) UNRELEASED; urgency=low
+libindicator (0.3.0~dev-0ubuntu1~ppa6~tl3) karmic; urgency=low
 
   * debian/control: Making sure the tools package is using the
     same version of the library that it was built with.
 
- -- Ted Gould <ted@ubuntu.com>  Tue, 24 Nov 2009 14:54:28 -0600
+ -- Ted Gould <ted@ubuntu.com>  Tue, 24 Nov 2009 14:56:15 -0600
 
 libindicator (0.3.0~dev-0ubuntu1~ppa6~tl2) karmic; urgency=low
 
