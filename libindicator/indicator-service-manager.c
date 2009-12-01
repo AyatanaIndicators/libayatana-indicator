@@ -308,16 +308,43 @@ start_service_cb (DBusGProxy * proxy, guint status, GError * error, gpointer use
 static void
 start_service (IndicatorServiceManager * service)
 {
+	GError * error = NULL;
 	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(service);
 
 	g_return_if_fail(priv->dbus_proxy != NULL);
 	g_return_if_fail(priv->name != NULL);
 
-	org_freedesktop_DBus_start_service_by_name_async (priv->dbus_proxy,
-	                                                  priv->name,
-	                                                  0,
-	                                                  start_service_cb,
-	                                                  service);
+	/* Check to see if we can get a proxy to it first. */
+	DBusGConnection * session_bus = dbus_g_bus_get(DBUS_BUS_SESSION, &error);
+	if (error != NULL) {
+		g_error("Unable to get session bus: %s", error->message);
+		g_error_free(error);
+		return;
+	}
+
+	/* Tries to get the proxy first. */
+	priv->service_proxy = dbus_g_proxy_new_for_name_owner(session_bus,
+	                                                      priv->name,
+	                                                      INDICATOR_SERVICE_OBJECT,
+	                                                      INDICATOR_SERVICE_INTERFACE,
+	                                                      &error);
+
+	if (error != NULL) {
+		/* We don't care about the error, just start the service anyway. */
+		g_error_free(error);
+		org_freedesktop_DBus_start_service_by_name_async (priv->dbus_proxy,
+		                                                  priv->name,
+		                                                  0,
+		                                                  start_service_cb,
+		                                                  service);
+	} else {
+		/* If we got a proxy just because we're good people then
+		   we need to call watch on it just like 'start_service_cb'
+		   does. */
+		org_ayatana_indicator_service_watch_async(priv->service_proxy,
+		                                          watch_cb,
+		                                          service);
+	}
 
 	return;
 }
