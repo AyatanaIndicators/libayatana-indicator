@@ -17,6 +17,20 @@ timeout (gpointer data)
 void
 connection (IndicatorServiceManager * sm, gboolean connected, gpointer user_data)
 {
+	static gboolean has_connected = FALSE;
+
+	if (has_connected && connected) {
+		g_warning("We got two connected signals.  FAIL.");
+		passed = FALSE;
+		return;
+	}
+
+	if (!connected) {
+		g_debug("Not connected");
+		return;
+	}
+
+	has_connected = TRUE;
 	g_debug("Connection");
 	passed = TRUE;
 	g_main_loop_quit(mainloop);
