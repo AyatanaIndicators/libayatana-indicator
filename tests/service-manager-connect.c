@@ -37,6 +37,8 @@ main (int argc, char ** argv)
 	mainloop = g_main_loop_new(NULL, FALSE);
 	g_main_loop_run(mainloop);
 
+	g_object_unref(is);
+
 	g_debug("Quiting");
 	if (passed) {
 		g_debug("Passed");

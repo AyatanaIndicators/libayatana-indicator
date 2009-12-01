@@ -8,7 +8,7 @@ static gboolean passed = FALSE;
 gboolean
 timeout (gpointer data)
 {
-	passed = TRUE;
+	passed = FALSE;
 	g_debug("Timeout with no shutdown.");
 	g_main_loop_quit(mainloop);
 	return FALSE;
@@ -17,8 +17,8 @@ timeout (gpointer data)
 void
 shutdown (void)
 {
-	g_error("Shutdown");
-	passed = FALSE;
+	g_debug("Shutdown");
+	passed = TRUE;
 	g_main_loop_quit(mainloop);
 	return;
 }
