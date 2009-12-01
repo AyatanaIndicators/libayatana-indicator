@@ -310,6 +310,12 @@ _indicator_service_server_watch (IndicatorService * service, DBusGMethodInvocati
 	return TRUE;
 }
 
+static gint
+find_watcher (gconstpointer a, gconstpointer b)
+{
+	return g_strcmp0((const gchar *)a, (const gchar *)b);
+}
+
 static gboolean
 _indicator_service_server_un_watch (IndicatorService * service, DBusGMethodInvocation * method)
 {
@@ -317,7 +323,16 @@ _indicator_service_server_un_watch (IndicatorService * service, DBusGMethodInvoc
 	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(service);
 
 	/* Remove us from the watcher list here */
-
+	GList * watcher_item = g_list_find_custom(priv->watchers, dbus_g_method_get_sender(method), find_watcher);
+	if (watcher_item != NULL) {
+		/* Free the watcher */
+		gchar * name = watcher_item->data;
+		priv->watchers = g_list_remove(priv->watchers, name);
+		g_free(name);
+	} else {
+		/* Odd that we couldn't find the person, but, eh */
+		g_warning("Unable to find watcher who is unwatching: %s", dbus_g_method_get_sender(method));
+	}
 
 	/* If we're out of watchers set the timeout for shutdown */
 	if (priv->watchers == NULL) {
@@ -328,6 +343,7 @@ _indicator_service_server_un_watch (IndicatorService * service, DBusGMethodInvoc
 			g_source_remove(priv->timeout);
 			priv->timeout = 0;
 		}
+		/* If we don't get a new watcher quickly, we'll shutdown. */
 		priv->timeout = g_timeout_add(500, timeout_no_watchers, service);
 	}
 
