@@ -6,6 +6,7 @@ check_PROGRAMS = \
 	service-manager-no-connect \
 	service-manager-connect \
 	service-manager-connect-service \
+	service-manager-nostart-connect \
 	service-shutdown-timeout
 
 lib_LTLIBRARIES = \
@@ -198,6 +199,29 @@ service-manager-connect-tester: service-manager-connect service-manager-connect-
 
 TESTS += service-manager-connect-tester
 DISTCLEANFILES += service-manager-connect-tester session.conf service-manager-connect.service
+
+#############################
+# Service Manager Shutdown
+#############################
+
+service_manager_nostart_connect_SOURCES = \
+	service-manager-nostart-connect.c
+
+service_manager_nostart_connect_CFLAGS = \
+	-Wall -Werror \
+	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
+
+service_manager_nostart_connect_LDADD = \
+	$(LIBINDICATOR_LIBS) \
+	$(top_builddir)/libindicator/.libs/libindicator.a
+
+service-manager-connect-nostart-tester: service-manager-nostart-connect service-manager-connect-service Makefile.am
+	@echo "#!/bin/sh" > $@
+	@echo dbus-test-runner --task ./service-manager-nostart-connect --task ./service-manager-connect-service >> $@
+	@chmod +x $@
+
+TESTS += service-manager-connect-nostart-tester
+DISTCLEANFILES += service-manager-connect-nostart-tester
 
 #############################
 # Test stuff

@@ -28,6 +28,8 @@ main (int argc, char ** argv)
 {
 	g_type_init();
 
+	g_debug("Starting service");
+
 	IndicatorService * is = indicator_service_new("org.ayatana.test");
 	g_signal_connect(G_OBJECT(is), INDICATOR_SERVICE_SIGNAL_SHUTDOWN, shutdown, NULL);
 
