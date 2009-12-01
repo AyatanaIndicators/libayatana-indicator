@@ -306,7 +306,7 @@ _indicator_service_server_watch (IndicatorService * service, DBusGMethodInvocati
 		priv->timeout = 0;
 	}
 
-	dbus_g_method_return(method, 1);
+	dbus_g_method_return(method, INDICATOR_SERVICE_VERSION);
 	return TRUE;
 }
 
