@@ -16,6 +16,7 @@ struct _IndicatorServiceManagerPrivate {
 	DBusGProxy * dbus_proxy;
 	DBusGProxy * service_proxy;
 	gboolean connected;
+	DBusGConnection * bus;
 };
 
 /* Signals Stuff */
@@ -106,17 +107,18 @@ indicator_service_manager_init (IndicatorServiceManager *self)
 	priv->dbus_proxy = NULL;
 	priv->service_proxy = NULL;
 	priv->connected = FALSE;
+	priv->bus = NULL;
 
 	/* Start talkin' dbus */
 	GError * error = NULL;
-	DBusGConnection * session_bus = dbus_g_bus_get(DBUS_BUS_SESSION, &error);
+	priv->bus = dbus_g_bus_get(DBUS_BUS_SESSION, &error);
 	if (error != NULL) {
 		g_error("Unable to get session bus: %s", error->message);
 		g_error_free(error);
 		return;
 	}
 
-	priv->dbus_proxy = dbus_g_proxy_new_for_name_owner(session_bus,
+	priv->dbus_proxy = dbus_g_proxy_new_for_name_owner(priv->bus,
 	                                                   DBUS_SERVICE_DBUS,
 	                                                   DBUS_PATH_DBUS,
 	                                                   DBUS_INTERFACE_DBUS,
@@ -285,14 +287,7 @@ start_service_cb (DBusGProxy * proxy, guint status, GError * error, gpointer use
 	}
 
 	/* Woot! it's running.  Let's do it some more. */
-	DBusGConnection * session_bus = dbus_g_bus_get(DBUS_BUS_SESSION, &error);
-	if (error != NULL) {
-		g_error("Unable to get session bus: %s", error->message);
-		g_error_free(error);
-		return;
-	}
-
-	priv->service_proxy = dbus_g_proxy_new_for_name_owner(session_bus,
+	priv->service_proxy = dbus_g_proxy_new_for_name_owner(priv->bus,
 	                                                  priv->name,
 	                                                  INDICATOR_SERVICE_OBJECT,
 	                                                  INDICATOR_SERVICE_INTERFACE,
@@ -315,15 +310,7 @@ start_service (IndicatorServiceManager * service)
 	g_return_if_fail(priv->name != NULL);
 
 	/* Check to see if we can get a proxy to it first. */
-	DBusGConnection * session_bus = dbus_g_bus_get(DBUS_BUS_SESSION, &error);
-	if (error != NULL) {
-		g_error("Unable to get session bus: %s", error->message);
-		g_error_free(error);
-		return;
-	}
-
-	/* Tries to get the proxy first. */
-	priv->service_proxy = dbus_g_proxy_new_for_name_owner(session_bus,
+	priv->service_proxy = dbus_g_proxy_new_for_name_owner(priv->bus,
 	                                                      priv->name,
 	                                                      INDICATOR_SERVICE_OBJECT,
 	                                                      INDICATOR_SERVICE_INTERFACE,
