@@ -8,6 +8,7 @@
 
 /* DBus Prototypes */
 static gboolean _indicator_service_server_watch (IndicatorService * service, DBusGMethodInvocation * method);
+static gboolean _indicator_service_server_un_watch (IndicatorService * service, DBusGMethodInvocation * method);
 
 #include "indicator-service-server.h"
 #include "dbus-shared.h"
@@ -306,6 +307,31 @@ _indicator_service_server_watch (IndicatorService * service, DBusGMethodInvocati
 	}
 
 	dbus_g_method_return(method, 1);
+	return TRUE;
+}
+
+static gboolean
+_indicator_service_server_un_watch (IndicatorService * service, DBusGMethodInvocation * method)
+{
+	g_return_val_if_fail(INDICATOR_IS_SERVICE(service), FALSE);
+	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(service);
+
+	/* Remove us from the watcher list here */
+
+
+	/* If we're out of watchers set the timeout for shutdown */
+	if (priv->watchers == NULL) {
+		if (priv->timeout != 0) {
+			/* This should never really happen, but let's ensure that
+			   bad things don't happen if it does. */
+			g_warning("No watchers timeout set twice.  Resolving, but odd.");
+			g_source_remove(priv->timeout);
+			priv->timeout = 0;
+		}
+		priv->timeout = g_timeout_add(500, timeout_no_watchers, service);
+	}
+
+	dbus_g_method_return(method);
 	return TRUE;
 }
 
