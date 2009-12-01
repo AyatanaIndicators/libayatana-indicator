@@ -232,7 +232,7 @@ get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspe
 }
 
 static void
-watch_cb (DBusGProxy * proxy, gint service_version, GError * error, gpointer user_data)
+watch_cb (DBusGProxy * proxy, guint service_api_version, guint this_service_version, GError * error, gpointer user_data)
 {
 	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(user_data);
 
@@ -242,8 +242,8 @@ watch_cb (DBusGProxy * proxy, gint service_version, GError * error, gpointer use
 		return;
 	}
 
-	if (service_version != INDICATOR_SERVICE_VERSION) {
-		g_warning("Service is using a different version of the service interface.  Expecting %d and got %d.", INDICATOR_SERVICE_VERSION, service_version);
+	if (service_api_version != INDICATOR_SERVICE_VERSION) {
+		g_warning("Service is using a different version of the service interface.  Expecting %d and got %d.", INDICATOR_SERVICE_VERSION, service_api_version);
 		return;
 	}
 
