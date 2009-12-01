@@ -16,6 +16,7 @@ struct _IndicatorServiceManagerPrivate {
 	DBusGProxy * dbus_proxy;
 	DBusGProxy * service_proxy;
 	gboolean connected;
+	guint this_service_version;
 };
 
 /* Signals Stuff */
@@ -33,10 +34,12 @@ static guint signals[LAST_SIGNAL] = { 0 };
 enum {
 	PROP_0,
 	PROP_NAME,
+	PROP_VERSION
 };
 
 /* The strings so that they can be slowly looked up. */
 #define PROP_NAME_S                    "name"
+#define PROP_VERSION_S                 "version"
 
 /* GObject Stuff */
 #define INDICATOR_SERVICE_MANAGER_GET_PRIVATE(o) \
@@ -91,6 +94,12 @@ indicator_service_manager_class_init (IndicatorServiceManagerClass *klass)
 	                                                    "This is the name that should be used to start a service.",
 	                                                    NULL,
 	                                                    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+	g_object_class_install_property(object_class, PROP_VERSION,
+	                                g_param_spec_uint(PROP_VERSION_S,
+	                                                  "The version of the service that we're expecting.",
+	                                                  "A number to check and reject a service if it gives us the wrong number.  This should match across the manager and the service",
+	                                                  0, G_MAXUINT, 0,
+	                                                  G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	return;
 }
@@ -105,6 +114,7 @@ indicator_service_manager_init (IndicatorServiceManager *self)
 	priv->dbus_proxy = NULL;
 	priv->service_proxy = NULL;
 	priv->connected = FALSE;
+	priv->this_service_version = 0;
 
 	/* Start talkin' dbus */
 	GError * error = NULL;
@@ -196,6 +206,10 @@ set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec 
 		}
 		break;
 	/* *********************** */
+	case PROP_VERSION:
+		priv->this_service_version = g_value_get_uint(value);
+		break;
+	/* *********************** */
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -221,6 +235,10 @@ get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspe
 		} else {
 			g_warning("Name is a string bud.");
 		}
+		break;
+	/* *********************** */
+	case PROP_VERSION:
+		g_value_set_uint(value, priv->this_service_version);
 		break;
 	/* *********************** */
 	default:
