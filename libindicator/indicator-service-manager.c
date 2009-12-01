@@ -51,6 +51,7 @@ static void indicator_service_manager_finalize   (GObject *object);
 static void set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec);
 static void get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec);
 static void start_service (IndicatorServiceManager * service);
+static void unwatch_cb (DBusGProxy *proxy, GError *error, gpointer userdata);
 
 G_DEFINE_TYPE (IndicatorServiceManager, indicator_service_manager, G_TYPE_OBJECT);
 
@@ -147,6 +148,12 @@ indicator_service_manager_dispose (GObject *object)
 		priv->dbus_proxy = NULL;
 	}
 
+	/* If we have a proxy, tell it we're shutting down.  Just
+	   to be polite about it. */
+	if (priv->service_proxy != NULL) {
+		org_ayatana_indicator_service_un_watch_async(priv->service_proxy, unwatch_cb, NULL);
+	}
+
 	/* Destory our service proxy, we won't need it. */
 	if (priv->service_proxy != NULL) {
 		g_object_unref(G_OBJECT(priv->service_proxy));
@@ -228,6 +235,12 @@ get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspe
 		break;
 	}
 
+	return;
+}
+
+static void
+unwatch_cb (DBusGProxy *proxy, GError *error, gpointer userdata)
+{
 	return;
 }
 
