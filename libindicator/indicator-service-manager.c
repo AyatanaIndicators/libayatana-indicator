@@ -257,6 +257,7 @@ watch_cb (DBusGProxy * proxy, gint service_version, GError * error, gpointer use
 
 	if (service_version != INDICATOR_SERVICE_VERSION) {
 		g_warning("Service is using a different version of the service interface.  Expecting %d and got %d.", INDICATOR_SERVICE_VERSION, service_version);
+		org_ayatana_indicator_service_un_watch_async(priv->service_proxy, unwatch_cb, NULL);
 		return;
 	}
 
