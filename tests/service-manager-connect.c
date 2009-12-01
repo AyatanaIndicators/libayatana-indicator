@@ -15,7 +15,7 @@ timeout (gpointer data)
 }
 
 void
-connection (void)
+connection (IndicatorServiceManager * sm, gboolean connected, gpointer user_data)
 {
 	g_debug("Connection");
 	passed = TRUE;
@@ -30,7 +30,7 @@ main (int argc, char ** argv)
 	g_log_set_always_fatal(G_LOG_LEVEL_CRITICAL);
 
 	IndicatorServiceManager * is = indicator_service_manager_new("org.ayatana.test");
-	g_signal_connect(G_OBJECT(is), INDICATOR_SERVICE_MANAGER_SIGNAL_CONNECTION_CHANGE, connection, NULL);
+	g_signal_connect(G_OBJECT(is), INDICATOR_SERVICE_MANAGER_SIGNAL_CONNECTION_CHANGE, G_CALLBACK(connection), NULL);
 
 	g_timeout_add_seconds(1, timeout, NULL);
 
