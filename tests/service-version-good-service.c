@@ -29,7 +29,7 @@ main (int argc, char ** argv)
 {
 	g_type_init();
 
-	IndicatorService * is = indicator_service_new_version("org.ayatana.test", SERVICE_VERSION_GOOD);
+	IndicatorService * is = indicator_service_new_version("org.ayatana.version.good", SERVICE_VERSION_GOOD);
 	g_signal_connect(G_OBJECT(is), INDICATOR_SERVICE_SIGNAL_SHUTDOWN, shutdown, NULL);
 
 	g_timeout_add_seconds(1, timeout, NULL);
