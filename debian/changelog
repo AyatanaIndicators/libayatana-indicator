@@ -1,3 +1,10 @@
+libindicator (0.3.0~dev-0ubuntu1~ppa7) UNRELEASED; urgency=low
+
+  * Adding an 'UnWatch' command to the standard DBus interface
+    for graceful disconnection from a service.
+
+ -- Ted Gould <ted@ubuntu.com>  Wed, 02 Dec 2009 08:36:06 -0600
+
 libindicator (0.3.0~dev-0ubuntu1~ppa6) karmic; urgency=low
 
   * Adding a new tool to load indicators from the command line.

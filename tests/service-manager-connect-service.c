@@ -8,7 +8,7 @@ static gboolean passed = FALSE;
 gboolean
 timeout (gpointer data)
 {
-	passed = TRUE;
+	passed = FALSE;
 	g_debug("Timeout with no shutdown.");
 	g_main_loop_quit(mainloop);
 	return FALSE;
@@ -17,8 +17,8 @@ timeout (gpointer data)
 void
 shutdown (void)
 {
-	g_error("Shutdown");
-	passed = FALSE;
+	g_debug("Shutdown");
+	passed = TRUE;
 	g_main_loop_quit(mainloop);
 	return;
 }
@@ -27,6 +27,8 @@ int
 main (int argc, char ** argv)
 {
 	g_type_init();
+
+	g_debug("Starting service");
 
 	IndicatorService * is = indicator_service_new("org.ayatana.test");
 	g_signal_connect(G_OBJECT(is), INDICATOR_SERVICE_SIGNAL_SHUTDOWN, shutdown, NULL);

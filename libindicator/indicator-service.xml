@@ -9,6 +9,9 @@
 			<annotation name="org.freedesktop.DBus.GLib.Async" value="true" />
 			<arg type="i" name="version" direction="out" />
 		</method>
+		<method name="UnWatch">
+			<annotation name="org.freedesktop.DBus.GLib.Async" value="true" />
+		</method>
 
 <!-- Signals -->
 		<!-- None currently -->
