@@ -10,6 +10,9 @@
 			<arg type="u" name="version" direction="out" />
 			<arg type="u" name="service_version" direction="out" />
 		</method>
+		<method name="UnWatch">
+			<annotation name="org.freedesktop.DBus.GLib.Async" value="true" />
+		</method>
 
 <!-- Signals -->
 		<!-- None currently -->

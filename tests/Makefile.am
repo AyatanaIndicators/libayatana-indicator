@@ -265,6 +265,31 @@ TESTS += service-version-tester
 DISTCLEANFILES += service-version-tester service-version-bad.service service-version-good.service
 
 #############################
+# Service Manager Shutdown
+#############################
+
+check_PROGRAMS += service-manager-nostart-connect
+
+service_manager_nostart_connect_SOURCES = \
+	service-manager-nostart-connect.c
+
+service_manager_nostart_connect_CFLAGS = \
+	-Wall -Werror \
+	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
+
+service_manager_nostart_connect_LDADD = \
+	$(LIBINDICATOR_LIBS) \
+	$(top_builddir)/libindicator/.libs/libindicator.a
+
+service-manager-connect-nostart-tester: service-manager-nostart-connect service-manager-connect-service Makefile.am
+	@echo "#!/bin/sh" > $@
+	@echo dbus-test-runner --task ./service-manager-nostart-connect --task ./service-manager-connect-service >> $@
+	@chmod +x $@
+
+TESTS += service-manager-connect-nostart-tester
+DISTCLEANFILES += service-manager-connect-nostart-tester
+
+#############################
 # Test stuff
 #############################
 

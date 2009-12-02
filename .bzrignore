@@ -141,3 +141,5 @@ tests/service-version-good-service
 tests/service-version-good.service
 tests/service-version-manager
 tests/service-version-tester
+tests/service-manager-connect-nostart-tester
+tests/service-manager-nostart-connect
