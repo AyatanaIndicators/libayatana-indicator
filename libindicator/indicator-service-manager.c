@@ -16,6 +16,7 @@ struct _IndicatorServiceManagerPrivate {
 	DBusGProxy * dbus_proxy;
 	DBusGProxy * service_proxy;
 	gboolean connected;
+	DBusGConnection * bus;
 };
 
 /* Signals Stuff */
@@ -51,6 +52,7 @@ static void indicator_service_manager_finalize   (GObject *object);
 static void set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec);
 static void get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec);
 static void start_service (IndicatorServiceManager * service);
+static void unwatch_cb (DBusGProxy *proxy, GError *error, gpointer userdata);
 
 G_DEFINE_TYPE (IndicatorServiceManager, indicator_service_manager, G_TYPE_OBJECT);
 
@@ -105,17 +107,18 @@ indicator_service_manager_init (IndicatorServiceManager *self)
 	priv->dbus_proxy = NULL;
 	priv->service_proxy = NULL;
 	priv->connected = FALSE;
+	priv->bus = NULL;
 
 	/* Start talkin' dbus */
 	GError * error = NULL;
-	DBusGConnection * session_bus = dbus_g_bus_get(DBUS_BUS_SESSION, &error);
+	priv->bus = dbus_g_bus_get(DBUS_BUS_SESSION, &error);
 	if (error != NULL) {
 		g_error("Unable to get session bus: %s", error->message);
 		g_error_free(error);
 		return;
 	}
 
-	priv->dbus_proxy = dbus_g_proxy_new_for_name_owner(session_bus,
+	priv->dbus_proxy = dbus_g_proxy_new_for_name_owner(priv->bus,
 	                                                   DBUS_SERVICE_DBUS,
 	                                                   DBUS_PATH_DBUS,
 	                                                   DBUS_INTERFACE_DBUS,
@@ -145,6 +148,12 @@ indicator_service_manager_dispose (GObject *object)
 	if (priv->dbus_proxy != NULL) {
 		g_object_unref(G_OBJECT(priv->dbus_proxy));
 		priv->dbus_proxy = NULL;
+	}
+
+	/* If we have a proxy, tell it we're shutting down.  Just
+	   to be polite about it. */
+	if (priv->service_proxy != NULL) {
+		org_ayatana_indicator_service_un_watch_async(priv->service_proxy, unwatch_cb, NULL);
 	}
 
 	/* Destory our service proxy, we won't need it. */
@@ -232,6 +241,12 @@ get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspe
 }
 
 static void
+unwatch_cb (DBusGProxy *proxy, GError *error, gpointer userdata)
+{
+	return;
+}
+
+static void
 watch_cb (DBusGProxy * proxy, gint service_version, GError * error, gpointer user_data)
 {
 	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(user_data);
@@ -244,6 +259,7 @@ watch_cb (DBusGProxy * proxy, gint service_version, GError * error, gpointer use
 
 	if (service_version != INDICATOR_SERVICE_VERSION) {
 		g_warning("Service is using a different version of the service interface.  Expecting %d and got %d.", INDICATOR_SERVICE_VERSION, service_version);
+		org_ayatana_indicator_service_un_watch_async(priv->service_proxy, unwatch_cb, NULL);
 		return;
 	}
 
@@ -271,14 +287,7 @@ start_service_cb (DBusGProxy * proxy, guint status, GError * error, gpointer use
 	}
 
 	/* Woot! it's running.  Let's do it some more. */
-	DBusGConnection * session_bus = dbus_g_bus_get(DBUS_BUS_SESSION, &error);
-	if (error != NULL) {
-		g_error("Unable to get session bus: %s", error->message);
-		g_error_free(error);
-		return;
-	}
-
-	priv->service_proxy = dbus_g_proxy_new_for_name_owner(session_bus,
+	priv->service_proxy = dbus_g_proxy_new_for_name_owner(priv->bus,
 	                                                  priv->name,
 	                                                  INDICATOR_SERVICE_OBJECT,
 	                                                  INDICATOR_SERVICE_INTERFACE,
@@ -294,16 +303,35 @@ start_service_cb (DBusGProxy * proxy, guint status, GError * error, gpointer use
 static void
 start_service (IndicatorServiceManager * service)
 {
+	GError * error = NULL;
 	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(service);
 
 	g_return_if_fail(priv->dbus_proxy != NULL);
 	g_return_if_fail(priv->name != NULL);
 
-	org_freedesktop_DBus_start_service_by_name_async (priv->dbus_proxy,
-	                                                  priv->name,
-	                                                  0,
-	                                                  start_service_cb,
-	                                                  service);
+	/* Check to see if we can get a proxy to it first. */
+	priv->service_proxy = dbus_g_proxy_new_for_name_owner(priv->bus,
+	                                                      priv->name,
+	                                                      INDICATOR_SERVICE_OBJECT,
+	                                                      INDICATOR_SERVICE_INTERFACE,
+	                                                      &error);
+
+	if (error != NULL) {
+		/* We don't care about the error, just start the service anyway. */
+		g_error_free(error);
+		org_freedesktop_DBus_start_service_by_name_async (priv->dbus_proxy,
+		                                                  priv->name,
+		                                                  0,
+		                                                  start_service_cb,
+		                                                  service);
+	} else {
+		/* If we got a proxy just because we're good people then
+		   we need to call watch on it just like 'start_service_cb'
+		   does. */
+		org_ayatana_indicator_service_watch_async(priv->service_proxy,
+		                                          watch_cb,
+		                                          service);
+	}
 
 	return;
 }

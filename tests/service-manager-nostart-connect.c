@@ -43,6 +43,8 @@ main (int argc, char ** argv)
 	g_type_init();
 	g_log_set_always_fatal(G_LOG_LEVEL_CRITICAL);
 
+	g_usleep(150000);
+
 	IndicatorServiceManager * is = indicator_service_manager_new("org.ayatana.test");
 	g_signal_connect(G_OBJECT(is), INDICATOR_SERVICE_MANAGER_SIGNAL_CONNECTION_CHANGE, G_CALLBACK(connection), NULL);
 
