@@ -18,7 +18,7 @@ timeout (gpointer data)
 void
 shutdown (void)
 {
-	g_error("Shutdown");
+	g_debug("Shutdown");
 	passed = TRUE;
 	g_main_loop_quit(mainloop);
 	return;
