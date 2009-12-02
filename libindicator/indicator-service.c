@@ -350,3 +350,28 @@ indicator_service_new (gchar * name)
 
 	return INDICATOR_SERVICE(obj);
 }
+
+/**
+	indicator_service_new_version:
+	@name: The name for the service on dbus
+	@version: The version of the other interfaces provide
+		by the service.
+
+	This function creates the service on DBus and tries to
+	get a well-known name specified in @name.  If the name
+	can't be estabilished then the #IndicatorService::shutdown
+	signal will be sent.
+
+	Return value: A brand new #IndicatorService object or #NULL
+		if there is an error.
+*/
+IndicatorService *
+indicator_service_new_version (gchar * name, guint version)
+{
+	GObject * obj = g_object_new(INDICATOR_SERVICE_TYPE,
+	                             PROP_NAME_S, name,
+	                             PROP_VERSION_S, version,
+	                             NULL);
+
+	return INDICATOR_SERVICE(obj);
+}

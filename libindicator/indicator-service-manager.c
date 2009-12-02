@@ -337,6 +337,17 @@ indicator_service_manager_new (gchar * dbus_name)
 	return INDICATOR_SERVICE_MANAGER(obj);
 }
 
+IndicatorServiceManager *
+indicator_service_manager_new_version (gchar * dbus_name, guint version)
+{
+	GObject * obj = g_object_new(INDICATOR_SERVICE_MANAGER_TYPE,
+	                             PROP_NAME_S, dbus_name,
+	                             PROP_VERSION_S, version,
+	                             NULL);
+
+	return INDICATOR_SERVICE_MANAGER(obj);
+}
+
 gboolean
 indicator_service_manager_connected (IndicatorServiceManager * sm)
 {
