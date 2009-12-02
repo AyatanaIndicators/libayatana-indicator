@@ -1,7 +1,7 @@
 TESTS =
 DISTCLEANFILES =
 
-check_PROGRAMS = \
+check_PROGRAMS = 
 	test-loader \
 	service-manager-no-connect \
 	service-manager-connect \
@@ -19,6 +19,8 @@ DBUS_RUNNER=dbus-test-runner --dbus-config /usr/share/dbus-test-runner/session.c
 #############################
 # Test Loader
 #############################
+
+check_PROGRAMS += test-loader
 
 test_loader_SOURCES = \
 	test-loader.c
@@ -117,6 +119,8 @@ libdummy_indicator_simple_la_LDFLAGS = \
 # Service Shutdown Timeout
 #############################
 
+check_PROGRAMS += service-shutdown-timeout
+
 service_shutdown_timeout_SOURCES = \
 	service-shutdown-timeout.c
 
@@ -139,6 +143,8 @@ DISTCLEANFILES += service-shutdown-timeout-tester
 #############################
 # Service Manager No Connect
 #############################
+
+check_PROGRAMS += service-manager-no-connect
 
 service_manager_no_connect_SOURCES = \
 	service-manager-no-connect.c
@@ -169,6 +175,8 @@ session.conf: $(srcdir)/session.conf.in Makefile.am
 service-manager-connect.service: $(srcdir)/service-manager-connect.service.in Makefile.am
 	sed -e "s|\@builddir\@|$(abspath $(builddir))|" $< > $@
 
+check_PROGRAMS += service-manager-connect
+
 service_manager_connect_SOURCES = \
 	service-manager-connect.c
 
@@ -179,6 +187,8 @@ service_manager_connect_CFLAGS = \
 service_manager_connect_LDADD = \
 	$(LIBINDICATOR_LIBS) \
 	$(top_builddir)/libindicator/.libs/libindicator.a
+
+check_PROGRAMS += service-manager-connect-service
 
 service_manager_connect_service_SOURCES = \
 	service-manager-connect-service.c
@@ -198,6 +208,66 @@ service-manager-connect-tester: service-manager-connect service-manager-connect-
 
 TESTS += service-manager-connect-tester
 DISTCLEANFILES += service-manager-connect-tester session.conf service-manager-connect.service
+
+#############################
+# Service Versions
+#############################
+
+service-version-good.service: $(srcdir)/service-version-good.service.in Makefile.am
+	sed -e "s|\@builddir\@|$(abspath $(builddir))|" $< > $@
+
+service-version-bad.service: $(srcdir)/service-version-bad.service.in Makefile.am
+	sed -e "s|\@builddir\@|$(abspath $(builddir))|" $< > $@
+
+check_PROGRAMS += service-version-manager
+
+service_version_manager_SOURCES = \
+	service-version-values.h \
+	service-version-manager.c
+
+service_version_manager_CFLAGS = \
+	-Wall -Werror \
+	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
+
+service_version_manager_LDADD = \
+	$(LIBINDICATOR_LIBS) \
+	$(top_builddir)/libindicator/.libs/libindicator.a
+
+check_PROGRAMS += service-version-bad-service
+
+service_version_bad_service_SOURCES = \
+	service-version-values.h \
+	service-version-bad-service.c
+
+service_version_bad_service_CFLAGS = \
+	-Wall -Werror \
+	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
+
+service_version_bad_service_LDADD = \
+	$(LIBINDICATOR_LIBS) \
+	$(top_builddir)/libindicator/.libs/libindicator.a
+
+check_PROGRAMS += service-version-good-service
+
+service_version_good_service_SOURCES = \
+	service-version-values.h \
+	service-version-good-service.c
+
+service_version_good_service_CFLAGS = \
+	-Wall -Werror \
+	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
+
+service_version_good_service_LDADD = \
+	$(LIBINDICATOR_LIBS) \
+	$(top_builddir)/libindicator/.libs/libindicator.a
+
+service-version-tester: service-version-manager service-version-bad-service service-version-good-service session.conf service-version-bad.service service-version-good.service Makefile.am
+	@echo "#!/bin/sh" > $@
+	@echo dbus-test-runner --dbus-config $(builddir)/session.conf --task ./service-version-manager >> $@
+	@chmod +x $@
+
+TESTS += service-version-tester
+DISTCLEANFILES += service-version-tester service-version-bad.service service-version-good.service
 
 #############################
 # Test stuff

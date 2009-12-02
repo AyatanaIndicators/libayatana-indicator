@@ -1,0 +1,4 @@
+
+#define  SERVICE_VERSION_GOOD  1342
+#define  SERVICE_VERSION_BAD   543
+
