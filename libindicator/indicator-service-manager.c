@@ -265,6 +265,11 @@ watch_cb (DBusGProxy * proxy, guint service_api_version, guint this_service_vers
 		return;
 	}
 
+	if (this_service_version != priv->this_service_version) {
+		g_warning("Service is using a API version than the manager.  Expecting %d and got %d.", priv->this_service_version, this_service_version);
+		return;
+	}
+
 	if (!priv->connected) {
 		priv->connected = TRUE;
 		g_signal_emit(G_OBJECT(user_data), signals[CONNECTION_CHANGE], 0, TRUE, TRUE);
