@@ -2,11 +2,6 @@ TESTS =
 DISTCLEANFILES =
 
 check_PROGRAMS = 
-	test-loader \
-	service-manager-no-connect \
-	service-manager-connect \
-	service-manager-connect-service \
-	service-shutdown-timeout
 
 lib_LTLIBRARIES = \
 	libdummy-indicator-blank.la \
