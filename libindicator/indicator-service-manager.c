@@ -55,7 +55,6 @@ static void indicator_service_manager_finalize   (GObject *object);
 static void set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec);
 static void get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec);
 static void start_service (IndicatorServiceManager * service);
-static void unwatch_cb (DBusGProxy *proxy, GError *error, gpointer userdata);
 
 G_DEFINE_TYPE (IndicatorServiceManager, indicator_service_manager, G_TYPE_OBJECT);
 
@@ -163,7 +162,7 @@ indicator_service_manager_dispose (GObject *object)
 	/* If we have a proxy, tell it we're shutting down.  Just
 	   to be polite about it. */
 	if (priv->service_proxy != NULL) {
-		org_ayatana_indicator_service_un_watch_async(priv->service_proxy, unwatch_cb, NULL);
+		dbus_g_proxy_call_no_reply(priv->service_proxy, "UnWatch", G_TYPE_INVALID);
 	}
 
 	/* Destory our service proxy, we won't need it. */
@@ -259,12 +258,6 @@ get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspe
 }
 
 static void
-unwatch_cb (DBusGProxy *proxy, GError *error, gpointer userdata)
-{
-	return;
-}
-
-static void
 watch_cb (DBusGProxy * proxy, guint service_api_version, guint this_service_version, GError * error, gpointer user_data)
 {
 	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(user_data);
@@ -277,13 +270,13 @@ watch_cb (DBusGProxy * proxy, guint service_api_version, guint this_service_vers
 
 	if (service_api_version != INDICATOR_SERVICE_VERSION) {
 		g_warning("Service is using a different version of the service interface.  Expecting %d and got %d.", INDICATOR_SERVICE_VERSION, service_api_version);
-		org_ayatana_indicator_service_un_watch_async(priv->service_proxy, unwatch_cb, NULL);
+		dbus_g_proxy_call_no_reply(priv->service_proxy, "UnWatch", G_TYPE_INVALID);
 		return;
 	}
 
 	if (this_service_version != priv->this_service_version) {
 		g_warning("Service is using a API version than the manager.  Expecting %d and got %d.", priv->this_service_version, this_service_version);
-		org_ayatana_indicator_service_un_watch_async(priv->service_proxy, unwatch_cb, NULL);
+		dbus_g_proxy_call_no_reply(priv->service_proxy, "UnWatch", G_TYPE_INVALID);
 		return;
 	}
 
