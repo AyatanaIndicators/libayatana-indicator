@@ -309,6 +309,7 @@ start_service_cb (DBusGProxy * proxy, guint status, GError * error, gpointer use
 	                                                  INDICATOR_SERVICE_OBJECT,
 	                                                  INDICATOR_SERVICE_INTERFACE,
 	                                                  &error);
+	g_object_add_weak_pointer(G_OBJECT(priv->service_proxy), (gpointer *)&(priv->service_proxy));
 
 	org_ayatana_indicator_service_watch_async(priv->service_proxy,
 	                                          watch_cb,
