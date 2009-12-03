@@ -21,6 +21,7 @@ struct _IndicatorServicePrivate {
 	DBusGProxy * dbus_proxy;
 	guint timeout;
 	GList * watchers;
+	guint this_service_version;
 };
 
 /* Signals Stuff */
@@ -37,10 +38,12 @@ static guint signals[LAST_SIGNAL] = { 0 };
 enum {
 	PROP_0,
 	PROP_NAME,
+	PROP_VERSION
 };
 
 /* The strings so that they can be slowly looked up. */
 #define PROP_NAME_S                    "name"
+#define PROP_VERSION_S                 "version"
 
 /* GObject Stuff */
 #define INDICATOR_SERVICE_GET_PRIVATE(o) \
@@ -79,6 +82,12 @@ indicator_service_class_init (IndicatorServiceClass *klass)
 	                                                    "This is the name that should be used on DBus for this service.",
 	                                                    NULL,
 	                                                    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+	g_object_class_install_property(object_class, PROP_VERSION,
+	                                g_param_spec_uint(PROP_VERSION_S,
+	                                                  "The version of the service that we're implementing.",
+	                                                  "A number to represent the version of the other APIs the service provides.  This should match across the manager and the service",
+	                                                  0, G_MAXUINT, 0,
+	                                                  G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	/* Signals */
 
@@ -114,6 +123,7 @@ indicator_service_init (IndicatorService *self)
 	priv->dbus_proxy = NULL;
 	priv->timeout = 0;
 	priv->watchers = NULL;
+	priv->this_service_version = 0;
 
 	/* Start talkin' dbus */
 	GError * error = NULL;
@@ -214,6 +224,10 @@ set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec 
 		}
 		break;
 	/* *********************** */
+	case PROP_VERSION:
+		priv->this_service_version = g_value_get_uint(value);
+		break;
+	/* *********************** */
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -239,6 +253,10 @@ get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspe
 		} else {
 			g_warning("Name property requires a string value.");
 		}
+		break;
+	/* *********************** */
+	case PROP_VERSION:
+		g_value_set_uint(value, priv->this_service_version);
 		break;
 	/* *********************** */
 	default:
@@ -306,7 +324,7 @@ _indicator_service_server_watch (IndicatorService * service, DBusGMethodInvocati
 		priv->timeout = 0;
 	}
 
-	dbus_g_method_return(method, INDICATOR_SERVICE_VERSION);
+	dbus_g_method_return(method, INDICATOR_SERVICE_VERSION, priv->this_service_version);
 	return TRUE;
 }
 
@@ -370,6 +388,31 @@ indicator_service_new (gchar * name)
 {
 	GObject * obj = g_object_new(INDICATOR_SERVICE_TYPE,
 	                             PROP_NAME_S, name,
+	                             NULL);
+
+	return INDICATOR_SERVICE(obj);
+}
+
+/**
+	indicator_service_new_version:
+	@name: The name for the service on dbus
+	@version: The version of the other interfaces provide
+		by the service.
+
+	This function creates the service on DBus and tries to
+	get a well-known name specified in @name.  If the name
+	can't be estabilished then the #IndicatorService::shutdown
+	signal will be sent.
+
+	Return value: A brand new #IndicatorService object or #NULL
+		if there is an error.
+*/
+IndicatorService *
+indicator_service_new_version (gchar * name, guint version)
+{
+	GObject * obj = g_object_new(INDICATOR_SERVICE_TYPE,
+	                             PROP_NAME_S, name,
+	                             PROP_VERSION_S, version,
 	                             NULL);
 
 	return INDICATOR_SERVICE(obj);

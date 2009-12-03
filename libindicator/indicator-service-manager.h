@@ -54,6 +54,8 @@ struct _IndicatorServiceManager {
 GType indicator_service_manager_get_type (void);
 
 IndicatorServiceManager *   indicator_service_manager_new         (gchar * dbus_name);
+IndicatorServiceManager *   indicator_service_manager_new_version (gchar * dbus_name,
+                                                                   guint version);
 gboolean                    indicator_service_manager_connected   (IndicatorServiceManager * sm);
 void                        indicator_service_manager_set_refresh (IndicatorServiceManager * sm,
                                                                    guint time_in_ms);
