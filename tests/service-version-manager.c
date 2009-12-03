@@ -16,16 +16,18 @@ timeout (gpointer data)
 }
 
 void
-connection_bad (void)
+connection_bad (IndicatorServiceManager * sm, gboolean connected, gpointer user_data)
 {
+	if (!connected) return;
 	g_debug("Connection From Bad!");
 	con_bad = TRUE;
 	return;
 }
 
 void
-connection_good (void)
+connection_good (IndicatorServiceManager * sm, gboolean connected, gpointer user_data)
 {
+	if (!connected) return;
 	g_debug("Connection From Good.");
 	con_good = TRUE;
 	return;
@@ -39,10 +41,10 @@ main (int argc, char ** argv)
 	g_print("Manager: DBUS_SESSION_BUS_ADDRESS = %s\n", g_getenv("DBUS_SESSION_BUS_ADDRESS"));
 
 	IndicatorServiceManager * goodis = indicator_service_manager_new_version("org.ayatana.version.good", SERVICE_VERSION_GOOD);
-	g_signal_connect(G_OBJECT(goodis), INDICATOR_SERVICE_MANAGER_SIGNAL_CONNECTION_CHANGE, connection_good, NULL);
+	g_signal_connect(G_OBJECT(goodis), INDICATOR_SERVICE_MANAGER_SIGNAL_CONNECTION_CHANGE, G_CALLBACK(connection_good), NULL);
 
 	IndicatorServiceManager * badis = indicator_service_manager_new_version("org.ayatana.version.bad", SERVICE_VERSION_GOOD);
-	g_signal_connect(G_OBJECT(badis), INDICATOR_SERVICE_MANAGER_SIGNAL_CONNECTION_CHANGE, connection_bad, NULL);
+	g_signal_connect(G_OBJECT(badis), INDICATOR_SERVICE_MANAGER_SIGNAL_CONNECTION_CHANGE, G_CALLBACK(connection_bad), NULL);
 
 	g_timeout_add_seconds(1, timeout, NULL);
 
