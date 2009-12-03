@@ -1,3 +1,9 @@
+libindicator (0.3.0~dev-0ubuntu1~ppa8) UNRELEASED; urgency=low
+
+  * autogen.sh fix. (LP: #491907)
+
+ -- Ted Gould <ted@ubuntu.com>  Thu, 03 Dec 2009 08:46:56 -0600
+
 libindicator (0.3.0~dev-0ubuntu1~ppa7) karmic; urgency=low
 
   * Adding an 'UnWatch' command to the standard DBus interface
