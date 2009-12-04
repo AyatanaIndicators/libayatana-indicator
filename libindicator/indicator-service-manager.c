@@ -445,8 +445,9 @@ indicator_service_manager_new_version (gchar * dbus_name, guint version)
 gboolean
 indicator_service_manager_connected (IndicatorServiceManager * sm)
 {
-
-	return FALSE;
+	g_return_val_if_fail(INDICATOR_IS_SERVICE_MANAGER(sm), FALSE);
+	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(sm);
+	return priv->connected;
 }
 
 /**
