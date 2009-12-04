@@ -10,6 +10,15 @@
 #include "dbus-shared.h"
 
 /* Private Stuff */
+/**
+	IndicatorServiceManagerPrivate:
+	@name: The well known dbus name the service should be on.
+	@dbus_proxy: A proxy to talk to the dbus daemon.
+	@service_proxy: The proxy to the service itself.
+	@connected: Whether we're connected to the service or not.
+	@this_service_version: The version of the service that we're looking for.
+	@bus: A reference to the bus so we don't have to keep getting it.
+*/
 typedef struct _IndicatorServiceManagerPrivate IndicatorServiceManagerPrivate;
 struct _IndicatorServiceManagerPrivate {
 	gchar * name;
@@ -58,6 +67,8 @@ static void start_service (IndicatorServiceManager * service);
 
 G_DEFINE_TYPE (IndicatorServiceManager, indicator_service_manager, G_TYPE_OBJECT);
 
+/* Build all of our signals and proxies and tie everything
+   all together.  Lovely. */
 static void
 indicator_service_manager_class_init (IndicatorServiceManagerClass *klass)
 {
@@ -105,6 +116,9 @@ indicator_service_manager_class_init (IndicatorServiceManagerClass *klass)
 	return;
 }
 
+/* This inits all the variable and sets up the proxy
+   to dbus.  It doesn't look for the service as at this
+   point we don't know it's name. */
 static void
 indicator_service_manager_init (IndicatorServiceManager *self)
 {
@@ -141,6 +155,10 @@ indicator_service_manager_init (IndicatorServiceManager *self)
 	return;
 }
 
+/* If we're connected this provides all the signals to say
+   that we're about to not be.  Then it takes down the proxies
+   and tells the service that we're not interested in being
+   its friend anymore either. */
 static void
 indicator_service_manager_dispose (GObject *object)
 {
@@ -176,6 +194,7 @@ indicator_service_manager_dispose (GObject *object)
 	return;
 }
 
+/* Ironically, we don't allocate a lot of memory ourselves. */
 static void
 indicator_service_manager_finalize (GObject *object)
 {
@@ -190,6 +209,8 @@ indicator_service_manager_finalize (GObject *object)
 	return;
 }
 
+/* Either copies the name into the private variable or
+   sets the version.  Do it wrong and it'll get upset. */
 static void
 set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec)
 {
@@ -202,16 +223,12 @@ set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec 
 	switch (prop_id) {
 	/* *********************** */
 	case PROP_NAME:
-		if (G_VALUE_HOLDS_STRING(value)) {
-			if (priv->name != NULL) {
-				g_error("Name can not be set twice!");
-				return;
-			}
-			priv->name = g_value_dup_string(value);
-			start_service(self);
-		} else {
-			g_warning("Name is a string bud.");
+		if (priv->name != NULL) {
+			g_error("Name can not be set twice!");
+			return;
 		}
+		priv->name = g_value_dup_string(value);
+		start_service(self);
 		break;
 	/* *********************** */
 	case PROP_VERSION:
@@ -226,6 +243,8 @@ set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec 
 	return;
 }
 
+/* Grabs the values from the private variables and
+   puts them into the value. */
 static void
 get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec)
 {
@@ -238,11 +257,7 @@ get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspe
 	switch (prop_id) {
 	/* *********************** */
 	case PROP_NAME:
-		if (G_VALUE_HOLDS_STRING(value)) {
-			g_value_set_string(value, priv->name);
-		} else {
-			g_warning("Name is a string bud.");
-		}
+		g_value_set_string(value, priv->name);
 		break;
 	/* *********************** */
 	case PROP_VERSION:
@@ -257,6 +272,12 @@ get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspe
 	return;
 }
 
+/* A callback from telling a service that we want to watch
+   it.  It gives us the service API version and the version
+   of the other APIs it supports.  We check both of those.
+   If they don't match then we unwatch it.  Otherwise, we
+   signal a connection change to tell the rest of the world
+   that we have a service now.  */
 static void
 watch_cb (DBusGProxy * proxy, guint service_api_version, guint this_service_version, GError * error, gpointer user_data)
 {
@@ -288,6 +309,10 @@ watch_cb (DBusGProxy * proxy, guint service_api_version, guint this_service_vers
 	return;
 }
 
+/* The callback after asking the dbus-daemon to start a
+   service for us.  It can return success or failure, on
+   failure we can't do much.  But, with sucess, we start
+   to build a proxy and tell the service that we're watching. */
 static void
 start_service_cb (DBusGProxy * proxy, guint status, GError * error, gpointer user_data)
 {
@@ -333,6 +358,7 @@ start_service (IndicatorServiceManager * service)
 	                                                      INDICATOR_SERVICE_OBJECT,
 	                                                      INDICATOR_SERVICE_INTERFACE,
 	                                                      &error);
+	g_object_add_weak_pointer(G_OBJECT(priv->service_proxy), (gpointer *)&(priv->service_proxy));
 
 	if (error != NULL) {
 		/* We don't care about the error, just start the service anyway. */
