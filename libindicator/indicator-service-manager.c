@@ -343,6 +343,10 @@ start_service_cb (DBusGProxy * proxy, guint status, GError * error, gpointer use
 	return;
 }
 
+/* The function that handles getting us connected to the service.
+   In many cases it will start the service, but if the service
+   is already there it just allocates the service proxy and acts
+   like it was no big deal. */
 static void
 start_service (IndicatorServiceManager * service)
 {
@@ -381,6 +385,19 @@ start_service (IndicatorServiceManager * service)
 }
 
 /* API */
+
+/**
+	indicator_service_manager_new:
+	@dbus_name: The well known name of the service on DBus
+
+	This creates a new service manager object.  If the service
+	is not running it will start it.  No matter what, it will
+	give a IndicatorServiceManager::connection-changed event
+	signal when it gets connected.
+
+	Return value: A brand new lovely #IndicatorServiceManager
+		object.
+*/
 IndicatorServiceManager *
 indicator_service_manager_new (gchar * dbus_name)
 {
@@ -391,6 +408,20 @@ indicator_service_manager_new (gchar * dbus_name)
 	return INDICATOR_SERVICE_MANAGER(obj);
 }
 
+/**
+	inicator_service_manager_new_version:
+	@dbus_name: The well known name of the service on DBus
+	@version: Version of the service we expect
+
+	This creates a new service manager object.  It also sets
+	the version of the service that we're expecting to see.
+	In general, it behaves similarly to #indicator_service_manager_new()
+	except that it checks @version against the version returned
+	by the service.
+
+	Return value: A brand new lovely #IndicatorServiceManager
+		object.
+*/
 IndicatorServiceManager *
 indicator_service_manager_new_version (gchar * dbus_name, guint version)
 {
@@ -402,6 +433,15 @@ indicator_service_manager_new_version (gchar * dbus_name, guint version)
 	return INDICATOR_SERVICE_MANAGER(obj);
 }
 
+/**
+	indicator_service_manager_connected:
+	@sm: #IndicatorServiceManager object to check
+
+	Checks to see if the service manager is connected to a
+	service.
+
+	Return value: #TRUE if there is a service connceted.
+*/
 gboolean
 indicator_service_manager_connected (IndicatorServiceManager * sm)
 {
@@ -409,6 +449,17 @@ indicator_service_manager_connected (IndicatorServiceManager * sm)
 	return FALSE;
 }
 
+/**
+	indicator_service_manager_set_refresh:
+	@sm: #IndicatorServiceManager object to configure
+	@time_in_ms: The refresh time in milliseconds
+
+	Use this function to set the amount of time between restarting
+	services that may crash or shutdown.  This is mostly useful
+	for testing and development.
+
+	NOTE: Not yet implemented.
+*/
 void
 indicator_service_manager_set_refresh (IndicatorServiceManager * sm, guint time_in_ms)
 {
