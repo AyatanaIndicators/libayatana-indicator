@@ -1,3 +1,26 @@
+/*
+An object used to provide a simple interface for a service
+to query version and manage whether it's running.
+
+Copyright 2009 Canonical Ltd.
+
+Authors:
+    Ted Gould <ted@canonical.com>
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+version 3.0 as published by the Free Software Foundation.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License version 3.0 for more details.
+
+You should have received a copy of the GNU General Public
+License along with this library. If not, see
+<http://www.gnu.org/licenses/>.
+*/
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -14,8 +37,16 @@ static gboolean _indicator_service_server_un_watch (IndicatorService * service, 
 #include "dbus-shared.h"
 
 /* Private Stuff */
+/**
+	IndicatorSevicePrivate:
+	@name: The DBus well known name for the service.
+	@dbus_proxy: A proxy for talking to the dbus bus manager.
+	@timeout: The source ID for the timeout event.
+	@watcher: A list of processes on dbus that are watching us.
+	@this_service_version: The version to hand out that we're
+		implementing.  May not be set, so we'll send zero (default).
+*/
 typedef struct _IndicatorServicePrivate IndicatorServicePrivate;
-
 struct _IndicatorServicePrivate {
 	gchar * name;
 	DBusGProxy * dbus_proxy;
@@ -113,6 +144,10 @@ indicator_service_class_init (IndicatorServiceClass *klass)
 	return;
 }
 
+/* This function builds the variables, sets up the dbus
+   proxy and registers the object on dbus.  Importantly,
+   it does not request a name as we don't know what name
+   we have yet. */
 static void
 indicator_service_init (IndicatorService *self)
 {
@@ -162,6 +197,8 @@ indicator_service_init (IndicatorService *self)
 	return;
 }
 
+/* Unrefcounting the proxies and making sure that our
+   timeout doesn't come to haunt us. */
 static void
 indicator_service_dispose (GObject *object)
 {
@@ -181,6 +218,8 @@ indicator_service_dispose (GObject *object)
 	return;
 }
 
+/* Freeing the name we're looking for and all of the
+   information on the watchers we're tracking. */
 static void
 indicator_service_finalize (GObject *object)
 {
@@ -200,6 +239,8 @@ indicator_service_finalize (GObject *object)
 	return;
 }
 
+/* Either copies a string for the name or it just grabs
+   the value of the version. */
 static void
 set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec)
 {
@@ -236,6 +277,8 @@ set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec 
 	return;
 }
 
+/* Copies out the name into a value or the version number.
+   Probably this is the least useful code in this file. */
 static void
 get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec)
 {
@@ -267,6 +310,9 @@ get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspe
 	return;
 }
 
+/* This is the function that gets executed if we timeout
+   because there are no watchers.  We sent the shutdown
+   signal and hope someone does something sane with it. */
 static gboolean
 timeout_no_watchers (gpointer data)
 {
@@ -274,6 +320,9 @@ timeout_no_watchers (gpointer data)
 	return FALSE;
 }
 
+/* The callback from our request to get a well known name
+   on dbus.  If we can't get it we send the shutdown signal.
+   Else we start the timer to see if anyone cares about us. */
 static void
 try_and_get_name_cb (DBusGProxy * proxy, guint status, GError * error, gpointer data)
 {
@@ -294,6 +343,7 @@ try_and_get_name_cb (DBusGProxy * proxy, guint status, GError * error, gpointer 
 	return;
 }
 
+/* This function sets up the request for the name on dbus. */
 static void
 try_and_get_name (IndicatorService * service)
 {
@@ -310,6 +360,10 @@ try_and_get_name (IndicatorService * service)
 	return;
 }
 
+/* Here is the function that gets called by the dbus
+   interface "Watch" function.  It is an async function so
+   that we can get the sender and store that information.  We
+   put them in a list and reset the timeout. */
 static gboolean
 _indicator_service_server_watch (IndicatorService * service, DBusGMethodInvocation * method)
 {
@@ -328,12 +382,18 @@ _indicator_service_server_watch (IndicatorService * service, DBusGMethodInvocati
 	return TRUE;
 }
 
+/* Mung g_strcmp0 into GCompareFunc */
 static gint
 find_watcher (gconstpointer a, gconstpointer b)
 {
 	return g_strcmp0((const gchar *)a, (const gchar *)b);
 }
 
+/* A function connecting into the dbus interface for the
+   "UnWatch" function.  It is also an async function to get
+   the sender.  It then looks the sender up and removes them
+   from the list of watchers.  If there are none left, it then
+   starts the timer for the shutdown signal. */
 static gboolean
 _indicator_service_server_un_watch (IndicatorService * service, DBusGMethodInvocation * method)
 {

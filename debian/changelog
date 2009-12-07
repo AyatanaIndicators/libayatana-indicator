@@ -1,3 +1,10 @@
+libindicator (0.3.0~dev-0ubuntu1~ppa10) UNRELEASED; urgency=low
+
+  * Licensing and doc updates.
+  * Minor code cleanups
+
+ -- Ted Gould <ted@ubuntu.com>  Mon, 07 Dec 2009 14:23:05 -0600
+
 libindicator (0.3.0~dev-0ubuntu1~ppa9) karmic; urgency=low
 
   * Adding in a service API version number.
