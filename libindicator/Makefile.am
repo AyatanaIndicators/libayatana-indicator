@@ -26,6 +26,7 @@ libindicator_la_SOURCES = \
 
 libindicator_la_CFLAGS = \
 	$(LIBINDICATOR_CFLAGS) \
+	-DG_LOG_DOMAIN=\"libindicator\" \
 	-Wall -Werror
 
 libindicator_la_LIBADD = \
