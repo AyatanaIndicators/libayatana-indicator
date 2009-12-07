@@ -135,5 +135,11 @@ tests/service-manager-connect-tester
 tests/session.conf
 tests/service-manager-connect.service
 tools/indicator-loader
+tests/service-version-bad-service
+tests/service-version-bad.service
+tests/service-version-good-service
+tests/service-version-good.service
+tests/service-version-manager
+tests/service-version-tester
 tests/service-manager-connect-nostart-tester
 tests/service-manager-nostart-connect

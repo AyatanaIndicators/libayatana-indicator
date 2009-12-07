@@ -1,3 +1,9 @@
+libindicator (0.3.0~dev-0ubuntu1~ppa9) UNRELEASED; urgency=low
+
+  * Adding in a service API version number.
+
+ -- Ted Gould <ted@ubuntu.com>  Mon, 07 Dec 2009 13:10:14 -0600
+
 libindicator (0.3.0~dev-0ubuntu1~ppa8) karmic; urgency=low
 
   * autogen.sh fix. (LP: #491907)
