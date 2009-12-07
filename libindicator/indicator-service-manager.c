@@ -275,7 +275,7 @@ watch_cb (DBusGProxy * proxy, guint service_api_version, guint this_service_vers
 	}
 
 	if (this_service_version != priv->this_service_version) {
-		g_warning("Service is using a API version than the manager.  Expecting %d and got %d.", priv->this_service_version, this_service_version);
+		g_warning("Service is using a different API version than the manager.  Expecting %d and got %d.", priv->this_service_version, this_service_version);
 		dbus_g_proxy_call_no_reply(priv->service_proxy, "UnWatch", G_TYPE_INVALID);
 		return;
 	}
