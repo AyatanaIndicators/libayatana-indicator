@@ -1,4 +1,4 @@
-libindicator (0.3.0-0ubuntu1) karmic; urgency=low
+libindicator (0.3.0-0ubuntu1) lucid; urgency=low
 
   * debian/control:
     - Added description for libindicator-tools
