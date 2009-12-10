@@ -44,5 +44,7 @@ Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
          libindicator0 (= ${binary:Version})
-Description: Need a better description
-
+Description: Tools for libindicator
+ Tools useful for developers of applications using indicators.
+ .
+ This package contains files that are needed to build applications.

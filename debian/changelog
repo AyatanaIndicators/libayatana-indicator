@@ -1,5 +1,9 @@
 libindicator (0.3.0-0ubuntu1) karmic; urgency=low
 
+  * debian/control:
+    - Added description for libindicator-tools
+
+  [Ted Gould]
   * Upstream 0.3.0 Release 
     * Adds a new tool to load indicators from the command line.
     * Adds an object for loading indicators.
@@ -9,7 +13,7 @@ libindicator (0.3.0-0ubuntu1) karmic; urgency=low
   * debian/control, debian/libindicator-tools: Adding in a new
     package for the tools of libindicator.
 
- -- Ted Gould <ted@ubuntu.com>  Thu, 10 Dec 2009 10:59:37 -0600
+ -- Ken VanDine <ken.vandine@canonical.com>  Thu, 10 Dec 2009 12:11:49 -0500
 
 libindicator (0.2.1-0ubuntu2~ppa1) karmic; urgency=low
 
