@@ -1,71 +1,15 @@
-libindicator (0.3.0~dev-0ubuntu1~ppa10) karmic; urgency=low
+libindicator (0.3.0~dev-0ubuntu1~ppa11) UNRELEASED; urgency=low
 
-  * Licensing and doc updates.
-  * Minor code cleanups
-
- -- Ted Gould <ted@ubuntu.com>  Mon, 07 Dec 2009 14:24:34 -0600
-
-libindicator (0.3.0~dev-0ubuntu1~ppa9) karmic; urgency=low
-
-  * Adding in a service API version number.
-
- -- Ted Gould <ted@ubuntu.com>  Mon, 07 Dec 2009 13:11:37 -0600
-
-libindicator (0.3.0~dev-0ubuntu1~ppa8) karmic; urgency=low
-
-  * autogen.sh fix. (LP: #491907)
-
- -- Ted Gould <ted@ubuntu.com>  Thu, 03 Dec 2009 08:49:12 -0600
-
-libindicator (0.3.0~dev-0ubuntu1~ppa7) karmic; urgency=low
-
-  * Adding an 'UnWatch' command to the standard DBus interface
-    for graceful disconnection from a service.
-
- -- Ted Gould <ted@ubuntu.com>  Wed, 02 Dec 2009 08:40:06 -0600
-
-libindicator (0.3.0~dev-0ubuntu1~ppa6) karmic; urgency=low
-
-  * Adding a new tool to load indicators from the command line.
+  * Upstream 0.3.0 Release 
+    * Adds a new tool to load indicators from the command line.
+    * Adds an object for loading indicators.
+    * Changes the indicator interface to be object based.
+  * debian/control, debian/libindicator0: Adding in a new packages
+    for the binary library.
   * debian/control, debian/libindicator-tools: Adding in a new
     package for the tools of libindicator.
 
- -- Ted Gould <ted@ubuntu.com>  Tue, 24 Nov 2009 16:35:58 -0600
-
-libindicator (0.3.0~dev-0ubuntu1~ppa5) karmic; urgency=low
-
-  * debian/control: Adding a depend for the -dev package on the
-    base library to stop users from linking staticly.
-
- -- Robert Collins <robert@ubuntu.com>  Tue, 17 Nov 2009 14:06:00 +1100
-
-libindicator (0.3.0~dev-0ubuntu1~ppa4) karmic; urgency=low
-
-  * 64-bit fix for printf's
-
- -- Ted Gould <ted@ubuntu.com>  Mon, 16 Nov 2009 15:26:23 -0600
-
-libindicator (0.3.0~dev-0ubuntu1~ppa3) karmic; urgency=low
-
-  * debian/control: Adding build deps dbus-glib as well.
-
- -- Ted Gould <ted@ubuntu.com>  Thu, 05 Nov 2009 10:25:52 -0600
-
-libindicator (0.3.0~dev-0ubuntu1~ppa2) karmic; urgency=low
-
-  * debian/control: Adding build deps for the libraries we're
-    using.  Seems we should have done that earlier, eh?
-
- -- Ted Gould <ted@ubuntu.com>  Thu, 05 Nov 2009 10:09:39 -0600
-
-libindicator (0.3.0~dev-0ubuntu1~ppa1) karmic; urgency=low
-
-  * Changing the object interface to allow for multiple items
-    per module.
-  * Changing debian/libindicator-dev.install for the adjusted
-    include path.
-
- -- Ted Gould <ted@ubuntu.com>  Thu, 05 Nov 2009 09:16:22 -0600
+ -- Ted Gould <ted@ubuntu.com>  Thu, 10 Dec 2009 10:55:07 -0600
 
 libindicator (0.2.1-0ubuntu2~ppa1) karmic; urgency=low
 
