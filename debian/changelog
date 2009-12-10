@@ -1,4 +1,4 @@
-libindicator (0.3.0~dev-0ubuntu1~ppa11) karmic; urgency=low
+libindicator (0.3.0-0ubuntu1~ppa1) karmic; urgency=low
 
   * Upstream 0.3.0 Release 
     * Adds a new tool to load indicators from the command line.
