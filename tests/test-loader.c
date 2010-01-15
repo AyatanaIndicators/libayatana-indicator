@@ -38,6 +38,23 @@ test_loader_filename_dummy_signaler (void)
 	return;
 }
 
+void
+test_loader_filename_dummy_simple_location (void)
+{
+	IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/.libs/libdummy-indicator-simple.so");
+	g_assert(object != NULL);
+
+	GList * entries = indicator_object_get_entries(object);
+	g_assert(entries != NULL);
+	g_assert(g_list_length(entries) == 1);
+
+	g_assert(indicator_object_get_location(object, (IndicatorObjectEntry *)entries->data) == 0);
+	g_assert(indicator_object_get_location(object, NULL) == 0);
+
+	g_object_unref(object);
+
+	return;
+}
 
 void
 test_loader_filename_dummy_simple_accessors (void)
@@ -125,6 +142,7 @@ test_loader_creation_deletion_suite (void)
 	g_test_add_func ("/libindicator/loader/dummy/blank_load",  test_loader_filename_dummy_null);
 	g_test_add_func ("/libindicator/loader/dummy/simple_load",  test_loader_filename_dummy_simple);
 	g_test_add_func ("/libindicator/loader/dummy/simple_accessors", test_loader_filename_dummy_simple_accessors);
+	g_test_add_func ("/libindicator/loader/dummy/simple_location", test_loader_filename_dummy_simple_location);
 	g_test_add_func ("/libindicator/loader/dummy/signaler",  test_loader_filename_dummy_signaler);
 
 	return;
