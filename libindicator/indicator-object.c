@@ -27,6 +27,7 @@ License along with this library. If not, see
 
 #include "indicator.h"
 #include "indicator-object.h"
+#include "indicator-object-marshal.h"
 
 /**
 	IndicatorObjectPrivate:
@@ -54,6 +55,7 @@ struct _IndicatorObjectPrivate {
 enum {
 	ENTRY_ADDED,
 	ENTRY_REMOVED,
+	ENTRY_MOVED,
 	LAST_SIGNAL
 };
 
@@ -116,6 +118,20 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 	                                       NULL, NULL,
 	                                       g_cclosure_marshal_VOID__POINTER,
 	                                       G_TYPE_NONE, 1, G_TYPE_POINTER, G_TYPE_NONE);
+	/**
+		IndicatorObject::entry-moved:
+		@arg0: The #IndicatorObject object
+		
+		Signaled when an entry is removed and should
+		be removed by the person using this object.
+	*/
+	signals[ENTRY_MOVED] = g_signal_new (INDICATOR_OBJECT_SIGNAL_ENTRY_MOVED,
+	                                     G_TYPE_FROM_CLASS(klass),
+	                                     G_SIGNAL_RUN_LAST,
+	                                     G_STRUCT_OFFSET (IndicatorObjectClass, entry_moved),
+	                                     NULL, NULL,
+	                                     _indicator_object_marshal_VOID__POINTER_UINT_UINT,
+	                                     G_TYPE_NONE, 3, G_TYPE_POINTER, G_TYPE_UINT, G_TYPE_UINT, G_TYPE_NONE);
 
 	return;
 }
