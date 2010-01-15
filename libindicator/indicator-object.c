@@ -390,6 +390,5 @@ indicator_object_get_location (IndicatorObject * io, IndicatorObjectEntry * entr
 		return class->get_location(io, entry);
 	}
 
-	g_error("No get_entries function on object.  It must have been deleted?!?!");
 	return 0;
 }
