@@ -12,15 +12,22 @@ entry_change_cb (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer da
 }
 
 void
+entry_move_cb (IndicatorObject * io, IndicatorObjectEntry * entry, gint old, gint new, gpointer data)
+{
+	return entry_change_cb(io, entry, data);
+}
+
+void
 test_loader_filename_dummy_signaler (void)
 {
 	IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/.libs/libdummy-indicator-signaler.so");
 	g_assert(object != NULL);
 
-	gpointer added_value = NULL, removed_value = NULL;
+	gpointer added_value = NULL, removed_value = NULL, moved_value = NULL;
 
 	g_signal_connect(G_OBJECT(object), INDICATOR_OBJECT_SIGNAL_ENTRY_ADDED,   G_CALLBACK(entry_change_cb), &added_value);
 	g_signal_connect(G_OBJECT(object), INDICATOR_OBJECT_SIGNAL_ENTRY_REMOVED, G_CALLBACK(entry_change_cb), &removed_value);
+	g_signal_connect(G_OBJECT(object), INDICATOR_OBJECT_SIGNAL_ENTRY_MOVED,   G_CALLBACK(entry_move_cb),   &moved_value);
 
 	GList * list = indicator_object_get_entries(object);
 	g_assert(list != NULL);
@@ -32,6 +39,7 @@ test_loader_filename_dummy_signaler (void)
 
 	g_assert(GPOINTER_TO_UINT(added_value) == 5);
 	g_assert(GPOINTER_TO_UINT(removed_value) == 5);
+	g_assert(GPOINTER_TO_UINT(moved_value) == 5);
 
 	g_object_unref(object);
 
