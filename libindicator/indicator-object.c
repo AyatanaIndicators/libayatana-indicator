@@ -92,7 +92,9 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 	/**
 		IndicatorObject::entry-added:
 		@arg0: The #IndicatorObject object
-		
+		@arg1: A pointer to the #IndicatorObjectEntry that
+			is being added.
+
 		Signaled when a new entry is added and should
 		be shown by the person using this object.
 	*/
@@ -107,7 +109,9 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 	/**
 		IndicatorObject::entry-removed:
 		@arg0: The #IndicatorObject object
-		
+		@arg1: A pointer to the #IndicatorObjectEntry that
+			is being removed.
+
 		Signaled when an entry is removed and should
 		be removed by the person using this object.
 	*/
@@ -121,9 +125,13 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 	/**
 		IndicatorObject::entry-moved:
 		@arg0: The #IndicatorObject object
-		
-		Signaled when an entry is removed and should
-		be removed by the person using this object.
+		@arg1: A pointer to the #IndicatorObjectEntry that
+			is being moved.
+		@arg2: The old location of the entry
+		@arg3: The new location of the entry
+
+		When the order of the entries change, then this signal
+		is sent to tell the new location.
 	*/
 	signals[ENTRY_MOVED] = g_signal_new (INDICATOR_OBJECT_SIGNAL_ENTRY_MOVED,
 	                                     G_TYPE_FROM_CLASS(klass),
