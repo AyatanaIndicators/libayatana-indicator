@@ -88,6 +88,7 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 	klass->get_image =  NULL;
 
 	klass->get_entries = get_entries_default;
+	klass->get_location = NULL;
 
 	/**
 		IndicatorObject::entry-added:
@@ -365,4 +366,30 @@ indicator_object_get_entries (IndicatorObject * io)
 
 	g_error("No get_entries function on object.  It must have been deleted?!?!");
 	return NULL;
+}
+
+/**
+	indicator_object_get_location:
+	@io: #IndicatorObject to query
+	@entry: The #IndicatorObjectEntry to look for.
+
+	This function looks on the class for the object and calls
+	it's #IndicatorObjectClass::get_location function.  If the
+	function doesn't exist it returns zero.
+
+	Return value: Location of the @entry in the display or
+		zero if no location is specified.
+*/
+guint
+indicator_object_get_location (IndicatorObject * io, IndicatorObjectEntry * entry)
+{
+	g_return_val_if_fail(INDICATOR_IS_OBJECT(io), 0);
+	IndicatorObjectClass * class = INDICATOR_OBJECT_GET_CLASS(io);
+
+	if (class->get_location) {
+		return class->get_location(io, entry);
+	}
+
+	g_error("No get_entries function on object.  It must have been deleted?!?!");
+	return 0;
 }
