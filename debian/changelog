@@ -1,9 +1,9 @@
-libindicator (0.3.0-0ubuntu2~ppa1~restart2) UNRELEASED; urgency=low
+libindicator (0.3.0-0ubuntu2~ppa1~restart2) karmic; urgency=low
 
   * Upstream Merge
     * Emitting the connection changed signal better.
 
- -- Ted Gould <ted@ubuntu.com>  Fri, 15 Jan 2010 22:17:01 -0600
+ -- Ted Gould <ted@ubuntu.com>  Fri, 15 Jan 2010 22:19:13 -0600
 
 libindicator (0.3.0-0ubuntu2~ppa1~restart1) karmic; urgency=low
 
