@@ -455,18 +455,24 @@ start_service_again_cb (gpointer data)
 static void
 start_service_again (IndicatorServiceManager * manager)
 {
+	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(manager);
+
 	/* Allow the restarting to be disabled */
 	if (g_getenv(TIMEOUT_ENV_NAME)) {
+		priv->connected = FALSE;
+		g_signal_emit(manager, signals[CONNECTION_CHANGE], 0, FALSE, TRUE);
 		return;
 	}
-
-	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(manager);
 
 	if (priv->restart_count == 0) {
 		/* First time, do it in idle */
 		g_idle_add(start_service_again_cb, manager);
 	} else {
 		/* Not our first time 'round the block.  Let's slow this down. */
+		if (priv->connected) {
+			priv->connected = FALSE;
+			g_signal_emit(manager, signals[CONNECTION_CHANGE], 0, FALSE, TRUE);
+		}
 		if (priv->restart_count > 16)
 			priv->restart_count = 16; /* Not more than 1024x */
 		g_timeout_add((1 << priv->restart_count) * TIMEOUT_MULTIPLIER, start_service_again_cb, manager);
