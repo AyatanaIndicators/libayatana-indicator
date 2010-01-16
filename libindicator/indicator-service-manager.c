@@ -25,6 +25,8 @@ License along with this library. If not, see
 #include "config.h"
 #endif
 
+#include <stdlib.h>
+
 #include <dbus/dbus-glib-bindings.h>
 #include <dbus/dbus-glib-lowlevel.h>
 
@@ -60,6 +62,10 @@ enum {
 
 static guint signals[LAST_SIGNAL] = { 0 };
 
+/* We multiply our timeouts by in ms.  This can be overriden by
+   the environment variable INDICATOR_SERVICE_RESTART_TIMEOUT. */
+static guint timeout_multiplier = 100;
+#define TIMEOUT_ENV_NAME   "INDICATOR_SERVICE_RESTART_TIMEOUT"
 
 /* Properties */
 /* Enum for the properties so that they can be quickly
@@ -135,6 +141,15 @@ indicator_service_manager_class_init (IndicatorServiceManagerClass *klass)
 	                                                  "A number to check and reject a service if it gives us the wrong number.  This should match across the manager and the service",
 	                                                  0, G_MAXUINT, 0,
 	                                                  G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+	/* Look to see if there is an environment variable effecting
+	   the restart interval.  This is in the class init as it should
+	   only happen once. */
+	const gchar * restart_env = g_getenv(TIMEOUT_ENV_NAME);
+	if (restart_env != NULL) {
+		timeout_multiplier = atoi(restart_env);
+		g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "Time out multipler set to: %d", timeout_multiplier);
+	}
 
 	return;
 }
