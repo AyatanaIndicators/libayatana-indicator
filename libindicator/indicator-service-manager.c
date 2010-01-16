@@ -435,6 +435,18 @@ start_service (IndicatorServiceManager * service)
 	return;
 }
 
+/* The callback that starts the service for real after
+   the timeout as determined in 'start_service_again'.
+   This could be in the idle or a timer. */
+static gboolean
+start_service_again_cb (gpointer data)
+{
+	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(data);
+	priv->restart_count++;
+	start_service(INDICATOR_SERVICE_MANAGER(data));
+	return FALSE;
+}
+
 /* This function tries to start a new service, perhaps
    after a timeout that it determines.  The real issue
    here is that it throttles restarting if we're not
@@ -442,7 +454,17 @@ start_service (IndicatorServiceManager * service)
 static void
 start_service_again (IndicatorServiceManager * manager)
 {
+	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(manager);
 
+	if (priv->restart_count == 0) {
+		/* First time, do it in idle */
+		g_idle_add(start_service_again_cb, manager);
+	} else {
+		/* Not our first time 'round the block.  Let's slow this down. */
+		if (priv->restart_count > 16)
+			priv->restart_count = 16; /* Not more than 1024x */
+		g_timeout_add((1 << priv->restart_count) * timeout_multiplier, start_service_again_cb, manager);
+	}
 
 	return;
 }
