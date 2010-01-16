@@ -64,10 +64,9 @@ enum {
 
 static guint signals[LAST_SIGNAL] = { 0 };
 
-/* We multiply our timeouts by in ms.  This can be overriden by
-   the environment variable INDICATOR_SERVICE_RESTART_TIMEOUT. */
-static guint timeout_multiplier = 100;
-#define TIMEOUT_ENV_NAME   "INDICATOR_SERVICE_RESTART_TIMEOUT"
+/* If this env variable is set, we don't restart */
+#define TIMEOUT_ENV_NAME   "INDICATOR_SERVICE_RESTART_DISABLE"
+#define TIMEOUT_MULTIPLIER 100 /* In ms */
 
 /* Properties */
 /* Enum for the properties so that they can be quickly
@@ -145,15 +144,6 @@ indicator_service_manager_class_init (IndicatorServiceManagerClass *klass)
 	                                                  "A number to check and reject a service if it gives us the wrong number.  This should match across the manager and the service",
 	                                                  0, G_MAXUINT, 0,
 	                                                  G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
-
-	/* Look to see if there is an environment variable effecting
-	   the restart interval.  This is in the class init as it should
-	   only happen once. */
-	const gchar * restart_env = g_getenv(TIMEOUT_ENV_NAME);
-	if (restart_env != NULL) {
-		timeout_multiplier = atoi(restart_env);
-		g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "Time out multipler set to: %d", timeout_multiplier);
-	}
 
 	return;
 }
@@ -465,6 +455,11 @@ start_service_again_cb (gpointer data)
 static void
 start_service_again (IndicatorServiceManager * manager)
 {
+	/* Allow the restarting to be disabled */
+	if (g_getenv(TIMEOUT_ENV_NAME)) {
+		return;
+	}
+
 	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(manager);
 
 	if (priv->restart_count == 0) {
@@ -474,7 +469,7 @@ start_service_again (IndicatorServiceManager * manager)
 		/* Not our first time 'round the block.  Let's slow this down. */
 		if (priv->restart_count > 16)
 			priv->restart_count = 16; /* Not more than 1024x */
-		g_timeout_add((1 << priv->restart_count) * timeout_multiplier, start_service_again_cb, manager);
+		g_timeout_add((1 << priv->restart_count) * TIMEOUT_MULTIPLIER, start_service_again_cb, manager);
 	}
 
 	return;
