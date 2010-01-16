@@ -94,6 +94,7 @@ static void indicator_service_manager_finalize   (GObject *object);
 /* Prototypes */
 static void set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec);
 static void get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec);
+static void service_proxy_destroyed (DBusGProxy * proxy, gpointer user_data);
 static void start_service (IndicatorServiceManager * service);
 static void start_service_again (IndicatorServiceManager * manager);
 
@@ -385,6 +386,7 @@ start_service_cb (DBusGProxy * proxy, guint status, GError * error, gpointer use
 	                                                  INDICATOR_SERVICE_INTERFACE,
 	                                                  &error);
 	g_object_add_weak_pointer(G_OBJECT(priv->service_proxy), (gpointer *)&(priv->service_proxy));
+	g_signal_connect(G_OBJECT(priv->service_proxy), "destroy", G_CALLBACK(service_proxy_destroyed), user_data);
 
 	org_ayatana_indicator_service_watch_async(priv->service_proxy,
 	                                          watch_cb,
@@ -423,6 +425,7 @@ start_service (IndicatorServiceManager * service)
 		                                                  service);
 	} else {
 		g_object_add_weak_pointer(G_OBJECT(priv->service_proxy), (gpointer *)&(priv->service_proxy));
+		g_signal_connect(G_OBJECT(priv->service_proxy), "destroy", G_CALLBACK(service_proxy_destroyed), service);
 
 		/* If we got a proxy just because we're good people then
 		   we need to call watch on it just like 'start_service_cb'
@@ -433,6 +436,14 @@ start_service (IndicatorServiceManager * service)
 	}
 
 	return;
+}
+
+/* Responds to the destory event of the proxy and starts
+   setting up to restart the service. */
+static void
+service_proxy_destroyed (DBusGProxy * proxy, gpointer user_data)
+{
+	return start_service_again(INDICATOR_SERVICE_MANAGER(user_data));
 }
 
 /* The callback that starts the service for real after
