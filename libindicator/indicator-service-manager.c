@@ -25,6 +25,8 @@ License along with this library. If not, see
 #include "config.h"
 #endif
 
+#include <stdlib.h>
+
 #include <dbus/dbus-glib-bindings.h>
 #include <dbus/dbus-glib-lowlevel.h>
 
@@ -41,6 +43,7 @@ License along with this library. If not, see
 	@connected: Whether we're connected to the service or not.
 	@this_service_version: The version of the service that we're looking for.
 	@bus: A reference to the bus so we don't have to keep getting it.
+	@restart_count: The number of times we've restarted this service.
 */
 typedef struct _IndicatorServiceManagerPrivate IndicatorServiceManagerPrivate;
 struct _IndicatorServiceManagerPrivate {
@@ -50,6 +53,7 @@ struct _IndicatorServiceManagerPrivate {
 	gboolean connected;
 	guint this_service_version;
 	DBusGConnection * bus;
+	guint restart_count;
 };
 
 /* Signals Stuff */
@@ -60,6 +64,9 @@ enum {
 
 static guint signals[LAST_SIGNAL] = { 0 };
 
+/* If this env variable is set, we don't restart */
+#define TIMEOUT_ENV_NAME   "INDICATOR_SERVICE_RESTART_DISABLE"
+#define TIMEOUT_MULTIPLIER 100 /* In ms */
 
 /* Properties */
 /* Enum for the properties so that they can be quickly
@@ -86,7 +93,9 @@ static void indicator_service_manager_finalize   (GObject *object);
 /* Prototypes */
 static void set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec);
 static void get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec);
+static void service_proxy_destroyed (DBusGProxy * proxy, gpointer user_data);
 static void start_service (IndicatorServiceManager * service);
+static void start_service_again (IndicatorServiceManager * manager);
 
 G_DEFINE_TYPE (IndicatorServiceManager, indicator_service_manager, G_TYPE_OBJECT);
 
@@ -154,6 +163,7 @@ indicator_service_manager_init (IndicatorServiceManager *self)
 	priv->connected = FALSE;
 	priv->this_service_version = 0;
 	priv->bus = NULL;
+	priv->restart_count = 0;
 
 	/* Start talkin' dbus */
 	GError * error = NULL;
@@ -312,6 +322,12 @@ watch_cb (DBusGProxy * proxy, guint service_api_version, guint this_service_vers
 		return;
 	}
 
+	/* We've done it, now let's stop counting. */
+	/* Note: we're not checking versions.  Because, the hope is that
+	   the guy holding the name we want with the wrong version will
+	   drop and we can start another service quickly. */
+	priv->restart_count = 0;
+
 	if (service_api_version != INDICATOR_SERVICE_VERSION) {
 		g_warning("Service is using a different version of the service interface.  Expecting %d and got %d.", INDICATOR_SERVICE_VERSION, service_api_version);
 		dbus_g_proxy_call_no_reply(priv->service_proxy, "UnWatch", G_TYPE_INVALID);
@@ -343,11 +359,13 @@ start_service_cb (DBusGProxy * proxy, guint status, GError * error, gpointer use
 
 	if (error != NULL) {
 		g_warning("Unable to start service '%s': %s", priv->name, error->message);
+		start_service_again(INDICATOR_SERVICE_MANAGER(user_data));
 		return;
 	}
 
 	if (status != DBUS_START_REPLY_SUCCESS && status != DBUS_START_REPLY_ALREADY_RUNNING) {
 		g_warning("Status of starting the process '%s' was an error: %d", priv->name, status);
+		start_service_again(INDICATOR_SERVICE_MANAGER(user_data));
 		return;
 	}
 
@@ -358,6 +376,7 @@ start_service_cb (DBusGProxy * proxy, guint status, GError * error, gpointer use
 	                                                  INDICATOR_SERVICE_INTERFACE,
 	                                                  &error);
 	g_object_add_weak_pointer(G_OBJECT(priv->service_proxy), (gpointer *)&(priv->service_proxy));
+	g_signal_connect(G_OBJECT(priv->service_proxy), "destroy", G_CALLBACK(service_proxy_destroyed), user_data);
 
 	org_ayatana_indicator_service_watch_async(priv->service_proxy,
 	                                          watch_cb,
@@ -396,6 +415,7 @@ start_service (IndicatorServiceManager * service)
 		                                                  service);
 	} else {
 		g_object_add_weak_pointer(G_OBJECT(priv->service_proxy), (gpointer *)&(priv->service_proxy));
+		g_signal_connect(G_OBJECT(priv->service_proxy), "destroy", G_CALLBACK(service_proxy_destroyed), service);
 
 		/* If we got a proxy just because we're good people then
 		   we need to call watch on it just like 'start_service_cb'
@@ -403,6 +423,53 @@ start_service (IndicatorServiceManager * service)
 		org_ayatana_indicator_service_watch_async(priv->service_proxy,
 		                                          watch_cb,
 		                                          service);
+	}
+
+	return;
+}
+
+/* Responds to the destory event of the proxy and starts
+   setting up to restart the service. */
+static void
+service_proxy_destroyed (DBusGProxy * proxy, gpointer user_data)
+{
+	return start_service_again(INDICATOR_SERVICE_MANAGER(user_data));
+}
+
+/* The callback that starts the service for real after
+   the timeout as determined in 'start_service_again'.
+   This could be in the idle or a timer. */
+static gboolean
+start_service_again_cb (gpointer data)
+{
+	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(data);
+	priv->restart_count++;
+	start_service(INDICATOR_SERVICE_MANAGER(data));
+	return FALSE;
+}
+
+/* This function tries to start a new service, perhaps
+   after a timeout that it determines.  The real issue
+   here is that it throttles restarting if we're not
+   being successful. */
+static void
+start_service_again (IndicatorServiceManager * manager)
+{
+	/* Allow the restarting to be disabled */
+	if (g_getenv(TIMEOUT_ENV_NAME)) {
+		return;
+	}
+
+	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(manager);
+
+	if (priv->restart_count == 0) {
+		/* First time, do it in idle */
+		g_idle_add(start_service_again_cb, manager);
+	} else {
+		/* Not our first time 'round the block.  Let's slow this down. */
+		if (priv->restart_count > 16)
+			priv->restart_count = 16; /* Not more than 1024x */
+		g_timeout_add((1 << priv->restart_count) * TIMEOUT_MULTIPLIER, start_service_again_cb, manager);
 	}
 
 	return;
