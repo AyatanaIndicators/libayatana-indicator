@@ -43,6 +43,7 @@ License along with this library. If not, see
 	@connected: Whether we're connected to the service or not.
 	@this_service_version: The version of the service that we're looking for.
 	@bus: A reference to the bus so we don't have to keep getting it.
+	@restart_count: The number of times we've restarted this service.
 */
 typedef struct _IndicatorServiceManagerPrivate IndicatorServiceManagerPrivate;
 struct _IndicatorServiceManagerPrivate {
@@ -52,6 +53,7 @@ struct _IndicatorServiceManagerPrivate {
 	gboolean connected;
 	guint this_service_version;
 	DBusGConnection * bus;
+	guint restart_count;
 };
 
 /* Signals Stuff */
@@ -93,6 +95,7 @@ static void indicator_service_manager_finalize   (GObject *object);
 static void set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec);
 static void get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec);
 static void start_service (IndicatorServiceManager * service);
+static void start_service_again (IndicatorServiceManager * manager);
 
 G_DEFINE_TYPE (IndicatorServiceManager, indicator_service_manager, G_TYPE_OBJECT);
 
@@ -169,6 +172,7 @@ indicator_service_manager_init (IndicatorServiceManager *self)
 	priv->connected = FALSE;
 	priv->this_service_version = 0;
 	priv->bus = NULL;
+	priv->restart_count = 0;
 
 	/* Start talkin' dbus */
 	GError * error = NULL;
@@ -327,6 +331,12 @@ watch_cb (DBusGProxy * proxy, guint service_api_version, guint this_service_vers
 		return;
 	}
 
+	/* We've done it, now let's stop counting. */
+	/* Note: we're not checking versions.  Because, the hope is that
+	   the guy holding the name we want with the wrong version will
+	   drop and we can start another service quickly. */
+	priv->restart_count = 0;
+
 	if (service_api_version != INDICATOR_SERVICE_VERSION) {
 		g_warning("Service is using a different version of the service interface.  Expecting %d and got %d.", INDICATOR_SERVICE_VERSION, service_api_version);
 		dbus_g_proxy_call_no_reply(priv->service_proxy, "UnWatch", G_TYPE_INVALID);
@@ -358,11 +368,13 @@ start_service_cb (DBusGProxy * proxy, guint status, GError * error, gpointer use
 
 	if (error != NULL) {
 		g_warning("Unable to start service '%s': %s", priv->name, error->message);
+		start_service_again(INDICATOR_SERVICE_MANAGER(user_data));
 		return;
 	}
 
 	if (status != DBUS_START_REPLY_SUCCESS && status != DBUS_START_REPLY_ALREADY_RUNNING) {
 		g_warning("Status of starting the process '%s' was an error: %d", priv->name, status);
+		start_service_again(INDICATOR_SERVICE_MANAGER(user_data));
 		return;
 	}
 
@@ -419,6 +431,18 @@ start_service (IndicatorServiceManager * service)
 		                                          watch_cb,
 		                                          service);
 	}
+
+	return;
+}
+
+/* This function tries to start a new service, perhaps
+   after a timeout that it determines.  The real issue
+   here is that it throttles restarting if we're not
+   being successful. */
+static void
+start_service_again (IndicatorServiceManager * manager)
+{
+
 
 	return;
 }
