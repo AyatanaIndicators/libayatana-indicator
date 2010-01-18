@@ -1,3 +1,10 @@
+libindicator (0.3.0-0ubuntu2~ppa1) UNRELEASED; urgency=low
+
+  * Upstream Merge
+    * Adding in the code to restart services
+
+ -- Ted Gould <ted@ubuntu.com>  Mon, 18 Jan 2010 12:54:33 -0600
+
 libindicator (0.3.0-0ubuntu1) karmic; urgency=low
 
   * debian/control:
