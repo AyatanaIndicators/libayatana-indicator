@@ -12,15 +12,22 @@ entry_change_cb (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer da
 }
 
 void
+entry_move_cb (IndicatorObject * io, IndicatorObjectEntry * entry, gint old, gint new, gpointer data)
+{
+	return entry_change_cb(io, entry, data);
+}
+
+void
 test_loader_filename_dummy_signaler (void)
 {
 	IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/.libs/libdummy-indicator-signaler.so");
 	g_assert(object != NULL);
 
-	gpointer added_value = NULL, removed_value = NULL;
+	gpointer added_value = NULL, removed_value = NULL, moved_value = NULL;
 
 	g_signal_connect(G_OBJECT(object), INDICATOR_OBJECT_SIGNAL_ENTRY_ADDED,   G_CALLBACK(entry_change_cb), &added_value);
 	g_signal_connect(G_OBJECT(object), INDICATOR_OBJECT_SIGNAL_ENTRY_REMOVED, G_CALLBACK(entry_change_cb), &removed_value);
+	g_signal_connect(G_OBJECT(object), INDICATOR_OBJECT_SIGNAL_ENTRY_MOVED,   G_CALLBACK(entry_move_cb),   &moved_value);
 
 	GList * list = indicator_object_get_entries(object);
 	g_assert(list != NULL);
@@ -32,12 +39,30 @@ test_loader_filename_dummy_signaler (void)
 
 	g_assert(GPOINTER_TO_UINT(added_value) == 5);
 	g_assert(GPOINTER_TO_UINT(removed_value) == 5);
+	g_assert(GPOINTER_TO_UINT(moved_value) == 5);
 
 	g_object_unref(object);
 
 	return;
 }
 
+void
+test_loader_filename_dummy_simple_location (void)
+{
+	IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/.libs/libdummy-indicator-simple.so");
+	g_assert(object != NULL);
+
+	GList * entries = indicator_object_get_entries(object);
+	g_assert(entries != NULL);
+	g_assert(g_list_length(entries) == 1);
+
+	g_assert(indicator_object_get_location(object, (IndicatorObjectEntry *)entries->data) == 0);
+	g_assert(indicator_object_get_location(object, NULL) == 0);
+
+	g_object_unref(object);
+
+	return;
+}
 
 void
 test_loader_filename_dummy_simple_accessors (void)
@@ -125,6 +150,7 @@ test_loader_creation_deletion_suite (void)
 	g_test_add_func ("/libindicator/loader/dummy/blank_load",  test_loader_filename_dummy_null);
 	g_test_add_func ("/libindicator/loader/dummy/simple_load",  test_loader_filename_dummy_simple);
 	g_test_add_func ("/libindicator/loader/dummy/simple_accessors", test_loader_filename_dummy_simple_accessors);
+	g_test_add_func ("/libindicator/loader/dummy/simple_location", test_loader_filename_dummy_simple_location);
 	g_test_add_func ("/libindicator/loader/dummy/signaler",  test_loader_filename_dummy_signaler);
 
 	return;

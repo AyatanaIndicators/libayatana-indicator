@@ -27,6 +27,7 @@ License along with this library. If not, see
 
 #include "indicator.h"
 #include "indicator-object.h"
+#include "indicator-object-marshal.h"
 
 /**
 	IndicatorObjectPrivate:
@@ -54,6 +55,7 @@ struct _IndicatorObjectPrivate {
 enum {
 	ENTRY_ADDED,
 	ENTRY_REMOVED,
+	ENTRY_MOVED,
 	LAST_SIGNAL
 };
 
@@ -86,11 +88,14 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 	klass->get_image =  NULL;
 
 	klass->get_entries = get_entries_default;
+	klass->get_location = NULL;
 
 	/**
 		IndicatorObject::entry-added:
 		@arg0: The #IndicatorObject object
-		
+		@arg1: A pointer to the #IndicatorObjectEntry that
+			is being added.
+
 		Signaled when a new entry is added and should
 		be shown by the person using this object.
 	*/
@@ -105,7 +110,9 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 	/**
 		IndicatorObject::entry-removed:
 		@arg0: The #IndicatorObject object
-		
+		@arg1: A pointer to the #IndicatorObjectEntry that
+			is being removed.
+
 		Signaled when an entry is removed and should
 		be removed by the person using this object.
 	*/
@@ -116,6 +123,24 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 	                                       NULL, NULL,
 	                                       g_cclosure_marshal_VOID__POINTER,
 	                                       G_TYPE_NONE, 1, G_TYPE_POINTER, G_TYPE_NONE);
+	/**
+		IndicatorObject::entry-moved:
+		@arg0: The #IndicatorObject object
+		@arg1: A pointer to the #IndicatorObjectEntry that
+			is being moved.
+		@arg2: The old location of the entry
+		@arg3: The new location of the entry
+
+		When the order of the entries change, then this signal
+		is sent to tell the new location.
+	*/
+	signals[ENTRY_MOVED] = g_signal_new (INDICATOR_OBJECT_SIGNAL_ENTRY_MOVED,
+	                                     G_TYPE_FROM_CLASS(klass),
+	                                     G_SIGNAL_RUN_LAST,
+	                                     G_STRUCT_OFFSET (IndicatorObjectClass, entry_moved),
+	                                     NULL, NULL,
+	                                     _indicator_object_marshal_VOID__POINTER_UINT_UINT,
+	                                     G_TYPE_NONE, 3, G_TYPE_POINTER, G_TYPE_UINT, G_TYPE_UINT, G_TYPE_NONE);
 
 	return;
 }
@@ -341,4 +366,29 @@ indicator_object_get_entries (IndicatorObject * io)
 
 	g_error("No get_entries function on object.  It must have been deleted?!?!");
 	return NULL;
+}
+
+/**
+	indicator_object_get_location:
+	@io: #IndicatorObject to query
+	@entry: The #IndicatorObjectEntry to look for.
+
+	This function looks on the class for the object and calls
+	it's #IndicatorObjectClass::get_location function.  If the
+	function doesn't exist it returns zero.
+
+	Return value: Location of the @entry in the display or
+		zero if no location is specified.
+*/
+guint
+indicator_object_get_location (IndicatorObject * io, IndicatorObjectEntry * entry)
+{
+	g_return_val_if_fail(INDICATOR_IS_OBJECT(io), 0);
+	IndicatorObjectClass * class = INDICATOR_OBJECT_GET_CLASS(io);
+
+	if (class->get_location) {
+		return class->get_location(io, entry);
+	}
+
+	return 0;
 }
