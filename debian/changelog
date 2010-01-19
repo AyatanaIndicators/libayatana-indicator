@@ -1,3 +1,10 @@
+libindicator (0.3.0-0ubuntu2~ppa2) UNRELEASED; urgency=low
+
+  * Upstream Merge
+    * Adding in entry ordering.
+
+ -- Ted Gould <ted@ubuntu.com>  Tue, 19 Jan 2010 08:58:40 -0600
+
 libindicator (0.3.0-0ubuntu2~ppa1) karmic; urgency=low
 
   * Upstream Merge

@@ -143,3 +143,7 @@ tests/service-version-manager
 tests/service-version-tester
 tests/service-manager-connect-nostart-tester
 tests/service-manager-nostart-connect
+libindicator/indicator-object-marshal.c
+libindicator/indicator-object-marshal.h
+libindicator/libindicator_la-indicator-object-marshal.lo
+libindicator/stamp-marshal

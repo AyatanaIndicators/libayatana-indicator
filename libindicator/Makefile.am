@@ -1,7 +1,10 @@
 BUILT_SOURCES = 
 CLEANFILES = 
+DISTCLEANFILES = 
 EXTRA_DIST = \
 	indicator.pc.in
+
+include $(top_srcdir)/Makefile.am.marshal
 
 libindicatorincludedir=$(includedir)/libindicator-0.3/libindicator
 
@@ -21,6 +24,8 @@ libindicator_la_SOURCES = \
 	$(indicator_headers) \
 	dbus-shared.h \
 	indicator-object.c \
+	indicator-object-marshal.h \
+	indicator-object-marshal.c \
 	indicator-service.c \
 	indicator-service-manager.c
 
@@ -34,6 +39,9 @@ libindicator_la_LIBADD = \
 
 pkgconfig_DATA = indicator.pc
 pkgconfigdir = $(libdir)/pkgconfig
+
+glib_marshal_list = indicator-object-marshal.list
+glib_marshal_prefix = _indicator_object_marshal
 
 ##################################
 # DBus Specs
