@@ -54,6 +54,7 @@ struct _IndicatorServiceManagerPrivate {
 	guint this_service_version;
 	DBusGConnection * bus;
 	guint restart_count;
+	gint restart_source;
 };
 
 /* Signals Stuff */
@@ -168,6 +169,7 @@ indicator_service_manager_init (IndicatorServiceManager *self)
 	priv->this_service_version = 0;
 	priv->bus = NULL;
 	priv->restart_count = 0;
+	priv->restart_source = 0;
 
 	/* Start talkin' dbus */
 	GError * error = NULL;
@@ -200,6 +202,13 @@ static void
 indicator_service_manager_dispose (GObject *object)
 {
 	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(object);
+
+	/* Removing the idle task to restart if it exists. */
+	if (priv->restart_source != 0) {
+		g_source_remove(priv->restart_source);
+	}
+	/* Block any restart calls */
+	priv->restart_source = -1;
 
 	/* If we were connected we need to make sure to
 	   tell people that it's no longer the case. */
@@ -468,6 +477,7 @@ start_service_again_cb (gpointer data)
 	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(data);
 	priv->restart_count++;
 	start_service(INDICATOR_SERVICE_MANAGER(data));
+	priv->restart_source = 0;
 	return FALSE;
 }
 
@@ -479,6 +489,12 @@ static void
 start_service_again (IndicatorServiceManager * manager)
 {
 	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(manager);
+
+	/* If we've already got a restart source running then
+	   let's not do this again. */
+	if (priv->restart_source != 0) {
+		return;
+	}
 
 	/* Allow the restarting to be disabled */
 	if (g_getenv(TIMEOUT_ENV_NAME)) {
@@ -492,7 +508,7 @@ start_service_again (IndicatorServiceManager * manager)
 		/* Not our first time 'round the block.  Let's slow this down. */
 		if (priv->restart_count > 16)
 			priv->restart_count = 16; /* Not more than 1024x */
-		g_timeout_add((1 << priv->restart_count) * TIMEOUT_MULTIPLIER, start_service_again_cb, manager);
+		priv->restart_source = g_timeout_add((1 << priv->restart_count) * TIMEOUT_MULTIPLIER, start_service_again_cb, manager);
 	}
 
 	return;
