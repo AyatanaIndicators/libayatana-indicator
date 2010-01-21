@@ -67,6 +67,10 @@ static guint signals[LAST_SIGNAL] = { 0 };
 /* If this env variable is set, we don't restart */
 #define TIMEOUT_ENV_NAME   "INDICATOR_SERVICE_RESTART_DISABLE"
 #define TIMEOUT_MULTIPLIER 100 /* In ms */
+/* What to reset the restart_count to if we know that we're
+   in a recoverable error condition, but waiting a little bit
+   will probably make things better.  5 ~= 3 sec. */
+#define TIMEOUT_A_LITTLE_WHILE  5
 
 /* Properties */
 /* Enum for the properties so that they can be quickly
@@ -319,6 +323,7 @@ watch_cb (DBusGProxy * proxy, guint service_api_version, guint this_service_vers
 	if (error != NULL) {
 		g_warning("Unable to set watch on '%s': '%s'", priv->name, error->message);
 		g_error_free(error);
+		start_service_again(INDICATOR_SERVICE_MANAGER(user_data));
 		return;
 	}
 
@@ -331,12 +336,20 @@ watch_cb (DBusGProxy * proxy, guint service_api_version, guint this_service_vers
 	if (service_api_version != INDICATOR_SERVICE_VERSION) {
 		g_warning("Service is using a different version of the service interface.  Expecting %d and got %d.", INDICATOR_SERVICE_VERSION, service_api_version);
 		dbus_g_proxy_call_no_reply(priv->service_proxy, "UnWatch", G_TYPE_INVALID);
+
+		/* Let's make us wait a little while, then try again */
+		priv->restart_count = TIMEOUT_A_LITTLE_WHILE;
+		start_service_again(INDICATOR_SERVICE_MANAGER(user_data));
 		return;
 	}
 
 	if (this_service_version != priv->this_service_version) {
 		g_warning("Service is using a different API version than the manager.  Expecting %d and got %d.", priv->this_service_version, this_service_version);
 		dbus_g_proxy_call_no_reply(priv->service_proxy, "UnWatch", G_TYPE_INVALID);
+
+		/* Let's make us wait a little while, then try again */
+		priv->restart_count = TIMEOUT_A_LITTLE_WHILE;
+		start_service_again(INDICATOR_SERVICE_MANAGER(user_data));
 		return;
 	}
 
