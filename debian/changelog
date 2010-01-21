@@ -1,16 +1,10 @@
-libindicator (0.3.0-0ubuntu2~ppa2) karmic; urgency=low
+libindicator (0.3.1-0ubuntu1~ppa1) UNRELEASED; urgency=low
 
-  * Upstream Merge
+  * Upstream release 0.3.1
     * Adding in entry ordering.
-
- -- Ted Gould <ted@ubuntu.com>  Tue, 19 Jan 2010 09:00:50 -0600
-
-libindicator (0.3.0-0ubuntu2~ppa1) karmic; urgency=low
-
-  * Upstream Merge
     * Adding in the code to restart services
 
- -- Ted Gould <ted@ubuntu.com>  Mon, 18 Jan 2010 12:57:31 -0600
+ -- Ted Gould <ted@ubuntu.com>  Thu, 21 Jan 2010 13:03:32 -0600
 
 libindicator (0.3.0-0ubuntu1) lucid; urgency=low
 

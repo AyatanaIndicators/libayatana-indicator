@@ -54,6 +54,7 @@ struct _IndicatorServiceManagerPrivate {
 	guint this_service_version;
 	DBusGConnection * bus;
 	guint restart_count;
+	gint restart_source;
 };
 
 /* Signals Stuff */
@@ -67,6 +68,10 @@ static guint signals[LAST_SIGNAL] = { 0 };
 /* If this env variable is set, we don't restart */
 #define TIMEOUT_ENV_NAME   "INDICATOR_SERVICE_RESTART_DISABLE"
 #define TIMEOUT_MULTIPLIER 100 /* In ms */
+/* What to reset the restart_count to if we know that we're
+   in a recoverable error condition, but waiting a little bit
+   will probably make things better.  5 ~= 3 sec. */
+#define TIMEOUT_A_LITTLE_WHILE  5
 
 /* Properties */
 /* Enum for the properties so that they can be quickly
@@ -164,6 +169,7 @@ indicator_service_manager_init (IndicatorServiceManager *self)
 	priv->this_service_version = 0;
 	priv->bus = NULL;
 	priv->restart_count = 0;
+	priv->restart_source = 0;
 
 	/* Start talkin' dbus */
 	GError * error = NULL;
@@ -196,6 +202,13 @@ static void
 indicator_service_manager_dispose (GObject *object)
 {
 	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(object);
+
+	/* Removing the idle task to restart if it exists. */
+	if (priv->restart_source != 0) {
+		g_source_remove(priv->restart_source);
+	}
+	/* Block any restart calls */
+	priv->restart_source = -1;
 
 	/* If we were connected we need to make sure to
 	   tell people that it's no longer the case. */
@@ -319,6 +332,7 @@ watch_cb (DBusGProxy * proxy, guint service_api_version, guint this_service_vers
 	if (error != NULL) {
 		g_warning("Unable to set watch on '%s': '%s'", priv->name, error->message);
 		g_error_free(error);
+		start_service_again(INDICATOR_SERVICE_MANAGER(user_data));
 		return;
 	}
 
@@ -331,12 +345,20 @@ watch_cb (DBusGProxy * proxy, guint service_api_version, guint this_service_vers
 	if (service_api_version != INDICATOR_SERVICE_VERSION) {
 		g_warning("Service is using a different version of the service interface.  Expecting %d and got %d.", INDICATOR_SERVICE_VERSION, service_api_version);
 		dbus_g_proxy_call_no_reply(priv->service_proxy, "UnWatch", G_TYPE_INVALID);
+
+		/* Let's make us wait a little while, then try again */
+		priv->restart_count = TIMEOUT_A_LITTLE_WHILE;
+		start_service_again(INDICATOR_SERVICE_MANAGER(user_data));
 		return;
 	}
 
 	if (this_service_version != priv->this_service_version) {
 		g_warning("Service is using a different API version than the manager.  Expecting %d and got %d.", priv->this_service_version, this_service_version);
 		dbus_g_proxy_call_no_reply(priv->service_proxy, "UnWatch", G_TYPE_INVALID);
+
+		/* Let's make us wait a little while, then try again */
+		priv->restart_count = TIMEOUT_A_LITTLE_WHILE;
+		start_service_again(INDICATOR_SERVICE_MANAGER(user_data));
 		return;
 	}
 
@@ -398,6 +420,11 @@ start_service (IndicatorServiceManager * service)
 	g_return_if_fail(priv->dbus_proxy != NULL);
 	g_return_if_fail(priv->name != NULL);
 
+	if (priv->service_proxy != NULL) {
+		g_object_unref(priv->service_proxy);
+		priv->service_proxy = NULL;
+	}
+
 	/* Check to see if we can get a proxy to it first. */
 	priv->service_proxy = dbus_g_proxy_new_for_name_owner(priv->bus,
 	                                                      priv->name,
@@ -450,6 +477,7 @@ start_service_again_cb (gpointer data)
 	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(data);
 	priv->restart_count++;
 	start_service(INDICATOR_SERVICE_MANAGER(data));
+	priv->restart_source = 0;
 	return FALSE;
 }
 
@@ -461,6 +489,12 @@ static void
 start_service_again (IndicatorServiceManager * manager)
 {
 	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(manager);
+
+	/* If we've already got a restart source running then
+	   let's not do this again. */
+	if (priv->restart_source != 0) {
+		return;
+	}
 
 	/* Allow the restarting to be disabled */
 	if (g_getenv(TIMEOUT_ENV_NAME)) {
@@ -474,7 +508,7 @@ start_service_again (IndicatorServiceManager * manager)
 		/* Not our first time 'round the block.  Let's slow this down. */
 		if (priv->restart_count > 16)
 			priv->restart_count = 16; /* Not more than 1024x */
-		g_timeout_add((1 << priv->restart_count) * TIMEOUT_MULTIPLIER, start_service_again_cb, manager);
+		priv->restart_source = g_timeout_add((1 << priv->restart_count) * TIMEOUT_MULTIPLIER, start_service_again_cb, manager);
 	}
 
 	return;
