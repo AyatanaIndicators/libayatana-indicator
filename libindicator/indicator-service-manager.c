@@ -411,6 +411,11 @@ start_service (IndicatorServiceManager * service)
 	g_return_if_fail(priv->dbus_proxy != NULL);
 	g_return_if_fail(priv->name != NULL);
 
+	if (priv->service_proxy != NULL) {
+		g_object_unref(priv->service_proxy);
+		priv->service_proxy = NULL;
+	}
+
 	/* Check to see if we can get a proxy to it first. */
 	priv->service_proxy = dbus_g_proxy_new_for_name_owner(priv->bus,
 	                                                      priv->name,
