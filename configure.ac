@@ -1,10 +1,10 @@
 
-AC_INIT(libindicator, 0.3.0, ted@canonical.com)
+AC_INIT(libindicator, 0.3.1, ted@canonical.com)
 
 AC_PREREQ(2.53)
 
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(libindicator, 0.3.0)
+AM_INIT_AUTOMAKE(libindicator, 0.3.1)
 
 AM_MAINTAINER_MODE
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES])
@@ -14,6 +14,8 @@ AC_PROG_CC
 AM_PROG_CC_C_O
 AC_STDC_HEADERS
 AC_PROG_LIBTOOL
+
+AC_PATH_PROG([GLIB_GENMARSHAL], [glib-genmarshal])
 
 AC_SUBST(VERSION)
 AC_CONFIG_MACRO_DIR([m4])

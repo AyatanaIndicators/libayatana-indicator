@@ -40,6 +40,8 @@ G_BEGIN_DECLS
 #define INDICATOR_OBJECT_SIGNAL_ENTRY_ADDED_ID    (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_ENTRY_ADDED, INDICATOR_OBJECT_TYPE))
 #define INDICATOR_OBJECT_SIGNAL_ENTRY_REMOVED     "entry-removed"
 #define INDICATOR_OBJECT_SIGNAL_ENTRY_REMOVED_ID  (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_ENTRY_REMOVED, INDICATOR_OBJECT_TYPE))
+#define INDICATOR_OBJECT_SIGNAL_ENTRY_MOVED       "entry-moved"
+#define INDICATOR_OBJECT_SIGNAL_ENTRY_MOVED_ID    (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_ENTRY_MOVED, INDICATOR_OBJECT_TYPE))
 
 typedef struct _IndicatorObject        IndicatorObject;
 typedef struct _IndicatorObjectClass   IndicatorObjectClass;
@@ -62,12 +64,14 @@ typedef struct _IndicatorObjectEntry   IndicatorObjectEntry;
 		a #GList of #IndicatorObjectEntries.  The list should be
 		under the ownership of the caller but the entires will
 		not be.
+	@get_location: Returns the location that a particular entry
+		should be placed in.  This is really only relevant for
+		indicators that have more than one entry.
 	@entry_added: Slot for #IndicatorObject::entry-added
 	@entry_removed: Slot for #IndicatorObject::entry-removed
+	@entry_moved: Slot for #IndicatorObject::entry-moved
 	@indicator_object_reserved_1: Reserved for future use
 	@indicator_object_reserved_2: Reserved for future use
-	@indicator_object_reserved_3: Reserved for future use
-	@indicator_object_reserved_4: Reserved for future use
 */
 struct _IndicatorObjectClass {
 	GObjectClass parent_class;
@@ -78,16 +82,16 @@ struct _IndicatorObjectClass {
 	GtkMenu  * (*get_menu)  (IndicatorObject * io);
 
 	GList *    (*get_entries) (IndicatorObject * io);
+	guint      (*get_location) (IndicatorObject * io, IndicatorObjectEntry * entry);
 
 	/* Signals */
 	void       (*entry_added) (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data);
 	void       (*entry_removed) (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data);
+	void       (*entry_moved) (IndicatorObject * io, IndicatorObjectEntry * entry, guint old_pos, guint new_pos, gpointer user_data);
 
 	/* Reserved */
 	void (* indicator_object_reserved_1) (void);
 	void (* indicator_object_reserved_2) (void);
-	void (* indicator_object_reserved_3) (void);
-	void (* indicator_object_reserved_4) (void);
 };
 
 /**
@@ -117,6 +121,7 @@ GType indicator_object_get_type (void);
 IndicatorObject * indicator_object_new_from_file (const gchar * file);
 
 GList * indicator_object_get_entries (IndicatorObject * io);
+guint   indicator_object_get_location (IndicatorObject * io, IndicatorObjectEntry * entry);
 
 G_END_DECLS
 
