@@ -485,6 +485,7 @@ start_service_again_cb (gpointer data)
 {
 	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(data);
 	priv->restart_count++;
+	g_debug("Restarting service '%s' count %d", priv->name, priv->restart_count);
 	start_service(INDICATOR_SERVICE_MANAGER(data));
 	priv->restart_source = 0;
 	return FALSE;
