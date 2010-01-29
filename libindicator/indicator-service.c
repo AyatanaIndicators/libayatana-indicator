@@ -334,10 +334,17 @@ try_and_get_name_cb (DBusGProxy * proxy, guint status, GError * error, gpointer 
 	IndicatorService * service = INDICATOR_SERVICE(data);
 	g_return_if_fail(service != NULL);
 
+	if (error != NULL) {
+		g_warning("Unable to send message to request name: %s", error->message);
+		g_signal_emit(G_OBJECT(data), signals[SHUTDOWN], 0, TRUE);
+		return;
+	}
+
 	if (status != DBUS_REQUEST_NAME_REPLY_PRIMARY_OWNER && status != DBUS_REQUEST_NAME_REPLY_ALREADY_OWNER) {
 		/* The already owner seems like it shouldn't ever
 		   happen, but I have a hard time throwing an error
 		   on it as we did achieve our goals. */
+		g_warning("Name request failed.  Status returned: %d", status);
 		g_signal_emit(G_OBJECT(data), signals[SHUTDOWN], 0, TRUE);
 		return;
 	}
