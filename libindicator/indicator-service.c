@@ -316,7 +316,12 @@ get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspe
 static gboolean
 timeout_no_watchers (gpointer data)
 {
-	g_signal_emit(G_OBJECT(data), signals[SHUTDOWN], 0, TRUE);
+	g_warning("No watchers, service timing out.");
+	if (g_getenv("INDICATOR_ALLOW_NO_WATCHERS") == NULL) {
+		g_signal_emit(G_OBJECT(data), signals[SHUTDOWN], 0, TRUE);
+	} else {
+		g_warning("\tblocked by environment variable.");
+	}
 	return FALSE;
 }
 
