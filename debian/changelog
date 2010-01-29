@@ -1,10 +1,10 @@
-libindicator (0.3.1-0ubuntu1~ppa2~better1) UNRELEASED; urgency=low
+libindicator (0.3.1-0ubuntu1~ppa2~better1) lucid; urgency=low
 
   * Upstream merge
     * Various fixes to timeout handling in servcies and the
       service manager.
 
- -- Ted Gould <ted@ubuntu.com>  Thu, 28 Jan 2010 21:41:19 -0800
+ -- Ted Gould <ted@ubuntu.com>  Thu, 28 Jan 2010 21:42:58 -0800
 
 libindicator (0.3.1-0ubuntu1~ppa1) karmic; urgency=low
 
