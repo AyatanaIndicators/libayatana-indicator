@@ -350,7 +350,7 @@ try_and_get_name_cb (DBusGProxy * proxy, guint status, GError * error, gpointer 
 	}
 
 	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(service);
-	priv->timeout = g_timeout_add(500, timeout_no_watchers, service);
+	priv->timeout = g_timeout_add_seconds(1, timeout_no_watchers, service);
 
 	return;
 }
