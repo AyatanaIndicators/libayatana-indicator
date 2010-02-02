@@ -300,7 +300,7 @@ XML_REPORT  = loader-check-results.xml
 HTML_REPORT = loader-check-results.html
 
 loader-tester: test-loader libdummy-indicator-null.la libdummy-indicator-simple.la Makefile
-	@echo "#!/bin/sh" > loader-tester
+	@echo "#!/bin/bash" > loader-tester
 	@echo $(XVFB_RUN) >> $@
 	@echo gtester -k --verbose -o=$(XML_REPORT) ./test-loader >> loader-tester
 	@chmod +x loader-tester
