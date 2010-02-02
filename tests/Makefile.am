@@ -10,6 +10,9 @@ lib_LTLIBRARIES = \
 	libdummy-indicator-simple.la
 
 DBUS_RUNNER=dbus-test-runner --dbus-config /usr/share/dbus-test-runner/session.conf
+XVFB_RUN=". $(srcdir)/run-xvfb.sh"
+
+EXTRA_DIST = run-xvfb.sh
 
 #############################
 # Test Loader
@@ -298,6 +301,7 @@ HTML_REPORT = loader-check-results.html
 
 loader-tester: test-loader libdummy-indicator-null.la libdummy-indicator-simple.la Makefile
 	@echo "#!/bin/sh" > loader-tester
+	@echo $(XVFB_RUN) >> $@
 	@echo gtester -k --verbose -o=$(XML_REPORT) ./test-loader >> loader-tester
 	@chmod +x loader-tester
 
