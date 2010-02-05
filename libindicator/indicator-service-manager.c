@@ -397,6 +397,15 @@ start_service_cb (DBusGProxy * proxy, guint status, GError * error, gpointer use
 	                                                  INDICATOR_SERVICE_OBJECT,
 	                                                  INDICATOR_SERVICE_INTERFACE,
 	                                                  &error);
+
+	if (error != NULL || priv->service_proxy == NULL) {
+		g_warning("Unable to create service proxy on '%s': %s", priv->name, error == NULL ? "(null)" : error->message);
+		priv->service_proxy = NULL; /* Should be already, but we want to be *really* sure. */
+		g_error_free(error);
+		start_service_again(INDICATOR_SERVICE_MANAGER(user_data));
+		return;
+	}
+
 	g_object_add_weak_pointer(G_OBJECT(priv->service_proxy), (gpointer *)&(priv->service_proxy));
 	g_signal_connect(G_OBJECT(priv->service_proxy), "destroy", G_CALLBACK(service_proxy_destroyed), user_data);
 
@@ -432,7 +441,7 @@ start_service (IndicatorServiceManager * service)
 	                                                      INDICATOR_SERVICE_INTERFACE,
 	                                                      &error);
 
-	if (error != NULL) {
+	if (error != NULL || priv->service_proxy == NULL) {
 		/* We don't care about the error, just start the service anyway. */
 		g_error_free(error);
 		org_freedesktop_DBus_start_service_by_name_async (priv->dbus_proxy,
@@ -476,6 +485,7 @@ start_service_again_cb (gpointer data)
 {
 	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(data);
 	priv->restart_count++;
+	g_debug("Restarting service '%s' count %d", priv->name, priv->restart_count);
 	start_service(INDICATOR_SERVICE_MANAGER(data));
 	priv->restart_source = 0;
 	return FALSE;
