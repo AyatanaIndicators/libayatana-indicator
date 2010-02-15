@@ -30,6 +30,8 @@ License along with this library. If not, see
 typedef struct _IndicatorDesktopShortcutsPrivate IndicatorDesktopShortcutsPrivate;
 struct _IndicatorDesktopShortcutsPrivate {
 	GKeyFile * keyfile;
+	gchar * identity;
+	GArray * nicks;
 };
 
 #define INDICATOR_DESKTOP_SHORTCUTS_GET_PRIVATE(o) \
@@ -63,6 +65,8 @@ indicator_desktop_shortcuts_init (IndicatorDesktopShortcuts *self)
 	IndicatorDesktopShortcutsPrivate * priv = INDICATOR_DESKTOP_SHORTCUTS_GET_PRIVATE(self);
 
 	priv->keyfile = NULL;
+	priv->identity = NULL;
+	priv->nicks = g_array_new(TRUE, TRUE, sizeof(gchar *));
 
 	return;
 }
@@ -71,6 +75,13 @@ indicator_desktop_shortcuts_init (IndicatorDesktopShortcuts *self)
 static void
 indicator_desktop_shortcuts_dispose (GObject *object)
 {
+	IndicatorDesktopShortcutsPrivate * priv = INDICATOR_DESKTOP_SHORTCUTS_GET_PRIVATE(object);
+
+	if (priv->keyfile) {
+		g_key_file_free(priv->keyfile);
+		priv->keyfile = NULL;
+	}
+	
 
 	G_OBJECT_CLASS (indicator_desktop_shortcuts_parent_class)->dispose (object);
 	return;
@@ -80,6 +91,22 @@ indicator_desktop_shortcuts_dispose (GObject *object)
 static void
 indicator_desktop_shortcuts_finalize (GObject *object)
 {
+	IndicatorDesktopShortcutsPrivate * priv = INDICATOR_DESKTOP_SHORTCUTS_GET_PRIVATE(object);
+
+	if (priv->identity != NULL) {
+		g_free(priv->identity);
+		priv->identity = NULL;
+	}
+
+	if (priv->nicks != NULL) {
+		gint i;
+		for (i = 0; i < priv->nicks->len; i++) {
+			gchar * nick = g_array_index(priv->nicks, gchar *, i);
+			g_free(nick);
+		}
+		g_array_free(priv->nicks, TRUE);
+		priv->nicks = NULL;
+	}
 
 	G_OBJECT_CLASS (indicator_desktop_shortcuts_parent_class)->finalize (object);
 	return;
