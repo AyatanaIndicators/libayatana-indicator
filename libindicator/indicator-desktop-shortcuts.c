@@ -40,6 +40,12 @@ struct _IndicatorDesktopShortcutsPrivate {
 	GArray * nicks;
 };
 
+enum {
+	PROP_0,
+	PROP_DESKTOP_FILE,
+	PROP_IDENTITY
+};
+
 #define INDICATOR_DESKTOP_SHORTCUTS_GET_PRIVATE(o) \
 		(G_TYPE_INSTANCE_GET_PRIVATE ((o), INDICATOR_TYPE_DESKTOP_SHORTCUTS, IndicatorDesktopShortcutsPrivate))
 
@@ -47,6 +53,8 @@ static void indicator_desktop_shortcuts_class_init (IndicatorDesktopShortcutsCla
 static void indicator_desktop_shortcuts_init       (IndicatorDesktopShortcuts *self);
 static void indicator_desktop_shortcuts_dispose    (GObject *object);
 static void indicator_desktop_shortcuts_finalize   (GObject *object);
+static void set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec);
+static void get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec);
 
 G_DEFINE_TYPE (IndicatorDesktopShortcuts, indicator_desktop_shortcuts, G_TYPE_OBJECT);
 
@@ -60,6 +68,23 @@ indicator_desktop_shortcuts_class_init (IndicatorDesktopShortcutsClass *klass)
 
 	object_class->dispose = indicator_desktop_shortcuts_dispose;
 	object_class->finalize = indicator_desktop_shortcuts_finalize;
+
+	/* Property funcs */
+	object_class->set_property = set_property;
+	object_class->get_property = get_property;
+
+	g_object_class_install_property(object_class, PROP_DESKTOP_FILE,
+	                                g_param_spec_string(PROP_DESKTOP_FILE_S,
+	                                                    "The path of the desktop file to read",
+	                                                    "A path to a desktop file that we'll look for shortcuts in.",
+	                                                    NULL,
+	                                                    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT_ONLY));
+	g_object_class_install_property(object_class, PROP_IDENTITY,
+	                                g_param_spec_string(PROP_IDENTITY_S,
+	                                                    "The string that represents the identity that we're acting as.",
+	                                                    "Used to process ShowIn and NotShownIn fields of the desktop shortcust to get the proper list.",
+	                                                    NULL,
+	                                                    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT_ONLY));
 
 	return;
 }
@@ -87,7 +112,6 @@ indicator_desktop_shortcuts_dispose (GObject *object)
 		g_key_file_free(priv->keyfile);
 		priv->keyfile = NULL;
 	}
-	
 
 	G_OBJECT_CLASS (indicator_desktop_shortcuts_parent_class)->dispose (object);
 	return;
@@ -115,6 +139,48 @@ indicator_desktop_shortcuts_finalize (GObject *object)
 	}
 
 	G_OBJECT_CLASS (indicator_desktop_shortcuts_parent_class)->finalize (object);
+	return;
+}
+
+/* Sets one of the two properties we have, only at construction though */
+static void
+set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec)
+{
+	g_return_if_fail(INDICATOR_IS_DESKTOP_SHORTCUTS(object));
+	IndicatorDesktopShortcutsPrivate * priv = INDICATOR_DESKTOP_SHORTCUTS_GET_PRIVATE(object);
+
+	switch(prop_id) {
+	case PROP_DESKTOP_FILE:
+		break;
+	case PROP_IDENTITY:
+		break;
+	/* *********************** */
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+		break;
+	}
+
+	return;
+}
+
+/* Gets either the desktop file our the identity. */
+static void
+get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec)
+{
+	g_return_if_fail(INDICATOR_IS_DESKTOP_SHORTCUTS(object));
+	IndicatorDesktopShortcutsPrivate * priv = INDICATOR_DESKTOP_SHORTCUTS_GET_PRIVATE(object);
+
+	switch(prop_id) {
+	case PROP_DESKTOP_FILE:
+		break;
+	case PROP_IDENTITY:
+		break;
+	/* *********************** */
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+		break;
+	}
+
 	return;
 }
 
