@@ -25,6 +25,7 @@ License along with this library. If not, see
 #include "config.h"
 #endif
 
+#include <gio/gdesktopappinfo.h>
 #include "indicator-desktop-shortcuts.h"
 
 #define GROUP_SUFFIX          "Shortcut Group"
@@ -237,6 +238,64 @@ indicator_desktop_shortcuts_nick_get_name (IndicatorDesktopShortcuts * ids, cons
 gboolean
 indicator_desktop_shortcuts_nick_exec (IndicatorDesktopShortcuts * ids, const gchar * nick)
 {
+	g_return_val_if_fail(INDICATOR_IS_DESKTOP_SHORTCUTS(ids), FALSE);
+	IndicatorDesktopShortcutsPrivate * priv = INDICATOR_DESKTOP_SHORTCUTS_GET_PRIVATE(ids);
 
-	return FALSE;
+	g_return_val_if_fail(priv->keyfile != NULL, FALSE);
+	g_return_val_if_fail(is_valid_nick((gchar **)priv->nicks->data, nick), FALSE);
+
+	gchar * groupheader = g_strdup_printf("%s " GROUP_SUFFIX, nick);
+	if (!g_key_file_has_group(priv->keyfile, groupheader)) {
+		g_warning("The group for nick '%s' doesn't exist anymore.", nick);
+		g_free(groupheader);
+		return FALSE;
+	}
+
+	if (!g_key_file_has_key(priv->keyfile, groupheader, G_KEY_FILE_DESKTOP_KEY_NAME, NULL)) {
+		g_warning("No name available for nick '%s'", nick);
+		g_free(groupheader);
+		return FALSE;
+	}
+
+	if (!g_key_file_has_key(priv->keyfile, groupheader, G_KEY_FILE_DESKTOP_KEY_EXEC, NULL)) {
+		g_warning("No exec available for nick '%s'", nick);
+		g_free(groupheader);
+		return FALSE;
+	}
+
+	/* Grab the name and the exec entries out of our current group */
+	gchar * name = g_key_file_get_locale_string(priv->keyfile,
+	                                            groupheader,
+	                                            G_KEY_FILE_DESKTOP_KEY_NAME,
+	                                            NULL,
+	                                            NULL);
+
+	gchar * exec = g_key_file_get_locale_string(priv->keyfile,
+	                                            groupheader,
+	                                            G_KEY_FILE_DESKTOP_KEY_EXEC,
+	                                            NULL,
+	                                            NULL);
+
+	/* Build a new desktop file with the name and exec in the desktop
+	   group.  We have to do this with data as apparently there isn't
+	   and add_group function in g_key_file.  Go figure. */
+	gchar * desktopdata = g_strdup_printf("[" G_KEY_FILE_DESKTOP_GROUP "]\n"
+	                                      G_KEY_FILE_DESKTOP_KEY_NAME "=\"%s\"\n"
+	                                      G_KEY_FILE_DESKTOP_KEY_EXEC "=\"%s\"\n",
+	                                      name, exec);
+	
+
+	g_free(name); g_free(exec);
+
+	GKeyFile * launcher = g_key_file_new();
+	g_key_file_load_from_data(launcher, desktopdata, -1, G_KEY_FILE_NONE, NULL);
+	g_free(desktopdata);
+
+	GDesktopAppInfo * appinfo = g_desktop_app_info_new_from_keyfile(launcher);
+	gboolean launched = g_app_info_launch(G_APP_INFO(appinfo), NULL, NULL, NULL);
+
+	g_object_unref(appinfo);
+	g_key_file_free(launcher);
+
+	return launched;
 }
