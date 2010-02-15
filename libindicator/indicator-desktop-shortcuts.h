@@ -66,7 +66,8 @@ IndicatorDesktopShortcuts * indicator_desktop_shortcuts_new              (const 
 const gchar **              indicator_desktop_shortcuts_get_nicks        (IndicatorDesktopShortcuts * ids);
 const gchar *               indicator_desktop_shortcuts_nick_get_name    (IndicatorDesktopShortcuts * ids,
                                                                           const gchar * nick);
-
+gboolean                    indicator_desktop_shortcuts_nick_exec        (IndicatorDesktopShortcuts * ids,
+                                                                          const gchar * nick);
 
 G_END_DECLS
 
