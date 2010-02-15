@@ -27,6 +27,8 @@ License along with this library. If not, see
 
 #include "indicator-desktop-shortcuts.h"
 
+#define GROUP_SUFFIX          "Shortcut Group"
+
 #define PROP_DESKTOP_FILE_S   "desktop-file"
 #define PROP_IDENTITY_S       "identity"
 
@@ -115,6 +117,18 @@ indicator_desktop_shortcuts_finalize (GObject *object)
 	return;
 }
 
+/* Looks through the nicks ot see if this one is in the list,
+   and thus valid to use. */
+static gboolean
+is_valid_nick (gchar ** list, const gchar * nick)
+{
+	if (*list == NULL)
+		return FALSE;
+	if (g_strcmp0(*list, nick) == 0)
+		return TRUE;
+	return is_valid_nick(list++, nick);
+}
+
 /* API */
 
 /**
@@ -175,11 +189,37 @@ indicator_desktop_shortcuts_get_nicks (IndicatorDesktopShortcuts * ids)
 	Return value: A user visible string for the shortcut or
 		#NULL on error.
 */
-const gchar *
+gchar *
 indicator_desktop_shortcuts_nick_get_name (IndicatorDesktopShortcuts * ids, const gchar * nick)
 {
+	g_return_val_if_fail(INDICATOR_IS_DESKTOP_SHORTCUTS(ids), NULL);
+	IndicatorDesktopShortcutsPrivate * priv = INDICATOR_DESKTOP_SHORTCUTS_GET_PRIVATE(ids);
 
-	return NULL;
+	g_return_val_if_fail(priv->keyfile != NULL, NULL);
+	g_return_val_if_fail(is_valid_nick((gchar **)priv->nicks->data, nick), NULL);
+
+	gchar * groupheader = g_strdup_printf("%s " GROUP_SUFFIX, nick);
+	if (!g_key_file_has_group(priv->keyfile, groupheader)) {
+		g_warning("The group for nick '%s' doesn't exist anymore.", nick);
+		g_free(groupheader);
+		return NULL;
+	}
+
+	if (!g_key_file_has_key(priv->keyfile, groupheader, G_KEY_FILE_DESKTOP_KEY_NAME, NULL)) {
+		g_warning("No name available for nick '%s'", nick);
+		g_free(groupheader);
+		return NULL;
+	}
+
+	gchar * name = g_key_file_get_locale_string(priv->keyfile,
+	                                            groupheader,
+	                                            G_KEY_FILE_DESKTOP_KEY_NAME,
+	                                            NULL,
+	                                            NULL);
+
+	g_free(groupheader);
+
+	return name;
 }
 
 /**
