@@ -27,6 +27,9 @@ License along with this library. If not, see
 
 #include "indicator-desktop-shortcuts.h"
 
+#define PROP_DESKTOP_FILE_S   "desktop-file"
+#define PROP_IDENTITY_S       "identity"
+
 typedef struct _IndicatorDesktopShortcutsPrivate IndicatorDesktopShortcutsPrivate;
 struct _IndicatorDesktopShortcutsPrivate {
 	GKeyFile * keyfile;
@@ -131,8 +134,11 @@ indicator_desktop_shortcuts_finalize (GObject *object)
 IndicatorDesktopShortcuts *
 indicator_desktop_shortcuts_new (const gchar * file, const gchar * identity)
 {
-
-	return NULL;
+	GObject * obj = g_object_new(INDICATOR_TYPE_DESKTOP_SHORTCUTS,
+	                             PROP_DESKTOP_FILE_S, file,
+	                             PROP_IDENTITY_S, identity,
+	                             NULL);
+	return INDICATOR_DESKTOP_SHORTCUTS(obj);
 }
 
 /**
@@ -150,9 +156,9 @@ indicator_desktop_shortcuts_new (const gchar * file, const gchar * identity)
 const gchar **
 indicator_desktop_shortcuts_get_nicks (IndicatorDesktopShortcuts * ids)
 {
-
-
-	return NULL;
+	g_return_val_if_fail(INDICATOR_IS_DESKTOP_SHORTCUTS(ids), NULL);
+	IndicatorDesktopShortcutsPrivate * priv = INDICATOR_DESKTOP_SHORTCUTS_GET_PRIVATE(ids);
+	return (const gchar **)priv->nicks->data;
 }
 
 /**
