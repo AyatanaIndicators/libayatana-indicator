@@ -39,15 +39,34 @@ G_BEGIN_DECLS
 typedef struct _IndicatorDesktopShortcuts      IndicatorDesktopShortcuts;
 typedef struct _IndicatorDesktopShortcutsClass IndicatorDesktopShortcutsClass;
 
+/**
+	IndicatorDesktopShortcutsClass:
+	@parent_class: Space for #GObjectClass
+
+	The vtable for our precious #IndicatorDesktopShortcutsClass.
+*/
 struct _IndicatorDesktopShortcutsClass {
 	GObjectClass parent_class;
 };
 
+/**
+	IndicatorDesktopShortcuts:
+	@parent: The parent data from #GObject
+
+	The public data for an instance of the class
+	#IndicatorDesktopShortcuts.
+*/
 struct _IndicatorDesktopShortcuts {
 	GObject parent;
 };
 
-GType indicator_desktop_shortcuts_get_type (void);
+GType                       indicator_desktop_shortcuts_get_type         (void);
+IndicatorDesktopShortcuts * indicator_desktop_shortcuts_new              (const gchar * file,
+                                                                          const gchar * identity);
+const gchar **              indicator_desktop_shortcuts_get_nicks        (IndicatorDesktopShortcuts * ids);
+const gchar *               indicator_desktop_shortcuts_nick_get_name    (IndicatorDesktopShortcuts * ids,
+                                                                          const gchar * nick);
+
 
 G_END_DECLS
 
