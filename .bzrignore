@@ -147,3 +147,4 @@ libindicator/indicator-object-marshal.c
 libindicator/indicator-object-marshal.h
 libindicator/libindicator_la-indicator-object-marshal.lo
 libindicator/stamp-marshal
+libindicator/libindicator_la-indicator-desktop-shortcuts.lo
