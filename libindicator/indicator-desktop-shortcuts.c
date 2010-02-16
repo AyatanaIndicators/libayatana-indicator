@@ -304,6 +304,8 @@ indicator_desktop_shortcuts_nick_get_name (IndicatorDesktopShortcuts * ids, cons
 gboolean
 indicator_desktop_shortcuts_nick_exec (IndicatorDesktopShortcuts * ids, const gchar * nick)
 {
+	GError * error = NULL;
+
 	g_return_val_if_fail(INDICATOR_IS_DESKTOP_SHORTCUTS(ids), FALSE);
 	IndicatorDesktopShortcutsPrivate * priv = INDICATOR_DESKTOP_SHORTCUTS_GET_PRIVATE(ids);
 
@@ -354,11 +356,24 @@ indicator_desktop_shortcuts_nick_exec (IndicatorDesktopShortcuts * ids, const gc
 	g_free(name); g_free(exec);
 
 	GKeyFile * launcher = g_key_file_new();
-	g_key_file_load_from_data(launcher, desktopdata, -1, G_KEY_FILE_NONE, NULL);
+	g_key_file_load_from_data(launcher, desktopdata, -1, G_KEY_FILE_NONE, &error);
 	g_free(desktopdata);
 
+	if (error != NULL) {
+		g_warning("Unable to build desktop keyfile for executing shortcut '%s': %s", nick, error->message);
+		g_error_free(error);
+		return FALSE;
+	}
+
 	GDesktopAppInfo * appinfo = g_desktop_app_info_new_from_keyfile(launcher);
-	gboolean launched = g_app_info_launch(G_APP_INFO(appinfo), NULL, NULL, NULL);
+	gboolean launched = g_app_info_launch(G_APP_INFO(appinfo), NULL, NULL, &error);
+
+	if (error != NULL) {
+		g_warning("Unable to launch file from nick '%s': %s", nick, error->message);
+		g_error_free(error);
+		g_key_file_free(launcher);
+		return FALSE;
+	}
 
 	g_object_unref(appinfo);
 	g_key_file_free(launcher);
