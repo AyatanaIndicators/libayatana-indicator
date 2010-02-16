@@ -235,7 +235,7 @@ parse_keyfile (IndicatorDesktopShortcuts * ids)
 	/* If there is an error from get_string_list num_nicks should still
 	   be zero, so this loop will drop out. */
 	for (i = 0; i < num_nicks; i++) {
-		gchar * groupname = g_strdup_printf("%s" GROUP_SUFFIX, nicks[i]);
+		gchar * groupname = g_strdup_printf("%s " GROUP_SUFFIX, nicks[i]);
 		if (!g_key_file_has_group(priv->keyfile, groupname)) {
 			g_warning("Unable to find group '%s'", groupname);
 			g_free(groupname);
