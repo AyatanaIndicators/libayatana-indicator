@@ -29,6 +29,7 @@ License along with this library. If not, see
 #include "indicator-desktop-shortcuts.h"
 
 #define GROUP_SUFFIX          "Shortcut Group"
+#define SHORTCUTS_KEY         "X-Ayatana-Desktop-Shortcuts"
 
 #define PROP_DESKTOP_FILE_S   "desktop-file"
 #define PROP_IDENTITY_S       "identity"
@@ -160,6 +161,13 @@ set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec 
 			g_warning("Unable to load keyfile from file '%s': %s", g_value_get_string(value), error->message);
 			g_error_free(error);
 			g_key_file_free(keyfile);
+			break;
+		}
+
+		if (!g_key_file_has_key(keyfile, G_KEY_FILE_DESKTOP_GROUP, SHORTCUTS_KEY, NULL)) {
+			g_warning("Keyfile from file '%s' does not have '" SHORTCUTS_KEY "' key", g_value_get_string(value));
+			g_key_file_free(keyfile);
+			break;
 		}
 
 		priv->keyfile = keyfile;
