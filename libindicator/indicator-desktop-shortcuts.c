@@ -216,6 +216,34 @@ get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspe
 static void
 parse_keyfile (IndicatorDesktopShortcuts * ids)
 {
+	IndicatorDesktopShortcutsPrivate * priv = INDICATOR_DESKTOP_SHORTCUTS_GET_PRIVATE(ids);
+
+	if (priv->keyfile == NULL) {
+		return;
+	}
+
+	if (priv->identity == NULL) {
+		return;
+	}
+
+	/* Okay, we've got everything we need.  Let's get it on! */
+	gint i;
+	gsize num_nicks = 0;
+	gchar ** nicks = g_key_file_get_string_list(priv->keyfile, G_KEY_FILE_DESKTOP_GROUP, SHORTCUTS_KEY, &num_nicks, NULL);
+
+	/* If there is an error from get_string_list num_nicks should still
+	   be zero, so this loop will drop out. */
+	for (i = 0; i < num_nicks; i++) {
+		gchar * groupname = g_strdup_printf("%s" GROUP_SUFFIX, nicks[i]);
+		if (!g_key_file_has_group(priv->keyfile, groupname)) {
+			g_warning("Unable to find group '%s'", groupname);
+			g_free(groupname);
+			continue;
+		}
+
+		gchar * nickalloc = g_strdup(nicks[i]);
+		g_array_append_val(priv->nicks, nickalloc);
+	}
 
 	return;
 }
