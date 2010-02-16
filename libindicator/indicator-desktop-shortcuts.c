@@ -78,7 +78,7 @@ indicator_desktop_shortcuts_class_init (IndicatorDesktopShortcutsClass *klass)
 	                                                    "The path of the desktop file to read",
 	                                                    "A path to a desktop file that we'll look for shortcuts in.",
 	                                                    NULL,
-	                                                    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT_ONLY));
+	                                                    G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT_ONLY));
 	g_object_class_install_property(object_class, PROP_IDENTITY,
 	                                g_param_spec_string(PROP_IDENTITY_S,
 	                                                    "The string that represents the identity that we're acting as.",
@@ -176,8 +176,6 @@ get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspe
 	IndicatorDesktopShortcutsPrivate * priv = INDICATOR_DESKTOP_SHORTCUTS_GET_PRIVATE(object);
 
 	switch(prop_id) {
-	case PROP_DESKTOP_FILE:
-		break;
 	case PROP_IDENTITY:
 		g_value_set_string(value, priv->identity);
 		break;
