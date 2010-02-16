@@ -153,6 +153,11 @@ set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec 
 	case PROP_DESKTOP_FILE:
 		break;
 	case PROP_IDENTITY:
+		if (priv->identity != NULL) {
+			g_warning("Identity already set to '%s' and trying to set it to '%s'.", priv->identity, g_value_get_string(value));
+			return;
+		}
+		priv->identity = g_value_dup_string(value);
 		break;
 	/* *********************** */
 	default:
@@ -174,6 +179,7 @@ get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspe
 	case PROP_DESKTOP_FILE:
 		break;
 	case PROP_IDENTITY:
+		g_value_set_string(value, priv->identity);
 		break;
 	/* *********************** */
 	default:
