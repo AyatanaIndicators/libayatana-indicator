@@ -1,0 +1,20 @@
+[Desktop Entry]
+Name=My Application
+Exec=ls
+NotShowIn=Germany
+X-Ayatana-Desktop-Shortcuts=bob;alvin;jim
+
+[bob Shortcut Group]
+Name=Bob's shortcut
+Exec=ls bob
+
+[alvin Shortcut Group]
+Name=Alivin's shortcut
+Exec=ls alvin
+OnlyShowIn=France
+
+[jim Shortcut Group]
+Name=Jim's shortcut
+Exec=ls jim
+NotShowIn=France
+
