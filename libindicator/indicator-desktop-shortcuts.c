@@ -55,6 +55,7 @@ static void indicator_desktop_shortcuts_dispose    (GObject *object);
 static void indicator_desktop_shortcuts_finalize   (GObject *object);
 static void set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec);
 static void get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec);
+static void parse_keyfile (IndicatorDesktopShortcuts * ids);
 
 G_DEFINE_TYPE (IndicatorDesktopShortcuts, indicator_desktop_shortcuts, G_TYPE_OBJECT);
 
@@ -150,14 +151,28 @@ set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec 
 	IndicatorDesktopShortcutsPrivate * priv = INDICATOR_DESKTOP_SHORTCUTS_GET_PRIVATE(object);
 
 	switch(prop_id) {
-	case PROP_DESKTOP_FILE:
+	case PROP_DESKTOP_FILE: {
+		GError * error = NULL;
+		GKeyFile * keyfile = g_key_file_new();
+		g_key_file_load_from_file(keyfile, g_value_get_string(value), G_KEY_FILE_NONE, &error);
+
+		if (error != NULL) {
+			g_warning("Unable to load keyfile from file '%s': %s", g_value_get_string(value), error->message);
+			g_error_free(error);
+			g_key_file_free(keyfile);
+		}
+
+		priv->keyfile = keyfile;
+		parse_keyfile(INDICATOR_DESKTOP_SHORTCUTS(object));
 		break;
+	}
 	case PROP_IDENTITY:
 		if (priv->identity != NULL) {
 			g_warning("Identity already set to '%s' and trying to set it to '%s'.", priv->identity, g_value_get_string(value));
 			return;
 		}
 		priv->identity = g_value_dup_string(value);
+		parse_keyfile(INDICATOR_DESKTOP_SHORTCUTS(object));
 		break;
 	/* *********************** */
 	default:
@@ -184,6 +199,15 @@ get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspe
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
 	}
+
+	return;
+}
+
+/* Checks to see if we can, and if we can it goes through
+   and parses the keyfile entries. */
+static void
+parse_keyfile (IndicatorDesktopShortcuts * ids)
+{
 
 	return;
 }
