@@ -57,6 +57,7 @@ static void indicator_desktop_shortcuts_finalize   (GObject *object);
 static void set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec);
 static void get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec);
 static void parse_keyfile (IndicatorDesktopShortcuts * ids);
+static gboolean should_show (GKeyFile * keyfile, const gchar * group, const gchar * identity);
 
 G_DEFINE_TYPE (IndicatorDesktopShortcuts, indicator_desktop_shortcuts, G_TYPE_OBJECT);
 
@@ -241,49 +242,77 @@ parse_keyfile (IndicatorDesktopShortcuts * ids)
 			continue;
 		}
 
-		/* If there is a list of OnlyShowIn entries we need to check
-		   to see if we're in that list.  If not, we drop this nick */
-		if (g_key_file_has_key(priv->keyfile, groupname, G_KEY_FILE_DESKTOP_KEY_ONLY_SHOW_IN, NULL)) {
-			gint j;
-			gsize num_only = 0;
-			gchar ** onlies = g_key_file_get_string_list(priv->keyfile, groupname, G_KEY_FILE_DESKTOP_KEY_ONLY_SHOW_IN, &num_only, NULL);
-
-			for (j = 0; j < num_only; j++) {
-				if (g_strcmp0(onlies[i], priv->identity) == 0) {
-					break;
-				}
-			}
-
-			if (j == num_only) {
-				g_free(groupname);
-				break;
-			}
+		if (!should_show(priv->keyfile, G_KEY_FILE_DESKTOP_GROUP, priv->identity)) {
+			g_free(groupname);
+			break;
 		}
 
-		/* If there is a NotShowIn entry we need to make sure that we're
-		   not in that list.  If we are, we need to drop out. */
-		if (g_key_file_has_key(priv->keyfile, groupname, G_KEY_FILE_DESKTOP_KEY_NOT_SHOW_IN, NULL)) {
-			gint j;
-			gsize num_not = 0;
-			gchar ** nots = g_key_file_get_string_list(priv->keyfile, groupname, G_KEY_FILE_DESKTOP_KEY_NOT_SHOW_IN, &num_not, NULL);
-
-			for (j = 0; j < num_not; j++) {
-				if (g_strcmp0(nots[i], priv->identity) == 0) {
-					break;
-				}
-			}
-
-			if (j != num_not) {
-				g_free(groupname);
-				break;
-			}
+		if (!should_show(priv->keyfile, groupname, priv->identity)) {
+			g_free(groupname);
+			break;
 		}
 
 		gchar * nickalloc = g_strdup(nicks[i]);
 		g_array_append_val(priv->nicks, nickalloc);
 	}
 
+	if (nicks != NULL) {
+		g_strfreev(nicks);
+	}
+
 	return;
+}
+
+/* Checks the ONLY_SHOW_IN and NOT_SHOW_IN keys for a group to
+   see if we should be showing ourselves. */
+static gboolean
+should_show (GKeyFile * keyfile, const gchar * group, const gchar * identity)
+{
+	/* If there is a list of OnlyShowIn entries we need to check
+	   to see if we're in that list.  If not, we drop this nick */
+	if (g_key_file_has_key(keyfile, group, G_KEY_FILE_DESKTOP_KEY_ONLY_SHOW_IN, NULL)) {
+		gint j;
+		gsize num_only = 0;
+		gchar ** onlies = g_key_file_get_string_list(keyfile, group, G_KEY_FILE_DESKTOP_KEY_ONLY_SHOW_IN, &num_only, NULL);
+
+		for (j = 0; j < num_only; j++) {
+			if (g_strcmp0(onlies[j], identity) == 0) {
+				break;
+			}
+		}
+
+		if (onlies != NULL) {
+			g_strfreev(onlies);
+		}
+
+		if (j == num_only) {
+			return FALSE;
+		}
+	}
+
+	/* If there is a NotShowIn entry we need to make sure that we're
+	   not in that list.  If we are, we need to drop out. */
+	if (g_key_file_has_key(keyfile, group, G_KEY_FILE_DESKTOP_KEY_NOT_SHOW_IN, NULL)) {
+		gint j;
+		gsize num_not = 0;
+		gchar ** nots = g_key_file_get_string_list(keyfile, group, G_KEY_FILE_DESKTOP_KEY_NOT_SHOW_IN, &num_not, NULL);
+
+		for (j = 0; j < num_not; j++) {
+			if (g_strcmp0(nots[j], identity) == 0) {
+				break;
+			}
+		}
+
+		if (nots != NULL) {
+			g_strfreev(nots);
+		}
+
+		if (j != num_not) {
+			return FALSE;
+		}
+	}
+
+	return TRUE;
 }
 
 /* Looks through the nicks ot see if this one is in the list,
