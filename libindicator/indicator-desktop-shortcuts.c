@@ -479,8 +479,9 @@ indicator_desktop_shortcuts_nick_exec (IndicatorDesktopShortcuts * ids, const gc
 	   group.  We have to do this with data as apparently there isn't
 	   and add_group function in g_key_file.  Go figure. */
 	gchar * desktopdata = g_strdup_printf("[" G_KEY_FILE_DESKTOP_GROUP "]\n"
-	                                      G_KEY_FILE_DESKTOP_KEY_NAME "=\"%s\"\n"
-	                                      G_KEY_FILE_DESKTOP_KEY_EXEC "=\"%s\"\n",
+	                                      G_KEY_FILE_DESKTOP_KEY_TYPE "=" G_KEY_FILE_DESKTOP_TYPE_APPLICATION "\n"
+	                                      G_KEY_FILE_DESKTOP_KEY_NAME "=%s\n"
+	                                      G_KEY_FILE_DESKTOP_KEY_EXEC "=%s\n",
 	                                      name, exec);
 	
 
@@ -497,6 +498,12 @@ indicator_desktop_shortcuts_nick_exec (IndicatorDesktopShortcuts * ids, const gc
 	}
 
 	GDesktopAppInfo * appinfo = g_desktop_app_info_new_from_keyfile(launcher);
+	if (appinfo == NULL) {
+		g_warning("Unable to build Desktop App info (unknown)");
+		g_key_file_free(launcher);
+		return FALSE;
+	}
+
 	gboolean launched = g_app_info_launch(G_APP_INFO(appinfo), NULL, NULL, &error);
 
 	if (error != NULL) {
