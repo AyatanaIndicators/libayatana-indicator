@@ -1,4 +1,4 @@
-libindicator (0.3.2-0ubuntu1~ppa1) lucid; urgency=low
+libindicator (0.3.2-0ubuntu1) lucid; urgency=low
 
   * Upstream release 0.3.2
     * Various fixes to timeout handling in services and the
@@ -7,7 +7,7 @@ libindicator (0.3.2-0ubuntu1~ppa1) lucid; urgency=low
 
  -- Ted Gould <ted@ubuntu.com>  Thu, 04 Feb 2010 17:40:06 -0800
 
-libindicator (0.3.1-0ubuntu1~ppa1) karmic; urgency=low
+libindicator (0.3.1-0ubuntu1) lucid; urgency=low
 
   * Upstream release 0.3.1
     * Adding in entry ordering.
