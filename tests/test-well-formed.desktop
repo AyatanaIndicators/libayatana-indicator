@@ -2,7 +2,7 @@
 Name=My Application
 Exec=ls
 NotShowIn=Germany
-X-Ayatana-Desktop-Shortcuts=bob;alvin;jim
+X-Ayatana-Desktop-Shortcuts=bob;alvin;jim;touch
 
 [bob Shortcut Group]
 Name=bob's shortcut
@@ -18,3 +18,7 @@ Name=Jim's shortcut
 Exec=ls jim
 NotShowIn=France
 
+[touch Shortcut Group]
+Name=Touch Test
+Exec=touch test-desktop-shortcuts-touch-test
+OnlyShowIn=TouchTest
