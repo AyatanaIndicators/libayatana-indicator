@@ -64,6 +64,7 @@ test-desktop-shortcuts-tester: test-desktop-shortcuts Makefile.am
 
 TESTS += test-desktop-shortcuts-tester
 DISTCLEANFILES += test-desktop-shortcuts-tester \
+	test-desktop-shortcuts-touch-test \
 	$(DS_XML_REPORT) \
 	$(DS_HTML_REPORT)
 
