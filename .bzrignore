@@ -150,3 +150,4 @@ libindicator/stamp-marshal
 libindicator/libindicator_la-indicator-desktop-shortcuts.lo
 tests/test-desktop-shortcuts
 tests/test-desktop-shortcuts-tester
+tests/test-desktop-shortcuts-touch-test
