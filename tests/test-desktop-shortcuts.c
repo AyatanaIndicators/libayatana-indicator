@@ -100,7 +100,7 @@ test_desktop_shortcuts_launch (void)
 	g_assert(ids != NULL);
 
 	const gchar ** nicks = indicator_desktop_shortcuts_get_nicks(ids);
-	g_assert(nicks != NULL);
+	g_assert(nicks_contains(nicks, "touch"));
 
 	g_assert(indicator_desktop_shortcuts_nick_exec(ids, "touch"));
 	g_assert(g_file_test("test-desktop-shortcuts-touch-test", G_FILE_TEST_EXISTS));

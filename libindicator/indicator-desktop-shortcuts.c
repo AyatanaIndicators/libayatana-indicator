@@ -322,6 +322,7 @@ is_valid_nick (gchar ** list, const gchar * nick)
 {
 	if (*list == NULL)
 		return FALSE;
+	g_debug("Checking Nick: %s", list[0]);
 	if (g_strcmp0(list[0], nick) == 0)
 		return TRUE;
 	return is_valid_nick(&list[1], nick);
@@ -486,6 +487,7 @@ indicator_desktop_shortcuts_nick_exec (IndicatorDesktopShortcuts * ids, const gc
 	
 
 	g_free(name); g_free(exec);
+	g_debug("Desktop file: \n%s", desktopdata);
 
 	GKeyFile * launcher = g_key_file_new();
 	g_key_file_load_from_data(launcher, desktopdata, -1, G_KEY_FILE_NONE, &error);
