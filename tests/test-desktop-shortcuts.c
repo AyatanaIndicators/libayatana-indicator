@@ -16,9 +16,25 @@ test_desktop_shortcuts_creation (void)
 }
 
 void
+test_desktop_shortcuts_globalnoshow (void)
+{
+
+	IndicatorDesktopShortcuts * ids = indicator_desktop_shortcuts_new(SRCDIR "/test-well-formed.desktop", "Germany");
+	g_assert(ids != NULL);
+
+	const gchar ** nicks = indicator_desktop_shortcuts_get_nicks(ids);
+	g_assert(nicks[0] == NULL);
+
+	g_object_unref(ids);
+
+	return;
+}
+
+void
 test_desktop_shortcuts_suite (void)
 {
-	g_test_add_func ("/libindicator/desktopshortcuts/creation", test_desktop_shortcuts_creation);
+	g_test_add_func ("/libindicator/desktopshortcuts/creation",    test_desktop_shortcuts_creation);
+	g_test_add_func ("/libindicator/desktopshortcuts/globalnosho", test_desktop_shortcuts_globalnoshow);
 
 	return;
 }
