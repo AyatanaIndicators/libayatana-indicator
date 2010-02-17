@@ -244,12 +244,12 @@ parse_keyfile (IndicatorDesktopShortcuts * ids)
 
 		if (!should_show(priv->keyfile, G_KEY_FILE_DESKTOP_GROUP, priv->identity)) {
 			g_free(groupname);
-			break;
+			continue;
 		}
 
 		if (!should_show(priv->keyfile, groupname, priv->identity)) {
 			g_free(groupname);
-			break;
+			continue;
 		}
 
 		gchar * nickalloc = g_strdup(nicks[i]);
