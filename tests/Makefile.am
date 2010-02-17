@@ -67,7 +67,7 @@ DISTCLEANFILES += test-desktop-shortcuts-tester \
 	test-desktop-shortcuts-touch-test \
 	$(DS_XML_REPORT) \
 	$(DS_HTML_REPORT)
-
+EXTRA_DIST += test-well-formed.desktop
 
 #############################
 # Dummy Indicator Blank
