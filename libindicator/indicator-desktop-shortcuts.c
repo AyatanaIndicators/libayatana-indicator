@@ -322,9 +322,9 @@ is_valid_nick (gchar ** list, const gchar * nick)
 {
 	if (*list == NULL)
 		return FALSE;
-	if (g_strcmp0(*list, nick) == 0)
+	if (g_strcmp0(list[0], nick) == 0)
 		return TRUE;
-	return is_valid_nick(list++, nick);
+	return is_valid_nick(&list[1], nick);
 }
 
 /* API */
