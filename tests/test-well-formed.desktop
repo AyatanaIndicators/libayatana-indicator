@@ -5,11 +5,11 @@ NotShowIn=Germany
 X-Ayatana-Desktop-Shortcuts=bob;alvin;jim
 
 [bob Shortcut Group]
-Name=Bob's shortcut
+Name=bob's shortcut
 Exec=ls bob
 
 [alvin Shortcut Group]
-Name=Alivin's shortcut
+Name=alvin's shortcut
 Exec=ls alvin
 OnlyShowIn=France
 

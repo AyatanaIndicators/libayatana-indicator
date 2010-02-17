@@ -62,12 +62,42 @@ test_desktop_shortcuts_localfilter (void)
 	return;
 }
 
+/* Nick names -- checks to see they all have names */
+void
+test_desktop_shortcuts_nicknames (void)
+{
+	IndicatorDesktopShortcuts * ids = indicator_desktop_shortcuts_new(SRCDIR "/test-well-formed.desktop", "France");
+	g_assert(ids != NULL);
+
+	const gchar ** nicks = indicator_desktop_shortcuts_get_nicks(ids);
+	gint i = 0;
+	while (nicks[i] != NULL) {
+		gchar * expectedstr = g_strdup_printf("%s's shortcut", nicks[i]);
+		gchar * name = indicator_desktop_shortcuts_nick_get_name(ids, nicks[i]);
+		g_assert(name != NULL);
+
+		gboolean same = (g_strcmp0(expectedstr, name) == 0);
+
+		g_free(name);
+		g_free(expectedstr);
+
+		g_assert(same);
+
+		i++;
+	}
+
+
+	g_object_unref(ids);
+
+	return;
+}
+
 void
 test_desktop_shortcuts_suite (void)
 {
 	g_test_add_func ("/libindicator/desktopshortcuts/creation",    test_desktop_shortcuts_creation);
 	g_test_add_func ("/libindicator/desktopshortcuts/globalnosho", test_desktop_shortcuts_globalnoshow);
-	g_test_add_func ("/libindicator/desktopshortcuts/localfilter", test_desktop_shortcuts_localfilter);
+	g_test_add_func ("/libindicator/desktopshortcuts/nicknames",   test_desktop_shortcuts_nicknames);
 
 	return;
 }
