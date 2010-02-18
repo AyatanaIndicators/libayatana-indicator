@@ -10,6 +10,7 @@ libindicatorincludedir=$(includedir)/libindicator-0.3/libindicator
 
 indicator_headers = \
 	indicator.h \
+	indicator-desktop-shortcuts.h \
 	indicator-object.h \
 	indicator-service.h \
 	indicator-service-manager.h
@@ -24,6 +25,7 @@ libindicator_la_SOURCES = \
 	$(indicator_headers) \
 	dbus-shared.h \
 	indicator-object.c \
+	indicator-desktop-shortcuts.c \
 	indicator-object-marshal.h \
 	indicator-object-marshal.c \
 	indicator-service.c \
