@@ -34,6 +34,42 @@ test_loader_LDADD = \
 	-lindicator
 
 #############################
+# Test Desktop Shortcuts
+#############################
+
+check_PROGRAMS += test-desktop-shortcuts
+
+test_desktop_shortcuts_SOURCES = \
+	test-desktop-shortcuts.c
+
+test_desktop_shortcuts_CFLAGS = \
+	-Wall -Werror \
+	-DSRCDIR="\"$(srcdir)\"" \
+	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir) \
+	-DBUILD_DIR="\"$(builddir)\""
+
+test_desktop_shortcuts_LDADD = \
+	$(LIBINDICATOR_LIBS) \
+	-L$(top_builddir)/libindicator/.libs \
+	-lindicator
+
+DS_XML_REPORT  = desktop-shortcuts-check-results.xml
+DS_HTML_REPORT = desktop-shortcuts-check-results.html
+
+test-desktop-shortcuts-tester: test-desktop-shortcuts Makefile.am
+	@echo "#!/bin/bash" > $@
+	@echo $(XVFB_RUN) >> $@
+	@echo gtester -k --verbose -o=$(XML_REPORT) ./test-desktop-shortcuts >> $@
+	@chmod +x $@
+
+TESTS += test-desktop-shortcuts-tester
+DISTCLEANFILES += test-desktop-shortcuts-tester \
+	test-desktop-shortcuts-touch-test \
+	$(DS_XML_REPORT) \
+	$(DS_HTML_REPORT)
+EXTRA_DIST += test-well-formed.desktop
+
+#############################
 # Dummy Indicator Blank
 #############################
 

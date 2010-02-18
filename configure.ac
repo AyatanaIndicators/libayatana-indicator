@@ -1,10 +1,10 @@
 
-AC_INIT(libindicator, 0.3.2, ted@canonical.com)
+AC_INIT(libindicator, 0.3.3, ted@canonical.com)
 
 AC_PREREQ(2.53)
 
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(libindicator, 0.3.2)
+AM_INIT_AUTOMAKE(libindicator, 0.3.3)
 
 AM_MAINTAINER_MODE
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES])
@@ -28,8 +28,10 @@ m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
 GTK_REQUIRED_VERSION=2.18
 DBUS_REQUIRED_VERSION=0.76
+GIO_UNIX_REQUIRED_VERSION=2.23
 
 PKG_CHECK_MODULES(LIBINDICATOR, gtk+-2.0 >= $GTK_REQUIRED_VERSION
+                                gio-unix-2.0 >= $GIO_UNIX_REQUIRED_VERSION
                                 dbus-glib-1 >= $DBUS_REQUIRED_VERSION)
 
 AC_SUBST(LIBINDICATOR_CFLAGS)
