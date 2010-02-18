@@ -1,9 +1,15 @@
-libindicator (0.3.3-0ubuntu1~ppa1) lucid; urgency=low
+libindicator (0.3.3-0ubuntu1) lucid; urgency=low
 
+  * debian/control:
+    - build-depends on libglib2.0-dev
+  * debian/rules:
+    - updated shlibs version
+
+  [ Ted Gould ]
   * Upstream release 0.3.3
     * Adding new object for parsing desktop files for Shortcuts
 
- -- Ted Gould <ted@ubuntu.com>  Thu, 18 Feb 2010 10:11:21 -0600
+ -- Sebastien Bacher <seb128@ubuntu.com>  Thu, 18 Feb 2010 17:32:08 +0100
 
 libindicator (0.3.2-0ubuntu1) lucid; urgency=low
 
