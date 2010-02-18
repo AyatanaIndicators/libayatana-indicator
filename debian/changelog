@@ -1,9 +1,9 @@
-libindicator (0.3.2-0ubuntu1~ppa2) lucid; urgency=low
+libindicator (0.3.3-0ubuntu1~ppa1) UNRELEASED; urgency=low
 
-  * Upstream merge
+  * Upstream release 0.3.3
     * Adding new object for parsing desktop files for Shortcuts
 
- -- Ted Gould <ted@ubuntu.com>  Thu, 18 Feb 2010 10:07:54 -0600
+ -- Ted Gould <ted@ubuntu.com>  Thu, 18 Feb 2010 10:08:06 -0600
 
 libindicator (0.3.2-0ubuntu1) lucid; urgency=low
 
