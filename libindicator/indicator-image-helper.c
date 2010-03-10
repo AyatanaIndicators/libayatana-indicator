@@ -53,6 +53,15 @@ theme_changed_cb (GtkIconTheme * theme, gpointer user_data)
 	return;
 }
 
+/* Removes the signal on the theme that was calling update on this
+   image. */
+static void
+image_destroyed_cb (GtkImage * image, gpointer user_data)
+{
+	g_signal_handlers_disconnect_by_func(gtk_icon_theme_get_default(), theme_changed_cb, image);
+	return;
+}
+
 GtkImage *
 indicator_image_helper (const gchar * name)
 {
@@ -80,6 +89,7 @@ indicator_image_helper (const gchar * name)
 
 	/* Connect to all changes */
 	g_signal_connect(G_OBJECT(gtk_icon_theme_get_default()), "changed", G_CALLBACK(theme_changed_cb), image);
+	g_signal_connect(G_OBJECT(image), "destroy", G_CALLBACK(image_destroyed_cb), NULL);
 
 	/* Return our built image */
 	return image;
