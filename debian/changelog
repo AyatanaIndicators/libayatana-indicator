@@ -1,9 +1,9 @@
-libindicator (0.3.4-0ubuntu1~ppa2~imagehelper1) UNRELEASED; urgency=low
+libindicator (0.3.4-0ubuntu1~ppa2~imagehelper1) lucid; urgency=low
 
   * Upstream merge
     * Adding in a image loader helper for indicators.
 
- -- Ted Gould <ted@ubuntu.com>  Wed, 10 Mar 2010 16:55:17 -0600
+ -- Ted Gould <ted@ubuntu.com>  Wed, 10 Mar 2010 16:58:13 -0600
 
 libindicator (0.3.4-0ubuntu1~ppa1) lucid; urgency=low
 
