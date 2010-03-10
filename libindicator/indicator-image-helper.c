@@ -3,7 +3,7 @@
 
 const gchar * INDICATOR_NAMES_DATA = "indicator-names-data";
 
-void
+static void
 refresh_image (GtkImage * image)
 {
 	g_return_if_fail(GTK_IS_IMAGE(image));
@@ -43,6 +43,16 @@ refresh_image (GtkImage * image)
 	return;
 }
 
+/* Handles the theme changed signal to refresh the icon to make
+   sure that it changes appropriately */
+static void
+theme_changed_cb (GtkIconTheme * theme, gpointer user_data)
+{
+	GtkImage * image = GTK_IMAGE(user_data);
+	refresh_image(image);
+	return;
+}
+
 GtkImage *
 indicator_image_helper (const gchar * name)
 {
@@ -69,7 +79,7 @@ indicator_image_helper (const gchar * name)
 	refresh_image(image);
 
 	/* Connect to all changes */
-	/* TODO */
+	g_signal_connect(G_OBJECT(gtk_icon_theme_get_default()), "changed", G_CALLBACK(theme_changed_cb), image);
 
 	/* Return our built image */
 	return image;
