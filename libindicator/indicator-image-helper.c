@@ -1,4 +1,5 @@
 
+#include <math.h>
 #include "indicator-image-helper.h"
 
 const gchar * INDICATOR_NAMES_DATA = "indicator-names-data";
@@ -48,6 +49,16 @@ refresh_image (GtkImage * image)
 	if (pixbuf == NULL) {
 		g_error("Unable to load icon from file '%s' because: %s", icon_filename, error == NULL ? "I don't know" : error->message);
 		return;
+	}
+
+	/* Scale icon if all we get is something too big. */
+	if (gdk_pixbuf_get_height(pixbuf) > icon_size) {
+		gfloat scale = (gfloat)icon_size / (gfloat)gdk_pixbuf_get_height(pixbuf);
+		gint width = round(gdk_pixbuf_get_width(pixbuf) * scale);
+
+		GdkPixbuf * scaled = gdk_pixbuf_scale_simple(pixbuf, width, icon_size, GDK_INTERP_BILINEAR);
+		g_object_unref(G_OBJECT(pixbuf));
+		pixbuf = scaled;
 	}
 
 	/* Put the pixbuf on the image */
