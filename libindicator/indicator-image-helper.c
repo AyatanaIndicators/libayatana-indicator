@@ -112,21 +112,24 @@ image_destroyed_cb (GtkImage * image, gpointer user_data)
 GtkImage *
 indicator_image_helper (const gchar * name)
 {
-	g_return_val_if_fail(name != NULL, NULL);
-	g_return_val_if_fail(name[0] != '\0', NULL);
-
-	/* Build us a GIcon */
-	GIcon * icon_names = g_themed_icon_new_with_default_fallbacks(name);
-	g_return_val_if_fail(icon_names != NULL, NULL);
-
 	/* Build us an image */
 	GtkImage * image = GTK_IMAGE(gtk_image_new());
 
-	if (image == NULL) {
-		g_error("Unable to create image from pixbuf on icon name '%s'", name);
-		g_object_unref(icon_names);
-		return NULL;
-	}
+	indicator_image_helper_update(image, name);
+
+	return image;
+}
+
+void
+indicator_image_helper_update (GtkImage * image, const gchar * name)
+{
+	g_return_if_fail(name != NULL);
+	g_return_if_fail(name[0] != '\0');
+	g_return_if_fail(image != NULL);
+
+	/* Build us a GIcon */
+	GIcon * icon_names = g_themed_icon_new_with_default_fallbacks(name);
+	g_return_if_fail(icon_names != NULL);
 
 	/* Attach our names to the image */
 	g_object_set_data_full(G_OBJECT(image), INDICATOR_NAMES_DATA, icon_names, g_object_unref);
@@ -138,6 +141,5 @@ indicator_image_helper (const gchar * name)
 	g_signal_connect(G_OBJECT(gtk_icon_theme_get_default()), "changed", G_CALLBACK(theme_changed_cb), image);
 	g_signal_connect(G_OBJECT(image), "destroy", G_CALLBACK(image_destroyed_cb), NULL);
 
-	/* Return our built image */
-	return image;
+	return;
 }
