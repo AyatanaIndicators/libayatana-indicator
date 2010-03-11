@@ -109,6 +109,8 @@ image_destroyed_cb (GtkImage * image, gpointer user_data)
 	return;
 }
 
+/* Builds an image with the name and fallbacks and all kinds of fun
+   stuff . */
 GtkImage *
 indicator_image_helper (const gchar * name)
 {
@@ -120,6 +122,7 @@ indicator_image_helper (const gchar * name)
 	return image;
 }
 
+/* Updates and image with all the fun stuff */
 void
 indicator_image_helper_update (GtkImage * image, const gchar * name)
 {
@@ -131,6 +134,8 @@ indicator_image_helper_update (GtkImage * image, const gchar * name)
 	GIcon * icon_names = g_themed_icon_new_with_default_fallbacks(name);
 	g_return_if_fail(icon_names != NULL);
 
+	gboolean seen_previously = (g_object_get_data(G_OBJECT(image), INDICATOR_NAMES_DATA) != NULL);
+
 	/* Attach our names to the image */
 	g_object_set_data_full(G_OBJECT(image), INDICATOR_NAMES_DATA, icon_names, g_object_unref);
 
@@ -138,8 +143,10 @@ indicator_image_helper_update (GtkImage * image, const gchar * name)
 	refresh_image(image);
 
 	/* Connect to all changes */
-	g_signal_connect(G_OBJECT(gtk_icon_theme_get_default()), "changed", G_CALLBACK(theme_changed_cb), image);
-	g_signal_connect(G_OBJECT(image), "destroy", G_CALLBACK(image_destroyed_cb), NULL);
+	if (!seen_previously) {
+		g_signal_connect(G_OBJECT(gtk_icon_theme_get_default()), "changed", G_CALLBACK(theme_changed_cb), image);
+		g_signal_connect(G_OBJECT(image), "destroy", G_CALLBACK(image_destroyed_cb), NULL);
+	}
 
 	return;
 }
