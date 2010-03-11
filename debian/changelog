@@ -1,3 +1,9 @@
+libindicator (0.3.5-0ubuntu1~ppa2) UNRELEASED; urgency=low
+
+  * debian/rules: Updating shlibs number
+
+ -- Ted Gould <ted@ubuntu.com>  Thu, 11 Mar 2010 14:26:32 -0600
+
 libindicator (0.3.5-0ubuntu1~ppa1) lucid; urgency=low
 
   * Upstream release 0.3.5
