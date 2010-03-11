@@ -109,6 +109,15 @@ image_destroyed_cb (GtkImage * image, gpointer user_data)
 	return;
 }
 
+/* Catch the style changing on the image to make sure
+   we've got the latest. */
+static void
+image_style_change_cb (GtkImage * image, GtkStyle * previous_style, gpointer user_data)
+{
+	refresh_image(image);
+	return;
+}
+
 /* Builds an image with the name and fallbacks and all kinds of fun
    stuff . */
 GtkImage *
@@ -146,6 +155,7 @@ indicator_image_helper_update (GtkImage * image, const gchar * name)
 	if (!seen_previously) {
 		g_signal_connect(G_OBJECT(gtk_icon_theme_get_default()), "changed", G_CALLBACK(theme_changed_cb), image);
 		g_signal_connect(G_OBJECT(image), "destroy", G_CALLBACK(image_destroyed_cb), NULL);
+		g_signal_connect(G_OBJECT(image), "style-set", G_CALLBACK(image_style_change_cb), NULL);
 	}
 
 	return;
