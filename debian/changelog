@@ -1,3 +1,10 @@
+libindicator (0.3.5-0ubuntu1) UNRELEASED; urgency=low
+
+  * Upstream release 0.3.5
+    * Adding in a image loader helper for indicators.
+
+ -- Ted Gould <ted@ubuntu.com>  Thu, 11 Mar 2010 14:27:04 -0600
+
 libindicator (0.3.4-0ubuntu1) lucid; urgency=low
 
   * Upstream Release 0.3.4
@@ -113,3 +120,4 @@ libindicator (0.2.0~bzr325-0ubuntu1) karmic; urgency=low
   * debian/control: Fix Vcs-* links.
 
  -- Ken VanDine <ken.vandine@canonical.com>  Tue, 25 Aug 2009 08:35:00 +0200
+
