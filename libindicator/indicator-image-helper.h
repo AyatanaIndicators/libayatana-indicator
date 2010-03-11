@@ -26,6 +26,8 @@ License along with this library. If not, see
 
 #include <gtk/gtk.h>
 
-GtkImage * indicator_image_helper (const gchar * name);
+GtkImage *   indicator_image_helper           (const gchar * name);
+void         indicator_image_helper_update    (GtkImage * image,
+                                               const gchar * name);
 
 #endif /* __INDICATOR_IMAGE_HELPER_H__ */
