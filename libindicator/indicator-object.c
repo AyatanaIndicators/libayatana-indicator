@@ -56,6 +56,7 @@ enum {
 	ENTRY_ADDED,
 	ENTRY_REMOVED,
 	ENTRY_MOVED,
+        SCROLL,
 	LAST_SIGNAL
 };
 
@@ -142,6 +143,25 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 	                                     _indicator_object_marshal_VOID__POINTER_UINT_UINT,
 	                                     G_TYPE_NONE, 3, G_TYPE_POINTER, G_TYPE_UINT, G_TYPE_UINT, G_TYPE_NONE);
 
+
+        /**
+                IndicatorObject::scroll:
+                @arg0: The #IndicatorObject object
+                @arg1: The delta of the scroll event
+                @arg2: The orientation of the scroll event. %TRUE indicates up, %FALSE down.
+
+                When the indicator receives a mouse scroll wheel event
+                from the user, this signal is emitted.
+         */
+        signals[SCROLL] = g_signal_new (INDICATOR_OBJECT_SIGNAL_SCROLL,
+                                        G_TYPE_FROM_CLASS(klass),
+                                        G_SIGNAL_RUN_LAST,
+                                        G_STRUCT_OFFSET (IndicatorObjectClass, scroll),
+                                        NULL, NULL,
+                                        _indicator_object_marshal_VOID__UINT_BOOL,
+                                        G_TYPE_NONE, 2, G_TYPE_UINT, G_TYPE_BOOLEAN);
+
+
 	return;
 }
 
@@ -188,7 +208,7 @@ static void
 indicator_object_finalize (GObject *object)
 {
 	IndicatorObjectPrivate * priv = INDICATOR_OBJECT_GET_PRIVATE(object);
-	
+
 	if (priv->module != NULL) {
 		/* Wow, this is convoluted.  So basically we want to unref
 		   the module which will cause the code it included to be
@@ -211,7 +231,7 @@ indicator_object_finalize (GObject *object)
 
 	This function builds an #IndicatorObject using the symbols
 	that are found in @file.  The module is loaded and the
-	references are all kept by the object.  To unload the 
+	references are all kept by the object.  To unload the
 	module the object must be destroyed.
 
 	Return value: A valid #IndicatorObject or #NULL if error.
@@ -304,7 +324,7 @@ unrefandout:
 /* The default get entries function uses the other single
    entries in the class to create an entry structure and
    put it into a list.  This makes it simple for simple objects
-   to create the list.  Small changes from the way they 
+   to create the list.  Small changes from the way they
    previously were. */
 static GList *
 get_entries_default (IndicatorObject * io)
