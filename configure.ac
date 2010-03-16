@@ -15,6 +15,8 @@ AM_PROG_CC_C_O
 AC_STDC_HEADERS
 AC_PROG_LIBTOOL
 
+AC_PATH_PROG([GLIB_MKENUMS], [glib-mkenums])
+
 AC_PATH_PROG([GLIB_GENMARSHAL], [glib-genmarshal])
 
 AC_SUBST(VERSION)
@@ -66,7 +68,7 @@ else
   REAL_PREFIX=$prefix
 fi
 
-# Have to go $sysconfdir->$prefix/etc->/usr/local/etc   
+# Have to go $sysconfdir->$prefix/etc->/usr/local/etc
 # if you actually know how to code shell then fix this :-)
 SYSCONFDIR_TMP="$sysconfdir"
 old_prefix=$prefix

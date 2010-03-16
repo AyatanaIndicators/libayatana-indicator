@@ -24,10 +24,17 @@ License along with this library. If not, see
 #ifndef __INDICATOR_OBJECT_H__
 #define __INDICATOR_OBJECT_H__
 
-#include <glib.h>
-#include <glib-object.h>
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS
+
+typedef enum
+{
+  INDICATOR_OBJECT_SCROLL_UP,
+  INDICATOR_OBJECT_SCROLL_DOWN,
+  INDICATOR_OBJECT_SCROLL_LEFT,
+  INDICATOR_OBJECT_SCROLL_RIGHT
+} IndicatorScrollDirection;
 
 #define INDICATOR_OBJECT_TYPE            (indicator_object_get_type ())
 #define INDICATOR_OBJECT(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), INDICATOR_OBJECT_TYPE, IndicatorObject))

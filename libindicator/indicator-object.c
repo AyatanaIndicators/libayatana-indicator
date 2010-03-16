@@ -28,6 +28,7 @@ License along with this library. If not, see
 #include "indicator.h"
 #include "indicator-object.h"
 #include "indicator-object-marshal.h"
+#include "indicator-object-enum-types.h"
 
 /**
 	IndicatorObjectPrivate:
@@ -158,8 +159,8 @@ indicator_object_class_init (IndicatorObjectClass *klass)
                                         G_SIGNAL_RUN_LAST,
                                         G_STRUCT_OFFSET (IndicatorObjectClass, scroll),
                                         NULL, NULL,
-                                        _indicator_object_marshal_VOID__UINT_BOOL,
-                                        G_TYPE_NONE, 2, G_TYPE_UINT, G_TYPE_BOOLEAN);
+                                        _indicator_object_marshal_VOID__UINT_ENUM,
+                                        G_TYPE_NONE, 2, G_TYPE_UINT, INDICATOR_OBJECT_TYPE_SCROLL_DIRECTION);
 
 
 	return;
