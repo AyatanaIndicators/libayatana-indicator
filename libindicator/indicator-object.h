@@ -97,7 +97,7 @@ struct _IndicatorObjectClass {
         void       (*entry_added)   (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data);
         void       (*entry_removed) (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data);
         void       (*entry_moved)   (IndicatorObject * io, IndicatorObjectEntry * entry, guint old_pos, guint new_pos, gpointer user_data);
-        void       (*scroll)        (IndicatorObject * io, gint delta, gboolean orientation);
+        void       (*scroll)        (IndicatorObject * io, gint delta, IndicatorScrollDirection direction);
 
 	/* Reserved */
 	void (* indicator_object_reserved_1) (void);
