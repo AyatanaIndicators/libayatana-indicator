@@ -149,7 +149,7 @@ indicator_object_class_init (IndicatorObjectClass *klass)
                 IndicatorObject::scroll:
                 @arg0: The #IndicatorObject object
                 @arg1: The delta of the scroll event
-                @arg2: The orientation of the scroll event. %TRUE indicates up, %FALSE down.
+                @arg2: The orientation of the scroll event.
 
                 When the indicator receives a mouse scroll wheel event
                 from the user, this signal is emitted.
