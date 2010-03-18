@@ -1,3 +1,10 @@
+libindicator (0.3.6-0ubuntu1~ppa1) UNRELEASED; urgency=low
+
+  * Upstream release 0.3.6
+    * Adding in scroll signals for the indicators
+
+ -- Ted Gould <ted@ubuntu.com>  Thu, 18 Mar 2010 10:53:02 -0500
+
 libindicator (0.3.5-0ubuntu1) lucid; urgency=low
 
   * Upstream release 0.3.5

@@ -1,6 +1,6 @@
-BUILT_SOURCES = 
-CLEANFILES = 
-DISTCLEANFILES = 
+BUILT_SOURCES = indicator-object-enum-types.h indicator-object-enum-types.c
+CLEANFILES =
+DISTCLEANFILES =
 EXTRA_DIST = \
 	indicator.pc.in
 
@@ -26,6 +26,7 @@ libindicator_la_SOURCES = \
 	$(indicator_headers) \
 	dbus-shared.h \
 	indicator-object.c \
+	indicator-object-enum-types.c \
 	indicator-desktop-shortcuts.c \
 	indicator-image-helper.c \
 	indicator-object-marshal.h \
@@ -46,6 +47,29 @@ pkgconfigdir = $(libdir)/pkgconfig
 
 glib_marshal_list = indicator-object-marshal.list
 glib_marshal_prefix = _indicator_object_marshal
+
+indicator-object-enum-types.h: s-enum-types-h
+	@true
+s-enum-types-h: $(indicator_headers)
+	( cd $(srcdir) && $(GLIB_MKENUMS) --template $(srcdir)/indicator-object-enum-types.h.template								\
+		$(indicator_headers) ) >> tmp-indicator-object-enum-types.h											\
+	&& (cmp -s tmp-indicator-object-enum-types.h indicator-object-enum-types.h || cp tmp-indicator-object-enum-types.h indicator-object-enum-types.h )	\
+	&& rm -f tmp-indicator-object-enum-types.h && echo timestamp > $(@F)
+
+indicator-object-enum-types.c: s-enum-types-c
+	@true
+s-enum-types-c: $(indicator_headers)
+	( cd $(srcdir) && $(GLIB_MKENUMS) --template $(srcdir)/indicator-object-enum-types.c.template								\
+		$(indicator_headers) ) > tmp-indicator-object-enum-types.c											\
+	&& (cmp -s tmp-indicator-object-enum-types.c indicator-object-enum-types.c || cp tmp-indicator-object-enum-types.c indicator-object-enum-types.c )	\
+	&& rm -f tmp-indicator-object-enum-types.c
+
+EXTRA_DIST += indicator-object-enum-types.h
+CLEANFILES +=						\
+	indicator-object-enum-types.h			\
+	indicator-object-enum-types.c			\
+	s-enum-types-h					\
+	s-enum-types-c
 
 ##################################
 # DBus Specs
