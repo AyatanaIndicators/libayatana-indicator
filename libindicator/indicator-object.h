@@ -24,10 +24,17 @@ License along with this library. If not, see
 #ifndef __INDICATOR_OBJECT_H__
 #define __INDICATOR_OBJECT_H__
 
-#include <glib.h>
-#include <glib-object.h>
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS
+
+typedef enum
+{
+  INDICATOR_OBJECT_SCROLL_UP,
+  INDICATOR_OBJECT_SCROLL_DOWN,
+  INDICATOR_OBJECT_SCROLL_LEFT,
+  INDICATOR_OBJECT_SCROLL_RIGHT
+} IndicatorScrollDirection;
 
 #define INDICATOR_OBJECT_TYPE            (indicator_object_get_type ())
 #define INDICATOR_OBJECT(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), INDICATOR_OBJECT_TYPE, IndicatorObject))
@@ -42,6 +49,8 @@ G_BEGIN_DECLS
 #define INDICATOR_OBJECT_SIGNAL_ENTRY_REMOVED_ID  (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_ENTRY_REMOVED, INDICATOR_OBJECT_TYPE))
 #define INDICATOR_OBJECT_SIGNAL_ENTRY_MOVED       "entry-moved"
 #define INDICATOR_OBJECT_SIGNAL_ENTRY_MOVED_ID    (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_ENTRY_MOVED, INDICATOR_OBJECT_TYPE))
+#define INDICATOR_OBJECT_SIGNAL_SCROLL            "scroll"
+#define INDICATOR_OBJECT_SIGNAL_SCROLL_ID         (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_SCROLL, INDICATOR_OBJECT_TYPE))
 
 typedef struct _IndicatorObject        IndicatorObject;
 typedef struct _IndicatorObjectClass   IndicatorObjectClass;
@@ -75,7 +84,7 @@ typedef struct _IndicatorObjectEntry   IndicatorObjectEntry;
 */
 struct _IndicatorObjectClass {
 	GObjectClass parent_class;
-	
+
 	/* Virtual Functions */
 	GtkLabel * (*get_label) (IndicatorObject * io);
 	GtkImage * (*get_image) (IndicatorObject * io);
@@ -85,13 +94,13 @@ struct _IndicatorObjectClass {
 	guint      (*get_location) (IndicatorObject * io, IndicatorObjectEntry * entry);
 
 	/* Signals */
-	void       (*entry_added) (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data);
-	void       (*entry_removed) (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data);
-	void       (*entry_moved) (IndicatorObject * io, IndicatorObjectEntry * entry, guint old_pos, guint new_pos, gpointer user_data);
+        void       (*entry_added)   (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data);
+        void       (*entry_removed) (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data);
+        void       (*entry_moved)   (IndicatorObject * io, IndicatorObjectEntry * entry, guint old_pos, guint new_pos, gpointer user_data);
+        void       (*scroll)        (IndicatorObject * io, gint delta, IndicatorScrollDirection direction);
 
 	/* Reserved */
 	void (* indicator_object_reserved_1) (void);
-	void (* indicator_object_reserved_2) (void);
 };
 
 /**
