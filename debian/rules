@@ -5,4 +5,4 @@ include /usr/share/cdbs/1/class/gnome.mk
 
 LDFLAGS += -Wl,-z,defs -Wl,--as-needed
 
-DEB_DH_MAKESHLIBS_ARGS_libindicator0 += -V 'libindicator0 (>= 0.3.5)'
+DEB_DH_MAKESHLIBS_ARGS_libindicator0 += -V 'libindicator0 (>= 0.3.6)'
