@@ -39,6 +39,7 @@ struct _IndicatorDesktopShortcutsPrivate {
 	GKeyFile * keyfile;
 	gchar * identity;
 	GArray * nicks;
+	gchar * domain;
 };
 
 enum {
@@ -100,6 +101,7 @@ indicator_desktop_shortcuts_init (IndicatorDesktopShortcuts *self)
 
 	priv->keyfile = NULL;
 	priv->identity = NULL;
+	priv->domain = NULL;
 	priv->nicks = g_array_new(TRUE, TRUE, sizeof(gchar *));
 
 	return;
@@ -129,6 +131,11 @@ indicator_desktop_shortcuts_finalize (GObject *object)
 	if (priv->identity != NULL) {
 		g_free(priv->identity);
 		priv->identity = NULL;
+	}
+
+	if (priv->domain != NULL) {
+		g_free(priv->domain);
+		priv->domain = NULL;
 	}
 
 	if (priv->nicks != NULL) {
@@ -225,6 +232,15 @@ parse_keyfile (IndicatorDesktopShortcuts * ids)
 
 	if (priv->identity == NULL) {
 		return;
+	}
+
+	/* Check to see if there is a custom translation domain that
+	   we should take into account. */
+	if (g_key_file_has_key(priv->keyfile, G_KEY_FILE_DESKTOP_GROUP, "X-Ubuntu-Gettext-Domain", NULL)) {
+		if (priv->domain != NULL) {
+			g_free(priv->domain);
+		}
+		priv->domain = g_key_file_get_string(priv->keyfile, G_KEY_FILE_DESKTOP_GROUP, "X-Ubuntu-Gettext-Domain", NULL);
 	}
 
 	/* Okay, we've got everything we need.  Let's get it on! */
