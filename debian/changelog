@@ -1,3 +1,10 @@
+libindicator (0.3.6-0ubuntu1~ppa2~shortcutdomain1) UNRELEASED; urgency=low
+
+  * Upstream merge
+    * Use the domain in desktop files for shortcuts
+
+ -- Ted Gould <ted@ubuntu.com>  Fri, 02 Apr 2010 10:50:28 -0500
+
 libindicator (0.3.6-0ubuntu1~ppa1) lucid; urgency=low
 
   * Upstream release 0.3.6
