@@ -234,12 +234,22 @@ parse_keyfile (IndicatorDesktopShortcuts * ids)
 		return;
 	}
 
+	/* Remove a previous translation domain if we had one
+	   from a perviously parsed file. */
+	if (priv->domain != NULL) {
+		g_free(priv->domain);
+		priv->domain = NULL;
+	}
+
 	/* Check to see if there is a custom translation domain that
 	   we should take into account. */
-	if (g_key_file_has_key(priv->keyfile, G_KEY_FILE_DESKTOP_GROUP, "X-Ubuntu-Gettext-Domain", NULL)) {
-		if (priv->domain != NULL) {
-			g_free(priv->domain);
-		}
+	if (priv->domain == NULL &&
+			g_key_file_has_key(priv->keyfile, G_KEY_FILE_DESKTOP_GROUP, "X-GNOME-Gettext-Domain", NULL)) {
+		priv->domain = g_key_file_get_string(priv->keyfile, G_KEY_FILE_DESKTOP_GROUP, "X-GNOME-Gettext-Domain", NULL);
+	}
+
+	if (priv->domain == NULL &&
+			g_key_file_has_key(priv->keyfile, G_KEY_FILE_DESKTOP_GROUP, "X-Ubuntu-Gettext-Domain", NULL)) {
 		priv->domain = g_key_file_get_string(priv->keyfile, G_KEY_FILE_DESKTOP_GROUP, "X-Ubuntu-Gettext-Domain", NULL);
 	}
 
