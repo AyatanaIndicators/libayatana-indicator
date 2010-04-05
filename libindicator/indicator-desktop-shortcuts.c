@@ -438,22 +438,25 @@ indicator_desktop_shortcuts_nick_get_name (IndicatorDesktopShortcuts * ids, cons
 	}
 
 	gchar * name = NULL;
-	if (priv->domain == NULL) {
-		name = g_key_file_get_locale_string(priv->keyfile,
+	gchar * keyvalue = g_key_file_get_string(priv->keyfile,
+	                                         groupheader,
+	                                         G_KEY_FILE_DESKTOP_KEY_NAME,
+	                                         NULL);
+	gchar * localeval = g_key_file_get_locale_string(priv->keyfile,
 		                                    groupheader,
 		                                    G_KEY_FILE_DESKTOP_KEY_NAME,
 		                                    NULL,
 		                                    NULL);
+	g_free(groupheader);
+
+	if (priv->domain != NULL && g_strcmp0(keyvalue, localeval) == 0) {
+		name = g_strdup(g_dgettext(priv->domain, keyvalue));
+		g_free(localeval);
 	} else {
-		gchar * tempname = g_key_file_get_string(priv->keyfile,
-		                                         groupheader,
-		                                         G_KEY_FILE_DESKTOP_KEY_NAME,
-		                                         NULL);
-		name = g_strdup(g_dgettext(priv->domain, tempname));
-		g_free(tempname);
+		name = localeval;
 	}
 
-	g_free(groupheader);
+	g_free(keyvalue);
 
 	return name;
 }
