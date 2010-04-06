@@ -39,6 +39,7 @@ struct _IndicatorDesktopShortcutsPrivate {
 	GKeyFile * keyfile;
 	gchar * identity;
 	GArray * nicks;
+	gchar * domain;
 };
 
 enum {
@@ -100,6 +101,7 @@ indicator_desktop_shortcuts_init (IndicatorDesktopShortcuts *self)
 
 	priv->keyfile = NULL;
 	priv->identity = NULL;
+	priv->domain = NULL;
 	priv->nicks = g_array_new(TRUE, TRUE, sizeof(gchar *));
 
 	return;
@@ -129,6 +131,11 @@ indicator_desktop_shortcuts_finalize (GObject *object)
 	if (priv->identity != NULL) {
 		g_free(priv->identity);
 		priv->identity = NULL;
+	}
+
+	if (priv->domain != NULL) {
+		g_free(priv->domain);
+		priv->domain = NULL;
 	}
 
 	if (priv->nicks != NULL) {
@@ -225,6 +232,25 @@ parse_keyfile (IndicatorDesktopShortcuts * ids)
 
 	if (priv->identity == NULL) {
 		return;
+	}
+
+	/* Remove a previous translation domain if we had one
+	   from a previously parsed file. */
+	if (priv->domain != NULL) {
+		g_free(priv->domain);
+		priv->domain = NULL;
+	}
+
+	/* Check to see if there is a custom translation domain that
+	   we should take into account. */
+	if (priv->domain == NULL &&
+			g_key_file_has_key(priv->keyfile, G_KEY_FILE_DESKTOP_GROUP, "X-GNOME-Gettext-Domain", NULL)) {
+		priv->domain = g_key_file_get_string(priv->keyfile, G_KEY_FILE_DESKTOP_GROUP, "X-GNOME-Gettext-Domain", NULL);
+	}
+
+	if (priv->domain == NULL &&
+			g_key_file_has_key(priv->keyfile, G_KEY_FILE_DESKTOP_GROUP, "X-Ubuntu-Gettext-Domain", NULL)) {
+		priv->domain = g_key_file_get_string(priv->keyfile, G_KEY_FILE_DESKTOP_GROUP, "X-Ubuntu-Gettext-Domain", NULL);
 	}
 
 	/* Okay, we've got everything we need.  Let's get it on! */
@@ -411,13 +437,26 @@ indicator_desktop_shortcuts_nick_get_name (IndicatorDesktopShortcuts * ids, cons
 		return NULL;
 	}
 
-	gchar * name = g_key_file_get_locale_string(priv->keyfile,
-	                                            groupheader,
-	                                            G_KEY_FILE_DESKTOP_KEY_NAME,
-	                                            NULL,
-	                                            NULL);
-
+	gchar * name = NULL;
+	gchar * keyvalue = g_key_file_get_string(priv->keyfile,
+	                                         groupheader,
+	                                         G_KEY_FILE_DESKTOP_KEY_NAME,
+	                                         NULL);
+	gchar * localeval = g_key_file_get_locale_string(priv->keyfile,
+		                                    groupheader,
+		                                    G_KEY_FILE_DESKTOP_KEY_NAME,
+		                                    NULL,
+		                                    NULL);
 	g_free(groupheader);
+
+	if (priv->domain != NULL && g_strcmp0(keyvalue, localeval) == 0) {
+		name = g_strdup(g_dgettext(priv->domain, keyvalue));
+		g_free(localeval);
+	} else {
+		name = localeval;
+	}
+
+	g_free(keyvalue);
 
 	return name;
 }
