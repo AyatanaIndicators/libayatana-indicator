@@ -235,7 +235,7 @@ parse_keyfile (IndicatorDesktopShortcuts * ids)
 	}
 
 	/* Remove a previous translation domain if we had one
-	   from a perviously parsed file. */
+	   from a previously parsed file. */
 	if (priv->domain != NULL) {
 		g_free(priv->domain);
 		priv->domain = NULL;
