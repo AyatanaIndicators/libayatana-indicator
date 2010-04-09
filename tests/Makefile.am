@@ -46,7 +46,7 @@ test_desktop_shortcuts_CFLAGS = \
 	-Wall -Werror \
 	-DSRCDIR="\"$(srcdir)\"" \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir) \
-	-DBUILD_DIR="\"$(builddir)\""
+	-DBUILD_DIR="\"$(abs_builddir)\""
 
 test_desktop_shortcuts_LDADD = \
 	$(LIBINDICATOR_LIBS) \

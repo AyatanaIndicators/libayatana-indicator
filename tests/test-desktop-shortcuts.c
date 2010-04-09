@@ -103,6 +103,7 @@ test_desktop_shortcuts_launch (void)
 	g_assert(nicks_contains(nicks, "touch"));
 
 	g_assert(indicator_desktop_shortcuts_nick_exec(ids, "touch"));
+	g_usleep(100000);
 	g_assert(g_file_test(BUILD_DIR "/test-desktop-shortcuts-touch-test", G_FILE_TEST_EXISTS));
 
 	g_object_unref(ids);
