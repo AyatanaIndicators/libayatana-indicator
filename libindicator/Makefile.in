@@ -270,7 +270,8 @@ CLEANFILES = stamp-marshal indicator-object-enum-types.h \
 	$(BUILT_SOURCES)
 DISTCLEANFILES = $(marshal_h) $(marshal_c)
 EXTRA_DIST = indicator.pc.in $(glib_marshal_list) \
-	indicator-object-enum-types.h $(DBUS_SPECS)
+	indicator-object-enum-types.h.template \
+	indicator-object-enum-types.c.template $(DBUS_SPECS)
 marshal_h = $(glib_marshal_list:.list=.h)
 marshal_c = $(glib_marshal_list:.list=.c)
 libindicatorincludedir = $(includedir)/libindicator-0.3/libindicator
