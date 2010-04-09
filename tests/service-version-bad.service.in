@@ -1,3 +1,0 @@
-[D-BUS Service]
-Name=org.ayatana.version.bad
-Exec=@builddir@/service-version-bad-service
