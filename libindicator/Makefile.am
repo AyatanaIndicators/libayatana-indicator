@@ -64,7 +64,7 @@ s-enum-types-c: $(indicator_headers)
 	&& (cmp -s tmp-indicator-object-enum-types.c indicator-object-enum-types.c || cp tmp-indicator-object-enum-types.c indicator-object-enum-types.c )	\
 	&& rm -f tmp-indicator-object-enum-types.c
 
-EXTRA_DIST += indicator-object-enum-types.h
+EXTRA_DIST += indicator-object-enum-types.h.template indicator-object-enum-types.c.template
 CLEANFILES +=						\
 	indicator-object-enum-types.h			\
 	indicator-object-enum-types.c			\
