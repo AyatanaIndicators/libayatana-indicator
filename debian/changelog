@@ -1,3 +1,9 @@
+libindicator (0.3.8-2) unstable; urgency=low
+
+  * Revert cdbs drop, as requested by the Ubuntu maintainers.
+
+ -- Evgeni Golov <evgeni@debian.org>  Wed, 16 Jun 2010 09:51:54 +0200
+
 libindicator (0.3.8-1) unstable; urgency=low
 
   * Merge Ubuntu package into Debian.
