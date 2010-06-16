@@ -1,8 +1,14 @@
 #!/usr/bin/make -f
 
-include /usr/share/cdbs/1/rules/debhelper.mk
-include /usr/share/cdbs/1/class/gnome.mk
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
 
 LDFLAGS += -Wl,-z,defs -Wl,--as-needed
 
-DEB_DH_MAKESHLIBS_ARGS_libindicator0 += -V 'libindicator0 (>= 0.3.6)'
+%:
+	dh  $@
+
+override_dh_auto_test:
+
+override_dh_makeshlibs:
+	dh_makeshlibs -V 'libindicator0 (>= 0.3.6)'

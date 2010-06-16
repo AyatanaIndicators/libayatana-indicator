@@ -1,30 +1,30 @@
 Source: libindicator
 Section: libs
 Priority: optional
-Maintainer: Ubuntu Core Developers <ubuntu-devel-discuss@lists.ubuntu.com>
-Build-Depends: debhelper (>= 5.0),
-               cdbs (>= 0.4.41),
+Maintainer: Evgeni Golov <evgeni@debian.org>
+Uploaders: Kartik Mistry <kartik@debian.org>
+Build-Depends: debhelper (>= 7.0.50~),
                libglib2.0-dev (>= 2.22),
                libgtk2.0-dev (>= 2.12.0),
                libdbus-glib-1-dev,
                libtool,
                intltool,
                gtk-doc-tools
-Standards-Version: 3.8.0
+Standards-Version: 3.8.4
 Homepage: https://launchpad.net/libindicator
-Vcs-Bzr: https://code.launchpad.net/~ubuntu-desktop/libindicator/ubuntu
-Vcs-Browser: http://bazaar.launchpad.net/~ubuntu-desktop/libindicator/ubuntu
+Vcs-Git: git://git.debian.org/collab-maint/libindicator.git
+Vcs-Browser: http://git.debian.org/?p=collab-maint/libindicator.git
 
 Package: libindicator0
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends}
-Description: GNOME panel indicator applet - shared library
+Description: panel indicator applet - shared library
  This library contains information to build indicators to go into
  the indicator applet.
  .
- This package contains files that are needed to build applications.
+ This package contains the library itself.
 
 Package: libindicator-dev
 Section: libdevel
@@ -33,7 +33,7 @@ Depends: ${shlibs:Depends},
          ${misc:Depends},
          libgtk2.0-dev (>= 2.12.0),
          libindicator0 (= ${binary:Version})
-Description: GNOME panel indicator applet - shared library
+Description: panel indicator applet - library development files
  This library contains information to build indicators to go into
  the indicator applet.
  .
