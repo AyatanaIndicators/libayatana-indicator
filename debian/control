@@ -1,8 +1,8 @@
 Source: libindicator
 Section: libs
 Priority: optional
-Maintainer: Evgeni Golov <evgeni@debian.org>
-Uploaders: Kartik Mistry <kartik@debian.org>
+Maintainer: The Ayatana Packagers <pkg-ayatana-devel@lists.alioth.debian.org>
+Uploaders: Evgeni Golov <evgeni@debian.org>, Kartik Mistry <kartik@debian.org>
 Build-Depends: debhelper (>= 5.0),
                cdbs (>= 0.4.41),
                libglib2.0-dev (>= 2.22),
@@ -13,8 +13,8 @@ Build-Depends: debhelper (>= 5.0),
                gtk-doc-tools
 Standards-Version: 3.8.4
 Homepage: https://launchpad.net/libindicator
-Vcs-Git: git://git.debian.org/collab-maint/libindicator.git
-Vcs-Browser: http://git.debian.org/?p=collab-maint/libindicator.git
+Vcs-Bzr: http://bzr.debian.org/bzr/pkg-ayatana/libindicator/debian
+Vcs-Browser: http://bzr.debian.org/loggerhead/pkg-ayatana/libindicator/debian
 
 Package: libindicator0
 Section: libs

@@ -1,8 +1,9 @@
 libindicator (0.3.8-2) unstable; urgency=low
 
   * Revert cdbs drop, as requested by the Ubuntu maintainers.
+  * Update Maintainer and Vcs-* fields for pkg-ayatana.
 
- -- Evgeni Golov <evgeni@debian.org>  Wed, 16 Jun 2010 09:51:54 +0200
+ -- Evgeni Golov <evgeni@debian.org>  Wed, 16 Jun 2010 09:54:50 +0200
 
 libindicator (0.3.8-1) unstable; urgency=low
 
