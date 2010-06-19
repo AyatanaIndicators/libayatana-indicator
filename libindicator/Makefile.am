@@ -8,7 +8,7 @@ EXTRA_DIST = \
 include $(top_srcdir)/Makefile.am.marshal
 
 libindicatorincludedir=$(includedir)/libindicator-0.3/libindicator
-libindicator3includedir=$(includedir)/libindicator-3.3/libindicator
+libindicator3includedir=$(includedir)/libindicator3-0.3/libindicator
 
 indicator_headers = \
 	indicator.h \
@@ -22,7 +22,7 @@ indicator_headers = \
 libindicatorinclude_HEADERS = \
 	$(indicator_headers)
 libindicator3include_HEADERS = \
-	$(indicator3_headers)
+	$(indicator_headers)
 
 lib_LTLIBRARIES = \
 	libindicator.la \
