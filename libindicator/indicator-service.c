@@ -50,6 +50,7 @@ typedef struct _IndicatorServicePrivate IndicatorServicePrivate;
 struct _IndicatorServicePrivate {
 	gchar * name;
 	DBusGProxy * dbus_proxy;
+	DBusGConnection * bus;
 	guint timeout;
 	GHashTable * watchers;
 	guint this_service_version;
@@ -158,13 +159,14 @@ indicator_service_init (IndicatorService *self)
 	priv->dbus_proxy = NULL;
 	priv->timeout = 0;
 	priv->watchers = NULL;
+	priv->bus = NULL;
 	priv->this_service_version = 0;
 
 	priv->watchers = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_object_unref);
 
 	/* Start talkin' dbus */
 	GError * error = NULL;
-	DBusGConnection * bus = dbus_g_bus_get(DBUS_BUS_STARTER, &error);
+	priv->bus = dbus_g_bus_get(DBUS_BUS_STARTER, &error);
 	if (error != NULL) {
 		g_error("Unable to get starter bus: %s", error->message);
 		g_error_free(error);
@@ -173,7 +175,7 @@ indicator_service_init (IndicatorService *self)
 		/* I think this should automatically, but I can't find confirmation
 		   of that, so we're putting the extra little code in here. */
 		error = NULL;
-		bus = dbus_g_bus_get(DBUS_BUS_SESSION, &error);
+		priv->bus = dbus_g_bus_get(DBUS_BUS_SESSION, &error);
 		if (error != NULL) {
 			g_error("Unable to get session bus: %s", error->message);
 			g_error_free(error);
@@ -181,7 +183,7 @@ indicator_service_init (IndicatorService *self)
 		}
 	}
 
-	priv->dbus_proxy = dbus_g_proxy_new_for_name_owner(bus,
+	priv->dbus_proxy = dbus_g_proxy_new_for_name_owner(priv->bus,
 	                                                   DBUS_SERVICE_DBUS,
 	                                                   DBUS_PATH_DBUS,
 	                                                   DBUS_INTERFACE_DBUS,
@@ -192,7 +194,7 @@ indicator_service_init (IndicatorService *self)
 		return;
 	}
 
-	dbus_g_connection_register_g_object(bus,
+	dbus_g_connection_register_g_object(priv->bus,
 	                                    INDICATOR_SERVICE_OBJECT,
 	                                    G_OBJECT(self));
 
