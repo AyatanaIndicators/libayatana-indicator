@@ -387,9 +387,19 @@ _indicator_service_server_watch (IndicatorService * service, DBusGMethodInvocati
 
 	const gchar * sender = dbus_g_method_get_sender(method);
 	if (g_hash_table_lookup(priv->watchers, sender) == NULL) {
-		DBusGProxy * senderproxy = (gpointer)1;
+		GError * error = NULL;
+		DBusGProxy * senderproxy = dbus_g_proxy_new_for_name_owner(priv->bus,
+		                                                           sender,
+		                                                           "/",
+		                                                           DBUS_INTERFACE_INTROSPECTABLE,
+		                                                           &error);
 
-		g_hash_table_insert(priv->watchers, g_strdup(sender), senderproxy);
+		if (error == NULL) {
+			g_hash_table_insert(priv->watchers, g_strdup(sender), senderproxy);
+		} else {
+			g_warning("Unable to create proxy for watcher '%s': %s", sender, error->message);
+			g_error_free(error);
+		}
 	}
 
 	if (priv->timeout != 0) {
