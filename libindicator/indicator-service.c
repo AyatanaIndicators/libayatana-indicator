@@ -29,6 +29,7 @@ License along with this library. If not, see
 
 #include "indicator-service.h"
 
+static void unwatch_core (IndicatorService * service, const gchar * name);
 /* DBus Prototypes */
 static gboolean _indicator_service_server_watch (IndicatorService * service, DBusGMethodInvocation * method);
 static gboolean _indicator_service_server_un_watch (IndicatorService * service, DBusGMethodInvocation * method);
@@ -375,6 +376,19 @@ try_and_get_name (IndicatorService * service)
 	return;
 }
 
+/* If the proxy gets destroyed that's the same as getting an
+   unwatch signal.  Make it so. */
+static void
+proxy_destroyed (GObject * proxy, gpointer user_data)
+{
+	g_return_if_fail(INDICATOR_IS_SERVICE(user_data));
+
+	const gchar * name = dbus_g_proxy_get_bus_name(DBUS_G_PROXY(proxy));
+	unwatch_core(INDICATOR_SERVICE(user_data), name);
+
+	return;
+}
+
 /* Here is the function that gets called by the dbus
    interface "Watch" function.  It is an async function so
    that we can get the sender and store that information.  We
@@ -393,6 +407,8 @@ _indicator_service_server_watch (IndicatorService * service, DBusGMethodInvocati
 		                                                           "/",
 		                                                           DBUS_INTERFACE_INTROSPECTABLE,
 		                                                           &error);
+
+		g_signal_connect(G_OBJECT(senderproxy), "destroy", G_CALLBACK(proxy_destroyed), service);
 
 		if (error == NULL) {
 			g_hash_table_insert(priv->watchers, g_strdup(sender), senderproxy);
@@ -413,23 +429,34 @@ _indicator_service_server_watch (IndicatorService * service, DBusGMethodInvocati
 
 /* A function connecting into the dbus interface for the
    "UnWatch" function.  It is also an async function to get
-   the sender.  It then looks the sender up and removes them
-   from the list of watchers.  If there are none left, it then
-   starts the timer for the shutdown signal. */
+   the sender and passes everything to unwatch_core to remove it. */
 static gboolean
 _indicator_service_server_un_watch (IndicatorService * service, DBusGMethodInvocation * method)
 {
 	g_return_val_if_fail(INDICATOR_IS_SERVICE(service), FALSE);
+
+	unwatch_core(service, dbus_g_method_get_sender(method));
+
+	dbus_g_method_return(method);
+	return TRUE;
+}
+
+/* Performs the core of loosing a watcher; it removes them
+   from the list of watchers.  If there are none left, it then
+   starts the timer for the shutdown signal. */
+static void
+unwatch_core (IndicatorService * service, const gchar * name)
+{
 	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(service);
 
 	/* Remove us from the watcher list here */
-	gpointer watcher_item = g_hash_table_lookup(priv->watchers, dbus_g_method_get_sender(method));
+	gpointer watcher_item = g_hash_table_lookup(priv->watchers, name);
 	if (watcher_item != NULL) {
 		/* Free the watcher */
-		g_hash_table_remove(priv->watchers, dbus_g_method_get_sender(method));
+		g_hash_table_remove(priv->watchers, name);
 	} else {
 		/* Odd that we couldn't find the person, but, eh */
-		g_warning("Unable to find watcher who is unwatching: %s", dbus_g_method_get_sender(method));
+		g_warning("Unable to find watcher who is unwatching: %s", name);
 	}
 
 	/* If we're out of watchers set the timeout for shutdown */
@@ -445,8 +472,7 @@ _indicator_service_server_un_watch (IndicatorService * service, DBusGMethodInvoc
 		priv->timeout = g_timeout_add(500, timeout_no_watchers, service);
 	}
 
-	dbus_g_method_return(method);
-	return TRUE;
+	return;
 }
 
 /* API */
