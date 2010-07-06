@@ -51,7 +51,7 @@ struct _IndicatorServicePrivate {
 	gchar * name;
 	DBusGProxy * dbus_proxy;
 	guint timeout;
-	GList * watchers;
+	GHashTable * watchers;
 	guint this_service_version;
 };
 
@@ -160,6 +160,8 @@ indicator_service_init (IndicatorService *self)
 	priv->watchers = NULL;
 	priv->this_service_version = 0;
 
+	priv->watchers = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_object_unref);
+
 	/* Start talkin' dbus */
 	GError * error = NULL;
 	DBusGConnection * bus = dbus_g_bus_get(DBUS_BUS_STARTER, &error);
@@ -230,8 +232,7 @@ indicator_service_finalize (GObject *object)
 	}
 
 	if (priv->watchers != NULL) {
-		g_list_foreach(priv->watchers, (GFunc)g_free, NULL);
-		g_list_free(priv->watchers);
+		g_hash_table_destroy(priv->watchers);
 		priv->watchers = NULL;
 	}
 
@@ -382,8 +383,12 @@ _indicator_service_server_watch (IndicatorService * service, DBusGMethodInvocati
 	g_return_val_if_fail(INDICATOR_IS_SERVICE(service), FALSE);
 	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(service);
 
-	priv->watchers = g_list_append(priv->watchers,
-	                               g_strdup(dbus_g_method_get_sender(method)));
+	const gchar * sender = dbus_g_method_get_sender(method);
+	if (g_hash_table_lookup(priv->watchers, sender) == NULL) {
+		DBusGProxy * senderproxy = (gpointer)1;
+
+		g_hash_table_insert(priv->watchers, g_strdup(sender), senderproxy);
+	}
 
 	if (priv->timeout != 0) {
 		g_source_remove(priv->timeout);
@@ -392,13 +397,6 @@ _indicator_service_server_watch (IndicatorService * service, DBusGMethodInvocati
 
 	dbus_g_method_return(method, INDICATOR_SERVICE_VERSION, priv->this_service_version);
 	return TRUE;
-}
-
-/* Mung g_strcmp0 into GCompareFunc */
-static gint
-find_watcher (gconstpointer a, gconstpointer b)
-{
-	return g_strcmp0((const gchar *)a, (const gchar *)b);
 }
 
 /* A function connecting into the dbus interface for the
@@ -413,19 +411,17 @@ _indicator_service_server_un_watch (IndicatorService * service, DBusGMethodInvoc
 	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(service);
 
 	/* Remove us from the watcher list here */
-	GList * watcher_item = g_list_find_custom(priv->watchers, dbus_g_method_get_sender(method), find_watcher);
+	gpointer watcher_item = g_hash_table_lookup(priv->watchers, dbus_g_method_get_sender(method));
 	if (watcher_item != NULL) {
 		/* Free the watcher */
-		gchar * name = watcher_item->data;
-		priv->watchers = g_list_remove(priv->watchers, name);
-		g_free(name);
+		g_hash_table_remove(priv->watchers, dbus_g_method_get_sender(method));
 	} else {
 		/* Odd that we couldn't find the person, but, eh */
 		g_warning("Unable to find watcher who is unwatching: %s", dbus_g_method_get_sender(method));
 	}
 
 	/* If we're out of watchers set the timeout for shutdown */
-	if (priv->watchers == NULL) {
+	if (g_hash_table_size(priv->watchers) == 0) {
 		if (priv->timeout != 0) {
 			/* This should never really happen, but let's ensure that
 			   bad things don't happen if it does. */
