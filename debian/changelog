@@ -1,19 +1,14 @@
-libindicator (0.3.8-2ubuntu1~ppa3) lucid; urgency=low
+libindicator (0.3.9-0ubuntu1~ppa1) UNRELEASED; urgency=low
 
-  * Merge Upstream
+  * New upstream release.
     * Removing checking for style properties that aren't used.
     * Make it so that a watcher dying is the same as unregistering.
-
- -- Ted Gould <ted@ubuntu.com>  Thu, 08 Jul 2010 09:25:25 -0500
-
-libindicator (0.3.8-2ubuntu1~ppa1) lucid; urgency=low
-
   * Merge debian changes
   	* Drop debian/source/*
   * debian/control: Switch VCS for this branch to be the indicator
     applet developers branch.
 
- -- Ted Gould <ted@ubuntu.com>  Wed, 16 Jun 2010 13:29:16 -0500
+ -- Ted Gould <ted@ubuntu.com>  Thu, 08 Jul 2010 15:17:32 -0500
 
 libindicator (0.3.8-2) unstable; urgency=low
 
