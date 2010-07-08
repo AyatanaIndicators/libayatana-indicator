@@ -165,6 +165,10 @@ indicator_service_init (IndicatorService *self)
 	priv->bus = NULL;
 	priv->this_service_version = 0;
 
+	/* NOTE: We're using g_object_unref here because that's what needs to
+	   happen, but you really should call watchers_remove first as well
+	   since that disconnects the signals.  We can't do that with a callback
+	   here because there is no user data to pass the object as well. */
 	priv->watchers = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_object_unref);
 
 	/* Start talkin' dbus */
