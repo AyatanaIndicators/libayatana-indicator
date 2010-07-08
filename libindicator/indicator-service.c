@@ -30,6 +30,8 @@ License along with this library. If not, see
 #include "indicator-service.h"
 
 static void unwatch_core (IndicatorService * service, const gchar * name);
+static void proxy_destroyed (GObject * proxy, gpointer user_data);
+static gboolean watchers_remove (gpointer key, gpointer value, gpointer user_data);
 /* DBus Prototypes */
 static gboolean _indicator_service_server_watch (IndicatorService * service, DBusGMethodInvocation * method);
 static gboolean _indicator_service_server_un_watch (IndicatorService * service, DBusGMethodInvocation * method);
@@ -209,6 +211,10 @@ indicator_service_dispose (GObject *object)
 {
 	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(object);
 
+	if (priv->watchers != NULL) {
+		g_hash_table_foreach_remove(priv->watchers, watchers_remove, object);
+	}
+
 	if (priv->dbus_proxy != NULL) {
 		g_object_unref(G_OBJECT(priv->dbus_proxy));
 		priv->dbus_proxy = NULL;
@@ -312,6 +318,15 @@ get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspe
 	}
 
 	return;
+}
+
+/* A function to remove the signals on a proxy before we destroy
+   it because in this case we've stopped caring. */
+static gboolean
+watchers_remove (gpointer key, gpointer value, gpointer user_data)
+{
+	g_signal_handlers_disconnect_by_func(G_OBJECT(value), G_CALLBACK(proxy_destroyed), user_data);
+	return TRUE;
 }
 
 /* This is the function that gets executed if we timeout
