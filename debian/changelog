@@ -1,3 +1,42 @@
+libindicator (0.3.9-0ubuntu1) maverick; urgency=low
+
+  * New upstream release.
+    * Removing checking for style properties that aren't used.
+    * Make it so that a watcher dying is the same as unregistering.
+  * Merge debian changes
+  	* Drop debian/source/*
+  * debian/control: Switch VCS for this branch to be the indicator
+    applet developers branch.
+
+ -- Ted Gould <ted@ubuntu.com>  Thu, 08 Jul 2010 15:19:08 -0500
+
+libindicator (0.3.8-2) unstable; urgency=low
+
+  * Revert cdbs drop, as requested by the Ubuntu maintainers.
+  * Update Maintainer and Vcs-* fields for pkg-ayatana.
+
+ -- Evgeni Golov <evgeni@debian.org>  Wed, 16 Jun 2010 09:54:50 +0200
+
+libindicator (0.3.8-1) unstable; urgency=low
+
+  * Merge Ubuntu package into Debian.
+    Closes: #549999
+  * debian/copyright:
+    + Update to machine readable format.
+  * debian/control:
+    + Drop cdbs Build-Dep, bump debhelper to >=7.
+    + Standards-Version 3.8.4.
+    + Update Vcs-* fields.
+    + Drop GNOME from Description, the package is not GNOME specific.
+    + Slightly update Description, thanks lintian.
+  * debian/rules:
+    + Use minimal debhelper 7 rules without cdbs.
+    + Disable tests for now, they fail (launchpad 587811)
+  * debian/source/format:
+    + Add file, make package 3.0 (quilt).
+
+ -- Evgeni Golov <evgeni@debian.org>  Mon, 07 Jun 2010 11:21:32 +0200
+
 libindicator (0.3.8-0ubuntu1) lucid; urgency=low
 
   * New upstream release.
@@ -142,4 +181,3 @@ libindicator (0.2.0~bzr325-0ubuntu1) karmic; urgency=low
   * debian/control: Fix Vcs-* links.
 
  -- Ken VanDine <ken.vandine@canonical.com>  Tue, 25 Aug 2009 08:35:00 +0200
-
