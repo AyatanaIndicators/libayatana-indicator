@@ -453,6 +453,7 @@ unwatch_core (IndicatorService * service, const gchar * name)
 	gpointer watcher_item = g_hash_table_lookup(priv->watchers, name);
 	if (watcher_item != NULL) {
 		/* Free the watcher */
+		g_signal_handlers_disconnect_by_func(G_OBJECT(watcher_item), G_CALLBACK(proxy_destroyed), service);
 		g_hash_table_remove(priv->watchers, name);
 	} else {
 		/* Odd that we couldn't find the person, but, eh */
