@@ -152,3 +152,5 @@ tests/test-desktop-shortcuts
 tests/test-desktop-shortcuts-tester
 tests/test-desktop-shortcuts-touch-test
 libindicator/libindicator_la-indicator-image-helper.lo
+tests/service-version-multiwatch-manager
+tests/service-version-multiwatch-tester
