@@ -155,3 +155,4 @@ libindicator/libindicator_la-indicator-image-helper.lo
 tests/service-version-multiwatch-manager
 tests/service-version-multiwatch-tester
 tests/service-version-multiwatch-service
+tests/service-version-multiwatch-manager-impolite

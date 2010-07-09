@@ -321,6 +321,20 @@ service_version_multiwatch_manager_LDADD = \
 	$(LIBINDICATOR_LIBS) \
 	$(top_builddir)/libindicator/.libs/libindicator.a
 
+check_PROGRAMS += service-version-multiwatch-manager-impolite
+
+service_version_manager_impolite_SOURCES = \
+	service-version-values.h \
+	service-version-multiwatch-manager-impolite.c
+
+service_version_multiwatch_manager_impolite_CFLAGS = \
+	-Wall -Werror \
+	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
+
+service_version_multiwatch_manager_impolite_LDADD = \
+	$(LIBINDICATOR_LIBS) \
+	$(top_builddir)/libindicator/.libs/libindicator.a
+
 check_PROGRAMS += service-version-multiwatch-service
 
 service_version_multiwatch_service_SOURCES = \
@@ -335,9 +349,9 @@ service_version_multiwatch_service_LDADD = \
 	$(LIBINDICATOR_LIBS) \
 	$(top_builddir)/libindicator/.libs/libindicator.a
 
-service-version-multiwatch-tester: service-version-multiwatch-manager service-version-multiwatch-service Makefile.am
+service-version-multiwatch-tester: service-version-multiwatch-manager service-version-multiwatch-service service-version-multiwatch-manager-impolite Makefile.am
 	@echo "#!/bin/sh" > $@
-	@echo dbus-test-runner --task ./service-version-multiwatch-service --task-name Service --task ./service-version-multiwatch-manager --task-name Manager1 --task ./service-version-multiwatch-manager --task-name Manager2 --task ./service-version-multiwatch-manager --task-name Manager3 --task ./service-version-multiwatch-manager --task-name Manager4 --task ./service-version-multiwatch-manager --task-name Manager5 >> $@
+	@echo dbus-test-runner --task ./service-version-multiwatch-service --task-name Service --task ./service-version-multiwatch-manager --task-name Manager1 --task ./service-version-multiwatch-manager --task-name Manager2 --task ./service-version-multiwatch-manager --task-name Manager3 --task ./service-version-multiwatch-manager --task-name Manager4 --task ./service-version-multiwatch-manager --task-name Manager5 --task ./service-version-multiwatch-manager-impolite --task-name Impolite1 --task ./service-version-multiwatch-manager-impolite --task-name Impolite2 --task ./service-version-multiwatch-manager-impolite --task-name Impolite3 >> $@
 	@chmod +x $@
 
 TESTS += service-version-multiwatch-tester
