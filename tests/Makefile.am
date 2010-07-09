@@ -351,7 +351,7 @@ service_version_multiwatch_service_LDADD = \
 
 service-version-multiwatch-tester: service-version-multiwatch-manager service-version-multiwatch-service service-version-multiwatch-manager-impolite Makefile.am
 	@echo "#!/bin/sh" > $@
-	@echo dbus-test-runner --task ./service-version-multiwatch-service --task-name Service --task ./service-version-multiwatch-manager --task-name Manager1 --task ./service-version-multiwatch-manager --task-name Manager2 --task ./service-version-multiwatch-manager --task-name Manager3 --task ./service-version-multiwatch-manager --task-name Manager4 --task ./service-version-multiwatch-manager --task-name Manager5 --task ./service-version-multiwatch-manager-impolite --task-name Impolite1 >> $@
+	@echo dbus-test-runner --task ./service-version-multiwatch-service --task-name Service --task ./service-version-multiwatch-manager --task-name Manager1 --task ./service-version-multiwatch-manager --task-name Manager2 --task ./service-version-multiwatch-manager --task-name Manager3 --task ./service-version-multiwatch-manager --task-name Manager4 --task ./service-version-multiwatch-manager --task-name Manager5 --task ./service-version-multiwatch-manager-impolite --task-name Impolite1 --task ./service-version-multiwatch-manager-impolite --task-name Impolite2 --task ./service-version-multiwatch-manager-impolite --task-name Impolite3 >> $@
 	@chmod +x $@
 
 TESTS += service-version-multiwatch-tester
