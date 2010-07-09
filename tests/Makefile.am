@@ -304,6 +304,18 @@ TESTS += service-version-tester
 DISTCLEANFILES += service-version-tester service-version-bad.service service-version-good.service
 
 #############################
+# Service Versions
+#############################
+
+service-version-multiwatch-tester: service-version-manager service-version-good-service session.conf service-version-good.service Makefile.am
+	@echo "#!/bin/sh" > $@
+	@echo dbus-test-runner --dbus-config $(builddir)/session.conf --task ./service-version-manager --task-name Manager1 --task ./service-version-manager --task-name Manager2 >> $@
+	@chmod +x $@
+
+TESTS += service-version-multiwatch-tester
+DISTCLEANFILES += service-version-multiwatch-tester
+
+#############################
 # Service Manager Shutdown
 #############################
 
