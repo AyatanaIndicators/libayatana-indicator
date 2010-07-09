@@ -321,9 +321,23 @@ service_version_multiwatch_manager_LDADD = \
 	$(LIBINDICATOR_LIBS) \
 	$(top_builddir)/libindicator/.libs/libindicator.a
 
-service-version-multiwatch-tester: service-version-multiwatch-manager service-version-good-service Makefile.am
+check_PROGRAMS += service-version-multiwatch-service
+
+service_version_multiwatch_service_SOURCES = \
+	service-version-values.h \
+	service-version-multiwatch-service.c
+
+service_version_multiwatch_service_CFLAGS = \
+	-Wall -Werror \
+	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
+
+service_version_multiwatch_service_LDADD = \
+	$(LIBINDICATOR_LIBS) \
+	$(top_builddir)/libindicator/.libs/libindicator.a
+
+service-version-multiwatch-tester: service-version-multiwatch-manager service-version-multiwatch-service Makefile.am
 	@echo "#!/bin/sh" > $@
-	@echo dbus-test-runner --task ./service-version-good-service --task-name Service --task ./service-version-multiwatch-manager --task-name Manager1 --task ./service-version-multiwatch-manager --task-name Manager2 >> $@
+	@echo dbus-test-runner --task ./service-version-multiwatch-service --task-name Service --task ./service-version-multiwatch-manager --task-name Manager1 --task ./service-version-multiwatch-manager --task-name Manager2 >> $@
 	@chmod +x $@
 
 TESTS += service-version-multiwatch-tester
