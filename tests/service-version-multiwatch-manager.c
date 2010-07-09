@@ -29,6 +29,8 @@ connection_good (IndicatorServiceManager * sm, gboolean connected, gpointer user
 gboolean
 delay_start (gpointer data)
 {
+	g_debug("Starting Manager");
+
 	goodis = indicator_service_manager_new_version("org.ayatana.version.good", SERVICE_VERSION_GOOD);
 	g_signal_connect(G_OBJECT(goodis), INDICATOR_SERVICE_MANAGER_SIGNAL_CONNECTION_CHANGE, G_CALLBACK(connection_good), NULL);
 
