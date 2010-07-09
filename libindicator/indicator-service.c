@@ -466,6 +466,9 @@ _indicator_service_server_un_watch (IndicatorService * service, DBusGMethodInvoc
 static void
 unwatch_core (IndicatorService * service, const gchar * name)
 {
+	g_return_if_fail(name != NULL);
+	g_return_if_fail(INDICATOR_IS_SERVICE(service));
+
 	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(service);
 
 	/* Remove us from the watcher list here */
