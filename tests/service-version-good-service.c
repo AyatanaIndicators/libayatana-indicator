@@ -5,12 +5,19 @@
 
 static GMainLoop * mainloop = NULL;
 static gboolean passed = FALSE;
+static IndicatorService * is = NULL;
 
 gboolean
 timeout (gpointer data)
 {
 	passed = FALSE;
 	g_debug("Timeout with no shutdown.");
+
+	if (is != NULL) {
+		g_object_unref(is);
+		is = NULL;
+	}
+
 	g_main_loop_quit(mainloop);
 	return FALSE;
 }
@@ -20,6 +27,12 @@ shutdown (void)
 {
 	g_debug("Shutdown");
 	passed = TRUE;
+
+	if (is != NULL) {
+		g_object_unref(is);
+		is = NULL;
+	}
+
 	g_main_loop_quit(mainloop);
 	return;
 }
@@ -29,7 +42,7 @@ main (int argc, char ** argv)
 {
 	g_type_init();
 
-	IndicatorService * is = indicator_service_new_version("org.ayatana.version.good", SERVICE_VERSION_GOOD);
+	is = indicator_service_new_version("org.ayatana.version.good", SERVICE_VERSION_GOOD);
 	g_signal_connect(G_OBJECT(is), INDICATOR_SERVICE_SIGNAL_SHUTDOWN, shutdown, NULL);
 
 	g_timeout_add_seconds(1, timeout, NULL);
