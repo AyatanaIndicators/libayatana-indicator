@@ -307,9 +307,23 @@ DISTCLEANFILES += service-version-tester service-version-bad.service service-ver
 # Service Versions
 #############################
 
-service-version-multiwatch-tester: service-version-manager service-version-good-service session.conf service-version-good.service Makefile.am
+check_PROGRAMS += service-version-multiwatch-manager
+
+service_version_manager_SOURCES = \
+	service-version-values.h \
+	service-version-multiwatch-manager.c
+
+service_version_multiwatch_manager_CFLAGS = \
+	-Wall -Werror \
+	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
+
+service_version_multiwatch_manager_LDADD = \
+	$(LIBINDICATOR_LIBS) \
+	$(top_builddir)/libindicator/.libs/libindicator.a
+
+service-version-multiwatch-tester: service-version-multiwatch-manager service-version-good-service session.conf service-version-good.service Makefile.am
 	@echo "#!/bin/sh" > $@
-	@echo dbus-test-runner --dbus-config $(builddir)/session.conf --task ./service-version-manager --task-name Manager1 --task ./service-version-manager --task-name Manager2 >> $@
+	@echo dbus-test-runner --dbus-config $(builddir)/session.conf --task ./service-version-multiwatch-manager --task-name Manager1 --task ./service-version-multiwatch-manager --task-name Manager2 >> $@
 	@chmod +x $@
 
 TESTS += service-version-multiwatch-tester
