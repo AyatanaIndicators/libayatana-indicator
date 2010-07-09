@@ -1,4 +1,4 @@
-libindicator (0.3.9-0ubuntu1~ppa1) lucid; urgency=low
+libindicator (0.3.9-0ubuntu1) maverick; urgency=low
 
   * New upstream release.
     * Removing checking for style properties that aren't used.
