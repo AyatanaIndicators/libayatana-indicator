@@ -321,9 +321,9 @@ service_version_multiwatch_manager_LDADD = \
 	$(LIBINDICATOR_LIBS) \
 	$(top_builddir)/libindicator/.libs/libindicator.a
 
-service-version-multiwatch-tester: service-version-multiwatch-manager service-version-good-service session.conf service-version-good.service Makefile.am
+service-version-multiwatch-tester: service-version-multiwatch-manager service-version-good-service Makefile.am
 	@echo "#!/bin/sh" > $@
-	@echo dbus-test-runner --dbus-config $(builddir)/session.conf --task ./service-version-good-service --task-name Service --task ./service-version-multiwatch-manager --task-name Manager1 --task ./service-version-multiwatch-manager --task-name Manager2 >> $@
+	@echo dbus-test-runner --task ./service-version-good-service --task-name Service --task ./service-version-multiwatch-manager --task-name Manager1 --task ./service-version-multiwatch-manager --task-name Manager2 >> $@
 	@chmod +x $@
 
 TESTS += service-version-multiwatch-tester

@@ -5,6 +5,7 @@
 
 static GMainLoop * mainloop = NULL;
 static gboolean passed = FALSE;
+static IndicatorServiceManager * goodis = NULL;
 
 gboolean
 timeout (gpointer data)
@@ -25,6 +26,17 @@ connection_good (IndicatorServiceManager * sm, gboolean connected, gpointer user
 	return;
 }
 
+gboolean
+delay_start (gpointer data)
+{
+	goodis = indicator_service_manager_new_version("org.ayatana.version.good", SERVICE_VERSION_GOOD);
+	g_signal_connect(G_OBJECT(goodis), INDICATOR_SERVICE_MANAGER_SIGNAL_CONNECTION_CHANGE, G_CALLBACK(connection_good), NULL);
+
+	g_timeout_add_seconds(1, timeout, NULL);
+
+	return FALSE;
+}
+
 int
 main (int argc, char ** argv)
 {
@@ -32,10 +44,7 @@ main (int argc, char ** argv)
 	g_log_set_always_fatal(G_LOG_LEVEL_CRITICAL);
 	g_print("Manager: DBUS_SESSION_BUS_ADDRESS = %s\n", g_getenv("DBUS_SESSION_BUS_ADDRESS"));
 
-	IndicatorServiceManager * goodis = indicator_service_manager_new_version("org.ayatana.version.good", SERVICE_VERSION_GOOD);
-	g_signal_connect(G_OBJECT(goodis), INDICATOR_SERVICE_MANAGER_SIGNAL_CONNECTION_CHANGE, G_CALLBACK(connection_good), NULL);
-
-	g_timeout_add_seconds(1, timeout, NULL);
+	g_timeout_add(500, delay_start, NULL);
 
 	mainloop = g_main_loop_new(NULL, FALSE);
 	g_main_loop_run(mainloop);
