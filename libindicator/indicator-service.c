@@ -395,14 +395,26 @@ try_and_get_name (IndicatorService * service)
 	return;
 }
 
+/* Look in the hash table for the proxy, as it won't give us
+   its name. */
+static gboolean
+hash_table_find (gpointer key, gpointer value, gpointer user_data)
+{
+	if (value == user_data) {
+		return TRUE;
+	}
+	return FALSE;
+}
+
 /* If the proxy gets destroyed that's the same as getting an
    unwatch signal.  Make it so. */
 static void
 proxy_destroyed (GObject * proxy, gpointer user_data)
 {
 	g_return_if_fail(INDICATOR_IS_SERVICE(user_data));
+	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(user_data);
 
-	const gchar * name = dbus_g_proxy_get_bus_name(DBUS_G_PROXY(proxy));
+	gchar * name = (gchar *)g_hash_table_find(priv->watchers, hash_table_find, proxy);
 	unwatch_core(INDICATOR_SERVICE(user_data), name);
 
 	return;
