@@ -1,8 +1,9 @@
 libindicator (0.3.9-1) unstable; urgency=low
 
   * Merging new upstream release and some changes from Ubuntu.
+  * Don't drop debian/source/*
 
- -- Evgeni Golov <evgeni@debian.org>  Wed, 14 Jul 2010 10:02:55 +0200
+ -- Evgeni Golov <evgeni@debian.org>  Wed, 14 Jul 2010 10:04:21 +0200
 
 libindicator (0.3.9-0ubuntu2) maverick; urgency=low
 
