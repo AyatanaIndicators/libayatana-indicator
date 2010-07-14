@@ -40,18 +40,6 @@ refresh_image (GtkImage * image)
 
 	gint icon_size = 22;
 
-	GtkStyle * style = gtk_widget_get_style(GTK_WIDGET(image));
-	GValue styleprop = {0};
-	gtk_style_get_style_property(style, GTK_TYPE_IMAGE, "x-ayatana-indicator-dynamic", &styleprop);
-
-	if (G_VALUE_HOLDS_BOOLEAN(&styleprop) && g_value_get_boolean(&styleprop)) {
-		PangoContext * context = gtk_widget_get_pango_context(GTK_WIDGET(image));
-		PangoFontMetrics * metrics = pango_context_get_metrics(context, style->font_desc, pango_context_get_language(context));
-		icon_size = PANGO_PIXELS(pango_font_metrics_get_ascent(metrics)) + PANGO_PIXELS(pango_font_metrics_get_descent(metrics));
-		g_debug("Looking for icon size %d", icon_size);
-		pango_font_metrics_unref(metrics);
-	}
-
 	/* Look through the themes for that icon */
 	GtkIconInfo * icon_info = gtk_icon_theme_lookup_by_gicon(default_theme, icon_names, icon_size, 0);
 	if (icon_info == NULL) {
