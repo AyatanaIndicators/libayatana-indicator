@@ -11,7 +11,7 @@ Build-Depends: debhelper (>= 5.0),
                libtool,
                intltool,
                gtk-doc-tools
-Standards-Version: 3.8.4
+Standards-Version: 3.9.0
 Homepage: https://launchpad.net/libindicator
 Vcs-Bzr: http://bzr.debian.org/bzr/pkg-ayatana/libindicator/debian
 Vcs-Browser: http://bzr.debian.org/loggerhead/pkg-ayatana/libindicator/debian
