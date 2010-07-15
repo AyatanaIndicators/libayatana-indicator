@@ -55,6 +55,7 @@ struct _IndicatorServicePrivate {
 	DBusGProxy * dbus_proxy;
 	DBusGConnection * bus;
 	guint timeout;
+	guint timeout_length;
 	GHashTable * watchers;
 	guint this_service_version;
 };
@@ -164,6 +165,16 @@ indicator_service_init (IndicatorService *self)
 	priv->watchers = NULL;
 	priv->bus = NULL;
 	priv->this_service_version = 0;
+	priv->timeout_length = 500;
+
+	const gchar * timeoutenv = g_getenv("INDICATOR_SERVICE_SHUTDOWN_TIMEOUT");
+	if (timeoutenv != NULL) {
+		gdouble newtimeout = g_strtod(timeoutenv, NULL);
+		if (newtimeout >= 1.0f) {
+			priv->timeout_length = newtimeout;
+			g_debug("Setting shutdown timeout to: %u", priv->timeout_length);
+		}
+	}
 
 	/* NOTE: We're using g_object_unref here because that's what needs to
 	   happen, but you really should call watchers_remove first as well
@@ -373,7 +384,9 @@ try_and_get_name_cb (DBusGProxy * proxy, guint status, GError * error, gpointer 
 	}
 
 	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(service);
-	priv->timeout = g_timeout_add_seconds(1, timeout_no_watchers, service);
+	/* Allow some extra time at start up as things can be in high
+	   contention then. */
+	priv->timeout = g_timeout_add(priv->timeout_length * 2, timeout_no_watchers, service);
 
 	return;
 }
@@ -515,7 +528,7 @@ unwatch_core (IndicatorService * service, const gchar * name)
 			priv->timeout = 0;
 		}
 		/* If we don't get a new watcher quickly, we'll shutdown. */
-		priv->timeout = g_timeout_add(500, timeout_no_watchers, service);
+		priv->timeout = g_timeout_add(priv->timeout_length, timeout_no_watchers, service);
 	}
 
 	return;
