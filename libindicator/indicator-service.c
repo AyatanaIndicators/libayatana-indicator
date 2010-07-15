@@ -55,6 +55,7 @@ struct _IndicatorServicePrivate {
 	DBusGProxy * dbus_proxy;
 	DBusGConnection * bus;
 	guint timeout;
+	guint timeout_length;
 	GHashTable * watchers;
 	guint this_service_version;
 };
@@ -164,6 +165,16 @@ indicator_service_init (IndicatorService *self)
 	priv->watchers = NULL;
 	priv->bus = NULL;
 	priv->this_service_version = 0;
+	priv->timeout_length = 500;
+
+	const gchar * timeoutenv = g_getenv("INDICATOR_SERVICE_SHUTDOWN_TIMEOUT");
+	if (timeoutenv != NULL) {
+		gdouble newtimeout = g_strtod(timeoutenv, NULL);
+		if (newtimeout >= 1.0f) {
+			priv->timeout_length = newtimeout;
+			g_debug("Setting shutdown timeout to: %u", priv->timeout_length);
+		}
+	}
 
 	/* NOTE: We're using g_object_unref here because that's what needs to
 	   happen, but you really should call watchers_remove first as well
@@ -373,7 +384,9 @@ try_and_get_name_cb (DBusGProxy * proxy, guint status, GError * error, gpointer 
 	}
 
 	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(service);
-	priv->timeout = g_timeout_add_seconds(1, timeout_no_watchers, service);
+	/* Allow some extra time at start up as things can be in high
+	   contention then. */
+	priv->timeout = g_timeout_add(priv->timeout_length * 2, timeout_no_watchers, service);
 
 	return;
 }
@@ -395,15 +408,38 @@ try_and_get_name (IndicatorService * service)
 	return;
 }
 
+typedef struct _hash_table_find_t hash_table_find_t;
+struct _hash_table_find_t {
+	GObject * proxy;
+	gchar * name;
+};
+
+/* Look in the hash table for the proxy, as it won't give us
+   its name. */
+static gboolean
+hash_table_find (gpointer key, gpointer value, gpointer user_data)
+{
+	hash_table_find_t * finddata = (hash_table_find_t *)user_data;
+	if (value == finddata->proxy) {
+		finddata->name = key;
+		return TRUE;
+	}
+	return FALSE;
+}
+
 /* If the proxy gets destroyed that's the same as getting an
    unwatch signal.  Make it so. */
 static void
 proxy_destroyed (GObject * proxy, gpointer user_data)
 {
 	g_return_if_fail(INDICATOR_IS_SERVICE(user_data));
+	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(user_data);
 
-	const gchar * name = dbus_g_proxy_get_bus_name(DBUS_G_PROXY(proxy));
-	unwatch_core(INDICATOR_SERVICE(user_data), name);
+	hash_table_find_t finddata = {0};
+	finddata.proxy = proxy;
+
+	g_hash_table_find(priv->watchers, hash_table_find, &finddata);
+	unwatch_core(INDICATOR_SERVICE(user_data), finddata.name);
 
 	return;
 }
@@ -466,6 +502,9 @@ _indicator_service_server_un_watch (IndicatorService * service, DBusGMethodInvoc
 static void
 unwatch_core (IndicatorService * service, const gchar * name)
 {
+	g_return_if_fail(name != NULL);
+	g_return_if_fail(INDICATOR_IS_SERVICE(service));
+
 	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(service);
 
 	/* Remove us from the watcher list here */
@@ -489,7 +528,7 @@ unwatch_core (IndicatorService * service, const gchar * name)
 			priv->timeout = 0;
 		}
 		/* If we don't get a new watcher quickly, we'll shutdown. */
-		priv->timeout = g_timeout_add(500, timeout_no_watchers, service);
+		priv->timeout = g_timeout_add(priv->timeout_length, timeout_no_watchers, service);
 	}
 
 	return;
