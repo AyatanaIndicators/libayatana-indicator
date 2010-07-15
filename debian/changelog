@@ -1,15 +1,16 @@
+libindicator (0.3.10-0ubuntu1~ppa1) UNRELEASED; urgency=low
+
+  * New upstream release.
+    * Fixing unwatching crash (LP: #603489)
+    * Adding configurable timeout for slow test systems
+
+ -- Ted Gould <ted@ubuntu.com>  Thu, 15 Jul 2010 10:01:38 -0500
+
 libindicator (0.3.9-0ubuntu2) maverick; urgency=low
 
   * Merged in fix for (LP: #603489)
 
  -- Ken VanDine <ken.vandine@canonical.com>  Fri, 09 Jul 2010 15:24:33 -0400
-
-libindicator (0.3.9-0ubuntu2~ppa1) lucid; urgency=low
-
-  * Upstream merge
-    * Fixing unwatching crash (LP: #603489)
-
- -- Ted Gould <ted@ubuntu.com>  Fri, 09 Jul 2010 13:43:50 -0500
 
 libindicator (0.3.9-0ubuntu1) maverick; urgency=low
 
