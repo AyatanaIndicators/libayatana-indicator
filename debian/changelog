@@ -1,4 +1,4 @@
-libindicator (0.3.10-0ubuntu1~ppa1) lucid; urgency=low
+libindicator (0.3.10-0ubuntu1) maverick; urgency=low
 
   * New upstream release.
     * Fixing unwatching crash (LP: #603489)
