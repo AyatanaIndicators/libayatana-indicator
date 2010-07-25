@@ -42,14 +42,14 @@ check_PROGRAMS = test-loader$(EXEEXT) test-desktop-shortcuts$(EXEEXT) \
 	service-version-manager$(EXEEXT) \
 	service-version-bad-service$(EXEEXT) \
 	service-version-good-service$(EXEEXT) \
+	service-version-multiwatch-manager$(EXEEXT) \
+	service-version-multiwatch-manager-impolite$(EXEEXT) \
+	service-version-multiwatch-service$(EXEEXT) \
 	service-manager-nostart-connect$(EXEEXT)
 subdir = tests
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
-	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
-	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
-	$(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -184,8 +184,7 @@ service_version_good_service_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(service_version_good_service_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-am_service_version_manager_OBJECTS =  \
-	service_version_manager-service-version-manager.$(OBJEXT)
+am_service_version_manager_OBJECTS = service_version_manager-service-version-multiwatch-manager.$(OBJEXT)
 service_version_manager_OBJECTS =  \
 	$(am_service_version_manager_OBJECTS)
 service_version_manager_DEPENDENCIES = $(am__DEPENDENCIES_1) \
@@ -194,6 +193,37 @@ service_version_manager_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(service_version_manager_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
+service_version_multiwatch_manager_SOURCES =  \
+	service-version-multiwatch-manager.c
+service_version_multiwatch_manager_OBJECTS = service_version_multiwatch_manager-service-version-multiwatch-manager.$(OBJEXT)
+service_version_multiwatch_manager_DEPENDENCIES =  \
+	$(am__DEPENDENCIES_1) \
+	$(top_builddir)/libindicator/.libs/libindicator.a
+service_version_multiwatch_manager_LINK = $(LIBTOOL) $(AM_V_lt) \
+	--tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link \
+	$(CCLD) $(service_version_multiwatch_manager_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+service_version_multiwatch_manager_impolite_SOURCES =  \
+	service-version-multiwatch-manager-impolite.c
+service_version_multiwatch_manager_impolite_OBJECTS = service_version_multiwatch_manager_impolite-service-version-multiwatch-manager-impolite.$(OBJEXT)
+service_version_multiwatch_manager_impolite_DEPENDENCIES =  \
+	$(am__DEPENDENCIES_1) \
+	$(top_builddir)/libindicator/.libs/libindicator.a
+service_version_multiwatch_manager_impolite_LINK = $(LIBTOOL) \
+	$(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=link $(CCLD) \
+	$(service_version_multiwatch_manager_impolite_CFLAGS) \
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+am_service_version_multiwatch_service_OBJECTS = service_version_multiwatch_service-service-version-multiwatch-service.$(OBJEXT)
+service_version_multiwatch_service_OBJECTS =  \
+	$(am_service_version_multiwatch_service_OBJECTS)
+service_version_multiwatch_service_DEPENDENCIES =  \
+	$(am__DEPENDENCIES_1) \
+	$(top_builddir)/libindicator/.libs/libindicator.a
+service_version_multiwatch_service_LINK = $(LIBTOOL) $(AM_V_lt) \
+	--tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link \
+	$(CCLD) $(service_version_multiwatch_service_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 am_test_desktop_shortcuts_OBJECTS =  \
 	test_desktop_shortcuts-test-desktop-shortcuts.$(OBJEXT)
 test_desktop_shortcuts_OBJECTS = $(am_test_desktop_shortcuts_OBJECTS)
@@ -246,6 +276,9 @@ SOURCES = $(libdummy_indicator_blank_la_SOURCES) \
 	$(service_version_bad_service_SOURCES) \
 	$(service_version_good_service_SOURCES) \
 	$(service_version_manager_SOURCES) \
+	service-version-multiwatch-manager.c \
+	service-version-multiwatch-manager-impolite.c \
+	$(service_version_multiwatch_service_SOURCES) \
 	$(test_desktop_shortcuts_SOURCES) $(test_loader_SOURCES)
 DIST_SOURCES = $(libdummy_indicator_blank_la_SOURCES) \
 	$(libdummy_indicator_null_la_SOURCES) \
@@ -259,6 +292,9 @@ DIST_SOURCES = $(libdummy_indicator_blank_la_SOURCES) \
 	$(service_version_bad_service_SOURCES) \
 	$(service_version_good_service_SOURCES) \
 	$(service_version_manager_SOURCES) \
+	service-version-multiwatch-manager.c \
+	service-version-multiwatch-manager-impolite.c \
+	$(service_version_multiwatch_service_SOURCES) \
 	$(test_desktop_shortcuts_SOURCES) $(test_loader_SOURCES)
 ETAGS = etags
 CTAGS = ctags
@@ -390,6 +426,7 @@ top_srcdir = @top_srcdir@
 TESTS = test-desktop-shortcuts-tester service-shutdown-timeout-tester \
 	service-manager-no-connect-tester \
 	service-manager-connect-tester service-version-tester \
+	service-version-multiwatch-tester \
 	service-manager-connect-nostart-tester loader-tester
 DISTCLEANFILES = test-desktop-shortcuts-tester \
 	test-desktop-shortcuts-touch-test $(DS_XML_REPORT) \
@@ -398,6 +435,7 @@ DISTCLEANFILES = test-desktop-shortcuts-tester \
 	service-manager-connect-tester session.conf \
 	service-manager-connect.service service-version-tester \
 	service-version-bad.service service-version-good.service \
+	service-version-multiwatch-tester \
 	service-manager-connect-nostart-tester loader-tester \
 	$(XML_REPORT) $(HTML_REPORT)
 lib_LTLIBRARIES = \
@@ -564,7 +602,7 @@ service_manager_connect_service_LDADD = \
 
 service_version_manager_SOURCES = \
 	service-version-values.h \
-	service-version-manager.c
+	service-version-multiwatch-manager.c
 
 service_version_manager_CFLAGS = \
 	-Wall -Werror \
@@ -595,6 +633,38 @@ service_version_good_service_CFLAGS = \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
 
 service_version_good_service_LDADD = \
+	$(LIBINDICATOR_LIBS) \
+	$(top_builddir)/libindicator/.libs/libindicator.a
+
+service_version_multiwatch_manager_CFLAGS = \
+	-Wall -Werror \
+	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
+
+service_version_multiwatch_manager_LDADD = \
+	$(LIBINDICATOR_LIBS) \
+	$(top_builddir)/libindicator/.libs/libindicator.a
+
+service_version_manager_impolite_SOURCES = \
+	service-version-values.h \
+	service-version-multiwatch-manager-impolite.c
+
+service_version_multiwatch_manager_impolite_CFLAGS = \
+	-Wall -Werror \
+	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
+
+service_version_multiwatch_manager_impolite_LDADD = \
+	$(LIBINDICATOR_LIBS) \
+	$(top_builddir)/libindicator/.libs/libindicator.a
+
+service_version_multiwatch_service_SOURCES = \
+	service-version-values.h \
+	service-version-multiwatch-service.c
+
+service_version_multiwatch_service_CFLAGS = \
+	-Wall -Werror \
+	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
+
+service_version_multiwatch_service_LDADD = \
 	$(LIBINDICATOR_LIBS) \
 	$(top_builddir)/libindicator/.libs/libindicator.a
 
@@ -721,6 +791,15 @@ service-version-good-service$(EXEEXT): $(service_version_good_service_OBJECTS) $
 service-version-manager$(EXEEXT): $(service_version_manager_OBJECTS) $(service_version_manager_DEPENDENCIES) 
 	@rm -f service-version-manager$(EXEEXT)
 	$(AM_V_CCLD)$(service_version_manager_LINK) $(service_version_manager_OBJECTS) $(service_version_manager_LDADD) $(LIBS)
+service-version-multiwatch-manager$(EXEEXT): $(service_version_multiwatch_manager_OBJECTS) $(service_version_multiwatch_manager_DEPENDENCIES) 
+	@rm -f service-version-multiwatch-manager$(EXEEXT)
+	$(AM_V_CCLD)$(service_version_multiwatch_manager_LINK) $(service_version_multiwatch_manager_OBJECTS) $(service_version_multiwatch_manager_LDADD) $(LIBS)
+service-version-multiwatch-manager-impolite$(EXEEXT): $(service_version_multiwatch_manager_impolite_OBJECTS) $(service_version_multiwatch_manager_impolite_DEPENDENCIES) 
+	@rm -f service-version-multiwatch-manager-impolite$(EXEEXT)
+	$(AM_V_CCLD)$(service_version_multiwatch_manager_impolite_LINK) $(service_version_multiwatch_manager_impolite_OBJECTS) $(service_version_multiwatch_manager_impolite_LDADD) $(LIBS)
+service-version-multiwatch-service$(EXEEXT): $(service_version_multiwatch_service_OBJECTS) $(service_version_multiwatch_service_DEPENDENCIES) 
+	@rm -f service-version-multiwatch-service$(EXEEXT)
+	$(AM_V_CCLD)$(service_version_multiwatch_service_LINK) $(service_version_multiwatch_service_OBJECTS) $(service_version_multiwatch_service_LDADD) $(LIBS)
 test-desktop-shortcuts$(EXEEXT): $(test_desktop_shortcuts_OBJECTS) $(test_desktop_shortcuts_DEPENDENCIES) 
 	@rm -f test-desktop-shortcuts$(EXEEXT)
 	$(AM_V_CCLD)$(test_desktop_shortcuts_LINK) $(test_desktop_shortcuts_OBJECTS) $(test_desktop_shortcuts_LDADD) $(LIBS)
@@ -745,7 +824,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/service_shutdown_timeout-service-shutdown-timeout.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/service_version_bad_service-service-version-bad-service.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/service_version_good_service-service-version-good-service.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/service_version_manager-service-version-manager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/service_version_manager-service-version-multiwatch-manager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/service_version_multiwatch_manager-service-version-multiwatch-manager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/service_version_multiwatch_manager_impolite-service-version-multiwatch-manager-impolite.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/service_version_multiwatch_service-service-version-multiwatch-service.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_desktop_shortcuts-test-desktop-shortcuts.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_loader-test-loader.Po@am__quote@
 
@@ -917,21 +999,69 @@ service_version_good_service-service-version-good-service.obj: service-version-g
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(service_version_good_service_CFLAGS) $(CFLAGS) -c -o service_version_good_service-service-version-good-service.obj `if test -f 'service-version-good-service.c'; then $(CYGPATH_W) 'service-version-good-service.c'; else $(CYGPATH_W) '$(srcdir)/service-version-good-service.c'; fi`
 
-service_version_manager-service-version-manager.o: service-version-manager.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(service_version_manager_CFLAGS) $(CFLAGS) -MT service_version_manager-service-version-manager.o -MD -MP -MF $(DEPDIR)/service_version_manager-service-version-manager.Tpo -c -o service_version_manager-service-version-manager.o `test -f 'service-version-manager.c' || echo '$(srcdir)/'`service-version-manager.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/service_version_manager-service-version-manager.Tpo $(DEPDIR)/service_version_manager-service-version-manager.Po
+service_version_manager-service-version-multiwatch-manager.o: service-version-multiwatch-manager.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(service_version_manager_CFLAGS) $(CFLAGS) -MT service_version_manager-service-version-multiwatch-manager.o -MD -MP -MF $(DEPDIR)/service_version_manager-service-version-multiwatch-manager.Tpo -c -o service_version_manager-service-version-multiwatch-manager.o `test -f 'service-version-multiwatch-manager.c' || echo '$(srcdir)/'`service-version-multiwatch-manager.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/service_version_manager-service-version-multiwatch-manager.Tpo $(DEPDIR)/service_version_manager-service-version-multiwatch-manager.Po
 @am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='service-version-manager.c' object='service_version_manager-service-version-manager.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='service-version-multiwatch-manager.c' object='service_version_manager-service-version-multiwatch-manager.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(service_version_manager_CFLAGS) $(CFLAGS) -c -o service_version_manager-service-version-manager.o `test -f 'service-version-manager.c' || echo '$(srcdir)/'`service-version-manager.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(service_version_manager_CFLAGS) $(CFLAGS) -c -o service_version_manager-service-version-multiwatch-manager.o `test -f 'service-version-multiwatch-manager.c' || echo '$(srcdir)/'`service-version-multiwatch-manager.c
 
-service_version_manager-service-version-manager.obj: service-version-manager.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(service_version_manager_CFLAGS) $(CFLAGS) -MT service_version_manager-service-version-manager.obj -MD -MP -MF $(DEPDIR)/service_version_manager-service-version-manager.Tpo -c -o service_version_manager-service-version-manager.obj `if test -f 'service-version-manager.c'; then $(CYGPATH_W) 'service-version-manager.c'; else $(CYGPATH_W) '$(srcdir)/service-version-manager.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/service_version_manager-service-version-manager.Tpo $(DEPDIR)/service_version_manager-service-version-manager.Po
+service_version_manager-service-version-multiwatch-manager.obj: service-version-multiwatch-manager.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(service_version_manager_CFLAGS) $(CFLAGS) -MT service_version_manager-service-version-multiwatch-manager.obj -MD -MP -MF $(DEPDIR)/service_version_manager-service-version-multiwatch-manager.Tpo -c -o service_version_manager-service-version-multiwatch-manager.obj `if test -f 'service-version-multiwatch-manager.c'; then $(CYGPATH_W) 'service-version-multiwatch-manager.c'; else $(CYGPATH_W) '$(srcdir)/service-version-multiwatch-manager.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/service_version_manager-service-version-multiwatch-manager.Tpo $(DEPDIR)/service_version_manager-service-version-multiwatch-manager.Po
 @am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='service-version-manager.c' object='service_version_manager-service-version-manager.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='service-version-multiwatch-manager.c' object='service_version_manager-service-version-multiwatch-manager.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(service_version_manager_CFLAGS) $(CFLAGS) -c -o service_version_manager-service-version-manager.obj `if test -f 'service-version-manager.c'; then $(CYGPATH_W) 'service-version-manager.c'; else $(CYGPATH_W) '$(srcdir)/service-version-manager.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(service_version_manager_CFLAGS) $(CFLAGS) -c -o service_version_manager-service-version-multiwatch-manager.obj `if test -f 'service-version-multiwatch-manager.c'; then $(CYGPATH_W) 'service-version-multiwatch-manager.c'; else $(CYGPATH_W) '$(srcdir)/service-version-multiwatch-manager.c'; fi`
+
+service_version_multiwatch_manager-service-version-multiwatch-manager.o: service-version-multiwatch-manager.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(service_version_multiwatch_manager_CFLAGS) $(CFLAGS) -MT service_version_multiwatch_manager-service-version-multiwatch-manager.o -MD -MP -MF $(DEPDIR)/service_version_multiwatch_manager-service-version-multiwatch-manager.Tpo -c -o service_version_multiwatch_manager-service-version-multiwatch-manager.o `test -f 'service-version-multiwatch-manager.c' || echo '$(srcdir)/'`service-version-multiwatch-manager.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/service_version_multiwatch_manager-service-version-multiwatch-manager.Tpo $(DEPDIR)/service_version_multiwatch_manager-service-version-multiwatch-manager.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='service-version-multiwatch-manager.c' object='service_version_multiwatch_manager-service-version-multiwatch-manager.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(service_version_multiwatch_manager_CFLAGS) $(CFLAGS) -c -o service_version_multiwatch_manager-service-version-multiwatch-manager.o `test -f 'service-version-multiwatch-manager.c' || echo '$(srcdir)/'`service-version-multiwatch-manager.c
+
+service_version_multiwatch_manager-service-version-multiwatch-manager.obj: service-version-multiwatch-manager.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(service_version_multiwatch_manager_CFLAGS) $(CFLAGS) -MT service_version_multiwatch_manager-service-version-multiwatch-manager.obj -MD -MP -MF $(DEPDIR)/service_version_multiwatch_manager-service-version-multiwatch-manager.Tpo -c -o service_version_multiwatch_manager-service-version-multiwatch-manager.obj `if test -f 'service-version-multiwatch-manager.c'; then $(CYGPATH_W) 'service-version-multiwatch-manager.c'; else $(CYGPATH_W) '$(srcdir)/service-version-multiwatch-manager.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/service_version_multiwatch_manager-service-version-multiwatch-manager.Tpo $(DEPDIR)/service_version_multiwatch_manager-service-version-multiwatch-manager.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='service-version-multiwatch-manager.c' object='service_version_multiwatch_manager-service-version-multiwatch-manager.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(service_version_multiwatch_manager_CFLAGS) $(CFLAGS) -c -o service_version_multiwatch_manager-service-version-multiwatch-manager.obj `if test -f 'service-version-multiwatch-manager.c'; then $(CYGPATH_W) 'service-version-multiwatch-manager.c'; else $(CYGPATH_W) '$(srcdir)/service-version-multiwatch-manager.c'; fi`
+
+service_version_multiwatch_manager_impolite-service-version-multiwatch-manager-impolite.o: service-version-multiwatch-manager-impolite.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(service_version_multiwatch_manager_impolite_CFLAGS) $(CFLAGS) -MT service_version_multiwatch_manager_impolite-service-version-multiwatch-manager-impolite.o -MD -MP -MF $(DEPDIR)/service_version_multiwatch_manager_impolite-service-version-multiwatch-manager-impolite.Tpo -c -o service_version_multiwatch_manager_impolite-service-version-multiwatch-manager-impolite.o `test -f 'service-version-multiwatch-manager-impolite.c' || echo '$(srcdir)/'`service-version-multiwatch-manager-impolite.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/service_version_multiwatch_manager_impolite-service-version-multiwatch-manager-impolite.Tpo $(DEPDIR)/service_version_multiwatch_manager_impolite-service-version-multiwatch-manager-impolite.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='service-version-multiwatch-manager-impolite.c' object='service_version_multiwatch_manager_impolite-service-version-multiwatch-manager-impolite.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(service_version_multiwatch_manager_impolite_CFLAGS) $(CFLAGS) -c -o service_version_multiwatch_manager_impolite-service-version-multiwatch-manager-impolite.o `test -f 'service-version-multiwatch-manager-impolite.c' || echo '$(srcdir)/'`service-version-multiwatch-manager-impolite.c
+
+service_version_multiwatch_manager_impolite-service-version-multiwatch-manager-impolite.obj: service-version-multiwatch-manager-impolite.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(service_version_multiwatch_manager_impolite_CFLAGS) $(CFLAGS) -MT service_version_multiwatch_manager_impolite-service-version-multiwatch-manager-impolite.obj -MD -MP -MF $(DEPDIR)/service_version_multiwatch_manager_impolite-service-version-multiwatch-manager-impolite.Tpo -c -o service_version_multiwatch_manager_impolite-service-version-multiwatch-manager-impolite.obj `if test -f 'service-version-multiwatch-manager-impolite.c'; then $(CYGPATH_W) 'service-version-multiwatch-manager-impolite.c'; else $(CYGPATH_W) '$(srcdir)/service-version-multiwatch-manager-impolite.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/service_version_multiwatch_manager_impolite-service-version-multiwatch-manager-impolite.Tpo $(DEPDIR)/service_version_multiwatch_manager_impolite-service-version-multiwatch-manager-impolite.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='service-version-multiwatch-manager-impolite.c' object='service_version_multiwatch_manager_impolite-service-version-multiwatch-manager-impolite.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(service_version_multiwatch_manager_impolite_CFLAGS) $(CFLAGS) -c -o service_version_multiwatch_manager_impolite-service-version-multiwatch-manager-impolite.obj `if test -f 'service-version-multiwatch-manager-impolite.c'; then $(CYGPATH_W) 'service-version-multiwatch-manager-impolite.c'; else $(CYGPATH_W) '$(srcdir)/service-version-multiwatch-manager-impolite.c'; fi`
+
+service_version_multiwatch_service-service-version-multiwatch-service.o: service-version-multiwatch-service.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(service_version_multiwatch_service_CFLAGS) $(CFLAGS) -MT service_version_multiwatch_service-service-version-multiwatch-service.o -MD -MP -MF $(DEPDIR)/service_version_multiwatch_service-service-version-multiwatch-service.Tpo -c -o service_version_multiwatch_service-service-version-multiwatch-service.o `test -f 'service-version-multiwatch-service.c' || echo '$(srcdir)/'`service-version-multiwatch-service.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/service_version_multiwatch_service-service-version-multiwatch-service.Tpo $(DEPDIR)/service_version_multiwatch_service-service-version-multiwatch-service.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='service-version-multiwatch-service.c' object='service_version_multiwatch_service-service-version-multiwatch-service.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(service_version_multiwatch_service_CFLAGS) $(CFLAGS) -c -o service_version_multiwatch_service-service-version-multiwatch-service.o `test -f 'service-version-multiwatch-service.c' || echo '$(srcdir)/'`service-version-multiwatch-service.c
+
+service_version_multiwatch_service-service-version-multiwatch-service.obj: service-version-multiwatch-service.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(service_version_multiwatch_service_CFLAGS) $(CFLAGS) -MT service_version_multiwatch_service-service-version-multiwatch-service.obj -MD -MP -MF $(DEPDIR)/service_version_multiwatch_service-service-version-multiwatch-service.Tpo -c -o service_version_multiwatch_service-service-version-multiwatch-service.obj `if test -f 'service-version-multiwatch-service.c'; then $(CYGPATH_W) 'service-version-multiwatch-service.c'; else $(CYGPATH_W) '$(srcdir)/service-version-multiwatch-service.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/service_version_multiwatch_service-service-version-multiwatch-service.Tpo $(DEPDIR)/service_version_multiwatch_service-service-version-multiwatch-service.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='service-version-multiwatch-service.c' object='service_version_multiwatch_service-service-version-multiwatch-service.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(service_version_multiwatch_service_CFLAGS) $(CFLAGS) -c -o service_version_multiwatch_service-service-version-multiwatch-service.obj `if test -f 'service-version-multiwatch-service.c'; then $(CYGPATH_W) 'service-version-multiwatch-service.c'; else $(CYGPATH_W) '$(srcdir)/service-version-multiwatch-service.c'; fi`
 
 test_desktop_shortcuts-test-desktop-shortcuts.o: test-desktop-shortcuts.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_desktop_shortcuts_CFLAGS) $(CFLAGS) -MT test_desktop_shortcuts-test-desktop-shortcuts.o -MD -MP -MF $(DEPDIR)/test_desktop_shortcuts-test-desktop-shortcuts.Tpo -c -o test_desktop_shortcuts-test-desktop-shortcuts.o `test -f 'test-desktop-shortcuts.c' || echo '$(srcdir)/'`test-desktop-shortcuts.c
@@ -1313,6 +1443,11 @@ service-version-bad.service: $(srcdir)/service-version-bad.service.in Makefile.a
 service-version-tester: service-version-manager service-version-bad-service service-version-good-service session.conf service-version-bad.service service-version-good.service Makefile.am
 	@echo "#!/bin/sh" > $@
 	@echo dbus-test-runner --dbus-config $(builddir)/session.conf --task ./service-version-manager >> $@
+	@chmod +x $@
+
+service-version-multiwatch-tester: service-version-multiwatch-manager service-version-multiwatch-service service-version-multiwatch-manager-impolite Makefile.am
+	@echo "#!/bin/sh" > $@
+	@echo dbus-test-runner --task ./service-version-multiwatch-service --task-name Service --task ./service-version-multiwatch-manager --task-name Manager1 --task ./service-version-multiwatch-manager --task-name Manager2 --task ./service-version-multiwatch-manager --task-name Manager3 --task ./service-version-multiwatch-manager --task-name Manager4 --task ./service-version-multiwatch-manager --task-name Manager5 --task ./service-version-multiwatch-manager-impolite --task-name Impolite1 --task ./service-version-multiwatch-manager-impolite --task-name Impolite2 --task ./service-version-multiwatch-manager-impolite --task-name Impolite3 >> $@
 	@chmod +x $@
 
 service-manager-connect-nostart-tester: service-manager-nostart-connect service-manager-connect-service Makefile.am
