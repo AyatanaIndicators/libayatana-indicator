@@ -30,6 +30,9 @@ static void
 refresh_image (GtkImage * image)
 {
 	g_return_if_fail(GTK_IS_IMAGE(image));
+	gchar * icon_filename = NULL;
+	GtkIconInfo * icon_info = NULL;
+	gint icon_size = 22;
 
 	GIcon * icon_names = (GIcon *)g_object_get_data(G_OBJECT(image), INDICATOR_NAMES_DATA);
 	g_return_if_fail(icon_names != NULL);
@@ -38,23 +41,29 @@ refresh_image (GtkImage * image)
 	GtkIconTheme * default_theme = gtk_icon_theme_get_default();
 	g_return_if_fail(default_theme != NULL);
 
-	gint icon_size = 22;
-
 	/* Look through the themes for that icon */
-	GtkIconInfo * icon_info = gtk_icon_theme_lookup_by_gicon(default_theme, icon_names, icon_size, 0);
+	icon_info = gtk_icon_theme_lookup_by_gicon(default_theme, icon_names, icon_size, 0);
 	if (icon_info == NULL) {
-		g_warning("Unable to find icon in theme.");
-		return;
+		/* Try using the second item in the names, which should be the original filename supplied */
+		const gchar * const * names = g_themed_icon_get_names(G_THEMED_ICON( icon_names ));
+		if (names) {
+			icon_filename = g_strdup(names[1]);
+		} else {
+			g_warning("Unable to find icon\n");
+			return;
+		}
+	} else {
+		/* Grab the filename */
+		icon_filename = (gchar *)gtk_icon_info_get_filename(icon_info);
 	}
-
-	/* Grab the filename */
-	const gchar * icon_filename = gtk_icon_info_get_filename(icon_info);
-	g_return_if_fail(icon_filename != NULL); /* An error because we shouldn't get info without a filename */
+	g_return_if_fail(icon_filename != NULL); /* An error because we don't have a filename */
 
 	/* Build a pixbuf */
 	GError * error = NULL;
 	GdkPixbuf * pixbuf = gdk_pixbuf_new_from_file(icon_filename, &error);
-	gtk_icon_info_free(icon_info);
+
+	if (icon_info != NULL)
+		gtk_icon_info_free(icon_info);
 
 	if (pixbuf == NULL) {
 		g_error("Unable to load icon from file '%s' because: %s", icon_filename, error == NULL ? "I don't know" : error->message);
@@ -126,15 +135,16 @@ indicator_image_helper_update (GtkImage * image, const gchar * name)
 	g_return_if_fail(name != NULL);
 	g_return_if_fail(name[0] != '\0');
 	g_return_if_fail(image != NULL);
+	gboolean seen_previously = FALSE;
 
 	/* Build us a GIcon */
 	GIcon * icon_names = g_themed_icon_new_with_default_fallbacks(name);
+	g_warn_if_fail(icon_names != NULL);
 	g_return_if_fail(icon_names != NULL);
-
-	gboolean seen_previously = (g_object_get_data(G_OBJECT(image), INDICATOR_NAMES_DATA) != NULL);
 
 	/* Attach our names to the image */
 	g_object_set_data_full(G_OBJECT(image), INDICATOR_NAMES_DATA, icon_names, g_object_unref);
+	seen_previously = (g_object_get_data(G_OBJECT(image), INDICATOR_NAMES_DATA) != NULL);
 
 	/* Put the pixbuf in */
 	refresh_image(image);
