@@ -1,9 +1,9 @@
-libindicator (0.3.11-0ubuntu1~ppa1) UNRELEASED; urgency=low
+libindicator (0.3.11-0ubuntu1~ppa1) maverick; urgency=low
 
   * New upstream release.
     * Allowing absolute paths in the image name (LP: #564034)
 
- -- Ted Gould <ted@ubuntu.com>  Thu, 12 Aug 2010 14:41:15 -0500
+ -- Ted Gould <ted@ubuntu.com>  Thu, 12 Aug 2010 14:42:46 -0500
 
 libindicator (0.3.10-0ubuntu1) maverick; urgency=low
 
