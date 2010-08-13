@@ -1,0 +1,74 @@
+=== modified file 'libindicator/indicator-image-helper.c'
+--- libindicator/indicator-image-helper.c	2010-08-12 19:37:24 +0000
++++ libindicator/indicator-image-helper.c	2010-08-13 09:03:45 +0000
+@@ -29,61 +29,15 @@
+ static void
+ refresh_image (GtkImage * image)
+ {
++  GIcon * icon;
++
+ 	g_return_if_fail(GTK_IS_IMAGE(image));
+-	const gchar * icon_filename = NULL;
+-	GtkIconInfo * icon_info = NULL;
+-	gint icon_size = 22;
+-
+-	GIcon * icon_names = (GIcon *)g_object_get_data(G_OBJECT(image), INDICATOR_NAMES_DATA);
+-	g_return_if_fail(icon_names != NULL);
+-
+-	/* Get the default theme */
+-	GtkIconTheme * default_theme = gtk_icon_theme_get_default();
+-	g_return_if_fail(default_theme != NULL);
+-
+-	/* Look through the themes for that icon */
+-	icon_info = gtk_icon_theme_lookup_by_gicon(default_theme, icon_names, icon_size, 0);
+-	if (icon_info == NULL) {
+-		/* Try using the second item in the names, which should be the original filename supplied */
+-		const gchar * const * names = g_themed_icon_get_names(G_THEMED_ICON( icon_names ));
+-		if (names) {
+-			icon_filename = names[1];
+-		} else {
+-			g_warning("Unable to find icon\n");
+-			return;
+-		}
+-	} else {
+-		/* Grab the filename */
+-		icon_filename = gtk_icon_info_get_filename(icon_info);
+-	}
+-	g_return_if_fail(icon_filename != NULL); /* An error because we don't have a filename */
+-
+-	/* Build a pixbuf */
+-	GError * error = NULL;
+-	GdkPixbuf * pixbuf = gdk_pixbuf_new_from_file(icon_filename, &error);
+-
+-	if (icon_info != NULL) {
+-		gtk_icon_info_free(icon_info);
+-	}
+-
+-	if (pixbuf == NULL) {
+-		g_error("Unable to load icon from file '%s' because: %s", icon_filename, error == NULL ? "I don't know" : error->message);
+-		return;
+-	}
+-
+-	/* Scale icon if all we get is something too big. */
+-	if (gdk_pixbuf_get_height(pixbuf) > icon_size) {
+-		gfloat scale = (gfloat)icon_size / (gfloat)gdk_pixbuf_get_height(pixbuf);
+-		gint width = round(gdk_pixbuf_get_width(pixbuf) * scale);
+-
+-		GdkPixbuf * scaled = gdk_pixbuf_scale_simple(pixbuf, width, icon_size, GDK_INTERP_BILINEAR);
+-		g_object_unref(G_OBJECT(pixbuf));
+-		pixbuf = scaled;
+-	}
+-
+-	/* Put the pixbuf on the image */
+-	gtk_image_set_from_pixbuf(image, pixbuf);
+-	g_object_unref(G_OBJECT(pixbuf));
++
++	icon = (GIcon *)g_object_get_data(G_OBJECT(image), INDICATOR_NAMES_DATA);
++	g_return_if_fail(G_IS_ICON (icon));
++
++  gtk_image_set_pixel_size (image, 22);
++	gtk_image_set_from_gicon (image, icon, GTK_ICON_SIZE_SMALL_TOOLBAR);
+ 
+ 	return;
+ }
+

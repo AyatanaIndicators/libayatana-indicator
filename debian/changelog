@@ -1,3 +1,13 @@
+libindicator (0.3.11-0ubuntu2) maverick; urgency=low
+
+  * workaround-icon-crash.patch: 
+    - change from Mikkel Kamstrup Erlandsen to workaround a crasher in the 
+       new version
+  * debian/control:
+    - updated the gtk build requirement
+
+ -- Sebastien Bacher <seb128@ubuntu.com>  Fri, 13 Aug 2010 11:40:29 +0200
+
 libindicator (0.3.11-0ubuntu1) maverick; urgency=low
 
   * New upstream release.
