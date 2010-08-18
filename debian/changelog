@@ -1,3 +1,10 @@
+libindicator (0.3.12-0ubuntu1~ppa1) UNRELEASED; urgency=low
+
+  * New upstream release.
+    * Removing a g_error that was breaking Unity on failed icons
+
+ -- Ted Gould <ted@ubuntu.com>  Wed, 18 Aug 2010 11:02:03 -0500
+
 libindicator (0.3.11-0ubuntu1~ppa1) maverick; urgency=low
 
   * New upstream release.

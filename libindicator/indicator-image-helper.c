@@ -50,6 +50,7 @@ refresh_image (GtkImage * image)
 			icon_filename = names[1];
 		} else {
 			g_warning("Unable to find icon\n");
+			gtk_image_clear(image);
 			return;
 		}
 	} else {
@@ -67,7 +68,8 @@ refresh_image (GtkImage * image)
 	}
 
 	if (pixbuf == NULL) {
-		g_error("Unable to load icon from file '%s' because: %s", icon_filename, error == NULL ? "I don't know" : error->message);
+		g_warning("Unable to load icon from file '%s' because: %s", icon_filename, error == NULL ? "I don't know" : error->message);
+		gtk_image_clear(image);
 		return;
 	}
 
