@@ -2,10 +2,21 @@ libindicator (0.3.12-0ubuntu1~ppa1) UNRELEASED; urgency=low
 
   * New upstream release.
     * Removing a g_error that was breaking Unity on failed icons
+  * dropping workaround-icon-crash.patch: 
 
  -- Ted Gould <ted@ubuntu.com>  Wed, 18 Aug 2010 11:02:03 -0500
 
-libindicator (0.3.11-0ubuntu1~ppa1) maverick; urgency=low
+libindicator (0.3.11-0ubuntu2) maverick; urgency=low
+
+  * workaround-icon-crash.patch: 
+    - change from Mikkel Kamstrup Erlandsen to workaround a crasher in the 
+       new version
+  * debian/control:
+    - updated the gtk build requirement
+
+ -- Sebastien Bacher <seb128@ubuntu.com>  Fri, 13 Aug 2010 11:40:29 +0200
+
+libindicator (0.3.11-0ubuntu1) maverick; urgency=low
 
   * New upstream release.
     * Allowing absolute paths in the image name (LP: #564034)
