@@ -1,3 +1,11 @@
+libindicator (0.3.12-0ubuntu1) maverick; urgency=low
+
+  * New upstream release.
+    * Removing a g_error that was breaking Unity on failed icons
+  * dropping workaround-icon-crash.patch: 
+
+ -- Ted Gould <ted@ubuntu.com>  Wed, 18 Aug 2010 11:05:51 -0500
+
 libindicator (0.3.11-0ubuntu2) maverick; urgency=low
 
   * workaround-icon-crash.patch: 
