@@ -1,9 +1,9 @@
-libindicator (0.3.12-0ubuntu2~ppa1) UNRELEASED; urgency=low
+libindicator (0.3.12-0ubuntu2~ppa1) maverick; urgency=low
 
   * Upstream Merge
     * Adding a menu_show signal
 
- -- Ted Gould <ted@ubuntu.com>  Tue, 14 Sep 2010 10:56:10 -0500
+ -- Ted Gould <ted@ubuntu.com>  Tue, 14 Sep 2010 10:57:33 -0500
 
 libindicator (0.3.12-0ubuntu1) maverick; urgency=low
 
