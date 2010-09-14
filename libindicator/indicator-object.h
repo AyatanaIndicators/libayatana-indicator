@@ -51,6 +51,8 @@ typedef enum
 #define INDICATOR_OBJECT_SIGNAL_ENTRY_MOVED_ID    (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_ENTRY_MOVED, INDICATOR_OBJECT_TYPE))
 #define INDICATOR_OBJECT_SIGNAL_SCROLL            "scroll"
 #define INDICATOR_OBJECT_SIGNAL_SCROLL_ID         (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_SCROLL, INDICATOR_OBJECT_TYPE))
+#define INDICATOR_OBJECT_SIGNAL_MENU_SHOW         "menu-show"
+#define INDICATOR_OBJECT_SIGNAL_MENU_SHOW_ID      (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_MENU_SHOW, INDICATOR_OBJECT_TYPE))
 
 typedef struct _IndicatorObject        IndicatorObject;
 typedef struct _IndicatorObjectClass   IndicatorObjectClass;
