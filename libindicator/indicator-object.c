@@ -57,7 +57,8 @@ enum {
 	ENTRY_ADDED,
 	ENTRY_REMOVED,
 	ENTRY_MOVED,
-        SCROLL,
+	SCROLL,
+	MENU_SHOW,
 	LAST_SIGNAL
 };
 
@@ -145,22 +146,40 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 	                                     G_TYPE_NONE, 3, G_TYPE_POINTER, G_TYPE_UINT, G_TYPE_UINT, G_TYPE_NONE);
 
 
-        /**
-                IndicatorObject::scroll:
-                @arg0: The #IndicatorObject object
-                @arg1: The delta of the scroll event
-                @arg2: The orientation of the scroll event.
+	/**
+		IndicatorObject::scroll:
+		@arg0: The #IndicatorObject object
+		@arg1: The delta of the scroll event
+		@arg2: The orientation of the scroll event.
 
-                When the indicator receives a mouse scroll wheel event
-                from the user, this signal is emitted.
-         */
-        signals[SCROLL] = g_signal_new (INDICATOR_OBJECT_SIGNAL_SCROLL,
-                                        G_TYPE_FROM_CLASS(klass),
-                                        G_SIGNAL_RUN_LAST,
-                                        G_STRUCT_OFFSET (IndicatorObjectClass, scroll),
-                                        NULL, NULL,
-                                        _indicator_object_marshal_VOID__UINT_ENUM,
-                                        G_TYPE_NONE, 2, G_TYPE_UINT, INDICATOR_OBJECT_TYPE_SCROLL_DIRECTION);
+		When the indicator receives a mouse scroll wheel event
+		from the user, this signal is emitted.
+	*/
+	signals[SCROLL] = g_signal_new (INDICATOR_OBJECT_SIGNAL_SCROLL,
+	                                G_TYPE_FROM_CLASS(klass),
+	                                G_SIGNAL_RUN_LAST,
+	                                G_STRUCT_OFFSET (IndicatorObjectClass, scroll),
+	                                NULL, NULL,
+	                                _indicator_object_marshal_VOID__UINT_ENUM,
+	                                G_TYPE_NONE, 2, G_TYPE_UINT, INDICATOR_OBJECT_TYPE_SCROLL_DIRECTION);
+
+	/**
+		IndicatorObject::menu-show:
+		@arg0: The #IndicatorObject object
+		@arg1: A pointer to the #IndicatorObjectEntry that
+			is being shown.
+		@arg2: The timestamp of the event
+
+		Used when the indicator wants to signal up the stack
+		that the menu should be shown.
+	*/
+	signals[MENU_SHOW] = g_signal_new (INDICATOR_OBJECT_SIGNAL_MENU_SHOW,
+	                                   G_TYPE_FROM_CLASS(klass),
+	                                   G_SIGNAL_RUN_LAST,
+	                                   G_STRUCT_OFFSET (IndicatorObjectClass, menu_show),
+	                                   NULL, NULL,
+	                                   _indicator_object_marshal_VOID__POINTER_UINT,
+	                                   G_TYPE_NONE, 2, G_TYPE_POINTER, G_TYPE_UINT);
 
 
 	return;
