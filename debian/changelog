@@ -1,3 +1,10 @@
+libindicator (0.3.13-0ubuntu1) maverick; urgency=low
+
+  * New upstream release.
+    * Adding a menu_show signal
+
+ -- Ted Gould <ted@ubuntu.com>  Wed, 15 Sep 2010 11:46:37 -0500
+
 libindicator (0.3.12-0ubuntu1) maverick; urgency=low
 
   * New upstream release.
