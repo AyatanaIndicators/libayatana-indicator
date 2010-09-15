@@ -79,6 +79,13 @@ entry_removed (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user
 	return;
 }
 
+static void
+menu_show (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp, gpointer user_data)
+{
+	g_debug("Show Menu: %s", entry->label != NULL ? gtk_label_get_text(entry->label) : "No Label");
+	return;
+}
+
 static gboolean
 load_module (const gchar * name, GtkWidget * menu)
 {
@@ -97,6 +104,7 @@ load_module (const gchar * name, GtkWidget * menu)
 	/* Connect to it's signals */
 	g_signal_connect(G_OBJECT(io), INDICATOR_OBJECT_SIGNAL_ENTRY_ADDED,   G_CALLBACK(entry_added),    menu);
 	g_signal_connect(G_OBJECT(io), INDICATOR_OBJECT_SIGNAL_ENTRY_REMOVED, G_CALLBACK(entry_removed),  menu);
+	g_signal_connect(G_OBJECT(io), INDICATOR_OBJECT_SIGNAL_MENU_SHOW,     G_CALLBACK(menu_show),      NULL);
 
 	/* Work on the entries */
 	GList * entries = indicator_object_get_entries(io);
