@@ -132,6 +132,7 @@ IndicatorObject * indicator_object_new_from_file (const gchar * file);
 
 GList * indicator_object_get_entries (IndicatorObject * io);
 guint   indicator_object_get_location (IndicatorObject * io, IndicatorObjectEntry * entry);
+void    indicator_object_entry_activate (IndicatorObject * io, IndicatorObjectEntry * entry);
 
 G_END_DECLS
 
