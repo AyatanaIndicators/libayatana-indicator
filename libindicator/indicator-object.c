@@ -437,6 +437,7 @@ indicator_object_get_location (IndicatorObject * io, IndicatorObjectEntry * entr
 	indicator_object_entry_activate:
 	@io: #IndicatorObject to query
 	@entry: The #IndicatorObjectEntry whose entry was shown
+	@timestamp: The X11 timestamp of the event
 
 	Used to signal to the indicator that the menu on an entry has
 	been clicked on.  This can either be an activate or a showing
@@ -444,7 +445,7 @@ indicator_object_get_location (IndicatorObject * io, IndicatorObjectEntry * entr
 	left up to the reader.
 */
 void
-indicator_object_entry_activate (IndicatorObject * io, IndicatorObjectEntry * entry)
+indicator_object_entry_activate (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp)
 {
 
 
