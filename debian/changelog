@@ -2,8 +2,10 @@ libindicator (0.3.13-0ubuntu1~ppa2~ats1) UNRELEASED; urgency=low
 
   * Upstream Merge
     * Adding a function to signal a menu is shown
+  * debian/control: Switching from libindicator0 to libindicator1
+    as we've broken ABI.
 
- -- Ted Gould <ted@ubuntu.com>  Thu, 16 Sep 2010 16:33:54 -0500
+ -- Ted Gould <ted@ubuntu.com>  Thu, 16 Sep 2010 16:35:58 -0500
 
 libindicator (0.3.13-0ubuntu1~ppa1) maverick; urgency=low
 
