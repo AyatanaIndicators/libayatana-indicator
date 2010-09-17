@@ -1,8 +1,8 @@
-libindicator (0.3.13-0ubuntu1~ppa2~ats3) UNRELEASED; urgency=low
+libindicator (0.3.13-0ubuntu1~ppa2~ats3) maverick; urgency=low
 
   * Autogen update
 
- -- Ted Gould <ted@ubuntu.com>  Fri, 17 Sep 2010 09:51:25 -0500
+ -- Ted Gould <ted@ubuntu.com>  Fri, 17 Sep 2010 09:52:30 -0500
 
 libindicator (0.3.13-0ubuntu1~ppa2~ats2) maverick; urgency=low
 
