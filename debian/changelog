@@ -1,3 +1,15 @@
+libindicator (0.3.13-0ubuntu1~ppa2) UNRELEASED; urgency=low
+
+  * Upstream Merge
+    * Adding a function to signal a menu is shown
+    * Changing indicator directory to '4'
+  * debian/control: Switching from libindicator0 to libindicator1
+    as we've broken ABI.  Conflicting with libindicator0 to make
+    upgrade simpler as it doesn't make sense to have both installed.
+  * Autogen update
+
+ -- Ted Gould <ted@ubuntu.com>  Sun, 19 Sep 2010 13:26:45 -0500
+
 libindicator (0.3.13-0ubuntu1~ppa1) maverick; urgency=low
 
   * New upstream release.

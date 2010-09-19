@@ -42,6 +42,11 @@ libindicator_la_CFLAGS = \
 libindicator_la_LIBADD = \
 	$(LIBINDICATOR_LIBS)
 
+libindicator_la_LDFLAGS = \
+	-version-info 1:0:0 \
+	-no-undefined \
+	-export-symbols-regex "^[^_].*"
+
 pkgconfig_DATA = indicator.pc
 pkgconfigdir = $(libdir)/pkgconfig
 

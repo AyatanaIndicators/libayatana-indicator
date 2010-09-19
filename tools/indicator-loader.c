@@ -28,6 +28,17 @@ License along with this library. If not, see
 #define ENTRY_DATA_NAME "indicator-custom-entry-data"
 
 static void
+activate_entry (GtkWidget * widget, gpointer user_data)
+{
+	g_return_if_fail(INDICATOR_IS_OBJECT(user_data));
+	gpointer entry = g_object_get_data(G_OBJECT(widget), ENTRY_DATA_NAME);
+	g_return_if_fail(entry == NULL);
+
+	indicator_object_entry_activate(INDICATOR_OBJECT(user_data), (IndicatorObjectEntry *)entry, gtk_get_current_event_time());
+	return;
+}
+
+static void
 entry_added (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data)
 {
 	g_debug("Signal: Entry Added");
@@ -47,6 +58,8 @@ entry_added (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_d
 	if (entry->menu != NULL) {
 		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), GTK_WIDGET(entry->menu));
 	}
+
+	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(activate_entry), io);
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(user_data), menuitem);
 	gtk_widget_show(menuitem);

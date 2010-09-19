@@ -94,6 +94,8 @@ struct _IndicatorObjectClass {
 	GList *    (*get_entries) (IndicatorObject * io);
 	guint      (*get_location) (IndicatorObject * io, IndicatorObjectEntry * entry);
 
+	void       (*entry_activate) (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp);
+
 	/* Signals */
 	void       (*entry_added)   (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data);
 	void       (*entry_removed) (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data);
@@ -102,6 +104,12 @@ struct _IndicatorObjectClass {
 	void       (*menu_show)     (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp, gpointer user_data);
 
 	/* Reserved */
+	void       (*reserved1)     (void);
+	void       (*reserved2)     (void);
+	void       (*reserved3)     (void);
+	void       (*reserved4)     (void);
+	void       (*reserved5)     (void);
+	void       (*reserved6)     (void);
 };
 
 /**
@@ -132,6 +140,7 @@ IndicatorObject * indicator_object_new_from_file (const gchar * file);
 
 GList * indicator_object_get_entries (IndicatorObject * io);
 guint   indicator_object_get_location (IndicatorObject * io, IndicatorObjectEntry * entry);
+void    indicator_object_entry_activate (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp);
 
 G_END_DECLS
 

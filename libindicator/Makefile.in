@@ -105,8 +105,8 @@ am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
 am__v_lt_0 = --silent
 libindicator_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
-	$(libindicator_la_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
-	-o $@
+	$(libindicator_la_CFLAGS) $(CFLAGS) $(libindicator_la_LDFLAGS) \
+	$(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -310,6 +310,11 @@ libindicator_la_CFLAGS = \
 
 libindicator_la_LIBADD = \
 	$(LIBINDICATOR_LIBS)
+
+libindicator_la_LDFLAGS = \
+	-version-info 1:0:0 \
+	-no-undefined \
+	-export-symbols-regex "^[^_].*"
 
 pkgconfig_DATA = indicator.pc
 pkgconfigdir = $(libdir)/pkgconfig
