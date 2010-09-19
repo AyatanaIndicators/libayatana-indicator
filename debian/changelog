@@ -1,10 +1,10 @@
-libindicator (0.3.13-0ubuntu1~ppa3) UNRELEASED; urgency=low
+libindicator (0.3.13-0ubuntu1~ppa3) maverick; urgency=low
 
   * debian/rules:
     * Dropping the simple patch system
     * Changing the shlibs to libindicator1
 
- -- Ted Gould <ted@ubuntu.com>  Sun, 19 Sep 2010 14:41:46 -0500
+ -- Ted Gould <ted@ubuntu.com>  Sun, 19 Sep 2010 14:47:46 -0500
 
 libindicator (0.3.13-0ubuntu1~ppa2) maverick; urgency=low
 
