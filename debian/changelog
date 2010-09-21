@@ -67,6 +67,12 @@ libindicator (0.3.11-0ubuntu1) maverick; urgency=low
 
  -- Ted Gould <ted@ubuntu.com>  Thu, 12 Aug 2010 14:42:46 -0500
 
+libindicator (0.3.10-1) unstable; urgency=low
+
+  * Merging new upstream release from Ubuntu.
+
+ -- Evgeni Golov <evgeni@debian.org>  Sun, 25 Jul 2010 12:08:48 +0200
+
 libindicator (0.3.10-0ubuntu1) maverick; urgency=low
 
   * New upstream release.
