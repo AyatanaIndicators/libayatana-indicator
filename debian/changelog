@@ -2,6 +2,8 @@ libindicator (0.3.13-0ubuntu2) UNRELEASED; urgency=low
 
   * debian/source:
     - don't use quilt format, it's making the daily build not working
+  * debian/control:
+    - put the Vcs-Bzr to point the right official branch
 
  -- Didier Roche <didrocks@ubuntu.com>  Tue, 21 Sep 2010 12:33:31 +0200
 
