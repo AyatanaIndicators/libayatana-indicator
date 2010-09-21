@@ -1,8 +1,10 @@
-libindicator (0.3.13-0ubuntu2~ppa2) maverick; urgency=low
+libindicator (0.3.14-0ubuntu1~ppa1) UNRELEASED; urgency=low
 
-  * Updating with Desktop version and undoing some changes.
+  * New upstream release.
+    * Adding a function to signal a menu is shown
+    * Changing indicator directory to '4'
 
- -- Ted Gould <ted@ubuntu.com>  Tue, 21 Sep 2010 09:25:05 -0500
+ -- Ted Gould <ted@ubuntu.com>  Tue, 21 Sep 2010 15:53:58 -0500
 
 libindicator (0.3.13-0ubuntu2~ppa1) UNRELEASED; urgency=low
 
@@ -21,26 +23,6 @@ libindicator (0.3.13-0ubuntu1) maverick; urgency=low
     * Adding a menu_show signal
 
  -- Ted Gould <ted@ubuntu.com>  Wed, 15 Sep 2010 11:46:37 -0500
-
-libindicator (0.3.13-0ubuntu1~ppa3) maverick; urgency=low
-
-  * debian/rules:
-    * Dropping the simple patch system
-    * Changing the shlibs to libindicator1
-
- -- Ted Gould <ted@ubuntu.com>  Sun, 19 Sep 2010 14:47:46 -0500
-
-libindicator (0.3.13-0ubuntu1~ppa2) maverick; urgency=low
-
-  * Upstream Merge
-    * Adding a function to signal a menu is shown
-    * Changing indicator directory to '4'
-  * debian/control: Switching from libindicator0 to libindicator1
-    as we've broken ABI.  Conflicting with libindicator0 to make
-    upgrade simpler as it doesn't make sense to have both installed.
-  * Autogen update
-
- -- Ted Gould <ted@ubuntu.com>  Sun, 19 Sep 2010 13:29:13 -0500
 
 libindicator (0.3.12-0ubuntu1) maverick; urgency=low
 
