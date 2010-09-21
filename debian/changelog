@@ -4,6 +4,9 @@ libindicator (0.3.13-0ubuntu2) UNRELEASED; urgency=low
     - don't use quilt format, it's making the daily build not working
   * debian/control:
     - put the Vcs-Bzr to point the right official branch
+    - rename to soname bump
+  * debian/libindicator1.install: rename to soname bump
+  * debian/rules: update MAKESHLIBS_ARGS
 
  -- Didier Roche <didrocks@ubuntu.com>  Tue, 21 Sep 2010 12:33:31 +0200
 
