@@ -1,4 +1,4 @@
-libindicator (0.3.13-0ubuntu2) UNRELEASED; urgency=low
+libindicator (0.3.13-0ubuntu2~ppa1) UNRELEASED; urgency=low
 
   * debian/source:
     - don't use quilt format, it's making the daily build not working
