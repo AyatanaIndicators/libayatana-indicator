@@ -14,8 +14,8 @@ Build-Depends: debhelper (>= 5.0),
                gtk-doc-tools
 Standards-Version: 3.9.0
 Homepage: https://launchpad.net/libindicator
-Vcs-Bzr: https://code.launchpad.net/~indicator-applet-developers/libindicator/ubuntu
-Vcs-Browser: http://bazaar.launchpad.net/~indicator-applet-developers/libindicator/ubuntu
+Vcs-Bzr: https://code.launchpad.net/~ubuntu-desktop/libindicator/ubuntu
+Vcs-Browser: http://bazaar.launchpad.net/~ubuntu-desktop/libindicator/ubuntu
 
 Package: libindicator1
 Section: libs
