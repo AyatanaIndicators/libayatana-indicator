@@ -1,3 +1,10 @@
+libindicator (0.3.13-0ubuntu2) UNRELEASED; urgency=low
+
+  * debian/source:
+    - don't use quilt format, it's making the daily build not working
+
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 21 Sep 2010 12:33:31 +0200
+
 libindicator (0.3.13-0ubuntu1) maverick; urgency=low
 
   * New upstream release.
