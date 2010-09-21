@@ -1,3 +1,9 @@
+libindicator (0.3.13-0ubuntu2~ppa2) UNRELEASED; urgency=low
+
+  * Updating with Desktop version and undoing some changes.
+
+ -- Ted Gould <ted@ubuntu.com>  Tue, 21 Sep 2010 09:23:58 -0500
+
 libindicator (0.3.13-0ubuntu2~ppa1) UNRELEASED; urgency=low
 
   * debian/source:
