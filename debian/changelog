@@ -1,4 +1,4 @@
-libindicator (0.3.14-0ubuntu1) UNRELEASED; urgency=low
+libindicator (0.3.14-0ubuntu1) maverick; urgency=low
 
   * New upstream release.
     * Adding a function to signal a menu is shown (LP: #637692)
@@ -16,7 +16,7 @@ libindicator (0.3.14-0ubuntu1) UNRELEASED; urgency=low
   * debian/rules:
     - removing simple-patchsys
 
- -- Didier Roche <didrocks@ubuntu.com>  Tue, 21 Sep 2010 12:33:31 +0200
+ -- Didier Roche <didrocks@ubuntu.com>  Wed, 22 Sep 2010 18:09:44 +0200
 
 libindicator (0.3.13-0ubuntu1) maverick; urgency=low
 
