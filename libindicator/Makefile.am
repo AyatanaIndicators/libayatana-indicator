@@ -1,14 +1,20 @@
+if USE_GTK3
+VER=3
+lib_LTLIBRARIES = libindicator3.la
+else
+VER=
+lib_LTLIBRARIES = libindicator.la
+endif
+
 BUILT_SOURCES = indicator-object-enum-types.h indicator-object-enum-types.c
 CLEANFILES =
 DISTCLEANFILES =
 EXTRA_DIST = \
-	indicator.pc.in \
-	indicator3.pc.in
+	indicator$(VER).pc.in
 
 include $(top_srcdir)/Makefile.am.marshal
 
-libindicatorincludedir=$(includedir)/libindicator-0.3/libindicator
-libindicator3includedir=$(includedir)/libindicator3-0.3/libindicator
+libindicatorincludedir=$(includedir)/libindicator$(VER)-0.3/libindicator
 
 indicator_headers = \
 	indicator.h \
@@ -18,15 +24,8 @@ indicator_headers = \
 	indicator-service.h \
 	indicator-service-manager.h
 
-
 libindicatorinclude_HEADERS = \
 	$(indicator_headers)
-libindicator3include_HEADERS = \
-	$(indicator_headers)
-
-lib_LTLIBRARIES = \
-	libindicator.la \
-	libindicator3.la
 
 libindicator_la_SOURCES = \
 	$(indicator_headers) \
@@ -39,23 +38,26 @@ libindicator_la_SOURCES = \
 	indicator-object-marshal.c \
 	indicator-service.c \
 	indicator-service-manager.c
-libindicator3_la_SOURCES = $(libindicator_la_SOURCES)
 
 libindicator_la_CFLAGS = \
 	$(LIBINDICATOR_CFLAGS) \
 	-DG_LOG_DOMAIN=\"libindicator\" \
 	-Wall -Werror
-libindicator3_la_CFLAGS = \
-	$(LIBINDICATOR3_CFLAGS) \
-	-DG_LOG_DOMAIN=\"libindicator\" \
-	-Wall -Werror
 
 libindicator_la_LIBADD = \
 	$(LIBINDICATOR_LIBS)
-libindicator3_la_LIBADD = \
-	$(LIBINDICATOR3_LIBS)
 
-pkgconfig_DATA = indicator.pc indicator3.pc
+# We duplicate these here because Automake won't let us use $(VER) on the left hand side.
+# Since we carefully use $(VER) in the right hand side above, we can assign the same values.
+# Only one version of the library is every compiled at the same time, so it is safe to reuse
+# the right hand sides like this.
+libindicator3includedir = $(libindicatorincludedir)
+libindicator3include_HEADERS = $(indicator_headers)
+libindicator3_la_SOURCES = $(libindicator_la_SOURCES)
+libindicator3_la_CFLAGS = $(libindicator_la_CFLAGS)
+libindicator3_la_LIBADD = $(libindicator_la_LIBADD)
+
+pkgconfig_DATA = indicator$(VER).pc
 pkgconfigdir = $(libdir)/pkgconfig
 
 glib_marshal_list = indicator-object-marshal.list

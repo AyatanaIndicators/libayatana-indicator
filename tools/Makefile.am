@@ -1,3 +1,8 @@
+if USE_GTK3
+INDICATOR_LIB = -lindicator3
+else
+INDICATOR_LIB = -lindicator
+endif
 
 libexec_PROGRAMS = \
 	indicator-loader
@@ -17,5 +22,5 @@ indicator_loader_CFLAGS = \
 indicator_loader_LDADD = \
 	$(LIBINDICATOR_LIBS) \
 	-L$(top_builddir)/libindicator/.libs \
-	-lindicator
+	$(INDICATOR_LIB)
 

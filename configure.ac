@@ -29,23 +29,32 @@ m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 ##############################
 
 GTK_REQUIRED_VERSION=2.18
-GTK3_REQUIRED_VERSION=2.90
+GTK3_REQUIRED_VERSION=2.91
 DBUS_REQUIRED_VERSION=0.76
 GIO_UNIX_REQUIRED_VERSION=2.22
 
-PKG_CHECK_MODULES(LIBINDICATOR, gtk+-2.0 >= $GTK_REQUIRED_VERSION
-                                gio-unix-2.0 >= $GIO_UNIX_REQUIRED_VERSION
-                                dbus-glib-1 >= $DBUS_REQUIRED_VERSION)
-
-AC_SUBST(LIBINDICATOR_CFLAGS)
-AC_SUBST(LIBINDICATOR_LIBS)
-
-PKG_CHECK_MODULES(LIBINDICATOR3, gtk+-3.0 >= $GTK3_REQUIRED_VERSION
-                                 gio-unix-2.0 >= $GIO_UNIX_REQUIRED_VERSION
-                                 dbus-glib-1 >= $DBUS_REQUIRED_VERSION)
-
-AC_SUBST(LIBINDICATOR3_CFLAGS)
-AC_SUBST(LIBINDICATOR3_LIBS)
+AC_ARG_WITH([gtk],
+  [AS_HELP_STRING([--with-gtk],
+    [Which version of gtk to use @<:@default=2@:>@])],
+  [],
+  [with_gtk=2])
+AS_IF([test "x$with_gtk" = x3],
+        [PKG_CHECK_MODULES(LIBINDICATOR,  gtk+-3.0 >= $GTK3_REQUIRED_VERSION
+                                          gio-unix-2.0 >= $GIO_UNIX_REQUIRED_VERSION
+                                          dbus-glib-1 >= $DBUS_REQUIRED_VERSION)
+         AC_SUBST(LIBINDICATOR_CFLAGS)
+         AC_SUBST(LIBINDICATOR_LIBS)
+        ],
+      [test "x$with_gtk" = x2],
+        [PKG_CHECK_MODULES(LIBINDICATOR,  gtk+-2.0 >= $GTK_REQUIRED_VERSION
+                                          gio-unix-2.0 >= $GIO_UNIX_REQUIRED_VERSION
+                                          dbus-glib-1 >= $DBUS_REQUIRED_VERSION)
+         AC_SUBST(LIBINDICATOR_CFLAGS)
+         AC_SUBST(LIBINDICATOR_LIBS)
+        ],
+      [AC_MSG_FAILURE([Value for --with-gtk was neither 2 nor 3])]
+)
+AM_CONDITIONAL(USE_GTK3, [test "x$with_gtk" = x3])
 
 ##############################
 # Custom Junk
@@ -114,4 +123,5 @@ AC_MSG_NOTICE([
 Libindicator Configuration:
 
 	Prefix:                 $prefix
+	GTK+ Version:           $with_gtk
 ])

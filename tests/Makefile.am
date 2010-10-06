@@ -1,3 +1,9 @@
+if USE_GTK3
+INDICATOR_LIB = -lindicator3
+else
+INDICATOR_LIB = -lindicator
+endif
+
 TESTS =
 DISTCLEANFILES =
 
@@ -31,7 +37,7 @@ test_loader_CFLAGS = \
 test_loader_LDADD = \
 	$(LIBINDICATOR_LIBS) \
 	-L$(top_builddir)/libindicator/.libs \
-	-lindicator
+	$(INDICATOR_LIB)
 
 #############################
 # Test Desktop Shortcuts
@@ -51,7 +57,7 @@ test_desktop_shortcuts_CFLAGS = \
 test_desktop_shortcuts_LDADD = \
 	$(LIBINDICATOR_LIBS) \
 	-L$(top_builddir)/libindicator/.libs \
-	-lindicator
+	$(INDICATOR_LIB)
 
 DS_XML_REPORT  = desktop-shortcuts-check-results.xml
 DS_HTML_REPORT = desktop-shortcuts-check-results.html
@@ -83,7 +89,7 @@ libdummy_indicator_blank_la_CFLAGS = \
 libdummy_indicator_blank_la_LIBADD = \
 	$(LIBINDICATOR_LIBS) \
 	-L$(top_builddir)/libindicator/.libs \
-	-lindicator
+	$(INDICATOR_LIB)
 
 libdummy_indicator_blank_la_LDFLAGS = \
 	-module \
@@ -103,7 +109,7 @@ libdummy_indicator_null_la_CFLAGS = \
 libdummy_indicator_null_la_LIBADD = \
 	$(LIBINDICATOR_LIBS) \
 	-L$(top_builddir)/libindicator/.libs \
-	-lindicator
+	$(INDICATOR_LIB)
 
 libdummy_indicator_null_la_LDFLAGS = \
 	-module \
@@ -123,7 +129,7 @@ libdummy_indicator_signaler_la_CFLAGS = \
 libdummy_indicator_signaler_la_LIBADD = \
 	$(LIBINDICATOR_LIBS) \
 	-L$(top_builddir)/libindicator/.libs \
-	-lindicator
+	$(INDICATOR_LIB)
 
 libdummy_indicator_signaler_la_LDFLAGS = \
 	-module \
@@ -143,7 +149,7 @@ libdummy_indicator_simple_la_CFLAGS = \
 libdummy_indicator_simple_la_LIBADD = \
 	$(LIBINDICATOR_LIBS) \
 	-L$(top_builddir)/libindicator/.libs \
-	-lindicator
+	$(INDICATOR_LIB)
 
 libdummy_indicator_simple_la_LDFLAGS = \
 	-module \
