@@ -1,0 +1,8 @@
+# Timeout after 1 minute
+export INDICATOR_SERVICE_SHUTDOWN_TIMEOUT=60000
+
+# If no one connects, still stay alive
+export INDICATOR_ALLOW_NO_WATCHERS=1
+
+# Don't restart the services if they crash
+export INDICATOR_SERVICE_RESTART_DISABLE=1
