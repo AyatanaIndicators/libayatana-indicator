@@ -3,8 +3,9 @@ libindicator (0.3.14-0ubuntu2~ppa1) UNRELEASED; urgency=low
   * Upstream Merge
     * Adding a small file to set debugging environment variables
   * Autogen
+  * debian/control: Adding package libindicator-debugenv
 
- -- Ted Gould <ted@ubuntu.com>  Fri, 15 Oct 2010 14:51:55 -0500
+ -- Ted Gould <ted@ubuntu.com>  Fri, 15 Oct 2010 14:54:17 -0500
 
 libindicator (0.3.14-0ubuntu1) maverick; urgency=low
 

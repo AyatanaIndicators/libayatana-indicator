@@ -51,3 +51,14 @@ Description: Tools for libindicator
  Tools useful for developers of applications using indicators.
  .
  This package contains files that are needed to build applications.
+
+Package: libindicator-debugenv
+Section: devel
+Architecture: all
+Depends: ${shlibs:Depends},
+         ${misc:Depends},
+         libindicator1 (= ${binary:Version})
+Description: Debug environment for libindicator
+ Sets debug values useful for developers of applications using indicators.
+ .
+ This package contains session configuration files
