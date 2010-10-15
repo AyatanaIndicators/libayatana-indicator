@@ -19,3 +19,8 @@ indicator_loader_LDADD = \
 	-L$(top_builddir)/libindicator/.libs \
 	-lindicator
 
+xsessiondir = $(sysconfdir)/X11/Xsession.d
+
+xsession_DATA = 80indicator-debugging
+
+EXTRA_DIST = $(xsession_DATA)
