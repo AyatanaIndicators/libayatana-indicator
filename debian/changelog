@@ -1,21 +1,22 @@
-libindicator (0.3.14-0ubuntu1~ppa1) maverick; urgency=low
+libindicator (0.3.14-0ubuntu1) maverick; urgency=low
 
   * New upstream release.
-    * Adding a function to signal a menu is shown
+    * Adding a function to signal a menu is shown (LP: #637692)
     * Changing indicator directory to '4'
-
- -- Ted Gould <ted@ubuntu.com>  Tue, 21 Sep 2010 15:55:56 -0500
-
-libindicator (0.3.13-0ubuntu2~ppa1) UNRELEASED; urgency=low
-
   * debian/source:
     - don't use quilt format, it's making the daily build not working
   * debian/control:
     - rename to soname bump
+    - put the Vcs-Bzr to point the right official branch
   * debian/libindicator1.install: rename to soname bump
-  * debian/rules: update MAKESHLIBS_ARGS
+  * debian/rules:
+    - update MAKESHLIBS_ARGS
 
- -- Didier Roche <didrocks@ubuntu.com>  Tue, 21 Sep 2010 12:33:31 +0200
+  [Ted Gould]
+  * debian/rules:
+    - removing simple-patchsys
+
+ -- Didier Roche <didrocks@ubuntu.com>  Wed, 22 Sep 2010 18:09:44 +0200
 
 libindicator (0.3.13-0ubuntu1) maverick; urgency=low
 
