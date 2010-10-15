@@ -1,3 +1,9 @@
+# These are environment variables that effect the behavior
+# of libindicator's service manager and indicator service
+# objects.  They turn off various robustness features that
+# make debugging difficult and are not recommended for
+# daily use.  Development use only!
+
 # Timeout after 1 minute
 export INDICATOR_SERVICE_SHUTDOWN_TIMEOUT=60000
 
