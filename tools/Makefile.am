@@ -21,6 +21,6 @@ indicator_loader_LDADD = \
 
 xsessiondir = $(sysconfdir)/X11/Xsession.d
 
-xsession_DATA = indicator-debugging
+xsession_DATA = 80indicator-debugging
 
 EXTRA_DIST = $(xsession_DATA)
