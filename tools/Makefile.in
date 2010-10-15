@@ -15,6 +15,7 @@
 
 @SET_MAKE@
 
+
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -45,7 +46,7 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am__installdirs = "$(DESTDIR)$(libexecdir)"
+am__installdirs = "$(DESTDIR)$(libexecdir)" "$(DESTDIR)$(xsessiondir)"
 PROGRAMS = $(libexec_PROGRAMS)
 am_indicator_loader_OBJECTS =  \
 	indicator_loader-indicator-loader.$(OBJEXT)
@@ -87,6 +88,28 @@ am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(indicator_loader_SOURCES)
 DIST_SOURCES = $(indicator_loader_SOURCES)
+am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
+am__vpath_adj = case $$p in \
+    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
+    *) f=$$p;; \
+  esac;
+am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
+am__install_max = 40
+am__nobase_strip_setup = \
+  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
+am__nobase_strip = \
+  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
+am__nobase_list = $(am__nobase_strip_setup); \
+  for p in $$list; do echo "$$p $$p"; done | \
+  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
+  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
+    if (++n[$$2] == $(am__install_max)) \
+      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
+    END { for (dir in files) print dir, files[dir] }'
+am__base_list = \
+  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
+  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
+DATA = $(xsession_DATA)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -231,6 +254,9 @@ indicator_loader_LDADD = \
 	-L$(top_builddir)/libindicator/.libs \
 	-lindicator
 
+xsessiondir = $(sysconfdir)/X11/Xsession.d
+xsession_DATA = 80indicator-debugging
+EXTRA_DIST = $(xsession_DATA)
 all: all-am
 
 .SUFFIXES:
@@ -365,6 +391,26 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
+install-xsessionDATA: $(xsession_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(xsessiondir)" || $(MKDIR_P) "$(DESTDIR)$(xsessiondir)"
+	@list='$(xsession_DATA)'; test -n "$(xsessiondir)" || list=; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(xsessiondir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(xsessiondir)" || exit $$?; \
+	done
+
+uninstall-xsessionDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(xsession_DATA)'; test -n "$(xsessiondir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	test -n "$$files" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(xsessiondir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(xsessiondir)" && rm -f $$files
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -450,9 +496,9 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(PROGRAMS)
+all-am: Makefile $(PROGRAMS) $(DATA)
 installdirs:
-	for dir in "$(DESTDIR)$(libexecdir)"; do \
+	for dir in "$(DESTDIR)$(libexecdir)" "$(DESTDIR)$(xsessiondir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -503,7 +549,7 @@ info: info-am
 
 info-am:
 
-install-data-am:
+install-data-am: install-xsessionDATA
 
 install-dvi: install-dvi-am
 
@@ -549,7 +595,7 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-libexecPROGRAMS
+uninstall-am: uninstall-libexecPROGRAMS uninstall-xsessionDATA
 
 .MAKE: install-am install-strip
 
@@ -561,11 +607,12 @@ uninstall-am: uninstall-libexecPROGRAMS
 	install-dvi-am install-exec install-exec-am install-html \
 	install-html-am install-info install-info-am \
 	install-libexecPROGRAMS install-man install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
+	install-ps install-ps-am install-strip install-xsessionDATA \
+	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-libexecPROGRAMS
+	tags uninstall uninstall-am uninstall-libexecPROGRAMS \
+	uninstall-xsessionDATA
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
