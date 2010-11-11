@@ -156,3 +156,16 @@ tests/service-version-multiwatch-manager
 tests/service-version-multiwatch-tester
 tests/service-version-multiwatch-service
 tests/service-version-multiwatch-manager-impolite
+libindicator/indicator-object-enum-types.c
+libindicator/indicator-object-enum-types.h
+libindicator/indicator3.pc
+libindicator/libindicator3.la
+libindicator/libindicator3_la-indicator-desktop-shortcuts.lo
+libindicator/libindicator3_la-indicator-image-helper.lo
+libindicator/libindicator3_la-indicator-object-enum-types.lo
+libindicator/libindicator3_la-indicator-object-marshal.lo
+libindicator/libindicator3_la-indicator-object.lo
+libindicator/libindicator3_la-indicator-service-manager.lo
+libindicator/libindicator3_la-indicator-service.lo
+libindicator/libindicator_la-indicator-object-enum-types.lo
+libindicator/s-enum-types-h
