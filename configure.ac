@@ -24,20 +24,46 @@ AC_CONFIG_MACRO_DIR([m4])
 
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
+AC_ARG_ENABLE([deprecations],
+  [AS_HELP_STRING([--enable-deprecations],
+    [allow deprecated API usage @<:@default=yes@:>@])],
+  [],
+  [enable_deprecations=yes])
+AS_IF([test "x$enable_deprecations" = xno],
+  [CFLAGS="$CFLAGS -DG_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGDK_PIXBUF_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -DGSEAL_ENABLE -DGTK_DISABLE_SINGLE_INCLUDES"]
+)
+
 ##############################
 # Dependencies
 ##############################
 
 GTK_REQUIRED_VERSION=2.18
+GTK3_REQUIRED_VERSION=2.91
 DBUS_REQUIRED_VERSION=0.76
 GIO_UNIX_REQUIRED_VERSION=2.22
 
-PKG_CHECK_MODULES(LIBINDICATOR, gtk+-2.0 >= $GTK_REQUIRED_VERSION
-                                gio-unix-2.0 >= $GIO_UNIX_REQUIRED_VERSION
-                                dbus-glib-1 >= $DBUS_REQUIRED_VERSION)
-
-AC_SUBST(LIBINDICATOR_CFLAGS)
-AC_SUBST(LIBINDICATOR_LIBS)
+AC_ARG_WITH([gtk],
+  [AS_HELP_STRING([--with-gtk],
+    [Which version of gtk to use @<:@default=2@:>@])],
+  [],
+  [with_gtk=2])
+AS_IF([test "x$with_gtk" = x3],
+        [PKG_CHECK_MODULES(LIBINDICATOR,  gtk+-3.0 >= $GTK3_REQUIRED_VERSION
+                                          gio-unix-2.0 >= $GIO_UNIX_REQUIRED_VERSION
+                                          dbus-glib-1 >= $DBUS_REQUIRED_VERSION)
+         AC_SUBST(LIBINDICATOR_CFLAGS)
+         AC_SUBST(LIBINDICATOR_LIBS)
+        ],
+      [test "x$with_gtk" = x2],
+        [PKG_CHECK_MODULES(LIBINDICATOR,  gtk+-2.0 >= $GTK_REQUIRED_VERSION
+                                          gio-unix-2.0 >= $GIO_UNIX_REQUIRED_VERSION
+                                          dbus-glib-1 >= $DBUS_REQUIRED_VERSION)
+         AC_SUBST(LIBINDICATOR_CFLAGS)
+         AC_SUBST(LIBINDICATOR_LIBS)
+        ],
+      [AC_MSG_FAILURE([Value for --with-gtk was neither 2 nor 3])]
+)
+AM_CONDITIONAL(USE_GTK3, [test "x$with_gtk" = x3])
 
 ##############################
 # Custom Junk
@@ -106,6 +132,7 @@ AC_OUTPUT([
 Makefile
 libindicator/Makefile
 libindicator/indicator.pc
+libindicator/indicator3.pc
 tests/Makefile
 tools/Makefile
 ])
@@ -119,6 +146,7 @@ AC_MSG_NOTICE([
 Libindicator Configuration:
 
 	Prefix:                 $prefix
+	GTK+ Version:           $with_gtk
 	
 	Enable debugging:       $enable_debug
 ])
