@@ -52,7 +52,8 @@ am_indicator_loader_OBJECTS =  \
 	indicator_loader-indicator-loader.$(OBJEXT)
 indicator_loader_OBJECTS = $(am_indicator_loader_OBJECTS)
 am__DEPENDENCIES_1 =
-indicator_loader_DEPENDENCIES = $(am__DEPENDENCIES_1)
+indicator_loader_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
 am__v_lt_0 = --silent
@@ -237,6 +238,8 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+@USE_GTK3_FALSE@INDICATOR_LIB = -lindicator
+@USE_GTK3_TRUE@INDICATOR_LIB = -lindicator3
 
 #############################
 # Indicator Loader
@@ -252,7 +255,7 @@ indicator_loader_CFLAGS = \
 indicator_loader_LDADD = \
 	$(LIBINDICATOR_LIBS) \
 	-L$(top_builddir)/libindicator/.libs \
-	-lindicator
+	$(INDICATOR_LIB)
 
 xsessiondir = $(sysconfdir)/X11/Xsession.d
 xsession_DATA = 80indicator-debugging

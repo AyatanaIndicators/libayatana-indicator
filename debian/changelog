@@ -1,11 +1,11 @@
-libindicator (0.3.14-0ubuntu2~ppa1) maverick; urgency=low
+libindicator (0.3.15-0ubuntu1~ppa1) UNRELEASED; urgency=low
 
-  * Upstream Merge
+  * New upstream release.
     * Adding a small file to set debugging environment variables
-  * Autogen
+    * Allowing to build for GTK 2/3 and build parallel libraries
   * debian/control: Adding package libindicator-debugenv
 
- -- Ted Gould <ted@ubuntu.com>  Fri, 15 Oct 2010 14:56:11 -0500
+ -- Ted Gould <ted@ubuntu.com>  Thu, 11 Nov 2010 14:40:34 -0600
 
 libindicator (0.3.14-0ubuntu1) maverick; urgency=low
 

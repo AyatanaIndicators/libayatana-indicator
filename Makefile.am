@@ -4,6 +4,8 @@ SUBDIRS = \
 	tests \
 	tools
 
+DISTCHECK_CONFIGURE_FLAGS = --disable-deprecations
+
 DISTCLEANFILES = \
 	libindicator-*.tar.gz
 

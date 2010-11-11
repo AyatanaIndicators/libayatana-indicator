@@ -1,0 +1,17 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+bindir=@bindir@
+includedir=@includedir@
+
+indicatordir=${libdir}/indicators3/1/
+iconsdir=@datarootdir@/@PACKAGE@/icons/
+
+Cflags: -I${includedir}/libindicator3-0.3
+Requires: gtk+-3.0
+Libs: -lindicator3
+
+Name: libindicator3
+Description: libindicator3.
+Version: @VERSION@
+
