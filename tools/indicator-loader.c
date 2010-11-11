@@ -28,6 +28,17 @@ License along with this library. If not, see
 #define ENTRY_DATA_NAME "indicator-custom-entry-data"
 
 static void
+activate_entry (GtkWidget * widget, gpointer user_data)
+{
+	g_return_if_fail(INDICATOR_IS_OBJECT(user_data));
+	gpointer entry = g_object_get_data(G_OBJECT(widget), ENTRY_DATA_NAME);
+	g_return_if_fail(entry == NULL);
+
+	indicator_object_entry_activate(INDICATOR_OBJECT(user_data), (IndicatorObjectEntry *)entry, gtk_get_current_event_time());
+	return;
+}
+
+static void
 entry_added (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data)
 {
 	g_debug("Signal: Entry Added");
@@ -47,6 +58,8 @@ entry_added (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_d
 	if (entry->menu != NULL) {
 		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), GTK_WIDGET(entry->menu));
 	}
+
+	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(activate_entry), io);
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(user_data), menuitem);
 	gtk_widget_show(menuitem);
@@ -79,6 +92,13 @@ entry_removed (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user
 	return;
 }
 
+static void
+menu_show (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp, gpointer user_data)
+{
+	g_debug("Show Menu: %s", entry->label != NULL ? gtk_label_get_text(entry->label) : "No Label");
+	return;
+}
+
 static gboolean
 load_module (const gchar * name, GtkWidget * menu)
 {
@@ -97,6 +117,7 @@ load_module (const gchar * name, GtkWidget * menu)
 	/* Connect to it's signals */
 	g_signal_connect(G_OBJECT(io), INDICATOR_OBJECT_SIGNAL_ENTRY_ADDED,   G_CALLBACK(entry_added),    menu);
 	g_signal_connect(G_OBJECT(io), INDICATOR_OBJECT_SIGNAL_ENTRY_REMOVED, G_CALLBACK(entry_removed),  menu);
+	g_signal_connect(G_OBJECT(io), INDICATOR_OBJECT_SIGNAL_MENU_SHOW,     G_CALLBACK(menu_show),      NULL);
 
 	/* Work on the entries */
 	GList * entries = indicator_object_get_entries(io);

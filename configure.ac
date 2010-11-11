@@ -1,10 +1,10 @@
 
-AC_INIT(libindicator, 0.3.8, ted@canonical.com)
+AC_INIT(libindicator, 0.3.14, ted@canonical.com)
 
 AC_PREREQ(2.53)
 
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(libindicator, 0.3.8)
+AM_INIT_AUTOMAKE(libindicator, 0.3.14)
 
 AM_MAINTAINER_MODE
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES])
@@ -101,6 +101,20 @@ AC_DEFINE_PATH(PREFIX, "${prefix}", [prefix directory])
 AC_DEFINE_PATH(SYSCONFDIR, "${sysconfdir}", [system configuration dir])
 AC_DEFINE_PATH(LIBDIR, "${libdir}", [system configuration dir])
 
+#########################
+# Debug symbols
+#########################
+AC_ARG_ENABLE([debug],
+              AC_HELP_STRING([--enable-debug], [build with debug symbols]),,
+              [enable_debug=no])
+
+if test "x$enable_debug" = "xyes"; then
+	CFLAGS="-g $CFLAGS"
+	AC_DEFINE(ENABLE_DEBUG, 1, [build with extra debug information])
+fi
+
+AM_CONDITIONAL(ENABLE_DEBUG, test "$enable_debug" = "yes")
+
 ###########################
 # Files
 ###########################
@@ -124,4 +138,6 @@ Libindicator Configuration:
 
 	Prefix:                 $prefix
 	GTK+ Version:           $with_gtk
+	
+	Enable debugging:       $enable_debug
 ])

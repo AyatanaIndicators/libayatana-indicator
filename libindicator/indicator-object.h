@@ -51,6 +51,8 @@ typedef enum
 #define INDICATOR_OBJECT_SIGNAL_ENTRY_MOVED_ID    (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_ENTRY_MOVED, INDICATOR_OBJECT_TYPE))
 #define INDICATOR_OBJECT_SIGNAL_SCROLL            "scroll"
 #define INDICATOR_OBJECT_SIGNAL_SCROLL_ID         (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_SCROLL, INDICATOR_OBJECT_TYPE))
+#define INDICATOR_OBJECT_SIGNAL_MENU_SHOW         "menu-show"
+#define INDICATOR_OBJECT_SIGNAL_MENU_SHOW_ID      (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_MENU_SHOW, INDICATOR_OBJECT_TYPE))
 
 typedef struct _IndicatorObject        IndicatorObject;
 typedef struct _IndicatorObjectClass   IndicatorObjectClass;
@@ -79,8 +81,7 @@ typedef struct _IndicatorObjectEntry   IndicatorObjectEntry;
 	@entry_added: Slot for #IndicatorObject::entry-added
 	@entry_removed: Slot for #IndicatorObject::entry-removed
 	@entry_moved: Slot for #IndicatorObject::entry-moved
-	@indicator_object_reserved_1: Reserved for future use
-	@indicator_object_reserved_2: Reserved for future use
+	@menu_show: Slot for #IndicatorObject::menu-show
 */
 struct _IndicatorObjectClass {
 	GObjectClass parent_class;
@@ -93,14 +94,22 @@ struct _IndicatorObjectClass {
 	GList *    (*get_entries) (IndicatorObject * io);
 	guint      (*get_location) (IndicatorObject * io, IndicatorObjectEntry * entry);
 
+	void       (*entry_activate) (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp);
+
 	/* Signals */
-        void       (*entry_added)   (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data);
-        void       (*entry_removed) (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data);
-        void       (*entry_moved)   (IndicatorObject * io, IndicatorObjectEntry * entry, guint old_pos, guint new_pos, gpointer user_data);
-        void       (*scroll)        (IndicatorObject * io, gint delta, IndicatorScrollDirection direction);
+	void       (*entry_added)   (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data);
+	void       (*entry_removed) (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data);
+	void       (*entry_moved)   (IndicatorObject * io, IndicatorObjectEntry * entry, guint old_pos, guint new_pos, gpointer user_data);
+	void       (*scroll)        (IndicatorObject * io, gint delta, IndicatorScrollDirection direction);
+	void       (*menu_show)     (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp, gpointer user_data);
 
 	/* Reserved */
-	void (* indicator_object_reserved_1) (void);
+	void       (*reserved1)     (void);
+	void       (*reserved2)     (void);
+	void       (*reserved3)     (void);
+	void       (*reserved4)     (void);
+	void       (*reserved5)     (void);
+	void       (*reserved6)     (void);
 };
 
 /**
@@ -131,6 +140,7 @@ IndicatorObject * indicator_object_new_from_file (const gchar * file);
 
 GList * indicator_object_get_entries (IndicatorObject * io);
 guint   indicator_object_get_location (IndicatorObject * io, IndicatorObjectEntry * entry);
+void    indicator_object_entry_activate (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp);
 
 G_END_DECLS
 
