@@ -14,8 +14,8 @@ Build-Depends: debhelper (>= 5.0),
                gtk-doc-tools
 Standards-Version: 3.9.0
 Homepage: https://launchpad.net/libindicator
-Vcs-Bzr: https://code.launchpad.net/~ubuntu-desktop/libindicator/ubuntu
-Vcs-Browser: http://bazaar.launchpad.net/~ubuntu-desktop/libindicator/ubuntu
+Vcs-Bzr: https://code.launchpad.net/~indicator-applet-developers/libindicator/ubuntu
+Vcs-Browser: http://bazaar.launchpad.net/~indicator-applet-developers/libindicator/ubuntu
 
 Package: libindicator1
 Section: libs
@@ -51,3 +51,14 @@ Description: Tools for libindicator
  Tools useful for developers of applications using indicators.
  .
  This package contains files that are needed to build applications.
+
+Package: libindicator-debugenv
+Section: devel
+Architecture: all
+Depends: ${shlibs:Depends},
+         ${misc:Depends},
+         libindicator1 (= ${binary:Version})
+Description: Debug environment for libindicator
+ Sets debug values useful for developers of applications using indicators.
+ .
+ This package contains session configuration files

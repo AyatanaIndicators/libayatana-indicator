@@ -80,7 +80,8 @@ am__base_list = \
 am__installdirs = "$(DESTDIR)$(libdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 am__DEPENDENCIES_1 =
-libdummy_indicator_blank_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
+libdummy_indicator_blank_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_libdummy_indicator_blank_la_OBJECTS =  \
 	libdummy_indicator_blank_la-dummy-indicator-blank.lo
 libdummy_indicator_blank_la_OBJECTS =  \
@@ -92,7 +93,8 @@ libdummy_indicator_blank_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(libdummy_indicator_blank_la_CFLAGS) $(CFLAGS) \
 	$(libdummy_indicator_blank_la_LDFLAGS) $(LDFLAGS) -o $@
-libdummy_indicator_null_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
+libdummy_indicator_null_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_libdummy_indicator_null_la_OBJECTS =  \
 	libdummy_indicator_null_la-dummy-indicator-null.lo
 libdummy_indicator_null_la_OBJECTS =  \
@@ -101,7 +103,8 @@ libdummy_indicator_null_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(libdummy_indicator_null_la_CFLAGS) $(CFLAGS) \
 	$(libdummy_indicator_null_la_LDFLAGS) $(LDFLAGS) -o $@
-libdummy_indicator_signaler_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
+libdummy_indicator_signaler_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_libdummy_indicator_signaler_la_OBJECTS =  \
 	libdummy_indicator_signaler_la-dummy-indicator-signaler.lo
 libdummy_indicator_signaler_la_OBJECTS =  \
@@ -110,7 +113,8 @@ libdummy_indicator_signaler_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(libdummy_indicator_signaler_la_CFLAGS) $(CFLAGS) \
 	$(libdummy_indicator_signaler_la_LDFLAGS) $(LDFLAGS) -o $@
-libdummy_indicator_simple_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
+libdummy_indicator_simple_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_libdummy_indicator_simple_la_OBJECTS =  \
 	libdummy_indicator_simple_la-dummy-indicator-simple.lo
 libdummy_indicator_simple_la_OBJECTS =  \
@@ -227,14 +231,15 @@ service_version_multiwatch_service_LINK = $(LIBTOOL) $(AM_V_lt) \
 am_test_desktop_shortcuts_OBJECTS =  \
 	test_desktop_shortcuts-test-desktop-shortcuts.$(OBJEXT)
 test_desktop_shortcuts_OBJECTS = $(am_test_desktop_shortcuts_OBJECTS)
-test_desktop_shortcuts_DEPENDENCIES = $(am__DEPENDENCIES_1)
+test_desktop_shortcuts_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 test_desktop_shortcuts_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(test_desktop_shortcuts_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 am_test_loader_OBJECTS = test_loader-test-loader.$(OBJEXT)
 test_loader_OBJECTS = $(am_test_loader_OBJECTS)
-test_loader_DEPENDENCIES = $(am__DEPENDENCIES_1)
+test_loader_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 test_loader_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(test_loader_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
@@ -425,6 +430,8 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+@USE_GTK3_FALSE@INDICATOR_LIB = -lindicator
+@USE_GTK3_TRUE@INDICATOR_LIB = -lindicator3
 TESTS = test-desktop-shortcuts-tester service-shutdown-timeout-tester \
 	service-manager-no-connect-tester \
 	service-manager-connect-tester service-version-tester \
@@ -460,7 +467,7 @@ test_loader_CFLAGS = \
 test_loader_LDADD = \
 	$(LIBINDICATOR_LIBS) \
 	-L$(top_builddir)/libindicator/.libs \
-	-lindicator
+	$(INDICATOR_LIB)
 
 test_desktop_shortcuts_SOURCES = \
 	test-desktop-shortcuts.c
@@ -474,7 +481,7 @@ test_desktop_shortcuts_CFLAGS = \
 test_desktop_shortcuts_LDADD = \
 	$(LIBINDICATOR_LIBS) \
 	-L$(top_builddir)/libindicator/.libs \
-	-lindicator
+	$(INDICATOR_LIB)
 
 DS_XML_REPORT = desktop-shortcuts-check-results.xml
 DS_HTML_REPORT = desktop-shortcuts-check-results.html
@@ -492,7 +499,7 @@ libdummy_indicator_blank_la_CFLAGS = \
 libdummy_indicator_blank_la_LIBADD = \
 	$(LIBINDICATOR_LIBS) \
 	-L$(top_builddir)/libindicator/.libs \
-	-lindicator
+	$(INDICATOR_LIB)
 
 libdummy_indicator_blank_la_LDFLAGS = \
 	-module \
@@ -512,7 +519,7 @@ libdummy_indicator_null_la_CFLAGS = \
 libdummy_indicator_null_la_LIBADD = \
 	$(LIBINDICATOR_LIBS) \
 	-L$(top_builddir)/libindicator/.libs \
-	-lindicator
+	$(INDICATOR_LIB)
 
 libdummy_indicator_null_la_LDFLAGS = \
 	-module \
@@ -532,7 +539,7 @@ libdummy_indicator_signaler_la_CFLAGS = \
 libdummy_indicator_signaler_la_LIBADD = \
 	$(LIBINDICATOR_LIBS) \
 	-L$(top_builddir)/libindicator/.libs \
-	-lindicator
+	$(INDICATOR_LIB)
 
 libdummy_indicator_signaler_la_LDFLAGS = \
 	-module \
@@ -552,7 +559,7 @@ libdummy_indicator_simple_la_CFLAGS = \
 libdummy_indicator_simple_la_LIBADD = \
 	$(LIBINDICATOR_LIBS) \
 	-L$(top_builddir)/libindicator/.libs \
-	-lindicator
+	$(INDICATOR_LIB)
 
 libdummy_indicator_simple_la_LDFLAGS = \
 	-module \

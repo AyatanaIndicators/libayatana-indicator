@@ -52,9 +52,10 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-DIST_COMMON = $(libindicatorinclude_HEADERS) $(srcdir)/Makefile.am \
+DIST_COMMON = $(libindicator3include_HEADERS) \
+	$(libindicatorinclude_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/indicator.pc.in \
-	$(top_srcdir)/Makefile.am.marshal
+	$(srcdir)/indicator3.pc.in $(top_srcdir)/Makefile.am.marshal
 subdir = libindicator
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -62,7 +63,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
-CONFIG_CLEAN_FILES = indicator.pc
+CONFIG_CLEAN_FILES = indicator.pc indicator3.pc
 CONFIG_CLEAN_VPATH_FILES =
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
@@ -86,6 +87,7 @@ am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgconfigdir)" \
+	"$(DESTDIR)$(libindicator3includedir)" \
 	"$(DESTDIR)$(libindicatorincludedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 am__DEPENDENCIES_1 =
@@ -107,6 +109,23 @@ libindicator_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(libindicator_la_CFLAGS) $(CFLAGS) $(libindicator_la_LDFLAGS) \
 	$(LDFLAGS) -o $@
+@USE_GTK3_FALSE@am_libindicator_la_rpath = -rpath $(libdir)
+am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1)
+libindicator3_la_DEPENDENCIES = $(am__DEPENDENCIES_2)
+am__objects_2 = $(am__objects_1) libindicator3_la-indicator-object.lo \
+	libindicator3_la-indicator-object-enum-types.lo \
+	libindicator3_la-indicator-desktop-shortcuts.lo \
+	libindicator3_la-indicator-image-helper.lo \
+	libindicator3_la-indicator-object-marshal.lo \
+	libindicator3_la-indicator-service.lo \
+	libindicator3_la-indicator-service-manager.lo
+am_libindicator3_la_OBJECTS = $(am__objects_2)
+libindicator3_la_OBJECTS = $(am_libindicator3_la_OBJECTS)
+libindicator3_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(libindicator3_la_CFLAGS) $(CFLAGS) \
+	$(libindicator3_la_LDFLAGS) $(LDFLAGS) -o $@
+@USE_GTK3_TRUE@am_libindicator3_la_rpath = -rpath $(libdir)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -133,10 +152,11 @@ am__v_CCLD_0 = @echo "  CCLD  " $@;
 AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
-SOURCES = $(libindicator_la_SOURCES)
-DIST_SOURCES = $(libindicator_la_SOURCES)
+SOURCES = $(libindicator_la_SOURCES) $(libindicator3_la_SOURCES)
+DIST_SOURCES = $(libindicator_la_SOURCES) $(libindicator3_la_SOURCES)
 DATA = $(pkgconfig_DATA)
-HEADERS = $(libindicatorinclude_HEADERS)
+HEADERS = $(libindicator3include_HEADERS) \
+	$(libindicatorinclude_HEADERS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -264,6 +284,10 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+@USE_GTK3_FALSE@VER = 
+@USE_GTK3_TRUE@VER = 3
+@USE_GTK3_FALSE@lib_LTLIBRARIES = libindicator.la
+@USE_GTK3_TRUE@lib_LTLIBRARIES = libindicator3.la
 BUILT_SOURCES = indicator-object-enum-types.h \
 	indicator-object-enum-types.c $(marshal_h) $(marshal_c) \
 	$(DBUS_SPECS:.xml=-client.h) $(DBUS_SPECS:.xml=-server.h)
@@ -271,12 +295,12 @@ CLEANFILES = stamp-marshal indicator-object-enum-types.h \
 	indicator-object-enum-types.c s-enum-types-h s-enum-types-c \
 	$(BUILT_SOURCES)
 DISTCLEANFILES = $(marshal_h) $(marshal_c)
-EXTRA_DIST = indicator.pc.in $(glib_marshal_list) \
+EXTRA_DIST = indicator3.pc.in indicator.pc.in $(glib_marshal_list) \
 	indicator-object-enum-types.h.template \
 	indicator-object-enum-types.c.template $(DBUS_SPECS)
 marshal_h = $(glib_marshal_list:.list=.h)
 marshal_c = $(glib_marshal_list:.list=.c)
-libindicatorincludedir = $(includedir)/libindicator-0.3/libindicator
+libindicatorincludedir = $(includedir)/libindicator$(VER)-0.3/libindicator
 indicator_headers = \
 	indicator.h \
 	indicator-desktop-shortcuts.h \
@@ -287,9 +311,6 @@ indicator_headers = \
 
 libindicatorinclude_HEADERS = \
 	$(indicator_headers)
-
-lib_LTLIBRARIES = \
-	libindicator.la
 
 libindicator_la_SOURCES = \
 	$(indicator_headers) \
@@ -316,7 +337,18 @@ libindicator_la_LDFLAGS = \
 	-no-undefined \
 	-export-symbols-regex "^[^_].*"
 
-pkgconfig_DATA = indicator.pc
+
+# We duplicate these here because Automake won't let us use $(VER) on the left hand side.
+# Since we carefully use $(VER) in the right hand side above, we can assign the same values.
+# Only one version of the library is every compiled at the same time, so it is safe to reuse
+# the right hand sides like this.
+libindicator3includedir = $(libindicatorincludedir)
+libindicator3include_HEADERS = $(indicator_headers)
+libindicator3_la_SOURCES = $(libindicator_la_SOURCES)
+libindicator3_la_CFLAGS = $(libindicator_la_CFLAGS)
+libindicator3_la_LIBADD = $(libindicator_la_LIBADD)
+libindicator3_la_LDFLAGS = $(libindicator_la_LDFLAGS)
+pkgconfig_DATA = indicator$(VER).pc
 pkgconfigdir = $(libdir)/pkgconfig
 glib_marshal_list = indicator-object-marshal.list
 glib_marshal_prefix = _indicator_object_marshal
@@ -364,6 +396,8 @@ $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 $(am__aclocal_m4_deps):
 indicator.pc: $(top_builddir)/config.status $(srcdir)/indicator.pc.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+indicator3.pc: $(top_builddir)/config.status $(srcdir)/indicator3.pc.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 install-libLTLIBRARIES: $(lib_LTLIBRARIES)
 	@$(NORMAL_INSTALL)
 	test -z "$(libdir)" || $(MKDIR_P) "$(DESTDIR)$(libdir)"
@@ -396,7 +430,9 @@ clean-libLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libindicator.la: $(libindicator_la_OBJECTS) $(libindicator_la_DEPENDENCIES) 
-	$(AM_V_CCLD)$(libindicator_la_LINK) -rpath $(libdir) $(libindicator_la_OBJECTS) $(libindicator_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libindicator_la_LINK) $(am_libindicator_la_rpath) $(libindicator_la_OBJECTS) $(libindicator_la_LIBADD) $(LIBS)
+libindicator3.la: $(libindicator3_la_OBJECTS) $(libindicator3_la_DEPENDENCIES) 
+	$(AM_V_CCLD)$(libindicator3_la_LINK) $(am_libindicator3_la_rpath) $(libindicator3_la_OBJECTS) $(libindicator3_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -404,6 +440,13 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libindicator3_la-indicator-desktop-shortcuts.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libindicator3_la-indicator-image-helper.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libindicator3_la-indicator-object-enum-types.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libindicator3_la-indicator-object-marshal.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libindicator3_la-indicator-object.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libindicator3_la-indicator-service-manager.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libindicator3_la-indicator-service.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libindicator_la-indicator-desktop-shortcuts.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libindicator_la-indicator-image-helper.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libindicator_la-indicator-object-enum-types.Plo@am__quote@
@@ -492,6 +535,62 @@ libindicator_la-indicator-service-manager.lo: indicator-service-manager.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libindicator_la_CFLAGS) $(CFLAGS) -c -o libindicator_la-indicator-service-manager.lo `test -f 'indicator-service-manager.c' || echo '$(srcdir)/'`indicator-service-manager.c
 
+libindicator3_la-indicator-object.lo: indicator-object.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libindicator3_la_CFLAGS) $(CFLAGS) -MT libindicator3_la-indicator-object.lo -MD -MP -MF $(DEPDIR)/libindicator3_la-indicator-object.Tpo -c -o libindicator3_la-indicator-object.lo `test -f 'indicator-object.c' || echo '$(srcdir)/'`indicator-object.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libindicator3_la-indicator-object.Tpo $(DEPDIR)/libindicator3_la-indicator-object.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='indicator-object.c' object='libindicator3_la-indicator-object.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libindicator3_la_CFLAGS) $(CFLAGS) -c -o libindicator3_la-indicator-object.lo `test -f 'indicator-object.c' || echo '$(srcdir)/'`indicator-object.c
+
+libindicator3_la-indicator-object-enum-types.lo: indicator-object-enum-types.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libindicator3_la_CFLAGS) $(CFLAGS) -MT libindicator3_la-indicator-object-enum-types.lo -MD -MP -MF $(DEPDIR)/libindicator3_la-indicator-object-enum-types.Tpo -c -o libindicator3_la-indicator-object-enum-types.lo `test -f 'indicator-object-enum-types.c' || echo '$(srcdir)/'`indicator-object-enum-types.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libindicator3_la-indicator-object-enum-types.Tpo $(DEPDIR)/libindicator3_la-indicator-object-enum-types.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='indicator-object-enum-types.c' object='libindicator3_la-indicator-object-enum-types.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libindicator3_la_CFLAGS) $(CFLAGS) -c -o libindicator3_la-indicator-object-enum-types.lo `test -f 'indicator-object-enum-types.c' || echo '$(srcdir)/'`indicator-object-enum-types.c
+
+libindicator3_la-indicator-desktop-shortcuts.lo: indicator-desktop-shortcuts.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libindicator3_la_CFLAGS) $(CFLAGS) -MT libindicator3_la-indicator-desktop-shortcuts.lo -MD -MP -MF $(DEPDIR)/libindicator3_la-indicator-desktop-shortcuts.Tpo -c -o libindicator3_la-indicator-desktop-shortcuts.lo `test -f 'indicator-desktop-shortcuts.c' || echo '$(srcdir)/'`indicator-desktop-shortcuts.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libindicator3_la-indicator-desktop-shortcuts.Tpo $(DEPDIR)/libindicator3_la-indicator-desktop-shortcuts.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='indicator-desktop-shortcuts.c' object='libindicator3_la-indicator-desktop-shortcuts.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libindicator3_la_CFLAGS) $(CFLAGS) -c -o libindicator3_la-indicator-desktop-shortcuts.lo `test -f 'indicator-desktop-shortcuts.c' || echo '$(srcdir)/'`indicator-desktop-shortcuts.c
+
+libindicator3_la-indicator-image-helper.lo: indicator-image-helper.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libindicator3_la_CFLAGS) $(CFLAGS) -MT libindicator3_la-indicator-image-helper.lo -MD -MP -MF $(DEPDIR)/libindicator3_la-indicator-image-helper.Tpo -c -o libindicator3_la-indicator-image-helper.lo `test -f 'indicator-image-helper.c' || echo '$(srcdir)/'`indicator-image-helper.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libindicator3_la-indicator-image-helper.Tpo $(DEPDIR)/libindicator3_la-indicator-image-helper.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='indicator-image-helper.c' object='libindicator3_la-indicator-image-helper.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libindicator3_la_CFLAGS) $(CFLAGS) -c -o libindicator3_la-indicator-image-helper.lo `test -f 'indicator-image-helper.c' || echo '$(srcdir)/'`indicator-image-helper.c
+
+libindicator3_la-indicator-object-marshal.lo: indicator-object-marshal.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libindicator3_la_CFLAGS) $(CFLAGS) -MT libindicator3_la-indicator-object-marshal.lo -MD -MP -MF $(DEPDIR)/libindicator3_la-indicator-object-marshal.Tpo -c -o libindicator3_la-indicator-object-marshal.lo `test -f 'indicator-object-marshal.c' || echo '$(srcdir)/'`indicator-object-marshal.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libindicator3_la-indicator-object-marshal.Tpo $(DEPDIR)/libindicator3_la-indicator-object-marshal.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='indicator-object-marshal.c' object='libindicator3_la-indicator-object-marshal.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libindicator3_la_CFLAGS) $(CFLAGS) -c -o libindicator3_la-indicator-object-marshal.lo `test -f 'indicator-object-marshal.c' || echo '$(srcdir)/'`indicator-object-marshal.c
+
+libindicator3_la-indicator-service.lo: indicator-service.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libindicator3_la_CFLAGS) $(CFLAGS) -MT libindicator3_la-indicator-service.lo -MD -MP -MF $(DEPDIR)/libindicator3_la-indicator-service.Tpo -c -o libindicator3_la-indicator-service.lo `test -f 'indicator-service.c' || echo '$(srcdir)/'`indicator-service.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libindicator3_la-indicator-service.Tpo $(DEPDIR)/libindicator3_la-indicator-service.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='indicator-service.c' object='libindicator3_la-indicator-service.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libindicator3_la_CFLAGS) $(CFLAGS) -c -o libindicator3_la-indicator-service.lo `test -f 'indicator-service.c' || echo '$(srcdir)/'`indicator-service.c
+
+libindicator3_la-indicator-service-manager.lo: indicator-service-manager.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libindicator3_la_CFLAGS) $(CFLAGS) -MT libindicator3_la-indicator-service-manager.lo -MD -MP -MF $(DEPDIR)/libindicator3_la-indicator-service-manager.Tpo -c -o libindicator3_la-indicator-service-manager.lo `test -f 'indicator-service-manager.c' || echo '$(srcdir)/'`indicator-service-manager.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libindicator3_la-indicator-service-manager.Tpo $(DEPDIR)/libindicator3_la-indicator-service-manager.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='indicator-service-manager.c' object='libindicator3_la-indicator-service-manager.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libindicator3_la_CFLAGS) $(CFLAGS) -c -o libindicator3_la-indicator-service-manager.lo `test -f 'indicator-service-manager.c' || echo '$(srcdir)/'`indicator-service-manager.c
+
 mostlyclean-libtool:
 	-rm -f *.lo
 
@@ -517,6 +616,26 @@ uninstall-pkgconfigDATA:
 	test -n "$$files" || exit 0; \
 	echo " ( cd '$(DESTDIR)$(pkgconfigdir)' && rm -f" $$files ")"; \
 	cd "$(DESTDIR)$(pkgconfigdir)" && rm -f $$files
+install-libindicator3includeHEADERS: $(libindicator3include_HEADERS)
+	@$(NORMAL_INSTALL)
+	test -z "$(libindicator3includedir)" || $(MKDIR_P) "$(DESTDIR)$(libindicator3includedir)"
+	@list='$(libindicator3include_HEADERS)'; test -n "$(libindicator3includedir)" || list=; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(libindicator3includedir)'"; \
+	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(libindicator3includedir)" || exit $$?; \
+	done
+
+uninstall-libindicator3includeHEADERS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(libindicator3include_HEADERS)'; test -n "$(libindicator3includedir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	test -n "$$files" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(libindicator3includedir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(libindicator3includedir)" && rm -f $$files
 install-libindicatorincludeHEADERS: $(libindicatorinclude_HEADERS)
 	@$(NORMAL_INSTALL)
 	test -z "$(libindicatorincludedir)" || $(MKDIR_P) "$(DESTDIR)$(libindicatorincludedir)"
@@ -625,7 +744,7 @@ check: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) check-am
 all-am: Makefile $(LTLIBRARIES) $(DATA) $(HEADERS)
 installdirs:
-	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgconfigdir)" "$(DESTDIR)$(libindicatorincludedir)"; do \
+	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgconfigdir)" "$(DESTDIR)$(libindicator3includedir)" "$(DESTDIR)$(libindicatorincludedir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: $(BUILT_SOURCES)
@@ -680,8 +799,8 @@ info: info-am
 
 info-am:
 
-install-data-am: install-libindicatorincludeHEADERS \
-	install-pkgconfigDATA
+install-data-am: install-libindicator3includeHEADERS \
+	install-libindicatorincludeHEADERS install-pkgconfigDATA
 
 install-dvi: install-dvi-am
 
@@ -728,6 +847,7 @@ ps: ps-am
 ps-am:
 
 uninstall-am: uninstall-libLTLIBRARIES \
+	uninstall-libindicator3includeHEADERS \
 	uninstall-libindicatorincludeHEADERS uninstall-pkgconfigDATA
 
 .MAKE: all check install install-am install-strip
@@ -739,13 +859,14 @@ uninstall-am: uninstall-libLTLIBRARIES \
 	install install-am install-data install-data-am install-dvi \
 	install-dvi-am install-exec install-exec-am install-html \
 	install-html-am install-info install-info-am \
-	install-libLTLIBRARIES install-libindicatorincludeHEADERS \
-	install-man install-pdf install-pdf-am install-pkgconfigDATA \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-libLTLIBRARIES \
+	install-libLTLIBRARIES install-libindicator3includeHEADERS \
+	install-libindicatorincludeHEADERS install-man install-pdf \
+	install-pdf-am install-pkgconfigDATA install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
+	pdf pdf-am ps ps-am tags uninstall uninstall-am \
+	uninstall-libLTLIBRARIES uninstall-libindicator3includeHEADERS \
 	uninstall-libindicatorincludeHEADERS uninstall-pkgconfigDATA
 
 
