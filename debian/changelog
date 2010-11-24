@@ -1,11 +1,23 @@
-libindicator (0.3.15-0ubuntu1~ppa1) maverick; urgency=low
+libindicator (0.3.15-0ubuntu1) UNRELEASED; urgency=low
 
+  * debian/rules
+    - Added build targets to build with gtk3 enabled in additional to
+      default build with gtk2
+  * debian/control
+    - Updated build depends to support building with gtk+-3.0
+    - Added dh-autoreconf build depends
+    - Added libindicator3-1, libindicator3-dev, libindicator3-tools binaries
+      binaries
+  * libindicator/Makefile.am and tools/Makefile.am
+    - Fixes needed for building with-gtk=3
+
+  [ Ted Gould ]
   * New upstream release.
     * Adding a small file to set debugging environment variables
     * Allowing to build for GTK 2/3 and build parallel libraries
   * debian/control: Adding package libindicator-debugenv
 
- -- Ted Gould <ted@ubuntu.com>  Thu, 11 Nov 2010 14:44:51 -0600
+ -- Ken VanDine <ken.vandine@canonical.com>  Wed, 24 Nov 2010 18:29:40 -0500
 
 libindicator (0.3.14-0ubuntu1) maverick; urgency=low
 
