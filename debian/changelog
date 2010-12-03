@@ -1,4 +1,4 @@
-libindicator (0.3.15-0ubuntu1) UNRELEASED; urgency=low
+libindicator (0.3.15-0ubuntu1) natty; urgency=low
 
   * debian/rules
     - Added build targets to build with gtk3 enabled in additional to
