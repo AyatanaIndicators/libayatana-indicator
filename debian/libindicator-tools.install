@@ -1,1 +1,3 @@
 debian/tmp/usr/lib/libindicator/indicator-loader
+debian/tmp/usr/lib/libindicator/indicator-loader3
+debian/tmp/usr/share/libindicator/80indicator-debugging

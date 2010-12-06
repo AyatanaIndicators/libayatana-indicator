@@ -1,3 +1,17 @@
+libindicator (0.3.15-0ubuntu2) natty; urgency=low
+
+  * debian/control: 
+    - dropped libindicator-debugenv package
+  * -debian/libindicator-debugenv.install
+  * debian/libindicator-tools.install
+    - Install indicator-loader and indicator-loader3 in the 
+    libindicator-tools package (means it depends on both gtk2 and gtk3)
+    - Install sample xsession env in pkgdatadir for developer use
+  * tools/Makefile.am
+    - Install 80indicator-debugging in pkgdatadir
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Mon, 06 Dec 2010 10:19:58 -0500
+
 libindicator (0.3.15-0ubuntu1) natty; urgency=low
 
   * debian/rules

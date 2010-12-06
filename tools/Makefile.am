@@ -35,7 +35,7 @@ indicator_loader3_SOURCES = $(indicator_loader_SOURCES)
 indicator_loader3_CFLAGS = $(indicator_loader_CFLAGS)
 indicator_loader3_LDADD = $(indicator_loader_LDADD)
 
-xsessiondir = $(sysconfdir)/X11/Xsession.d
+xsessiondir = $(pkgdatadir)
 
 xsession_DATA = 80indicator-debugging
 
