@@ -8,10 +8,12 @@ Build-Depends: debhelper (>= 5.0),
                cdbs (>= 0.4.41),
                libglib2.0-dev (>= 2.22),
                libgtk2.0-dev (>= 2.18),
+               libgtk3.0-dev (>= 2.91.3),
                libdbus-glib-1-dev,
                libtool,
                intltool,
-               gtk-doc-tools
+               gtk-doc-tools,
+               dh-autoreconf
 Standards-Version: 3.9.0
 Homepage: https://launchpad.net/libindicator
 Vcs-Bzr: https://code.launchpad.net/~indicator-applet-developers/libindicator/ubuntu
@@ -52,13 +54,37 @@ Description: Tools for libindicator
  .
  This package contains files that are needed to build applications.
 
-Package: libindicator-debugenv
-Section: devel
-Architecture: all
+Package: libindicator3-1
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends},
+         ${misc:Depends}
+Description: panel indicator applet - shared library
+ This library contains information to build indicators to go into
+ the indicator applet.
+ .
+ This package contains the library itself.
+
+Package: libindicator3-dev
+Section: libdevel
+Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
-         libindicator1 (= ${binary:Version})
-Description: Debug environment for libindicator
- Sets debug values useful for developers of applications using indicators.
+         libgtk3.0-dev (>= 2.91.3),
+         libindicator3-1 (= ${binary:Version})
+Description: panel indicator applet - library development files
+ This library contains information to build indicators to go into
+ the indicator applet.
  .
- This package contains session configuration files
+ This package contains files that are needed to build applications.
+
+Package: libindicator3-tools
+Section: devel
+Architecture: any
+Depends: ${shlibs:Depends},
+         ${misc:Depends},
+         libindicator3-1 (= ${binary:Version})
+Description: Tools for libindicator
+ Tools useful for developers of applications using indicators.
+ .
+ This package contains files that are needed to build applications.

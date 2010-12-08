@@ -2,9 +2,38 @@
 
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/gnome.mk
+include /usr/share/cdbs/1/rules/autoreconf.mk
 
+DEB_SRCDIR = .
+DEB_BUILDDIR = $(DEB_SRCDIR)/build
 
 LDFLAGS += -Wl,-z,defs -Wl,--as-needed
 
-DEB_DH_MAKESHLIBS_ARGS_libindicator0 += -V 'libindicator1 (>= 0.3.14)'
+DEB_DH_MAKESHLIBS_ARGS_libindicator1 += -V 'libindicator1 (>= 0.3.15)'
+DEB_DH_MAKESHLIBS_ARGS_libindicator3 += -V 'libindicator3-1 (>= 0.3.15)'
 
+configure/libindicator3-1:: stamp-configure-gtk3
+stamp-configure-gtk3:
+	: # configure for GTK+ 3.0
+	set -e; \
+	rm -rf build-gtk3; \
+	mkdir build-gtk3; \
+	cd build-gtk3; \
+	$(DEB_CONFIGURE_SCRIPT_ENV) ../configure --with-gtk=3 \
+		$(filter-out --srcdir=%, $(DEB_CONFIGURE_NORMAL_ARGS) $(DEB_CONFIGURE_EXTRA_FLAGS)); \
+	cd ..;
+	touch stamp-configure-gtk3
+
+build/libindicator3-1:: stamp-build-gtk3
+stamp-build-gtk3: stamp-configure-gtk3
+	: # build for GTK+ 3.0
+	$(MAKE) -C build-gtk3;
+	touch stamp-build-gtk3
+
+common-install-prehook-arch:: stamp-build-gtk3
+	: # install for GTK+ 3.0
+	$(MAKE) -C build-gtk3 DESTDIR=$(CURDIR)/debian/tmp install
+
+clean::
+	rm -f stamp-*-gtk3
+	rm -rf build-gtk3

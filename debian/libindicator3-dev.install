@@ -1,0 +1,3 @@
+debian/tmp/usr/lib/pkgconfig/indicator3.pc
+debian/tmp/usr/lib/libindicator3.a
+debian/tmp/usr/lib/libindicator3.so
