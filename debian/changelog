@@ -1,8 +1,10 @@
 libindicator (0.3.15-0ubuntu3~ppa1) UNRELEASED; urgency=low
 
   * debian/libindicator-tools: Removing indicator-loader3
+  * debian/libindicator3-dev: Adding in the include files for this
+    version of the library.
 
- -- Ted Gould <ted@ubuntu.com>  Wed, 08 Dec 2010 14:44:46 -0600
+ -- Ted Gould <ted@ubuntu.com>  Wed, 08 Dec 2010 14:46:03 -0600
 
 libindicator (0.3.15-0ubuntu2) natty; urgency=low
 
