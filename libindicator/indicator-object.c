@@ -453,6 +453,30 @@ indicator_object_get_location (IndicatorObject * io, IndicatorObjectEntry * entr
 }
 
 /**
+	indicator_object_get_show_now:
+	@io: #IndicatorObject to query
+	@entry: The #IndicatorObjectEntry to look for.
+
+	This function returns whether the entry should be shown with
+	priority on the panel.  If the object does not support checking
+	it assumes that its entries should never have priority.
+
+	Return value: Whether the entry should be shown with priority.
+*/
+guint
+indicator_object_get_show_now (IndicatorObject * io, IndicatorObjectEntry * entry)
+{
+	g_return_val_if_fail(INDICATOR_IS_OBJECT(io), 0);
+	IndicatorObjectClass * class = INDICATOR_OBJECT_GET_CLASS(io);
+
+	if (class->get_show_now) {
+		return class->get_show_now(io, entry);
+	}
+
+	return FALSE;
+}
+
+/**
 	indicator_object_entry_activate:
 	@io: #IndicatorObject to query
 	@entry: The #IndicatorObjectEntry whose entry was shown
