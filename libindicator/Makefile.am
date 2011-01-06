@@ -73,7 +73,7 @@ glib_marshal_prefix = _indicator_object_marshal
 indicator-object-enum-types.h: s-enum-types-h
 	@true
 s-enum-types-h: $(indicator_headers)
-	( cd $(srcdir) && $(GLIB_MKENUMS) --template $(srcdir)/indicator-object-enum-types.h.template								\
+	( cd $(srcdir) && $(GLIB_MKENUMS) --template $(abs_srcdir)/indicator-object-enum-types.h.template								\
 		$(indicator_headers) ) >> tmp-indicator-object-enum-types.h											\
 	&& (cmp -s tmp-indicator-object-enum-types.h indicator-object-enum-types.h || cp tmp-indicator-object-enum-types.h indicator-object-enum-types.h )	\
 	&& rm -f tmp-indicator-object-enum-types.h && echo timestamp > $(@F)
@@ -81,7 +81,7 @@ s-enum-types-h: $(indicator_headers)
 indicator-object-enum-types.c: s-enum-types-c
 	@true
 s-enum-types-c: $(indicator_headers)
-	( cd $(srcdir) && $(GLIB_MKENUMS) --template $(srcdir)/indicator-object-enum-types.c.template								\
+	( cd $(srcdir) && $(GLIB_MKENUMS) --template $(abs_srcdir)/indicator-object-enum-types.c.template								\
 		$(indicator_headers) ) > tmp-indicator-object-enum-types.c											\
 	&& (cmp -s tmp-indicator-object-enum-types.c indicator-object-enum-types.c || cp tmp-indicator-object-enum-types.c indicator-object-enum-types.c )	\
 	&& rm -f tmp-indicator-object-enum-types.c
