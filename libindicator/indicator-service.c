@@ -32,7 +32,6 @@ License along with this library. If not, see
 #include "dbus-shared.h"
 
 static void unwatch_core (IndicatorService * service, const gchar * name);
-static void proxy_destroyed (GObject * proxy, gpointer user_data);
 static gboolean watchers_remove (gpointer key, gpointer value, gpointer user_data);
 static void bus_get_cb (GObject * object, GAsyncResult * res, gpointer user_data);
 static GVariant * bus_watch (IndicatorService * service, const gchar * sender);
@@ -201,11 +200,11 @@ indicator_service_init (IndicatorService *self)
 		}
 	}
 
-	/* NOTE: We're using g_object_unref here because that's what needs to
+	/* NOTE: We're using g_free here because that's what needs to
 	   happen, but you really should call watchers_remove first as well
 	   since that disconnects the signals.  We can't do that with a callback
 	   here because there is no user data to pass the object as well. */
-	priv->watchers = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_object_unref);
+	priv->watchers = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
 	g_bus_get(G_BUS_TYPE_STARTER,
 	          NULL, /* TODO: Cancellable */
@@ -395,7 +394,7 @@ bus_method_call (GDBusConnection * connection, const gchar * sender, const gchar
 static gboolean
 watchers_remove (gpointer key, gpointer value, gpointer user_data)
 {
-	g_signal_handlers_disconnect_by_func(G_OBJECT(value), G_CALLBACK(proxy_destroyed), user_data);
+	g_bus_unwatch_name(GPOINTER_TO_UINT(value));
 	return TRUE;
 }
 
@@ -472,38 +471,20 @@ try_and_get_name (IndicatorService * service)
 	return;
 }
 
-typedef struct _hash_table_find_t hash_table_find_t;
-struct _hash_table_find_t {
-	GObject * proxy;
-	gchar * name;
-};
-
-/* Look in the hash table for the proxy, as it won't give us
-   its name. */
-static gboolean
-hash_table_find (gpointer key, gpointer value, gpointer user_data)
-{
-	hash_table_find_t * finddata = (hash_table_find_t *)user_data;
-	if (value == finddata->proxy) {
-		finddata->name = key;
-		return TRUE;
-	}
-	return FALSE;
-}
-
-/* If the proxy gets destroyed that's the same as getting an
-   unwatch signal.  Make it so. */
+/* When the watcher vanishes we don't really care about it
+   anymore. */
 static void
-proxy_destroyed (GObject * proxy, gpointer user_data)
+watcher_vanished_cb (GDBusConnection * connection, const gchar * name, gpointer user_data)
 {
 	g_return_if_fail(INDICATOR_IS_SERVICE(user_data));
 	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(user_data);
 
-	hash_table_find_t finddata = {0};
-	finddata.proxy = proxy;
-
-	g_hash_table_find(priv->watchers, hash_table_find, &finddata);
-	unwatch_core(INDICATOR_SERVICE(user_data), finddata.name);
+	gpointer finddata = g_hash_table_lookup(priv->watchers, name);
+	if (finddata != NULL) {
+		unwatch_core(INDICATOR_SERVICE(user_data), name);
+	} else {
+		g_warning("Odd, we were watching for '%s' and it disappeard, but then it wasn't in the hashtable.", name);
+	}
 
 	return;
 }
@@ -518,21 +499,19 @@ bus_watch (IndicatorService * service, const gchar * sender)
 	g_return_val_if_fail(INDICATOR_IS_SERVICE(service), NULL);
 	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(service);
 
-	if (g_hash_table_lookup(priv->watchers, sender) == NULL) {
-		GError * error = NULL;
-		DBusGProxy * senderproxy = dbus_g_proxy_new_for_name_owner(priv->bus,
-		                                                           sender,
-		                                                           "/",
-		                                                           DBUS_INTERFACE_INTROSPECTABLE,
-		                                                           &error);
+	if (GPOINTER_TO_UINT(g_hash_table_lookup(priv->watchers, sender)) == 0) {
+		guint watch = g_bus_watch_name_on_connection(priv->bus,
+		                                             sender,
+		                                             G_BUS_NAME_WATCHER_FLAGS_NONE,
+		                                             NULL, /* appeared, we dont' care, should have already happened. */
+		                                             watcher_vanished_cb,
+		                                             service,
+		                                             NULL);
 
-		g_signal_connect(G_OBJECT(senderproxy), "destroy", G_CALLBACK(proxy_destroyed), service);
-
-		if (error == NULL) {
-			g_hash_table_insert(priv->watchers, g_strdup(sender), senderproxy);
+		if (watch != 0) {
+			g_hash_table_insert(priv->watchers, g_strdup(sender), GUINT_TO_POINTER(watch));
 		} else {
-			g_warning("Unable to create proxy for watcher '%s': %s", sender, error->message);
-			g_error_free(error);
+			g_warning("Unable watch for '%s'", sender);
 		}
 	}
 
