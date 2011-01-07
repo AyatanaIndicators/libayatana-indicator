@@ -47,6 +47,8 @@ static gboolean _indicator_service_server_un_watch (IndicatorService * service, 
 	@watcher: A list of processes on dbus that are watching us.
 	@this_service_version: The version to hand out that we're
 		implementing.  May not be set, so we'll send zero (default).
+	@dbus_registration: The handle for this object being registered
+		on dbus.
 */
 typedef struct _IndicatorServicePrivate IndicatorServicePrivate;
 struct _IndicatorServicePrivate {
@@ -57,6 +59,7 @@ struct _IndicatorServicePrivate {
 	guint timeout_length;
 	GHashTable * watchers;
 	guint this_service_version;
+	guint dbus_registration;
 };
 
 /* Signals Stuff */
@@ -163,10 +166,6 @@ indicator_service_class_init (IndicatorServiceClass *klass)
 		}
 	}
 
-	/* Initialize the object as a DBus type */
-	dbus_g_object_type_install_info(INDICATOR_SERVICE_TYPE,
-	                                &dbus_glib__indicator_service_server_object_info);
-
 	return;
 }
 
@@ -187,6 +186,7 @@ indicator_service_init (IndicatorService *self)
 	priv->bus = NULL;
 	priv->this_service_version = 0;
 	priv->timeout_length = 500;
+	priv->dbus_registration = 0;
 
 	const gchar * timeoutenv = g_getenv("INDICATOR_SERVICE_SHUTDOWN_TIMEOUT");
 	if (timeoutenv != NULL) {
@@ -233,9 +233,13 @@ indicator_service_init (IndicatorService *self)
 		return;
 	}
 
-	dbus_g_connection_register_g_object(priv->bus,
-	                                    INDICATOR_SERVICE_OBJECT,
-	                                    G_OBJECT(self));
+	priv->dbus_registration = g_dbus_connection_register_object(priv->bus,
+	                                                            INDICATOR_SERVICE_OBJECT,
+	                                                            interface_info,
+	                                                            &interface_table,
+	                                                            self,
+	                                                            NULL,
+	                                                            &error);
 
 	return;
 }
@@ -259,6 +263,12 @@ indicator_service_dispose (GObject *object)
 	if (priv->timeout != 0) {
 		g_source_remove(priv->timeout);
 		priv->timeout = 0;
+	}
+
+	if (priv->dbus_registration != 0) {
+		g_dbus_connection_unregister_object(priv->bus, priv->dbus_registration);
+		/* Don't care if it fails, there's nothing we can do */
+		priv->dbus_registration = 0;
 	}
 
 	G_OBJECT_CLASS (indicator_service_parent_class)->dispose (object);
