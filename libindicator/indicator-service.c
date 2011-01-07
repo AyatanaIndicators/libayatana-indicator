@@ -25,7 +25,11 @@ License along with this library. If not, see
 #include "config.h"
 #endif
 
+#include <gio/gio.h>
+
 #include "indicator-service.h"
+#include "gen-indicator-service.xml.h"
+#include "dbus-shared.h"
 
 static void unwatch_core (IndicatorService * service, const gchar * name);
 static void proxy_destroyed (GObject * proxy, gpointer user_data);
@@ -33,9 +37,6 @@ static gboolean watchers_remove (gpointer key, gpointer value, gpointer user_dat
 /* DBus Prototypes */
 static gboolean _indicator_service_server_watch (IndicatorService * service, DBusGMethodInvocation * method);
 static gboolean _indicator_service_server_un_watch (IndicatorService * service, DBusGMethodInvocation * method);
-
-#include "indicator-service-server.h"
-#include "dbus-shared.h"
 
 /* Private Stuff */
 /**
@@ -74,6 +75,9 @@ enum {
 	PROP_NAME,
 	PROP_VERSION
 };
+
+static GDBusNodeInfo *            node_info = NULL;
+static GDBusInterfaceInfo *       interface_info = NULL;
 
 /* The strings so that they can be slowly looked up. */
 #define PROP_NAME_S                    "name"
@@ -139,6 +143,25 @@ indicator_service_class_init (IndicatorServiceClass *klass)
 	                                  NULL, NULL,
 	                                  g_cclosure_marshal_VOID__VOID,
 	                                  G_TYPE_NONE, 0, G_TYPE_NONE);
+
+	/* Setting up the DBus interfaces */
+	if (node_info == NULL) {
+		GError * error = NULL;
+
+		node_info = g_dbus_node_info_new_for_xml(_indicator_service, &error);
+		if (error != NULL) {
+			g_error("Unable to parse Indicator Service Interface description: %s", error->message);
+			g_error_free(error);
+		}
+	}
+
+	if (interface_info == NULL) {
+		interface_info = g_dbus_node_info_lookup_interface(node_info, INDICATOR_SERVICE_INTERFACE);
+
+		if (interface_info == NULL) {
+			g_error("Unable to find interface '" INDICATOR_SERVICE_INTERFACE "'");
+		}
+	}
 
 	/* Initialize the object as a DBus type */
 	dbus_g_object_type_install_info(INDICATOR_SERVICE_TYPE,
