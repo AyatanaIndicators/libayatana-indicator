@@ -34,6 +34,7 @@ License along with this library. If not, see
 static void unwatch_core (IndicatorService * service, const gchar * name);
 static void proxy_destroyed (GObject * proxy, gpointer user_data);
 static gboolean watchers_remove (gpointer key, gpointer value, gpointer user_data);
+static void bus_get_cb (GObject * object, GAsyncResult * res, gpointer user_data);
 
 /* Private Stuff */
 /**
@@ -49,7 +50,7 @@ static gboolean watchers_remove (gpointer key, gpointer value, gpointer user_dat
 typedef struct _IndicatorServicePrivate IndicatorServicePrivate;
 struct _IndicatorServicePrivate {
 	gchar * name;
-	DBusGConnection * bus;
+	GDBusConnection * bus;
 	guint timeout;
 	guint timeout_length;
 	GHashTable * watchers;
@@ -205,37 +206,10 @@ indicator_service_init (IndicatorService *self)
 	   here because there is no user data to pass the object as well. */
 	priv->watchers = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_object_unref);
 
-	/* Start talkin' dbus */
-	GError * error = NULL;
-	priv->bus = dbus_g_bus_get(DBUS_BUS_STARTER, &error);
-	if (error != NULL) {
-		g_error("Unable to get starter bus: %s", error->message);
-		g_error_free(error);
-
-		/* Okay, fine let's try the session bus then. */
-		/* I think this should automatically, but I can't find confirmation
-		   of that, so we're putting the extra little code in here. */
-		error = NULL;
-		priv->bus = dbus_g_bus_get(DBUS_BUS_SESSION, &error);
-		if (error != NULL) {
-			g_error("Unable to get session bus: %s", error->message);
-			g_error_free(error);
-			return;
-		}
-	}
-
-	priv->dbus_registration = g_dbus_connection_register_object(priv->bus,
-	                                                            INDICATOR_SERVICE_OBJECT,
-	                                                            interface_info,
-	                                                            &interface_table,
-	                                                            self,
-	                                                            NULL,
-	                                                            &error);
-	if (error != NULL) {
-		g_error("Unable to register the object to DBus: %s", error->message);
-		g_error_free(error);
-		return;
-	}
+	g_bus_get(G_BUS_TYPE_STARTER,
+	          NULL, /* TODO: Cancellable */
+	          bus_get_cb,
+	          self);
 
 	return;
 }
@@ -260,6 +234,11 @@ indicator_service_dispose (GObject *object)
 		g_dbus_connection_unregister_object(priv->bus, priv->dbus_registration);
 		/* Don't care if it fails, there's nothing we can do */
 		priv->dbus_registration = 0;
+	}
+
+	if (priv->bus != NULL) {
+		g_object_unref(priv->bus);
+		priv->bus = NULL;
 	}
 
 	G_OBJECT_CLASS (indicator_service_parent_class)->dispose (object);
@@ -352,6 +331,39 @@ get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspe
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
+	}
+
+	return;
+}
+
+/* Callback for getting our connection to DBus */
+static void
+bus_get_cb (GObject * object, GAsyncResult * res, gpointer user_data)
+{
+	GError * error = NULL;
+	GDBusConnection * connection = g_bus_get_finish(res, &error);
+
+	if (error != NULL) {
+		g_error("OMG! Unable to get a connection to DBus: %s", error->message);
+		g_error_free(error);
+		return;
+	}
+
+	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(user_data);
+	priv->bus = connection;
+
+	/* Now register our object on our new connection */
+	priv->dbus_registration = g_dbus_connection_register_object(priv->bus,
+	                                                            INDICATOR_SERVICE_OBJECT,
+	                                                            interface_info,
+	                                                            &interface_table,
+	                                                            user_data,
+	                                                            NULL,
+	                                                            &error);
+	if (error != NULL) {
+		g_error("Unable to register the object to DBus: %s", error->message);
+		g_error_free(error);
+		return;
 	}
 
 	return;
