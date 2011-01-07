@@ -35,6 +35,7 @@ static void unwatch_core (IndicatorService * service, const gchar * name);
 static void proxy_destroyed (GObject * proxy, gpointer user_data);
 static gboolean watchers_remove (gpointer key, gpointer value, gpointer user_data);
 static void bus_get_cb (GObject * object, GAsyncResult * res, gpointer user_data);
+static GVariant * bus_watch (IndicatorService * service, const gchar * sender);
 
 /* Private Stuff */
 /**
@@ -385,7 +386,7 @@ bus_method_call (GDBusConnection * connection, const gchar * sender, const gchar
 		g_warning("Calling method '%s' on the indicator service and it's unknown", method);
 	}
 
-	g_method_invocation_return_value(invocation, retval);
+	g_dbus_method_invocation_return_value(invocation, retval);
 	return;
 }
 
@@ -447,7 +448,7 @@ try_and_get_name_lost_cb (GDBusConnection * connection, const gchar * name, gpoi
 	g_return_if_fail(INDICATOR_IS_SERVICE(user_data));
 
 	g_warning("Name request failed.");
-	g_signal_emit(G_OBJECT(data), signals[SHUTDOWN], 0, TRUE);
+	g_signal_emit(G_OBJECT(user_data), signals[SHUTDOWN], 0, TRUE);
 
 	return;
 }
