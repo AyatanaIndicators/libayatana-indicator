@@ -79,9 +79,6 @@ enum {
 	PROP_VERSION
 };
 
-static GDBusNodeInfo *            node_info = NULL;
-static GDBusInterfaceInfo *       interface_info = NULL;
-
 /* The strings so that they can be slowly looked up. */
 #define PROP_NAME_S                    "name"
 #define PROP_VERSION_S                 "version"
@@ -99,7 +96,18 @@ static void indicator_service_finalize   (GObject *object);
 static void set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec);
 static void get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec);
 static void try_and_get_name (IndicatorService * service);
+static void bus_method_call (GDBusConnection * connection, const gchar * sender, const gchar * path, const gchar * interface, const gchar * method, GVariant * params, GDBusMethodInvocation * invocation, gpointer user_data); 
 
+/* GDBus Stuff */
+static GDBusNodeInfo *            node_info = NULL;
+static GDBusInterfaceInfo *       interface_info = NULL;
+static GDBusInterfaceVTable       interface_table = {
+	method_call:	bus_method_call,
+	get_property:	NULL, /* No properties */
+	set_property:	NULL  /* No properties */
+};
+
+/* THE define */
 G_DEFINE_TYPE (IndicatorService, indicator_service, G_TYPE_OBJECT);
 
 static void
@@ -362,6 +370,15 @@ get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspe
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
 	}
+
+	return;
+}
+
+/* A method has been called from our dbus inteface.  Figure out what it
+   is and dispatch it. */
+static void
+bus_method_call (GDBusConnection * connection, const gchar * sender, const gchar * path, const gchar * interface, const gchar * method, GVariant * params, GDBusMethodInvocation * invocation, gpointer user_data) 
+{
 
 	return;
 }
