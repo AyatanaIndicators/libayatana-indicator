@@ -365,7 +365,18 @@ get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspe
 static void
 bus_method_call (GDBusConnection * connection, const gchar * sender, const gchar * path, const gchar * interface, const gchar * method, GVariant * params, GDBusMethodInvocation * invocation, gpointer user_data) 
 {
+	IndicatorService * service = INDICATOR_SERVICE(user_data);
+	GVariant * retval = NULL;
 
+	if (g_strcmp0(method, "Watch") == 0) {
+		retval = bus_watch(service, sender);
+	} else if (g_strcmp0(method, "UnWatch") == 0) {
+		unwatch_core(service, sender);
+	} else {
+		g_warning("Calling method '%s' on the indicator service and it's unknown", method);
+	}
+
+	g_method_invocation_return_value(invocation, retval);
 	return;
 }
 
@@ -491,13 +502,12 @@ proxy_destroyed (GObject * proxy, gpointer user_data)
    interface "Watch" function.  It is an async function so
    that we can get the sender and store that information.  We
    put them in a list and reset the timeout. */
-static gboolean
-_indicator_service_server_watch (IndicatorService * service, DBusGMethodInvocation * method)
+static GVariant *
+bus_watch (IndicatorService * service, const gchar * sender)
 {
-	g_return_val_if_fail(INDICATOR_IS_SERVICE(service), FALSE);
+	g_return_val_if_fail(INDICATOR_IS_SERVICE(service), NULL);
 	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(service);
 
-	const gchar * sender = dbus_g_method_get_sender(method);
 	if (g_hash_table_lookup(priv->watchers, sender) == NULL) {
 		GError * error = NULL;
 		DBusGProxy * senderproxy = dbus_g_proxy_new_for_name_owner(priv->bus,
@@ -521,22 +531,7 @@ _indicator_service_server_watch (IndicatorService * service, DBusGMethodInvocati
 		priv->timeout = 0;
 	}
 
-	dbus_g_method_return(method, INDICATOR_SERVICE_VERSION, priv->this_service_version);
-	return TRUE;
-}
-
-/* A function connecting into the dbus interface for the
-   "UnWatch" function.  It is also an async function to get
-   the sender and passes everything to unwatch_core to remove it. */
-static gboolean
-_indicator_service_server_un_watch (IndicatorService * service, DBusGMethodInvocation * method)
-{
-	g_return_val_if_fail(INDICATOR_IS_SERVICE(service), FALSE);
-
-	unwatch_core(service, dbus_g_method_get_sender(method));
-
-	dbus_g_method_return(method);
-	return TRUE;
+	return g_variant_new("(uu)", INDICATOR_SERVICE_VERSION, priv->this_service_version);
 }
 
 /* Performs the core of loosing a watcher; it removes them
