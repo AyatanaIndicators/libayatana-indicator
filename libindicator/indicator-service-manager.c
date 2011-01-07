@@ -26,9 +26,10 @@ License along with this library. If not, see
 #endif
 
 #include <stdlib.h>
+#include <gio/gio.h>
 
 #include "indicator-service-manager.h"
-#include "indicator-service-client.h"
+#include "gen-indicator-service.xml.h"
 #include "dbus-shared.h"
 
 /* Private Stuff */
