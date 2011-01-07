@@ -36,21 +36,17 @@ License along with this library. If not, see
 /**
 	IndicatorServiceManagerPrivate:
 	@name: The well known dbus name the service should be on.
-	@dbus_proxy: A proxy to talk to the dbus daemon.
 	@service_proxy: The proxy to the service itself.
 	@connected: Whether we're connected to the service or not.
 	@this_service_version: The version of the service that we're looking for.
-	@bus: A reference to the bus so we don't have to keep getting it.
 	@restart_count: The number of times we've restarted this service.
 */
 typedef struct _IndicatorServiceManagerPrivate IndicatorServiceManagerPrivate;
 struct _IndicatorServiceManagerPrivate {
 	gchar * name;
-	DBusGProxy * dbus_proxy;
 	DBusGProxy * service_proxy;
 	gboolean connected;
 	guint this_service_version;
-	DBusGConnection * bus;
 	guint restart_count;
 	gint restart_source;
 };
@@ -161,33 +157,11 @@ indicator_service_manager_init (IndicatorServiceManager *self)
 
 	/* Get the private variables in a decent state */
 	priv->name = NULL;
-	priv->dbus_proxy = NULL;
 	priv->service_proxy = NULL;
 	priv->connected = FALSE;
 	priv->this_service_version = 0;
-	priv->bus = NULL;
 	priv->restart_count = 0;
 	priv->restart_source = 0;
-
-	/* Start talkin' dbus */
-	GError * error = NULL;
-	priv->bus = dbus_g_bus_get(DBUS_BUS_SESSION, &error);
-	if (error != NULL) {
-		g_error("Unable to get session bus for manager: %s", error->message);
-		g_error_free(error);
-		return;
-	}
-
-	priv->dbus_proxy = dbus_g_proxy_new_for_name_owner(priv->bus,
-	                                                   DBUS_SERVICE_DBUS,
-	                                                   DBUS_PATH_DBUS,
-	                                                   DBUS_INTERFACE_DBUS,
-	                                                   &error);
-	if (error != NULL) {
-		g_error("Unable to get the proxy to DBus: %s", error->message);
-		g_error_free(error);
-		return;
-	}
 
 	return;
 }
@@ -213,12 +187,6 @@ indicator_service_manager_dispose (GObject *object)
 	if (priv->connected) {
 		priv->connected = FALSE;
 		g_signal_emit(object, signals[CONNECTION_CHANGE], 0, FALSE, TRUE);
-	}
-
-	/* Destory our DBus proxy, we won't need it. */
-	if (priv->dbus_proxy != NULL) {
-		g_object_unref(G_OBJECT(priv->dbus_proxy));
-		priv->dbus_proxy = NULL;
 	}
 
 	/* If we have a proxy, tell it we're shutting down.  Just
@@ -424,7 +392,6 @@ start_service (IndicatorServiceManager * service)
 	GError * error = NULL;
 	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(service);
 
-	g_return_if_fail(priv->dbus_proxy != NULL);
 	g_return_if_fail(priv->name != NULL);
 
 	if (priv->service_proxy != NULL) {
