@@ -42,7 +42,6 @@ static gboolean _indicator_service_server_un_watch (IndicatorService * service, 
 /**
 	IndicatorSevicePrivate:
 	@name: The DBus well known name for the service.
-	@dbus_proxy: A proxy for talking to the dbus bus manager.
 	@timeout: The source ID for the timeout event.
 	@watcher: A list of processes on dbus that are watching us.
 	@this_service_version: The version to hand out that we're
@@ -53,7 +52,6 @@ static gboolean _indicator_service_server_un_watch (IndicatorService * service, 
 typedef struct _IndicatorServicePrivate IndicatorServicePrivate;
 struct _IndicatorServicePrivate {
 	gchar * name;
-	DBusGProxy * dbus_proxy;
 	DBusGConnection * bus;
 	guint timeout;
 	guint timeout_length;
@@ -188,7 +186,6 @@ indicator_service_init (IndicatorService *self)
 
 	/* Get the private variables in a decent state */
 	priv->name = NULL;
-	priv->dbus_proxy = NULL;
 	priv->timeout = 0;
 	priv->watchers = NULL;
 	priv->bus = NULL;
@@ -230,17 +227,6 @@ indicator_service_init (IndicatorService *self)
 		}
 	}
 
-	priv->dbus_proxy = dbus_g_proxy_new_for_name_owner(priv->bus,
-	                                                   DBUS_SERVICE_DBUS,
-	                                                   DBUS_PATH_DBUS,
-	                                                   DBUS_INTERFACE_DBUS,
-	                                                   &error);
-	if (error != NULL) {
-		g_error("Unable to get the proxy to DBus: %s", error->message);
-		g_error_free(error);
-		return;
-	}
-
 	priv->dbus_registration = g_dbus_connection_register_object(priv->bus,
 	                                                            INDICATOR_SERVICE_OBJECT,
 	                                                            interface_info,
@@ -248,6 +234,11 @@ indicator_service_init (IndicatorService *self)
 	                                                            self,
 	                                                            NULL,
 	                                                            &error);
+	if (error != NULL) {
+		g_error("Unable to register the object to DBus: %s", error->message);
+		g_error_free(error);
+		return;
+	}
 
 	return;
 }
@@ -261,11 +252,6 @@ indicator_service_dispose (GObject *object)
 
 	if (priv->watchers != NULL) {
 		g_hash_table_foreach_remove(priv->watchers, watchers_remove, object);
-	}
-
-	if (priv->dbus_proxy != NULL) {
-		g_object_unref(G_OBJECT(priv->dbus_proxy));
-		priv->dbus_proxy = NULL;
 	}
 
 	if (priv->timeout != 0) {
@@ -407,34 +393,41 @@ timeout_no_watchers (gpointer data)
 	return FALSE;
 }
 
-/* The callback from our request to get a well known name
-   on dbus.  If we can't get it we send the shutdown signal.
-   Else we start the timer to see if anyone cares about us. */
+/* Callback saying that the name we were looking for has been
+   found and we've got it.  Now start the timer to see if anyone
+   cares about us. */
 static void
-try_and_get_name_cb (DBusGProxy * proxy, guint status, GError * error, gpointer data)
+try_and_get_name_acquired_cb (GDBusConnection * connection, const gchar * name, gpointer user_data)
 {
-	IndicatorService * service = INDICATOR_SERVICE(data);
-	g_return_if_fail(service != NULL);
+	g_return_if_fail(connection != NULL);
+	g_return_if_fail(INDICATOR_IS_SERVICE(user_data));
 
-	if (error != NULL) {
-		g_warning("Unable to send message to request name: %s", error->message);
-		g_signal_emit(G_OBJECT(data), signals[SHUTDOWN], 0, TRUE);
-		return;
+	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(user_data);
+
+	/* Check to see if we already had a timer, if so we want to
+	   extend it a bit. */
+	if (priv->timeout != 0) {
+		g_source_remove(priv->timeout);
+		priv->timeout = 0;
 	}
 
-	if (status != DBUS_REQUEST_NAME_REPLY_PRIMARY_OWNER && status != DBUS_REQUEST_NAME_REPLY_ALREADY_OWNER) {
-		/* The already owner seems like it shouldn't ever
-		   happen, but I have a hard time throwing an error
-		   on it as we did achieve our goals. */
-		g_warning("Name request failed.  Status returned: %d", status);
-		g_signal_emit(G_OBJECT(data), signals[SHUTDOWN], 0, TRUE);
-		return;
-	}
-
-	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(service);
 	/* Allow some extra time at start up as things can be in high
 	   contention then. */
-	priv->timeout = g_timeout_add(priv->timeout_length * 2, timeout_no_watchers, service);
+	priv->timeout = g_timeout_add(priv->timeout_length * 2, timeout_no_watchers, user_data);
+
+	return;
+}
+
+/* Callback saying that we didn't get the name, so we need to
+   shutdown this service. */
+static void
+try_and_get_name_lost_cb (GDBusConnection * connection, const gchar * name, gpointer user_data)
+{
+	g_return_if_fail(connection != NULL);
+	g_return_if_fail(INDICATOR_IS_SERVICE(user_data));
+
+	g_warning("Name request failed.");
+	g_signal_emit(G_OBJECT(data), signals[SHUTDOWN], 0, TRUE);
 
 	return;
 }
@@ -444,14 +437,16 @@ static void
 try_and_get_name (IndicatorService * service)
 {
 	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(service);
-	g_return_if_fail(priv->dbus_proxy != NULL);
 	g_return_if_fail(priv->name != NULL);
 
-	org_freedesktop_DBus_request_name_async(priv->dbus_proxy,
-	                                        priv->name,
-	                                        DBUS_NAME_FLAG_DO_NOT_QUEUE,
-	                                        try_and_get_name_cb,
-	                                        service);
+	g_bus_own_name(G_BUS_TYPE_SESSION,
+	               priv->name,
+	               G_BUS_NAME_OWNER_FLAGS_NONE,
+	               NULL, /* bus acquired */
+	               try_and_get_name_acquired_cb, /* name acquired */
+	               try_and_get_name_lost_cb, /* name lost */
+	               service,
+	               NULL); /* user data destroy */
 
 	return;
 }
