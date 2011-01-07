@@ -24,8 +24,6 @@ License along with this library. If not, see
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-#include <dbus/dbus-glib-bindings.h>
-#include <dbus/dbus-glib-lowlevel.h>
 
 #include "indicator-service.h"
 

@@ -27,9 +27,6 @@ License along with this library. If not, see
 
 #include <stdlib.h>
 
-#include <dbus/dbus-glib-bindings.h>
-#include <dbus/dbus-glib-lowlevel.h>
-
 #include "indicator-service-manager.h"
 #include "indicator-service-client.h"
 #include "dbus-shared.h"
