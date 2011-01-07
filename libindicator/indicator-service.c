@@ -34,9 +34,6 @@ License along with this library. If not, see
 static void unwatch_core (IndicatorService * service, const gchar * name);
 static void proxy_destroyed (GObject * proxy, gpointer user_data);
 static gboolean watchers_remove (gpointer key, gpointer value, gpointer user_data);
-/* DBus Prototypes */
-static gboolean _indicator_service_server_watch (IndicatorService * service, DBusGMethodInvocation * method);
-static gboolean _indicator_service_server_un_watch (IndicatorService * service, DBusGMethodInvocation * method);
 
 /* Private Stuff */
 /**
