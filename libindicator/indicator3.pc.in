@@ -7,7 +7,7 @@ includedir=@includedir@
 indicatordir=${libdir}/indicators3/1/
 iconsdir=@datarootdir@/@PACKAGE@/icons/
 
-Cflags: -I${includedir}/libindicator3-0.3
+Cflags: -I${includedir}/libindicator-0.3
 Requires: gtk+-3.0
 Libs: -lindicator3
 
