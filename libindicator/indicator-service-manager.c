@@ -80,6 +80,10 @@ enum {
 #define PROP_NAME_S                    "name"
 #define PROP_VERSION_S                 "version"
 
+/* GDBus Stuff */
+static GDBusNodeInfo *            node_info = NULL;
+static GDBusInterfaceInfo *       interface_info = NULL;
+
 /* GObject Stuff */
 #define INDICATOR_SERVICE_MANAGER_GET_PRIVATE(o) \
 (G_TYPE_INSTANCE_GET_PRIVATE ((o), INDICATOR_SERVICE_MANAGER_TYPE, IndicatorServiceManagerPrivate))
@@ -145,6 +149,25 @@ indicator_service_manager_class_init (IndicatorServiceManagerClass *klass)
 	                                                  "A number to check and reject a service if it gives us the wrong number.  This should match across the manager and the service",
 	                                                  0, G_MAXUINT, 0,
 	                                                  G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+	/* Setting up the DBus interfaces */
+	if (node_info == NULL) {
+		GError * error = NULL;
+
+		node_info = g_dbus_node_info_new_for_xml(_indicator_service, &error);
+		if (error != NULL) {
+			g_error("Unable to parse Indicator Service Interface description: %s", error->message);
+			g_error_free(error);
+		}
+	}
+
+	if (interface_info == NULL) {
+		interface_info = g_dbus_node_info_lookup_interface(node_info, INDICATOR_SERVICE_INTERFACE);
+
+		if (interface_info == NULL) {
+			g_error("Unable to find interface '" INDICATOR_SERVICE_INTERFACE "'");
+		}
+	}
 
 	return;
 }
