@@ -206,7 +206,7 @@ indicator_service_init (IndicatorService *self)
 	   here because there is no user data to pass the object as well. */
 	priv->watchers = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
-	g_bus_get(G_BUS_TYPE_STARTER,
+	g_bus_get(G_BUS_TYPE_SESSION,
 	          NULL, /* TODO: Cancellable */
 	          bus_get_cb,
 	          self);
