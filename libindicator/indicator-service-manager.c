@@ -44,7 +44,7 @@ License along with this library. If not, see
 typedef struct _IndicatorServiceManagerPrivate IndicatorServiceManagerPrivate;
 struct _IndicatorServiceManagerPrivate {
 	gchar * name;
-	DBusGProxy * service_proxy;
+	GDBusProxy * service_proxy;
 	gboolean connected;
 	guint this_service_version;
 	guint restart_count;
@@ -92,9 +92,11 @@ static void indicator_service_manager_finalize   (GObject *object);
 /* Prototypes */
 static void set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec);
 static void get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec);
-static void service_proxy_destroyed (DBusGProxy * proxy, gpointer user_data);
 static void start_service (IndicatorServiceManager * service);
 static void start_service_again (IndicatorServiceManager * manager);
+static void unwatch (GDBusProxy * proxy);
+static void service_proxy_cb (GObject * object, GAsyncResult * res, gpointer user_data);
+static void service_proxy_name_change (GObject * object, GParamSpec * pspec, gpointer user_data);
 
 G_DEFINE_TYPE (IndicatorServiceManager, indicator_service_manager, G_TYPE_OBJECT);
 
@@ -192,7 +194,7 @@ indicator_service_manager_dispose (GObject *object)
 	/* If we have a proxy, tell it we're shutting down.  Just
 	   to be polite about it. */
 	if (priv->service_proxy != NULL) {
-		dbus_g_proxy_call_no_reply(priv->service_proxy, "UnWatch", G_TYPE_INVALID);
+		unwatch(priv->service_proxy);
 	}
 
 	/* Destory our service proxy, we won't need it. */
@@ -284,6 +286,22 @@ get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspe
 	return;
 }
 
+/* Small little function to make a long function call a little
+   bit cleaner. */
+static void
+unwatch (GDBusProxy * proxy)
+{
+	g_dbus_proxy_call(proxy,
+	                  "UnWatch",
+	                  NULL,   /* parameters */
+	                  G_DBUS_CALL_FLAGS_NONE,
+	                  -1,     /* timeout */
+	                  NULL,   /* cancelable */
+	                  NULL,   /* callback */
+	                  NULL);  /* user data */
+	return;
+}
+
 /* A callback from telling a service that we want to watch
    it.  It gives us the service API version and the version
    of the other APIs it supports.  We check both of those.
@@ -291,9 +309,12 @@ get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspe
    signal a connection change to tell the rest of the world
    that we have a service now.  */
 static void
-watch_cb (DBusGProxy * proxy, guint service_api_version, guint this_service_version, GError * error, gpointer user_data)
+watch_cb (GObject * object, GAsyncResult * res, gpointer user_data)
 {
+	GError * error = NULL;
 	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(user_data);
+
+	GVariant * params = g_dbus_proxy_call_finish(G_DBUS_PROXY(object), res, &error);
 
 	if (error != NULL) {
 		g_warning("Unable to set watch on '%s': '%s'", priv->name, error->message);
@@ -301,6 +322,12 @@ watch_cb (DBusGProxy * proxy, guint service_api_version, guint this_service_vers
 		start_service_again(INDICATOR_SERVICE_MANAGER(user_data));
 		return;
 	}
+
+	guint service_api_version;
+	guint this_service_version;
+
+	g_variant_get(params, "(uu)", &service_api_version, &this_service_version);
+	g_object_unref(params);
 
 	/* We've done it, now let's stop counting. */
 	/* Note: we're not checking versions.  Because, the hope is that
@@ -310,7 +337,7 @@ watch_cb (DBusGProxy * proxy, guint service_api_version, guint this_service_vers
 
 	if (service_api_version != INDICATOR_SERVICE_VERSION) {
 		g_warning("Service is using a different version of the service interface.  Expecting %d and got %d.", INDICATOR_SERVICE_VERSION, service_api_version);
-		dbus_g_proxy_call_no_reply(priv->service_proxy, "UnWatch", G_TYPE_INVALID);
+		unwatch(priv->service_proxy);
 
 		/* Let's make us wait a little while, then try again */
 		priv->restart_count = TIMEOUT_A_LITTLE_WHILE;
@@ -320,7 +347,7 @@ watch_cb (DBusGProxy * proxy, guint service_api_version, guint this_service_vers
 
 	if (this_service_version != priv->this_service_version) {
 		g_warning("Service is using a different API version than the manager.  Expecting %d and got %d.", priv->this_service_version, this_service_version);
-		dbus_g_proxy_call_no_reply(priv->service_proxy, "UnWatch", G_TYPE_INVALID);
+		unwatch(priv->service_proxy);
 
 		/* Let's make us wait a little while, then try again */
 		priv->restart_count = TIMEOUT_A_LITTLE_WHILE;
@@ -336,52 +363,6 @@ watch_cb (DBusGProxy * proxy, guint service_api_version, guint this_service_vers
 	return;
 }
 
-/* The callback after asking the dbus-daemon to start a
-   service for us.  It can return success or failure, on
-   failure we can't do much.  But, with sucess, we start
-   to build a proxy and tell the service that we're watching. */
-static void
-start_service_cb (DBusGProxy * proxy, guint status, GError * error, gpointer user_data)
-{
-	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(user_data);
-
-	if (error != NULL) {
-		g_warning("Unable to start service '%s': %s", priv->name, error->message);
-		start_service_again(INDICATOR_SERVICE_MANAGER(user_data));
-		return;
-	}
-
-	if (status != DBUS_START_REPLY_SUCCESS && status != DBUS_START_REPLY_ALREADY_RUNNING) {
-		g_warning("Status of starting the process '%s' was an error: %d", priv->name, status);
-		start_service_again(INDICATOR_SERVICE_MANAGER(user_data));
-		return;
-	}
-
-	/* Woot! it's running.  Let's do it some more. */
-	priv->service_proxy = dbus_g_proxy_new_for_name_owner(priv->bus,
-	                                                  priv->name,
-	                                                  INDICATOR_SERVICE_OBJECT,
-	                                                  INDICATOR_SERVICE_INTERFACE,
-	                                                  &error);
-
-	if (error != NULL || priv->service_proxy == NULL) {
-		g_warning("Unable to create service proxy on '%s': %s", priv->name, error == NULL ? "(null)" : error->message);
-		priv->service_proxy = NULL; /* Should be already, but we want to be *really* sure. */
-		g_error_free(error);
-		start_service_again(INDICATOR_SERVICE_MANAGER(user_data));
-		return;
-	}
-
-	g_object_add_weak_pointer(G_OBJECT(priv->service_proxy), (gpointer *)&(priv->service_proxy));
-	g_signal_connect(G_OBJECT(priv->service_proxy), "destroy", G_CALLBACK(service_proxy_destroyed), user_data);
-
-	org_ayatana_indicator_service_watch_async(priv->service_proxy,
-	                                          watch_cb,
-	                                          user_data);
-
-	return;
-}
-
 /* The function that handles getting us connected to the service.
    In many cases it will start the service, but if the service
    is already there it just allocates the service proxy and acts
@@ -389,7 +370,6 @@ start_service_cb (DBusGProxy * proxy, guint status, GError * error, gpointer use
 static void
 start_service (IndicatorServiceManager * service)
 {
-	GError * error = NULL;
 	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(service);
 
 	g_return_if_fail(priv->name != NULL);
@@ -399,47 +379,89 @@ start_service (IndicatorServiceManager * service)
 		priv->service_proxy = NULL;
 	}
 
-	/* Check to see if we can get a proxy to it first. */
-	priv->service_proxy = dbus_g_proxy_new_for_name_owner(priv->bus,
-	                                                      priv->name,
-	                                                      INDICATOR_SERVICE_OBJECT,
-	                                                      INDICATOR_SERVICE_INTERFACE,
-	                                                      &error);
-
-	if (error != NULL || priv->service_proxy == NULL) {
-		/* We don't care about the error, just start the service anyway. */
-		g_error_free(error);
-		org_freedesktop_DBus_start_service_by_name_async (priv->dbus_proxy,
-		                                                  priv->name,
-		                                                  0,
-		                                                  start_service_cb,
-		                                                  service);
-	} else {
-		g_object_add_weak_pointer(G_OBJECT(priv->service_proxy), (gpointer *)&(priv->service_proxy));
-		g_signal_connect(G_OBJECT(priv->service_proxy), "destroy", G_CALLBACK(service_proxy_destroyed), service);
-
-		/* If we got a proxy just because we're good people then
-		   we need to call watch on it just like 'start_service_cb'
-		   does. */
-		org_ayatana_indicator_service_watch_async(priv->service_proxy,
-		                                          watch_cb,
-		                                          service);
-	}
+	g_dbus_proxy_new_for_bus(G_BUS_TYPE_SESSION,
+	                         G_DBUS_PROXY_FLAGS_NONE,
+	                         interface_info,
+	                         priv->name,
+	                         INDICATOR_SERVICE_INTERFACE,
+	                         INDICATOR_SERVICE_OBJECT,
+	                         NULL, /* cancelable */
+	                         service_proxy_cb,
+	                         service);
 
 	return;
 }
 
-/* Responds to the destory event of the proxy and starts
-   setting up to restart the service. */
+/* Callback from trying to create the proxy for the serivce, this
+   could include starting the service.  Sometime it'll fail and
+   we'll try to start that dang service again! */
 static void
-service_proxy_destroyed (DBusGProxy * proxy, gpointer user_data)
+service_proxy_cb (GObject * object, GAsyncResult * res, gpointer user_data)
+{
+	GError * error = NULL;
+	GDBusProxy * proxy = g_dbus_proxy_new_for_bus_finish(res, &error);
+
+	if (error != NULL) {
+		/* Unable to create the proxy, eh, let's try again
+		   in a bit */
+		g_error_free(error);
+		start_service_again(INDICATOR_SERVICE_MANAGER(user_data));
+		return;
+	}
+
+	gchar * name = g_dbus_proxy_get_name_owner(proxy);
+	if (name == NULL) {
+		/* Hmm, since creating the proxy should start it, it seems very
+		   odd that it wouldn't have an owner at this point.  But, all
+		   we can do is try again. */
+		g_object_unref(proxy);
+		start_service_again(INDICATOR_SERVICE_MANAGER(user_data));
+		return;
+	}
+	g_free(name);
+
+	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(user_data);
+	priv->service_proxy = proxy;
+
+	/* Signal for drop */
+	g_signal_connect(G_OBJECT(priv->service_proxy), "notify::g-name-owner", G_CALLBACK(service_proxy_name_change), user_data);
+
+	/* Send watch */
+	g_dbus_proxy_call(priv->service_proxy,
+	                  "Watch",
+	                  NULL, /* params */
+	                  G_DBUS_CALL_FLAGS_NONE,
+	                  -1,
+	                  NULL, /* cancel */
+	                  watch_cb,
+	                  user_data);
+
+	return;
+}
+
+/* Responds to the name owner changing of the proxy, this
+   usually means the service died.  We're dropping the proxy
+   and recreating it so that it'll restart the service. */
+static void
+service_proxy_name_change (GObject * object, GParamSpec * pspec, gpointer user_data)
 {
 	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(user_data);
-	if (priv->connected) {
-		priv->connected = FALSE;
-		g_signal_emit(G_OBJECT(user_data), signals[CONNECTION_CHANGE], 0, FALSE, TRUE);
+	gchar * name = g_dbus_proxy_get_name_owner(priv->service_proxy);
+
+	if (name == NULL) {
+		if (priv->connected) {
+			priv->connected = FALSE;
+			g_signal_emit(G_OBJECT(user_data), signals[CONNECTION_CHANGE], 0, FALSE, TRUE);
+		}
+
+		start_service_again(INDICATOR_SERVICE_MANAGER(user_data));
+	} else {
+		/* This case is an oddity, and really can only be a weird race
+		   condition.  So we're going to ignore it for now. */
+		g_free(name);
 	}
-	return start_service_again(INDICATOR_SERVICE_MANAGER(user_data));
+
+	return;
 }
 
 /* The callback that starts the service for real after
