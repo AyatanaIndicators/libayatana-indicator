@@ -406,8 +406,8 @@ start_service (IndicatorServiceManager * service)
 	                         G_DBUS_PROXY_FLAGS_NONE,
 	                         interface_info,
 	                         priv->name,
-	                         INDICATOR_SERVICE_INTERFACE,
 	                         INDICATOR_SERVICE_OBJECT,
+	                         INDICATOR_SERVICE_INTERFACE,
 	                         NULL, /* cancelable */
 	                         service_proxy_cb,
 	                         service);
