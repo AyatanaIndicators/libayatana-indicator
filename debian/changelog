@@ -2,8 +2,9 @@ libindicator (0.3.15-0ubuntu3~ppa2~gdbus1) UNRELEASED; urgency=low
 
   * Upstream Merge:
     * GDBus Port
+  * autogen.sh
 
- -- Ted Gould <ted@ubuntu.com>  Sun, 09 Jan 2011 14:14:32 -0600
+ -- Ted Gould <ted@ubuntu.com>  Sun, 09 Jan 2011 14:18:14 -0600
 
 libindicator (0.3.15-0ubuntu3~ppa1) natty; urgency=low
 
