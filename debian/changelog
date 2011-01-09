@@ -1,11 +1,11 @@
-libindicator (0.3.15-0ubuntu3~ppa2~gdbus1) UNRELEASED; urgency=low
+libindicator (0.3.15-0ubuntu3~ppa2~gdbus1) natty; urgency=low
 
   * Upstream Merge:
     * GDBus Port
   * autogen.sh
   * debian/control: Migrating library versions from 1 to 2
 
- -- Ted Gould <ted@ubuntu.com>  Sun, 09 Jan 2011 14:20:52 -0600
+ -- Ted Gould <ted@ubuntu.com>  Sun, 09 Jan 2011 15:03:08 -0600
 
 libindicator (0.3.15-0ubuntu3~ppa1) natty; urgency=low
 
