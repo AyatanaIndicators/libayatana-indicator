@@ -51,6 +51,7 @@ typedef struct _IndicatorServicePrivate IndicatorServicePrivate;
 struct _IndicatorServicePrivate {
 	gchar * name;
 	GDBusConnection * bus;
+	GCancellable * bus_cancel;
 	guint timeout;
 	guint timeout_length;
 	GHashTable * watchers;
@@ -187,6 +188,7 @@ indicator_service_init (IndicatorService *self)
 	priv->timeout = 0;
 	priv->watchers = NULL;
 	priv->bus = NULL;
+	priv->bus_cancel = NULL;
 	priv->this_service_version = 0;
 	priv->timeout_length = 500;
 	priv->dbus_registration = 0;
@@ -206,8 +208,9 @@ indicator_service_init (IndicatorService *self)
 	   here because there is no user data to pass the object as well. */
 	priv->watchers = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
+	priv->bus_cancel = g_cancellable_new();
 	g_bus_get(G_BUS_TYPE_SESSION,
-	          NULL, /* TODO: Cancellable */
+	          priv->bus_cancel,
 	          bus_get_cb,
 	          self);
 
@@ -239,6 +242,12 @@ indicator_service_dispose (GObject *object)
 	if (priv->bus != NULL) {
 		g_object_unref(priv->bus);
 		priv->bus = NULL;
+	}
+
+	if (priv->bus_cancel != NULL) {
+		g_cancellable_cancel(priv->bus_cancel);
+		g_object_unref(priv->bus_cancel);
+		priv->bus_cancel = NULL;
 	}
 
 	G_OBJECT_CLASS (indicator_service_parent_class)->dispose (object);
@@ -350,7 +359,14 @@ bus_get_cb (GObject * object, GAsyncResult * res, gpointer user_data)
 	}
 
 	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(user_data);
+
+	g_warn_if_fail(priv->bus == NULL);
 	priv->bus = connection;
+
+	if (priv->bus_cancel != NULL) {
+		g_object_unref(priv->bus_cancel);
+		priv->bus_cancel = NULL;
+	}
 
 	/* Now register our object on our new connection */
 	priv->dbus_registration = g_dbus_connection_register_object(priv->bus,
@@ -498,7 +514,7 @@ bus_watch (IndicatorService * service, const gchar * sender)
 {
 	g_return_val_if_fail(INDICATOR_IS_SERVICE(service), NULL);
 	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(service);
-
+	
 	if (GPOINTER_TO_UINT(g_hash_table_lookup(priv->watchers, sender)) == 0) {
 		guint watch = g_bus_watch_name_on_connection(priv->bus,
 		                                             sender,
