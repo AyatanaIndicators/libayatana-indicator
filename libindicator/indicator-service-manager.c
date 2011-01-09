@@ -370,7 +370,7 @@ watch_cb (GObject * object, GAsyncResult * res, gpointer user_data)
 	guint this_service_version;
 
 	g_variant_get(params, "(uu)", &service_api_version, &this_service_version);
-	g_object_unref(params);
+	g_variant_unref(params);
 
 	/* We've done it, now let's stop counting. */
 	/* Note: we're not checking versions.  Because, the hope is that
