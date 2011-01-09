@@ -170,7 +170,8 @@ service_shutdown_timeout_CFLAGS = \
 
 service_shutdown_timeout_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	-L$(top_builddir)/libindicator/.libs \
+	$(INDICATOR_LIB)
 
 service-shutdown-timeout-tester: service-shutdown-timeout Makefile
 	@echo "#!/bin/sh" > service-shutdown-timeout-tester
@@ -195,7 +196,8 @@ service_manager_no_connect_CFLAGS = \
 
 service_manager_no_connect_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	-L$(top_builddir)/libindicator/.libs \
+	$(INDICATOR_LIB)
 
 service-manager-no-connect-tester: service-manager-no-connect Makefile.am
 	@echo "#!/bin/sh" > service-manager-no-connect-tester
@@ -226,7 +228,8 @@ service_manager_connect_CFLAGS = \
 
 service_manager_connect_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	-L$(top_builddir)/libindicator/.libs \
+	$(INDICATOR_LIB)
 
 check_PROGRAMS += service-manager-connect-service
 
@@ -239,7 +242,8 @@ service_manager_connect_service_CFLAGS = \
 
 service_manager_connect_service_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	-L$(top_builddir)/libindicator/.libs \
+	$(INDICATOR_LIB)
 
 service-manager-connect-tester: service-manager-connect service-manager-connect-service session.conf service-manager-connect.service Makefile.am
 	@echo "#!/bin/sh" > service-manager-connect-tester
@@ -271,7 +275,8 @@ service_version_manager_CFLAGS = \
 
 service_version_manager_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	-L$(top_builddir)/libindicator/.libs \
+	$(INDICATOR_LIB)
 
 check_PROGRAMS += service-version-bad-service
 
@@ -285,7 +290,8 @@ service_version_bad_service_CFLAGS = \
 
 service_version_bad_service_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	-L$(top_builddir)/libindicator/.libs \
+	$(INDICATOR_LIB)
 
 check_PROGRAMS += service-version-good-service
 
@@ -299,7 +305,8 @@ service_version_good_service_CFLAGS = \
 
 service_version_good_service_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	-L$(top_builddir)/libindicator/.libs \
+	$(INDICATOR_LIB)
 
 service-version-tester: service-version-manager service-version-bad-service service-version-good-service session.conf service-version-bad.service service-version-good.service Makefile.am
 	@echo "#!/bin/sh" > $@
@@ -325,7 +332,8 @@ service_version_multiwatch_manager_CFLAGS = \
 
 service_version_multiwatch_manager_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	-L$(top_builddir)/libindicator/.libs \
+	$(INDICATOR_LIB)
 
 check_PROGRAMS += service-version-multiwatch-manager-impolite
 
@@ -339,7 +347,8 @@ service_version_multiwatch_manager_impolite_CFLAGS = \
 
 service_version_multiwatch_manager_impolite_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	-L$(top_builddir)/libindicator/.libs \
+	$(INDICATOR_LIB)
 
 check_PROGRAMS += service-version-multiwatch-service
 
@@ -353,7 +362,8 @@ service_version_multiwatch_service_CFLAGS = \
 
 service_version_multiwatch_service_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	-L$(top_builddir)/libindicator/.libs \
+	$(INDICATOR_LIB)
 
 service-version-multiwatch-tester: service-version-multiwatch-manager service-version-multiwatch-service service-version-multiwatch-manager-impolite Makefile.am
 	@echo "#!/bin/sh" > $@
@@ -378,7 +388,8 @@ service_manager_nostart_connect_CFLAGS = \
 
 service_manager_nostart_connect_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	-L$(top_builddir)/libindicator/.libs \
+	$(INDICATOR_LIB)
 
 service-manager-connect-nostart-tester: service-manager-nostart-connect service-manager-connect-service Makefile.am
 	@echo "#!/bin/sh" > $@
