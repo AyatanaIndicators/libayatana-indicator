@@ -417,14 +417,17 @@ start_service (IndicatorServiceManager * service)
 
 	g_return_if_fail(priv->name != NULL);
 
+	if (priv->service_proxy_cancel != NULL) {
+		/* A service proxy is being gotten currently */
+		return;
+	}
+
 	if (priv->service_proxy != NULL) {
 		g_object_unref(priv->service_proxy);
 		priv->service_proxy = NULL;
 	}
 
-	if (priv->service_proxy_cancel == NULL) {
-		priv->service_proxy_cancel = g_cancellable_new();
-	}
+	priv->service_proxy_cancel = g_cancellable_new();
 
 	g_dbus_proxy_new_for_bus(G_BUS_TYPE_SESSION,
 	                         G_DBUS_PROXY_FLAGS_NONE,
@@ -446,13 +449,24 @@ static void
 service_proxy_cb (GObject * object, GAsyncResult * res, gpointer user_data)
 {
 	GError * error = NULL;
+
+	IndicatorServiceManager * service = INDICATOR_SERVICE_MANAGER(user_data);
+	g_return_if_fail(service != NULL);
+
 	GDBusProxy * proxy = g_dbus_proxy_new_for_bus_finish(res, &error);
+
+	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(user_data);
+
+	if (priv->service_proxy_cancel != NULL) {
+		g_object_unref(priv->service_proxy_cancel);
+		priv->service_proxy_cancel = NULL;
+	}
 
 	if (error != NULL) {
 		/* Unable to create the proxy, eh, let's try again
 		   in a bit */
 		g_error_free(error);
-		start_service_again(INDICATOR_SERVICE_MANAGER(user_data));
+		start_service_again(service);
 		return;
 	}
 
@@ -462,12 +476,13 @@ service_proxy_cb (GObject * object, GAsyncResult * res, gpointer user_data)
 		   odd that it wouldn't have an owner at this point.  But, all
 		   we can do is try again. */
 		g_object_unref(proxy);
-		start_service_again(INDICATOR_SERVICE_MANAGER(user_data));
+		start_service_again(service);
 		return;
 	}
 	g_free(name);
 
-	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(user_data);
+	/* Okay, we're good to grab the proxy at this point, we're
+	   sure that it's ours. */
 	priv->service_proxy = proxy;
 
 	/* Signal for drop */
