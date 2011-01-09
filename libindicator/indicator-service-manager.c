@@ -45,10 +45,12 @@ typedef struct _IndicatorServiceManagerPrivate IndicatorServiceManagerPrivate;
 struct _IndicatorServiceManagerPrivate {
 	gchar * name;
 	GDBusProxy * service_proxy;
+	GCancellable * service_proxy_cancel;
 	gboolean connected;
 	guint this_service_version;
 	guint restart_count;
 	gint restart_source;
+	GCancellable * watch_cancel;
 };
 
 /* Signals Stuff */
@@ -183,10 +185,12 @@ indicator_service_manager_init (IndicatorServiceManager *self)
 	/* Get the private variables in a decent state */
 	priv->name = NULL;
 	priv->service_proxy = NULL;
+	priv->service_proxy_cancel = NULL;
 	priv->connected = FALSE;
 	priv->this_service_version = 0;
 	priv->restart_count = 0;
 	priv->restart_source = 0;
+	priv->watch_cancel = NULL;
 
 	return;
 }
@@ -212,6 +216,22 @@ indicator_service_manager_dispose (GObject *object)
 	if (priv->connected) {
 		priv->connected = FALSE;
 		g_signal_emit(object, signals[CONNECTION_CHANGE], 0, FALSE, TRUE);
+	}
+
+	/* If we're still getting the proxy, stop looking so we
+	   can then clean up some more. */
+	if (priv->service_proxy_cancel != NULL) {
+		g_cancellable_cancel(priv->service_proxy_cancel);
+		g_object_unref(priv->service_proxy_cancel);
+		priv->service_proxy_cancel = NULL;
+	}
+
+	/* If we've sent a watch, cancel looking for the reply before
+	   sending the unwatch */
+	if (priv->watch_cancel != NULL) {
+		g_cancellable_cancel(priv->watch_cancel);
+		g_object_unref(priv->watch_cancel);
+		priv->watch_cancel = NULL;
 	}
 
 	/* If we have a proxy, tell it we're shutting down.  Just
@@ -402,13 +422,17 @@ start_service (IndicatorServiceManager * service)
 		priv->service_proxy = NULL;
 	}
 
+	if (priv->service_proxy_cancel == NULL) {
+		priv->service_proxy_cancel = g_cancellable_new();
+	}
+
 	g_dbus_proxy_new_for_bus(G_BUS_TYPE_SESSION,
 	                         G_DBUS_PROXY_FLAGS_NONE,
 	                         interface_info,
 	                         priv->name,
 	                         INDICATOR_SERVICE_OBJECT,
 	                         INDICATOR_SERVICE_INTERFACE,
-	                         NULL, /* cancelable */
+	                         priv->service_proxy_cancel,
 	                         service_proxy_cb,
 	                         service);
 
@@ -449,13 +473,18 @@ service_proxy_cb (GObject * object, GAsyncResult * res, gpointer user_data)
 	/* Signal for drop */
 	g_signal_connect(G_OBJECT(priv->service_proxy), "notify::g-name-owner", G_CALLBACK(service_proxy_name_change), user_data);
 
+	/* Build cancelable if we need it */
+	if (priv->watch_cancel == NULL) {
+		priv->watch_cancel = g_cancellable_new();
+	}
+
 	/* Send watch */
 	g_dbus_proxy_call(priv->service_proxy,
 	                  "Watch",
 	                  NULL, /* params */
 	                  G_DBUS_CALL_FLAGS_NONE,
 	                  -1,
-	                  NULL, /* cancel */
+	                  priv->watch_cancel,
 	                  watch_cb,
 	                  user_data);
 
