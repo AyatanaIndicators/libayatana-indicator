@@ -500,3 +500,24 @@ indicator_object_entry_activate (IndicatorObject * io, IndicatorObjectEntry * en
 	return;
 }
 
+/**
+	indicator_object_entry_activate:
+	@io: #IndicatorObject to query
+	@entry: The #IndicatorObjectEntry whose menu was closed
+	@timestamp: The X11 timestamp of the event
+
+	Used to signal that a menu has been closed for the specific
+	entry that is specified.
+*/
+void
+indicator_object_entry_close (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp)
+{
+	g_return_if_fail(INDICATOR_IS_OBJECT(io));
+	IndicatorObjectClass * class = INDICATOR_OBJECT_GET_CLASS(io);
+
+	if (class->entry_close != NULL) {
+		return class->entry_close(io, entry, timestamp);
+	}
+
+	return;
+}
