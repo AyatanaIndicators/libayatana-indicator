@@ -49,15 +49,13 @@ AC_ARG_WITH([gtk],
   [with_gtk=2])
 AS_IF([test "x$with_gtk" = x3],
         [PKG_CHECK_MODULES(LIBINDICATOR,  gtk+-3.0 >= $GTK3_REQUIRED_VERSION
-                                          gio-unix-2.0 >= $GIO_UNIX_REQUIRED_VERSION
-                                          dbus-glib-1 >= $DBUS_REQUIRED_VERSION)
+                                          gio-unix-2.0 >= $GIO_UNIX_REQUIRED_VERSION)
          AC_SUBST(LIBINDICATOR_CFLAGS)
          AC_SUBST(LIBINDICATOR_LIBS)
         ],
       [test "x$with_gtk" = x2],
         [PKG_CHECK_MODULES(LIBINDICATOR,  gtk+-2.0 >= $GTK_REQUIRED_VERSION
-                                          gio-unix-2.0 >= $GIO_UNIX_REQUIRED_VERSION
-                                          dbus-glib-1 >= $DBUS_REQUIRED_VERSION)
+                                          gio-unix-2.0 >= $GIO_UNIX_REQUIRED_VERSION)
          AC_SUBST(LIBINDICATOR_CFLAGS)
          AC_SUBST(LIBINDICATOR_LIBS)
         ],
