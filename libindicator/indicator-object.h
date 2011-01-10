@@ -83,6 +83,9 @@ typedef struct _IndicatorObjectEntry   IndicatorObjectEntry;
 	@get_show_now: Returns whether the entry is requesting to
 		be shown "right now" in that it has something important
 		to tell the user.
+	@entry_activate: Should be called when the menus for a given
+		entry are shown to the user.
+	@entry_close: Called when the menu is closed.
 	@entry_added: Slot for #IndicatorObject::entry-added
 	@entry_removed: Slot for #IndicatorObject::entry-removed
 	@entry_moved: Slot for #IndicatorObject::entry-moved
@@ -102,6 +105,7 @@ struct _IndicatorObjectClass {
 	gboolean   (*get_show_now) (IndicatorObject * io, IndicatorObjectEntry * entry);
 
 	void       (*entry_activate) (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp);
+	void       (*entry_close) (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp);
 
 	/* Signals */
 	void       (*entry_added)   (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data);
@@ -150,6 +154,7 @@ GList * indicator_object_get_entries (IndicatorObject * io);
 guint   indicator_object_get_location (IndicatorObject * io, IndicatorObjectEntry * entry);
 guint   indicator_object_get_show_now (IndicatorObject * io, IndicatorObjectEntry * entry);
 void    indicator_object_entry_activate (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp);
+void    indicator_object_entry_close (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp);
 
 G_END_DECLS
 
