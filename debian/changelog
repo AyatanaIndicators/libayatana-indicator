@@ -4,8 +4,9 @@ libindicator (0.3.15-0ubuntu3~ppa2) UNRLEASED; urgency=low
     * GDBus Port
   * autogen.sh
   * debian/control: Migrating library versions from 1 to 2
+  * debian/control: Dropping dbus-glib as a build-dep
 
- -- Ted Gould <ted@ubuntu.com>  Mon, 10 Jan 2011 11:52:20 -0600
+ -- Ted Gould <ted@ubuntu.com>  Mon, 10 Jan 2011 11:53:03 -0600
 
 libindicator (0.3.15-0ubuntu3~ppa1) natty; urgency=low
 
