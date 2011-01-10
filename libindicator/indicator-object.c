@@ -501,12 +501,12 @@ indicator_object_entry_activate (IndicatorObject * io, IndicatorObjectEntry * en
 }
 
 /**
-	indicator_object_entry_activate:
+	indicator_object_entry_close:
 	@io: #IndicatorObject to query
 	@entry: The #IndicatorObjectEntry whose menu was closed
 	@timestamp: The X11 timestamp of the event
 
-	Used to signal that a menu has been closed for the specific
+	Used to tell the indicator that a menu has been closed for the
 	entry that is specified.
 */
 void
