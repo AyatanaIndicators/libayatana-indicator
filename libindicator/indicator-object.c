@@ -59,6 +59,7 @@ enum {
 	ENTRY_MOVED,
 	SCROLL,
 	MENU_SHOW,
+	SHOW_NOW_CHANGED,
 	LAST_SIGNAL
 };
 
@@ -180,6 +181,24 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 	                                   NULL, NULL,
 	                                   _indicator_object_marshal_VOID__POINTER_UINT,
 	                                   G_TYPE_NONE, 2, G_TYPE_POINTER, G_TYPE_UINT);
+
+	/**
+		IndicatorObject::show-now-changed:
+		@arg0: The #IndicatorObject object
+		@arg1: A pointer to the #IndicatorObjectEntry that
+			is changing it's state
+		@arg2: The state of whether the entry should be shown
+
+		Whether the entry should be shown or not has changed so we need
+		to tell whoever is displaying it.
+	*/
+	signals[SHOW_NOW_CHANGED] = g_signal_new (INDICATOR_OBJECT_SIGNAL_SHOW_NOW_CHANGED,
+	                                          G_TYPE_FROM_CLASS(klass),
+	                                          G_SIGNAL_RUN_LAST,
+	                                          G_STRUCT_OFFSET (IndicatorObjectClass, show_now_changed),
+	                                          NULL, NULL,
+	                                          _indicator_object_marshal_VOID__POINTER_BOOLEAN,
+	                                          G_TYPE_NONE, 2, G_TYPE_POINTER, G_TYPE_BOOLEAN);
 
 
 	return;
@@ -431,6 +450,30 @@ indicator_object_get_location (IndicatorObject * io, IndicatorObjectEntry * entr
 	}
 
 	return 0;
+}
+
+/**
+	indicator_object_get_show_now:
+	@io: #IndicatorObject to query
+	@entry: The #IndicatorObjectEntry to look for.
+
+	This function returns whether the entry should be shown with
+	priority on the panel.  If the object does not support checking
+	it assumes that its entries should never have priority.
+
+	Return value: Whether the entry should be shown with priority.
+*/
+guint
+indicator_object_get_show_now (IndicatorObject * io, IndicatorObjectEntry * entry)
+{
+	g_return_val_if_fail(INDICATOR_IS_OBJECT(io), 0);
+	IndicatorObjectClass * class = INDICATOR_OBJECT_GET_CLASS(io);
+
+	if (class->get_show_now) {
+		return class->get_show_now(io, entry);
+	}
+
+	return FALSE;
 }
 
 /**

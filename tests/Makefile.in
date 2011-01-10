@@ -49,7 +49,10 @@ check_PROGRAMS = test-loader$(EXEEXT) test-desktop-shortcuts$(EXEEXT) \
 subdir = tests
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
+	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -128,7 +131,7 @@ am_service_manager_connect_OBJECTS =  \
 service_manager_connect_OBJECTS =  \
 	$(am_service_manager_connect_OBJECTS)
 service_manager_connect_DEPENDENCIES = $(am__DEPENDENCIES_1) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	$(am__DEPENDENCIES_1)
 service_manager_connect_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(service_manager_connect_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
@@ -137,7 +140,7 @@ am_service_manager_connect_service_OBJECTS = service_manager_connect_service-ser
 service_manager_connect_service_OBJECTS =  \
 	$(am_service_manager_connect_service_OBJECTS)
 service_manager_connect_service_DEPENDENCIES = $(am__DEPENDENCIES_1) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	$(am__DEPENDENCIES_1)
 service_manager_connect_service_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(service_manager_connect_service_CFLAGS) $(CFLAGS) \
@@ -146,7 +149,7 @@ am_service_manager_no_connect_OBJECTS = service_manager_no_connect-service-manag
 service_manager_no_connect_OBJECTS =  \
 	$(am_service_manager_no_connect_OBJECTS)
 service_manager_no_connect_DEPENDENCIES = $(am__DEPENDENCIES_1) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	$(am__DEPENDENCIES_1)
 service_manager_no_connect_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(service_manager_no_connect_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
@@ -155,7 +158,7 @@ am_service_manager_nostart_connect_OBJECTS = service_manager_nostart_connect-ser
 service_manager_nostart_connect_OBJECTS =  \
 	$(am_service_manager_nostart_connect_OBJECTS)
 service_manager_nostart_connect_DEPENDENCIES = $(am__DEPENDENCIES_1) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	$(am__DEPENDENCIES_1)
 service_manager_nostart_connect_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(service_manager_nostart_connect_CFLAGS) $(CFLAGS) \
@@ -165,7 +168,7 @@ am_service_shutdown_timeout_OBJECTS =  \
 service_shutdown_timeout_OBJECTS =  \
 	$(am_service_shutdown_timeout_OBJECTS)
 service_shutdown_timeout_DEPENDENCIES = $(am__DEPENDENCIES_1) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	$(am__DEPENDENCIES_1)
 service_shutdown_timeout_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(service_shutdown_timeout_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
@@ -174,7 +177,7 @@ am_service_version_bad_service_OBJECTS = service_version_bad_service-service-ver
 service_version_bad_service_OBJECTS =  \
 	$(am_service_version_bad_service_OBJECTS)
 service_version_bad_service_DEPENDENCIES = $(am__DEPENDENCIES_1) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	$(am__DEPENDENCIES_1)
 service_version_bad_service_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(service_version_bad_service_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
@@ -183,7 +186,7 @@ am_service_version_good_service_OBJECTS = service_version_good_service-service-v
 service_version_good_service_OBJECTS =  \
 	$(am_service_version_good_service_OBJECTS)
 service_version_good_service_DEPENDENCIES = $(am__DEPENDENCIES_1) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	$(am__DEPENDENCIES_1)
 service_version_good_service_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(service_version_good_service_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
@@ -192,7 +195,7 @@ am_service_version_manager_OBJECTS = service_version_manager-service-version-mul
 service_version_manager_OBJECTS =  \
 	$(am_service_version_manager_OBJECTS)
 service_version_manager_DEPENDENCIES = $(am__DEPENDENCIES_1) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	$(am__DEPENDENCIES_1)
 service_version_manager_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(service_version_manager_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
@@ -201,8 +204,7 @@ service_version_multiwatch_manager_SOURCES =  \
 	service-version-multiwatch-manager.c
 service_version_multiwatch_manager_OBJECTS = service_version_multiwatch_manager-service-version-multiwatch-manager.$(OBJEXT)
 service_version_multiwatch_manager_DEPENDENCIES =  \
-	$(am__DEPENDENCIES_1) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 service_version_multiwatch_manager_LINK = $(LIBTOOL) $(AM_V_lt) \
 	--tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link \
 	$(CCLD) $(service_version_multiwatch_manager_CFLAGS) $(CFLAGS) \
@@ -211,8 +213,7 @@ service_version_multiwatch_manager_impolite_SOURCES =  \
 	service-version-multiwatch-manager-impolite.c
 service_version_multiwatch_manager_impolite_OBJECTS = service_version_multiwatch_manager_impolite-service-version-multiwatch-manager-impolite.$(OBJEXT)
 service_version_multiwatch_manager_impolite_DEPENDENCIES =  \
-	$(am__DEPENDENCIES_1) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 service_version_multiwatch_manager_impolite_LINK = $(LIBTOOL) \
 	$(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) \
@@ -222,8 +223,7 @@ am_service_version_multiwatch_service_OBJECTS = service_version_multiwatch_servi
 service_version_multiwatch_service_OBJECTS =  \
 	$(am_service_version_multiwatch_service_OBJECTS)
 service_version_multiwatch_service_DEPENDENCIES =  \
-	$(am__DEPENDENCIES_1) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 service_version_multiwatch_service_LINK = $(LIBTOOL) $(AM_V_lt) \
 	--tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link \
 	$(CCLD) $(service_version_multiwatch_service_CFLAGS) $(CFLAGS) \
@@ -574,7 +574,8 @@ service_shutdown_timeout_CFLAGS = \
 
 service_shutdown_timeout_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	-L$(top_builddir)/libindicator/.libs \
+	$(INDICATOR_LIB)
 
 service_manager_no_connect_SOURCES = \
 	service-manager-no-connect.c
@@ -585,7 +586,8 @@ service_manager_no_connect_CFLAGS = \
 
 service_manager_no_connect_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	-L$(top_builddir)/libindicator/.libs \
+	$(INDICATOR_LIB)
 
 service_manager_connect_SOURCES = \
 	service-manager-connect.c
@@ -596,7 +598,8 @@ service_manager_connect_CFLAGS = \
 
 service_manager_connect_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	-L$(top_builddir)/libindicator/.libs \
+	$(INDICATOR_LIB)
 
 service_manager_connect_service_SOURCES = \
 	service-manager-connect-service.c
@@ -607,7 +610,8 @@ service_manager_connect_service_CFLAGS = \
 
 service_manager_connect_service_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	-L$(top_builddir)/libindicator/.libs \
+	$(INDICATOR_LIB)
 
 service_version_manager_SOURCES = \
 	service-version-values.h \
@@ -619,7 +623,8 @@ service_version_manager_CFLAGS = \
 
 service_version_manager_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	-L$(top_builddir)/libindicator/.libs \
+	$(INDICATOR_LIB)
 
 service_version_bad_service_SOURCES = \
 	service-version-values.h \
@@ -631,7 +636,8 @@ service_version_bad_service_CFLAGS = \
 
 service_version_bad_service_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	-L$(top_builddir)/libindicator/.libs \
+	$(INDICATOR_LIB)
 
 service_version_good_service_SOURCES = \
 	service-version-values.h \
@@ -643,7 +649,8 @@ service_version_good_service_CFLAGS = \
 
 service_version_good_service_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	-L$(top_builddir)/libindicator/.libs \
+	$(INDICATOR_LIB)
 
 service_version_multiwatch_manager_CFLAGS = \
 	-Wall -Werror \
@@ -651,7 +658,8 @@ service_version_multiwatch_manager_CFLAGS = \
 
 service_version_multiwatch_manager_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	-L$(top_builddir)/libindicator/.libs \
+	$(INDICATOR_LIB)
 
 service_version_manager_impolite_SOURCES = \
 	service-version-values.h \
@@ -663,7 +671,8 @@ service_version_multiwatch_manager_impolite_CFLAGS = \
 
 service_version_multiwatch_manager_impolite_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	-L$(top_builddir)/libindicator/.libs \
+	$(INDICATOR_LIB)
 
 service_version_multiwatch_service_SOURCES = \
 	service-version-values.h \
@@ -675,7 +684,8 @@ service_version_multiwatch_service_CFLAGS = \
 
 service_version_multiwatch_service_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	-L$(top_builddir)/libindicator/.libs \
+	$(INDICATOR_LIB)
 
 service_manager_nostart_connect_SOURCES = \
 	service-manager-nostart-connect.c
@@ -686,7 +696,8 @@ service_manager_nostart_connect_CFLAGS = \
 
 service_manager_nostart_connect_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	$(top_builddir)/libindicator/.libs/libindicator.a
+	-L$(top_builddir)/libindicator/.libs \
+	$(INDICATOR_LIB)
 
 
 #############################

@@ -31,6 +31,8 @@ libindicatorinclude_HEADERS = \
 libindicator_la_SOURCES = \
 	$(indicator_headers) \
 	dbus-shared.h \
+	gen-indicator-service.xml.h \
+	gen-indicator-service.xml.c \
 	indicator-object.c \
 	indicator-object-enum-types.c \
 	indicator-desktop-shortcuts.c \
@@ -49,7 +51,7 @@ libindicator_la_LIBADD = \
 	$(LIBINDICATOR_LIBS)
 
 libindicator_la_LDFLAGS = \
-	-version-info 1:0:0 \
+	-version-info 2:0:0 \
 	-no-undefined \
 	-export-symbols-regex "^[^_].*"
 
@@ -100,23 +102,19 @@ CLEANFILES +=						\
 DBUS_SPECS = \
 	indicator-service.xml
 
-%-client.h: %.xml
-	dbus-binding-tool \
-		--prefix=_$(subst -,_,$(basename $(notdir $<)))_client \
-		--mode=glib-client \
-		--output=$@ \
-		$<
+gen-%.xml.h: %.xml
+	@echo "Building $@ from $<"
+	@echo "extern const char * _$(subst -,_,$(subst .,_,$(basename $<)));" > $@
 
-%-server.h: %.xml
-	dbus-binding-tool \
-		--prefix=_$(subst -,_,$(basename $(notdir $<)))_server \
-		--mode=glib-server \
-		--output=$@ \
-		$<
+gen-%.xml.c: %.xml
+	@echo "Building $@ from $<"
+	@echo "const char * _$(subst -,_,$(subst .,_,$(basename $<))) = " > $@
+	@sed -e "s:\":\\\\\":g" -e s:^:\": -e s:\$$:\\\\n\": $< >> $@
+	@echo ";" >> $@
 
 BUILT_SOURCES += \
-	$(DBUS_SPECS:.xml=-client.h) \
-	$(DBUS_SPECS:.xml=-server.h)
+	gen-indicator-service.xml.h \
+	gen-indicator-service.xml.c
 
 CLEANFILES += $(BUILT_SOURCES)
 
