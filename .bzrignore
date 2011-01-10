@@ -169,3 +169,6 @@ libindicator/libindicator3_la-indicator-service-manager.lo
 libindicator/libindicator3_la-indicator-service.lo
 libindicator/libindicator_la-indicator-object-enum-types.lo
 libindicator/s-enum-types-h
+libindicator/gen-indicator-service.xml.c
+libindicator/gen-indicator-service.xml.h
+libindicator/libindicator_la-gen-indicator-service.xml.lo
