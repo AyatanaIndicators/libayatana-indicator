@@ -1,3 +1,19 @@
+libindicator (0.3.16-0ubuntu1) natty; urgency=low
+
+  * New upstream release.
+    * GDBus Port
+  * debian/control: Migrating library versions from 1 to 2
+  * debian/control: Dropping dbus-glib as a build-dep
+  * debian/libindicator-tools: Removing indicator-loader3
+  * debian/libindicator3-dev: Adding in the include files for this
+    version of the library.
+
+  [ Ken VanDine ]
+  * debian/control: 
+    - libindicator2 Breaks libindicator1
+
+ -- Ted Gould <ted@ubuntu.com>  Thu, 13 Jan 2011 12:49:25 -0600
+
 libindicator (0.3.15-0ubuntu2) natty; urgency=low
 
   * debian/control: 

@@ -53,6 +53,8 @@ typedef enum
 #define INDICATOR_OBJECT_SIGNAL_SCROLL_ID         (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_SCROLL, INDICATOR_OBJECT_TYPE))
 #define INDICATOR_OBJECT_SIGNAL_MENU_SHOW         "menu-show"
 #define INDICATOR_OBJECT_SIGNAL_MENU_SHOW_ID      (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_MENU_SHOW, INDICATOR_OBJECT_TYPE))
+#define INDICATOR_OBJECT_SIGNAL_SHOW_NOW_CHANGED  "show-now-changed"
+#define INDICATOR_OBJECT_SIGNAL_SHOW_NOW_CHANGED_ID (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_SHOW_NOW_CHANGED, INDICATOR_OBJECT_TYPE))
 
 typedef struct _IndicatorObject        IndicatorObject;
 typedef struct _IndicatorObjectClass   IndicatorObjectClass;
@@ -78,10 +80,17 @@ typedef struct _IndicatorObjectEntry   IndicatorObjectEntry;
 	@get_location: Returns the location that a particular entry
 		should be placed in.  This is really only relevant for
 		indicators that have more than one entry.
+	@get_show_now: Returns whether the entry is requesting to
+		be shown "right now" in that it has something important
+		to tell the user.
+	@entry_activate: Should be called when the menus for a given
+		entry are shown to the user.
+	@entry_close: Called when the menu is closed.
 	@entry_added: Slot for #IndicatorObject::entry-added
 	@entry_removed: Slot for #IndicatorObject::entry-removed
 	@entry_moved: Slot for #IndicatorObject::entry-moved
 	@menu_show: Slot for #IndicatorObject::menu-show
+	@show_now_changed: Slot for #IndicatorObject::show-now-changed
 */
 struct _IndicatorObjectClass {
 	GObjectClass parent_class;
@@ -93,8 +102,10 @@ struct _IndicatorObjectClass {
 
 	GList *    (*get_entries) (IndicatorObject * io);
 	guint      (*get_location) (IndicatorObject * io, IndicatorObjectEntry * entry);
+	gboolean   (*get_show_now) (IndicatorObject * io, IndicatorObjectEntry * entry);
 
 	void       (*entry_activate) (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp);
+	void       (*entry_close) (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp);
 
 	/* Signals */
 	void       (*entry_added)   (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data);
@@ -102,6 +113,7 @@ struct _IndicatorObjectClass {
 	void       (*entry_moved)   (IndicatorObject * io, IndicatorObjectEntry * entry, guint old_pos, guint new_pos, gpointer user_data);
 	void       (*scroll)        (IndicatorObject * io, gint delta, IndicatorScrollDirection direction);
 	void       (*menu_show)     (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp, gpointer user_data);
+	void       (*show_now_changed) (IndicatorObject * io, IndicatorObjectEntry * entry, gboolean show_now_state, gpointer user_data);
 
 	/* Reserved */
 	void       (*reserved1)     (void);
@@ -140,7 +152,9 @@ IndicatorObject * indicator_object_new_from_file (const gchar * file);
 
 GList * indicator_object_get_entries (IndicatorObject * io);
 guint   indicator_object_get_location (IndicatorObject * io, IndicatorObjectEntry * entry);
+guint   indicator_object_get_show_now (IndicatorObject * io, IndicatorObjectEntry * entry);
 void    indicator_object_entry_activate (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp);
+void    indicator_object_entry_close (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp);
 
 G_END_DECLS
 
