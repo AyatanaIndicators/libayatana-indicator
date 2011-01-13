@@ -94,6 +94,7 @@ am__DEPENDENCIES_1 =
 libindicator_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am__objects_1 =
 am_libindicator_la_OBJECTS = $(am__objects_1) \
+	libindicator_la-gen-indicator-service.xml.lo \
 	libindicator_la-indicator-object.lo \
 	libindicator_la-indicator-object-enum-types.lo \
 	libindicator_la-indicator-desktop-shortcuts.lo \
@@ -112,7 +113,9 @@ libindicator_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 @USE_GTK3_FALSE@am_libindicator_la_rpath = -rpath $(libdir)
 am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1)
 libindicator3_la_DEPENDENCIES = $(am__DEPENDENCIES_2)
-am__objects_2 = $(am__objects_1) libindicator3_la-indicator-object.lo \
+am__objects_2 = $(am__objects_1) \
+	libindicator3_la-gen-indicator-service.xml.lo \
+	libindicator3_la-indicator-object.lo \
 	libindicator3_la-indicator-object-enum-types.lo \
 	libindicator3_la-indicator-desktop-shortcuts.lo \
 	libindicator3_la-indicator-image-helper.lo \
@@ -290,7 +293,7 @@ top_srcdir = @top_srcdir@
 @USE_GTK3_TRUE@lib_LTLIBRARIES = libindicator3.la
 BUILT_SOURCES = indicator-object-enum-types.h \
 	indicator-object-enum-types.c $(marshal_h) $(marshal_c) \
-	$(DBUS_SPECS:.xml=-client.h) $(DBUS_SPECS:.xml=-server.h)
+	gen-indicator-service.xml.h gen-indicator-service.xml.c
 CLEANFILES = stamp-marshal indicator-object-enum-types.h \
 	indicator-object-enum-types.c s-enum-types-h s-enum-types-c \
 	$(BUILT_SOURCES)
@@ -315,6 +318,8 @@ libindicatorinclude_HEADERS = \
 libindicator_la_SOURCES = \
 	$(indicator_headers) \
 	dbus-shared.h \
+	gen-indicator-service.xml.h \
+	gen-indicator-service.xml.c \
 	indicator-object.c \
 	indicator-object-enum-types.c \
 	indicator-desktop-shortcuts.c \
@@ -333,7 +338,7 @@ libindicator_la_LIBADD = \
 	$(LIBINDICATOR_LIBS)
 
 libindicator_la_LDFLAGS = \
-	-version-info 1:0:0 \
+	-version-info 2:0:0 \
 	-no-undefined \
 	-export-symbols-regex "^[^_].*"
 
@@ -440,6 +445,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libindicator3_la-gen-indicator-service.xml.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libindicator3_la-indicator-desktop-shortcuts.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libindicator3_la-indicator-image-helper.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libindicator3_la-indicator-object-enum-types.Plo@am__quote@
@@ -447,6 +453,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libindicator3_la-indicator-object.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libindicator3_la-indicator-service-manager.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libindicator3_la-indicator-service.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libindicator_la-gen-indicator-service.xml.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libindicator_la-indicator-desktop-shortcuts.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libindicator_la-indicator-image-helper.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libindicator_la-indicator-object-enum-types.Plo@am__quote@
@@ -478,6 +485,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
+
+libindicator_la-gen-indicator-service.xml.lo: gen-indicator-service.xml.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libindicator_la_CFLAGS) $(CFLAGS) -MT libindicator_la-gen-indicator-service.xml.lo -MD -MP -MF $(DEPDIR)/libindicator_la-gen-indicator-service.xml.Tpo -c -o libindicator_la-gen-indicator-service.xml.lo `test -f 'gen-indicator-service.xml.c' || echo '$(srcdir)/'`gen-indicator-service.xml.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libindicator_la-gen-indicator-service.xml.Tpo $(DEPDIR)/libindicator_la-gen-indicator-service.xml.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gen-indicator-service.xml.c' object='libindicator_la-gen-indicator-service.xml.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libindicator_la_CFLAGS) $(CFLAGS) -c -o libindicator_la-gen-indicator-service.xml.lo `test -f 'gen-indicator-service.xml.c' || echo '$(srcdir)/'`gen-indicator-service.xml.c
 
 libindicator_la-indicator-object.lo: indicator-object.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libindicator_la_CFLAGS) $(CFLAGS) -MT libindicator_la-indicator-object.lo -MD -MP -MF $(DEPDIR)/libindicator_la-indicator-object.Tpo -c -o libindicator_la-indicator-object.lo `test -f 'indicator-object.c' || echo '$(srcdir)/'`indicator-object.c
@@ -534,6 +549,14 @@ libindicator_la-indicator-service-manager.lo: indicator-service-manager.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='indicator-service-manager.c' object='libindicator_la-indicator-service-manager.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libindicator_la_CFLAGS) $(CFLAGS) -c -o libindicator_la-indicator-service-manager.lo `test -f 'indicator-service-manager.c' || echo '$(srcdir)/'`indicator-service-manager.c
+
+libindicator3_la-gen-indicator-service.xml.lo: gen-indicator-service.xml.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libindicator3_la_CFLAGS) $(CFLAGS) -MT libindicator3_la-gen-indicator-service.xml.lo -MD -MP -MF $(DEPDIR)/libindicator3_la-gen-indicator-service.xml.Tpo -c -o libindicator3_la-gen-indicator-service.xml.lo `test -f 'gen-indicator-service.xml.c' || echo '$(srcdir)/'`gen-indicator-service.xml.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libindicator3_la-gen-indicator-service.xml.Tpo $(DEPDIR)/libindicator3_la-gen-indicator-service.xml.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gen-indicator-service.xml.c' object='libindicator3_la-gen-indicator-service.xml.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libindicator3_la_CFLAGS) $(CFLAGS) -c -o libindicator3_la-gen-indicator-service.xml.lo `test -f 'gen-indicator-service.xml.c' || echo '$(srcdir)/'`gen-indicator-service.xml.c
 
 libindicator3_la-indicator-object.lo: indicator-object.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libindicator3_la_CFLAGS) $(CFLAGS) -MT libindicator3_la-indicator-object.lo -MD -MP -MF $(DEPDIR)/libindicator3_la-indicator-object.Tpo -c -o libindicator3_la-indicator-object.lo `test -f 'indicator-object.c' || echo '$(srcdir)/'`indicator-object.c
@@ -894,7 +917,7 @@ $(marshal_c): $(marshal_h)
 indicator-object-enum-types.h: s-enum-types-h
 	@true
 s-enum-types-h: $(indicator_headers)
-	( cd $(srcdir) && $(GLIB_MKENUMS) --template $(srcdir)/indicator-object-enum-types.h.template								\
+	( cd $(srcdir) && $(GLIB_MKENUMS) --template $(abs_srcdir)/indicator-object-enum-types.h.template								\
 		$(indicator_headers) ) >> tmp-indicator-object-enum-types.h											\
 	&& (cmp -s tmp-indicator-object-enum-types.h indicator-object-enum-types.h || cp tmp-indicator-object-enum-types.h indicator-object-enum-types.h )	\
 	&& rm -f tmp-indicator-object-enum-types.h && echo timestamp > $(@F)
@@ -902,24 +925,20 @@ s-enum-types-h: $(indicator_headers)
 indicator-object-enum-types.c: s-enum-types-c
 	@true
 s-enum-types-c: $(indicator_headers)
-	( cd $(srcdir) && $(GLIB_MKENUMS) --template $(srcdir)/indicator-object-enum-types.c.template								\
+	( cd $(srcdir) && $(GLIB_MKENUMS) --template $(abs_srcdir)/indicator-object-enum-types.c.template								\
 		$(indicator_headers) ) > tmp-indicator-object-enum-types.c											\
 	&& (cmp -s tmp-indicator-object-enum-types.c indicator-object-enum-types.c || cp tmp-indicator-object-enum-types.c indicator-object-enum-types.c )	\
 	&& rm -f tmp-indicator-object-enum-types.c
 
-%-client.h: %.xml
-	dbus-binding-tool \
-		--prefix=_$(subst -,_,$(basename $(notdir $<)))_client \
-		--mode=glib-client \
-		--output=$@ \
-		$<
+gen-%.xml.h: %.xml
+	@echo "Building $@ from $<"
+	@echo "extern const char * _$(subst -,_,$(subst .,_,$(basename $<)));" > $@
 
-%-server.h: %.xml
-	dbus-binding-tool \
-		--prefix=_$(subst -,_,$(basename $(notdir $<)))_server \
-		--mode=glib-server \
-		--output=$@ \
-		$<
+gen-%.xml.c: %.xml
+	@echo "Building $@ from $<"
+	@echo "const char * _$(subst -,_,$(subst .,_,$(basename $<))) = " > $@
+	@sed -e "s:\":\\\\\":g" -e s:^:\": -e s:\$$:\\\\n\": $< >> $@
+	@echo ";" >> $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
