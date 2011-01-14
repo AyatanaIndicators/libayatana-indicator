@@ -46,6 +46,7 @@ struct _IndicatorServiceManagerPrivate {
 	gchar * name;
 	GDBusProxy * service_proxy;
 	GCancellable * service_proxy_cancel;
+	guint name_watcher;
 	gboolean connected;
 	guint this_service_version;
 	guint restart_count;
@@ -102,7 +103,7 @@ static void start_service (IndicatorServiceManager * service);
 static void start_service_again (IndicatorServiceManager * manager);
 static void unwatch (GDBusProxy * proxy);
 static void service_proxy_cb (GObject * object, GAsyncResult * res, gpointer user_data);
-static void service_proxy_name_change (GObject * object, GParamSpec * pspec, gpointer user_data);
+static void service_proxy_name_changed (GDBusConnection * connection, const gchar * sender_name, const gchar * object_path, const gchar * interface_name, const gchar * signal_name, GVariant * parameters, gpointer user_data);
 
 G_DEFINE_TYPE (IndicatorServiceManager, indicator_service_manager, G_TYPE_OBJECT);
 
@@ -186,6 +187,7 @@ indicator_service_manager_init (IndicatorServiceManager *self)
 	priv->name = NULL;
 	priv->service_proxy = NULL;
 	priv->service_proxy_cancel = NULL;
+	priv->name_watcher = 0;
 	priv->connected = FALSE;
 	priv->this_service_version = 0;
 	priv->restart_count = 0;
@@ -216,6 +218,12 @@ indicator_service_manager_dispose (GObject *object)
 	if (priv->connected) {
 		priv->connected = FALSE;
 		g_signal_emit(object, signals[CONNECTION_CHANGE], 0, FALSE, TRUE);
+	}
+
+	if (priv->name_watcher != 0) {
+		g_dbus_connection_signal_unsubscribe(g_dbus_proxy_get_connection(priv->service_proxy),
+		                                     priv->name_watcher);
+		priv->name_watcher = 0;
 	}
 
 	/* If we're still getting the proxy, stop looking so we
@@ -442,7 +450,7 @@ start_service (IndicatorServiceManager * service)
 	return;
 }
 
-/* Callback from trying to create the proxy for the serivce, this
+/* Callback from trying to create the proxy for the service, this
    could include starting the service.  Sometime it'll fail and
    we'll try to start that dang service again! */
 static void
@@ -486,7 +494,17 @@ service_proxy_cb (GObject * object, GAsyncResult * res, gpointer user_data)
 	priv->service_proxy = proxy;
 
 	/* Signal for drop */
-	g_signal_connect(G_OBJECT(priv->service_proxy), "notify::g-name-owner", G_CALLBACK(service_proxy_name_change), user_data);
+	priv->name_watcher = g_dbus_connection_signal_subscribe(
+	                                   g_dbus_proxy_get_connection(proxy),
+	                                   "org.freedesktop.DBus",
+	                                   "org.freedesktop.DBus",
+	                                   "NameOwnerChanged",
+	                                   "/org/freedesktop/DBus",
+	                                   g_dbus_proxy_get_name(proxy),
+	                                   G_DBUS_SIGNAL_FLAGS_NONE,
+	                                   service_proxy_name_changed,
+	                                   user_data,
+	                                   NULL);
 
 	/* Build cancelable if we need it */
 	if (priv->watch_cancel == NULL) {
@@ -510,12 +528,18 @@ service_proxy_cb (GObject * object, GAsyncResult * res, gpointer user_data)
    usually means the service died.  We're dropping the proxy
    and recreating it so that it'll restart the service. */
 static void
-service_proxy_name_change (GObject * object, GParamSpec * pspec, gpointer user_data)
+service_proxy_name_changed (GDBusConnection * connection, const gchar * sender_name,
+                            const gchar * object_path, const gchar * interface_name,
+                            const gchar * signal_name, GVariant * parameters,
+                            gpointer user_data)
+
 {
 	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(user_data);
-	gchar * name = g_dbus_proxy_get_name_owner(priv->service_proxy);
 
-	if (name == NULL) {
+	const gchar * new_name;
+	g_variant_get(parameters, "(&s&s&s)", NULL, NULL, &new_name);
+
+	if (new_name == NULL || new_name[0] == 0) {
 		if (priv->connected) {
 			priv->connected = FALSE;
 			g_signal_emit(G_OBJECT(user_data), signals[CONNECTION_CHANGE], 0, FALSE, TRUE);
@@ -523,9 +547,10 @@ service_proxy_name_change (GObject * object, GParamSpec * pspec, gpointer user_d
 
 		start_service_again(INDICATOR_SERVICE_MANAGER(user_data));
 	} else {
-		/* This case is an oddity, and really can only be a weird race
-		   condition.  So we're going to ignore it for now. */
-		g_free(name);
+		if (!priv->connected) {
+			priv->connected = TRUE;
+			g_signal_emit(G_OBJECT(user_data), signals[CONNECTION_CHANGE], 0, TRUE, TRUE);
+		}
 	}
 
 	return;
