@@ -5,7 +5,7 @@ libindicator (0.3.17-0ubuntu1~ppa1) UNRELEASED; urgency=low
 
  -- Ted Gould <ted@ubuntu.com>  Fri, 14 Jan 2011 11:03:58 -0600
 
-libindicator (0.3.16-0ubuntu1~ppa1) natty; urgency=low
+libindicator (0.3.16-0ubuntu1) natty; urgency=low
 
   * New upstream release.
     * GDBus Port
@@ -14,6 +14,10 @@ libindicator (0.3.16-0ubuntu1~ppa1) natty; urgency=low
   * debian/libindicator-tools: Removing indicator-loader3
   * debian/libindicator3-dev: Adding in the include files for this
     version of the library.
+
+  [ Ken VanDine ]
+  * debian/control: 
+    - libindicator2 Breaks libindicator1
 
  -- Ted Gould <ted@ubuntu.com>  Thu, 13 Jan 2011 12:49:25 -0600
 

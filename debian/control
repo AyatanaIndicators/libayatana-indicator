@@ -23,6 +23,7 @@ Section: libs
 Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends}
+Breaks: libindicator1
 Description: panel indicator applet - shared library
  This library contains information to build indicators to go into
  the indicator applet.
