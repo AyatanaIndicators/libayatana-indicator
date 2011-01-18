@@ -90,6 +90,7 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 	klass->get_label =  NULL;
 	klass->get_menu =   NULL;
 	klass->get_image =  NULL;
+	klass->get_accessible_name = NULL;
 
 	klass->get_entries = get_entries_default;
 	klass->get_location = NULL;
@@ -215,6 +216,7 @@ indicator_object_init (IndicatorObject *self)
 	self->priv->entry.menu = NULL;
 	self->priv->entry.label = NULL;
 	self->priv->entry.image = NULL;
+	self->priv->entry.accessible_name = NULL;
 
 	self->priv->gotten_entries = FALSE;
 
@@ -393,6 +395,14 @@ get_entries_default (IndicatorObject * io)
 		if (priv->entry.menu == NULL) {
 			g_warning("IndicatorObject class does not create a menu.  We need one of those.");
 			return NULL;
+		}
+
+		if (class->get_accessible_name) {
+			priv->entry.accessible_name = class->get_accessible_name(io);
+		}
+
+		if (priv->entry.accessible_name == NULL) {
+			g_warning("IndicatorObject class does not have an accessible name.");
 		}
 
 		priv->gotten_entries = TRUE;

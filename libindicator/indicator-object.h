@@ -73,6 +73,7 @@ typedef struct _IndicatorObjectEntry   IndicatorObjectEntry;
 	@get_menu: Gets the image for this object.  Should be set
 		to #NULL if @get_entries is set.  Should NOT ref the
 		object.
+	@get_accessible_name: Gets the accessible name for this object.
 	@get_entries: Gets all of the entires for this object returning
 		a #GList of #IndicatorObjectEntries.  The list should be
 		under the ownership of the caller but the entires will
@@ -99,6 +100,7 @@ struct _IndicatorObjectClass {
 	GtkLabel * (*get_label) (IndicatorObject * io);
 	GtkImage * (*get_image) (IndicatorObject * io);
 	GtkMenu  * (*get_menu)  (IndicatorObject * io);
+	gchar    * (*get_accessible_name) (IndicatorObject * io);
 
 	GList *    (*get_entries) (IndicatorObject * io);
 	guint      (*get_location) (IndicatorObject * io, IndicatorObjectEntry * entry);
@@ -140,11 +142,14 @@ struct _IndicatorObject {
 	@label: The label to be shown on the panel
 	@image: The image to be shown on the panel
 	@menu: The menu to be added to the menubar
+	@accessible_name: The accessible name of the
+		indicator
 */
 struct _IndicatorObjectEntry {
 	GtkLabel * label;
 	GtkImage * image;
 	GtkMenu  * menu;
+	gchar    * accessible_name;
 };
 
 GType indicator_object_get_type (void);

@@ -50,6 +50,12 @@ get_menu (IndicatorObject * io)
 	return main_menu;
 }
 
+gchar *
+get_accessible_name (IndicatorObject * io)
+{
+	return "Simple Item";
+}
+
 static void dummy_indicator_simple_class_init (DummyIndicatorSimpleClass *klass);
 static void dummy_indicator_simple_init       (DummyIndicatorSimple *self);
 static void dummy_indicator_simple_dispose    (GObject *object);
@@ -70,6 +76,7 @@ dummy_indicator_simple_class_init (DummyIndicatorSimpleClass *klass)
 	io_class->get_label = get_label;
 	io_class->get_image = get_icon;
 	io_class->get_menu = get_menu;
+	io_class->get_accessible_name = get_accessible_name;
 
 	return;
 }
