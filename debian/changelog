@@ -1,10 +1,10 @@
-libindicator (0.3.18-0ubuntu1~ppa1) UNRELEASED; urgency=low
+libindicator (0.3.18-0ubuntu1~ppa1) natty; urgency=low
 
   * New upstream release.
     * Adding a signal for scrolling that includes the entry
   * debian/rules: Updating shlibs 
 
- -- Ted Gould <ted@ubuntu.com>  Thu, 27 Jan 2011 15:29:02 -0600
+ -- Ted Gould <ted@ubuntu.com>  Thu, 27 Jan 2011 15:31:04 -0600
 
 libindicator (0.3.17-0ubuntu1~ppa1) natty; urgency=low
 
