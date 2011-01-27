@@ -9,8 +9,8 @@ DEB_BUILDDIR = $(DEB_SRCDIR)/build
 
 LDFLAGS += -Wl,-z,defs -Wl,--as-needed
 
-DEB_DH_MAKESHLIBS_ARGS_libindicator1 += -V 'libindicator1 (>= 0.3.15)'
-DEB_DH_MAKESHLIBS_ARGS_libindicator3 += -V 'libindicator3-1 (>= 0.3.15)'
+DEB_DH_MAKESHLIBS_ARGS_libindicator1 += -V 'libindicator1 (>= 0.3.18)'
+DEB_DH_MAKESHLIBS_ARGS_libindicator3 += -V 'libindicator3-1 (>= 0.3.18)'
 
 configure/libindicator3-1:: stamp-configure-gtk3
 stamp-configure-gtk3:
