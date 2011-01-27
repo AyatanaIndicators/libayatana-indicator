@@ -51,6 +51,8 @@ typedef enum
 #define INDICATOR_OBJECT_SIGNAL_ENTRY_MOVED_ID    (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_ENTRY_MOVED, INDICATOR_OBJECT_TYPE))
 #define INDICATOR_OBJECT_SIGNAL_SCROLL            "scroll"
 #define INDICATOR_OBJECT_SIGNAL_SCROLL_ID         (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_SCROLL, INDICATOR_OBJECT_TYPE))
+#define INDICATOR_OBJECT_SIGNAL_SCROLL_ENTRY      "scroll-entry"
+#define INDICATOR_OBJECT_SIGNAL_SCROLL_ENTRY_ID   (g_signal_lookup(#define INDICATOR_OBJECT_SIGNAL_SCROLL_ENTRY, INDICATOR_OBJECT_TYPE))
 #define INDICATOR_OBJECT_SIGNAL_MENU_SHOW         "menu-show"
 #define INDICATOR_OBJECT_SIGNAL_MENU_SHOW_ID      (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_MENU_SHOW, INDICATOR_OBJECT_TYPE))
 #define INDICATOR_OBJECT_SIGNAL_SHOW_NOW_CHANGED  "show-now-changed"
@@ -114,6 +116,7 @@ struct _IndicatorObjectClass {
 	void       (*scroll)        (IndicatorObject * io, gint delta, IndicatorScrollDirection direction);
 	void       (*menu_show)     (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp, gpointer user_data);
 	void       (*show_now_changed) (IndicatorObject * io, IndicatorObjectEntry * entry, gboolean show_now_state, gpointer user_data);
+	void       (*scroll_entry)  (IndicatorObject * io, IndicatorObjectEntry * entry, gint delta, IndicatorScrollDirection direction);
 
 	/* Reserved */
 	void       (*reserved1)     (void);
@@ -121,7 +124,6 @@ struct _IndicatorObjectClass {
 	void       (*reserved3)     (void);
 	void       (*reserved4)     (void);
 	void       (*reserved5)     (void);
-	void       (*reserved6)     (void);
 };
 
 /**
