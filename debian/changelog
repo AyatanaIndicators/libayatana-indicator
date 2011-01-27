@@ -1,3 +1,18 @@
+libindicator (0.3.18-0ubuntu1) natty; urgency=low
+
+  * New upstream release.
+    * Adding a signal for scrolling that includes the entry
+  * debian/rules: Updating shlibs 
+
+ -- Ted Gould <ted@ubuntu.com>  Thu, 27 Jan 2011 15:31:04 -0600
+
+libindicator (0.3.17-0ubuntu1~ppa1) natty; urgency=low
+
+  * New upstream release.
+    * Fixing catching services dropping off
+
+ -- Ted Gould <ted@ubuntu.com>  Fri, 14 Jan 2011 11:09:36 -0600
+
 libindicator (0.3.16-0ubuntu1) natty; urgency=low
 
   * New upstream release.
