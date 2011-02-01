@@ -58,6 +58,7 @@ enum {
 	ENTRY_REMOVED,
 	ENTRY_MOVED,
 	SCROLL,
+	SCROLL_ENTRY,
 	MENU_SHOW,
 	SHOW_NOW_CHANGED,
 	LAST_SIGNAL
@@ -147,7 +148,6 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 	                                     _indicator_object_marshal_VOID__POINTER_UINT_UINT,
 	                                     G_TYPE_NONE, 3, G_TYPE_POINTER, G_TYPE_UINT, G_TYPE_UINT, G_TYPE_NONE);
 
-
 	/**
 		IndicatorObject::scroll:
 		@arg0: The #IndicatorObject object
@@ -163,7 +163,28 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 	                                G_STRUCT_OFFSET (IndicatorObjectClass, scroll),
 	                                NULL, NULL,
 	                                _indicator_object_marshal_VOID__UINT_ENUM,
-	                                G_TYPE_NONE, 2, G_TYPE_UINT, INDICATOR_OBJECT_TYPE_SCROLL_DIRECTION);
+	                                G_TYPE_NONE, 2, G_TYPE_UINT,
+	                                INDICATOR_OBJECT_TYPE_SCROLL_DIRECTION);
+
+/**
+		IndicatorObject::scroll-entry:
+		@arg0: The #IndicatorObject object
+		@arg1: A pointer to the #IndicatorObjectEntry that
+			receives the scroll event.
+		@arg2: The delta of the scroll event
+		@arg3: The orientation of the scroll event.
+
+		When the indicator receives a mouse scroll wheel event
+		from the user, this signal is emitted.
+	*/
+	signals[SCROLL_ENTRY] = g_signal_new (INDICATOR_OBJECT_SIGNAL_SCROLL_ENTRY,
+	                                G_TYPE_FROM_CLASS(klass),
+	                                G_SIGNAL_RUN_LAST,
+	                                G_STRUCT_OFFSET (IndicatorObjectClass, scroll_entry),
+	                                NULL, NULL,
+	                                _indicator_object_marshal_VOID__POINTER_UINT_ENUM,
+	                                G_TYPE_NONE, 3, G_TYPE_POINTER, G_TYPE_UINT,
+	                                INDICATOR_OBJECT_TYPE_SCROLL_DIRECTION);
 
 	/**
 		IndicatorObject::menu-show:
