@@ -46,7 +46,7 @@ get_menu (IndicatorObject * io)
 {
 	return NULL;
 }
-gchar *
+const gchar *
 get_accessible_name (IndicatorObject * io)
 {
 	return NULL;

@@ -102,7 +102,7 @@ struct _IndicatorObjectClass {
 	GtkLabel * (*get_label) (IndicatorObject * io);
 	GtkImage * (*get_image) (IndicatorObject * io);
 	GtkMenu  * (*get_menu)  (IndicatorObject * io);
-	gchar    * (*get_accessible_name) (IndicatorObject * io);
+	const gchar * (*get_accessible_name) (IndicatorObject * io);
 
 	GList *    (*get_entries) (IndicatorObject * io);
 	guint      (*get_location) (IndicatorObject * io, IndicatorObjectEntry * entry);
@@ -151,7 +151,7 @@ struct _IndicatorObjectEntry {
 	GtkLabel * label;
 	GtkImage * image;
 	GtkMenu  * menu;
-	gchar    * accessible_name;
+	const gchar * accessible_name;
 };
 
 GType indicator_object_get_type (void);

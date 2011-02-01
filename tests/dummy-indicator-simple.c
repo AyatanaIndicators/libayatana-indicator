@@ -50,7 +50,7 @@ get_menu (IndicatorObject * io)
 	return main_menu;
 }
 
-gchar *
+const gchar *
 get_accessible_name (IndicatorObject * io)
 {
 	return "Simple Item";
