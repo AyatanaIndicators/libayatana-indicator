@@ -57,6 +57,8 @@ typedef enum
 #define INDICATOR_OBJECT_SIGNAL_MENU_SHOW_ID      (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_MENU_SHOW, INDICATOR_OBJECT_TYPE))
 #define INDICATOR_OBJECT_SIGNAL_SHOW_NOW_CHANGED  "show-now-changed"
 #define INDICATOR_OBJECT_SIGNAL_SHOW_NOW_CHANGED_ID (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_SHOW_NOW_CHANGED, INDICATOR_OBJECT_TYPE))
+#define INDICATOR_OBJECT_SIGNAL_ACCESSIBLE_DESC_UPDATE "accessible-desc-update"
+#define INDICATOR_OBJECT_SIGNAL_ACCESSIBLE_DESC_UPDATE_ID (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_ACCESSIBLE_DESC_UPDATE, INDICATOR_OBJECT_TYPE))
 
 typedef struct _IndicatorObject        IndicatorObject;
 typedef struct _IndicatorObjectClass   IndicatorObjectClass;
@@ -75,7 +77,8 @@ typedef struct _IndicatorObjectEntry   IndicatorObjectEntry;
 	@get_menu: Gets the image for this object.  Should be set
 		to #NULL if @get_entries is set.  Should NOT ref the
 		object.
-	@get_accessible_name: Gets the accessible name for this object.
+	@get_accessible_desc: Gets the accessible descriptionfor this
+		object.
 	@get_entries: Gets all of the entires for this object returning
 		a #GList of #IndicatorObjectEntries.  The list should be
 		under the ownership of the caller but the entires will
@@ -94,6 +97,7 @@ typedef struct _IndicatorObjectEntry   IndicatorObjectEntry;
 	@entry_moved: Slot for #IndicatorObject::entry-moved
 	@menu_show: Slot for #IndicatorObject::menu-show
 	@show_now_changed: Slot for #IndicatorObject::show-now-changed
+	@accessible_desc_update: Slot for #IndicatorObject::accessible-desc-update
 */
 struct _IndicatorObjectClass {
 	GObjectClass parent_class;
@@ -102,7 +106,7 @@ struct _IndicatorObjectClass {
 	GtkLabel * (*get_label) (IndicatorObject * io);
 	GtkImage * (*get_image) (IndicatorObject * io);
 	GtkMenu  * (*get_menu)  (IndicatorObject * io);
-	const gchar * (*get_accessible_name) (IndicatorObject * io);
+	const gchar * (*get_accessible_desc) (IndicatorObject * io);
 
 	GList *    (*get_entries) (IndicatorObject * io);
 	guint      (*get_location) (IndicatorObject * io, IndicatorObjectEntry * entry);
@@ -119,6 +123,7 @@ struct _IndicatorObjectClass {
 	void       (*menu_show)     (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp, gpointer user_data);
 	void       (*show_now_changed) (IndicatorObject * io, IndicatorObjectEntry * entry, gboolean show_now_state, gpointer user_data);
 	void       (*scroll_entry)  (IndicatorObject * io, IndicatorObjectEntry * entry, gint delta, IndicatorScrollDirection direction);
+	void (*accessible_desc_update) (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data);
 
 	/* Reserved */
 	void       (*reserved1)     (void);
@@ -144,14 +149,14 @@ struct _IndicatorObject {
 	@label: The label to be shown on the panel
 	@image: The image to be shown on the panel
 	@menu: The menu to be added to the menubar
-	@accessible_name: The accessible name of the
-		indicator
+	@accessible_desc: The accessible description
+		of the indicator
 */
 struct _IndicatorObjectEntry {
 	GtkLabel * label;
 	GtkImage * image;
 	GtkMenu  * menu;
-	const gchar * accessible_name;
+	const gchar * accessible_desc;
 };
 
 GType indicator_object_get_type (void);

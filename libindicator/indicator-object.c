@@ -61,6 +61,7 @@ enum {
 	SCROLL_ENTRY,
 	MENU_SHOW,
 	SHOW_NOW_CHANGED,
+	ACCESSIBLE_DESC_UPDATE,
 	LAST_SIGNAL
 };
 
@@ -91,7 +92,7 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 	klass->get_label =  NULL;
 	klass->get_menu =   NULL;
 	klass->get_image =  NULL;
-	klass->get_accessible_name = NULL;
+	klass->get_accessible_desc = NULL;
 
 	klass->get_entries = get_entries_default;
 	klass->get_location = NULL;
@@ -222,6 +223,24 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 	                                          _indicator_object_marshal_VOID__POINTER_BOOLEAN,
 	                                          G_TYPE_NONE, 2, G_TYPE_POINTER, G_TYPE_BOOLEAN);
 
+	/**
+		IndicatorObject::accessible-desc-update::
+		@arg0: The #IndicatorObject object
+		@arg1: A pointer to the #IndicatorObjectEntry whos
+			accessible description has been updated.
+
+		Signaled when an indicator's accessible description
+		has been updated, so that the displayer of the
+		indicator can fetch the new description.
+	*/
+	signals[ACCESSIBLE_DESC_UPDATE] = g_signal_new (INDICATOR_OBJECT_SIGNAL_ACCESSIBLE_DESC_UPDATE,
+	                                     G_TYPE_FROM_CLASS(klass),
+	                                     G_SIGNAL_RUN_LAST,
+	                                     G_STRUCT_OFFSET (IndicatorObjectClass, accessible_desc_update),
+	                                     NULL, NULL,
+	                                     g_cclosure_marshal_VOID__POINTER,
+	                                     G_TYPE_NONE, 1, G_TYPE_POINTER, G_TYPE_NONE);
+
 
 	return;
 }
@@ -237,7 +256,7 @@ indicator_object_init (IndicatorObject *self)
 	self->priv->entry.menu = NULL;
 	self->priv->entry.label = NULL;
 	self->priv->entry.image = NULL;
-	self->priv->entry.accessible_name = NULL;
+	self->priv->entry.accessible_desc = NULL;
 
 	self->priv->gotten_entries = FALSE;
 
@@ -418,12 +437,12 @@ get_entries_default (IndicatorObject * io)
 			return NULL;
 		}
 
-		if (class->get_accessible_name) {
-			priv->entry.accessible_name = class->get_accessible_name(io);
+		if (class->get_accessible_desc) {
+			priv->entry.accessible_desc = class->get_accessible_desc(io);
 		}
 
-		if (priv->entry.accessible_name == NULL) {
-			g_warning("IndicatorObject class does not have an accessible name.");
+		if (priv->entry.accessible_desc == NULL) {
+			g_warning("IndicatorObject class does not have an accessible description.");
 		}
 
 		priv->gotten_entries = TRUE;
