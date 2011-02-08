@@ -47,7 +47,7 @@ get_menu (IndicatorObject * io)
 	return NULL;
 }
 const gchar *
-get_accessible_name (IndicatorObject * io)
+get_accessible_desc (IndicatorObject * io)
 {
 	return NULL;
 }
@@ -72,7 +72,7 @@ dummy_indicator_null_class_init (DummyIndicatorNullClass *klass)
 	io_class->get_label = get_label;
 	io_class->get_image = get_icon;
 	io_class->get_menu = get_menu;
-	io_class->get_accessible_name = get_accessible_name;
+	io_class->get_accessible_desc = get_accessible_desc;
 
 	return;
 }

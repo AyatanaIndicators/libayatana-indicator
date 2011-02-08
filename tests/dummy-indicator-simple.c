@@ -51,7 +51,7 @@ get_menu (IndicatorObject * io)
 }
 
 const gchar *
-get_accessible_name (IndicatorObject * io)
+get_accessible_desc (IndicatorObject * io)
 {
 	return "Simple Item";
 }
@@ -76,7 +76,7 @@ dummy_indicator_simple_class_init (DummyIndicatorSimpleClass *klass)
 	io_class->get_label = get_label;
 	io_class->get_image = get_icon;
 	io_class->get_menu = get_menu;
-	io_class->get_accessible_name = get_accessible_name;
+	io_class->get_accessible_desc = get_accessible_desc;
 
 	return;
 }
