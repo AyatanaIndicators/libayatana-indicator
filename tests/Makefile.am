@@ -20,7 +20,10 @@ XVFB_RUN=". $(srcdir)/run-xvfb.sh"
 
 EXTRA_DIST = \
 	run-xvfb.sh \
-	session.conf.in
+	session.conf.in \
+	service-manager-connect.service.in \
+	service-version-bad.service.in \
+	service-version-good.service.in
 
 #############################
 # Test Loader
