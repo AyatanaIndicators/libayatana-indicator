@@ -123,7 +123,7 @@ struct _IndicatorObjectClass {
 	void       (*menu_show)     (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp, gpointer user_data);
 	void       (*show_now_changed) (IndicatorObject * io, IndicatorObjectEntry * entry, gboolean show_now_state, gpointer user_data);
 	void       (*scroll_entry)  (IndicatorObject * io, IndicatorObjectEntry * entry, gint delta, IndicatorScrollDirection direction);
-	void (*accessible_desc_update) (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data);
+	void       (*accessible_desc_update) (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data);
 
 	/* Reserved */
 	void       (*reserved1)     (void);
@@ -131,6 +131,7 @@ struct _IndicatorObjectClass {
 	void       (*reserved3)     (void);
 	void       (*reserved4)     (void);
 	void       (*reserved5)     (void);
+	void       (*reserved6)     (void);
 };
 
 /**
@@ -151,12 +152,22 @@ struct _IndicatorObject {
 	@menu: The menu to be added to the menubar
 	@accessible_desc: The accessible description
 		of the indicator
+
+	@reserved1: Reserved for future use
+	@reserved2: Reserved for future use
+	@reserved3: Reserved for future use
+	@reserved4: Reserved for future use
 */
 struct _IndicatorObjectEntry {
 	GtkLabel * label;
 	GtkImage * image;
 	GtkMenu  * menu;
 	const gchar * accessible_desc;
+
+	void       (*reserved1)     (void);
+	void       (*reserved2)     (void);
+	void       (*reserved3)     (void);
+	void       (*reserved4)     (void);
 };
 
 GType indicator_object_get_type (void);
