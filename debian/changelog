@@ -1,4 +1,4 @@
-libindicator (0.3.18-0ubuntu1~ppa1) natty; urgency=low
+libindicator (0.3.18-0ubuntu1) natty; urgency=low
 
   * New upstream release.
     * Adding a signal for scrolling that includes the entry
