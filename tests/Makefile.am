@@ -18,7 +18,12 @@ lib_LTLIBRARIES = \
 DBUS_RUNNER=dbus-test-runner --dbus-config /usr/share/dbus-test-runner/session.conf
 XVFB_RUN=". $(srcdir)/run-xvfb.sh"
 
-EXTRA_DIST = run-xvfb.sh
+EXTRA_DIST = \
+	run-xvfb.sh \
+	session.conf.in \
+	service-manager-connect.service.in \
+	service-version-bad.service.in \
+	service-version-good.service.in
 
 #############################
 # Test Loader

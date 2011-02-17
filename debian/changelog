@@ -1,3 +1,18 @@
+libindicator (0.3.19-0ubuntu1) natty; urgency=low
+
+  * debian/rules
+    - Updated shlibs
+
+  [Ted Gould]
+  * New upstream release.
+    ∘ Adding in a11y description support
+    ∘ Fixing distcheck (LP: #587811)
+  * debian/*: Changing the library major version from 2 to 3
+  * debian/control: Adding Breaks for the previous library rev
+    so that users don't end up with systems that use both.
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Thu, 17 Feb 2011 14:04:55 -0500
+
 libindicator (0.3.18-0ubuntu1) natty; urgency=low
 
   * New upstream release.
