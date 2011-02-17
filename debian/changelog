@@ -4,8 +4,10 @@ libindicator (0.3.19-0ubuntu1~ppa1) UNRELEASED; urgency=low
     ∘ Adding in a11y description support
     ∘ Fixing distcheck (LP: #587811)
   * debian/*: Changing the library major version from 2 to 3
+  * debian/control: Adding Breaks for the previous library rev
+    so that users don't end up with systems that use both.
 
- -- Ted Gould <ted@ubuntu.com>  Thu, 17 Feb 2011 10:23:24 -0600
+ -- Ted Gould <ted@ubuntu.com>  Thu, 17 Feb 2011 10:25:11 -0600
 
 libindicator (0.3.18-0ubuntu1) natty; urgency=low
 
