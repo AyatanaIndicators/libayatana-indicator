@@ -4,7 +4,7 @@ libdir=@libdir@
 bindir=@bindir@
 includedir=@includedir@
 
-indicatordir=${libdir}/indicators3/1/
+indicatordir=${libdir}/indicators3/2/
 iconsdir=@datarootdir@/@PACKAGE@/icons/
 
 Cflags: -I${includedir}/libindicator-0.3

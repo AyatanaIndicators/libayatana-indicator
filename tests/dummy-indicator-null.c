@@ -46,6 +46,11 @@ get_menu (IndicatorObject * io)
 {
 	return NULL;
 }
+const gchar *
+get_accessible_desc (IndicatorObject * io)
+{
+	return NULL;
+}
 
 static void dummy_indicator_null_class_init (DummyIndicatorNullClass *klass);
 static void dummy_indicator_null_init       (DummyIndicatorNull *self);
@@ -67,6 +72,7 @@ dummy_indicator_null_class_init (DummyIndicatorNullClass *klass)
 	io_class->get_label = get_label;
 	io_class->get_image = get_icon;
 	io_class->get_menu = get_menu;
+	io_class->get_accessible_desc = get_accessible_desc;
 
 	return;
 }

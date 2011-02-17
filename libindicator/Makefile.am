@@ -51,7 +51,7 @@ libindicator_la_LIBADD = \
 	$(LIBINDICATOR_LIBS)
 
 libindicator_la_LDFLAGS = \
-	-version-info 2:0:0 \
+	-version-info 3:0:0 \
 	-no-undefined \
 	-export-symbols-regex "^[^_].*"
 
