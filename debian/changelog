@@ -3,8 +3,9 @@ libindicator (0.3.19-0ubuntu1~ppa1) UNRELEASED; urgency=low
   * New upstream release.
     ∘ Adding in a11y description support
     ∘ Fixing distcheck (LP: #587811)
+  * debian/*: Changing the library major version from 2 to 3
 
- -- Ted Gould <ted@ubuntu.com>  Thu, 17 Feb 2011 10:20:50 -0600
+ -- Ted Gould <ted@ubuntu.com>  Thu, 17 Feb 2011 10:23:24 -0600
 
 libindicator (0.3.18-0ubuntu1) natty; urgency=low
 
