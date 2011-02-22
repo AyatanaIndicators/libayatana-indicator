@@ -1,3 +1,10 @@
+libindicator (0.3.19-0ubuntu2) natty; urgency=low
+
+  * debian/control:
+    - Use new GTK3 package naming
+
+ -- Robert Ancell <robert.ancell@canonical.com>  Wed, 23 Feb 2011 10:46:46 +1100
+
 libindicator (0.3.19-0ubuntu1~ppa1) natty; urgency=low
 
   * New upstream release.
