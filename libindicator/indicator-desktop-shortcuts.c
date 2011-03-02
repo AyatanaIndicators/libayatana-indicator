@@ -174,7 +174,6 @@ set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec 
 		}
 
 		if (!g_key_file_has_key(keyfile, G_KEY_FILE_DESKTOP_GROUP, SHORTCUTS_KEY, NULL)) {
-			g_warning("Keyfile from file '%s' does not have '" SHORTCUTS_KEY "' key", g_value_get_string(value));
 			g_key_file_free(keyfile);
 			break;
 		}
