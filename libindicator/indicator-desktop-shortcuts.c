@@ -30,6 +30,7 @@ License along with this library. If not, see
 
 #define GROUP_SUFFIX          "Shortcut Group"
 #define SHORTCUTS_KEY         "X-Ayatana-Desktop-Shortcuts"
+#define ENVIRON_KEY           "TargetEnvironment"
 
 #define PROP_DESKTOP_FILE_S   "desktop-file"
 #define PROP_IDENTITY_S       "identity"
@@ -173,7 +174,6 @@ set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec 
 		}
 
 		if (!g_key_file_has_key(keyfile, G_KEY_FILE_DESKTOP_GROUP, SHORTCUTS_KEY, NULL)) {
-			g_warning("Keyfile from file '%s' does not have '" SHORTCUTS_KEY "' key", g_value_get_string(value));
 			g_key_file_free(keyfile);
 			break;
 		}
@@ -295,6 +295,31 @@ parse_keyfile (IndicatorDesktopShortcuts * ids)
 static gboolean
 should_show (GKeyFile * keyfile, const gchar * group, const gchar * identity)
 {
+	if (g_key_file_has_key(keyfile, group, ENVIRON_KEY, NULL)) {
+		/* If we've got this key, we're going to return here and not
+		   process the deprecated keys. */
+		gint j;
+		gsize num_env = 0;
+		gchar ** envs = g_key_file_get_string_list(keyfile, group, ENVIRON_KEY, &num_env, NULL);
+
+		for (j = 0; j < num_env; j++) {
+			if (g_strcmp0(envs[j], identity) == 0) {
+				break;
+			}
+		}
+
+		if (envs != NULL) {
+			g_strfreev(envs);
+		}
+
+		if (j == num_env) {
+			return FALSE;
+		}
+		return TRUE;	
+	} else {
+		g_warning(GROUP_SUFFIX " does not have key '" ENVIRON_KEY "' falling back to deprecated use of '" G_KEY_FILE_DESKTOP_KEY_ONLY_SHOW_IN "' and '" G_KEY_FILE_DESKTOP_KEY_NOT_SHOW_IN "'.");
+	}
+
 	/* If there is a list of OnlyShowIn entries we need to check
 	   to see if we're in that list.  If not, we drop this nick */
 	if (g_key_file_has_key(keyfile, group, G_KEY_FILE_DESKTOP_KEY_ONLY_SHOW_IN, NULL)) {
