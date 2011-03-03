@@ -9,10 +9,10 @@ DEB_BUILDDIR = $(DEB_SRCDIR)/build
 
 LDFLAGS += -Wl,-z,defs -Wl,--as-needed
 
-DEB_DH_MAKESHLIBS_ARGS_libindicator1 += -V 'libindicator1 (>= 0.3.18)'
-DEB_DH_MAKESHLIBS_ARGS_libindicator3 += -V 'libindicator3-1 (>= 0.3.18)'
+DEB_DH_MAKESHLIBS_ARGS_libindicator3 += -V 'libindicator3 (>= 0.3.19)'
+DEB_DH_MAKESHLIBS_ARGS_libindicator3_3 += -V 'libindicator3-3 (>= 0.3.19)'
 
-configure/libindicator3-1:: stamp-configure-gtk3
+configure/libindicator3-3:: stamp-configure-gtk3
 stamp-configure-gtk3:
 	: # configure for GTK+ 3.0
 	set -e; \
@@ -24,7 +24,7 @@ stamp-configure-gtk3:
 	cd ..;
 	touch stamp-configure-gtk3
 
-build/libindicator3-1:: stamp-build-gtk3
+build/libindicator3-3:: stamp-build-gtk3
 stamp-build-gtk3: stamp-configure-gtk3
 	: # build for GTK+ 3.0
 	$(MAKE) -C build-gtk3;
