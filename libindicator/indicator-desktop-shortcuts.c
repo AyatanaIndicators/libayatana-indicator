@@ -59,7 +59,7 @@ static void indicator_desktop_shortcuts_finalize   (GObject *object);
 static void set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec);
 static void get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec);
 static void parse_keyfile (IndicatorDesktopShortcuts * ids);
-static gboolean should_show (GKeyFile * keyfile, const gchar * group, const gchar * identity);
+static gboolean should_show (GKeyFile * keyfile, const gchar * group, const gchar * identity, gboolean should_have_target);
 
 G_DEFINE_TYPE (IndicatorDesktopShortcuts, indicator_desktop_shortcuts, G_TYPE_OBJECT);
 
@@ -269,12 +269,12 @@ parse_keyfile (IndicatorDesktopShortcuts * ids)
 			continue;
 		}
 
-		if (!should_show(priv->keyfile, G_KEY_FILE_DESKTOP_GROUP, priv->identity)) {
+		if (!should_show(priv->keyfile, G_KEY_FILE_DESKTOP_GROUP, priv->identity, FALSE)) {
 			g_free(groupname);
 			continue;
 		}
 
-		if (!should_show(priv->keyfile, groupname, priv->identity)) {
+		if (!should_show(priv->keyfile, groupname, priv->identity, TRUE)) {
 			g_free(groupname);
 			continue;
 		}
@@ -293,9 +293,9 @@ parse_keyfile (IndicatorDesktopShortcuts * ids)
 /* Checks the ONLY_SHOW_IN and NOT_SHOW_IN keys for a group to
    see if we should be showing ourselves. */
 static gboolean
-should_show (GKeyFile * keyfile, const gchar * group, const gchar * identity)
+should_show (GKeyFile * keyfile, const gchar * group, const gchar * identity, gboolean should_have_target)
 {
-	if (g_key_file_has_key(keyfile, group, ENVIRON_KEY, NULL)) {
+	if (should_have_target && g_key_file_has_key(keyfile, group, ENVIRON_KEY, NULL)) {
 		/* If we've got this key, we're going to return here and not
 		   process the deprecated keys. */
 		gint j;
@@ -317,7 +317,9 @@ should_show (GKeyFile * keyfile, const gchar * group, const gchar * identity)
 		}
 		return TRUE;	
 	} else {
-		g_warning(GROUP_SUFFIX " does not have key '" ENVIRON_KEY "' falling back to deprecated use of '" G_KEY_FILE_DESKTOP_KEY_ONLY_SHOW_IN "' and '" G_KEY_FILE_DESKTOP_KEY_NOT_SHOW_IN "'.");
+		if (should_have_target) {
+			g_warning(GROUP_SUFFIX " does not have key '" ENVIRON_KEY "' falling back to deprecated use of '" G_KEY_FILE_DESKTOP_KEY_ONLY_SHOW_IN "' and '" G_KEY_FILE_DESKTOP_KEY_NOT_SHOW_IN "'.");
+		}
 	}
 
 	/* If there is a list of OnlyShowIn entries we need to check
