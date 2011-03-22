@@ -48,6 +48,8 @@ struct _IndicatorObjectPrivate {
 	/* For get_entries_default */
 	IndicatorObjectEntry entry;
 	gboolean gotten_entries;
+
+	GStrv environments;
 };
 
 #define INDICATOR_OBJECT_GET_PRIVATE(o) (INDICATOR_OBJECT(o)->priv)
@@ -260,6 +262,8 @@ indicator_object_init (IndicatorObject *self)
 
 	self->priv->gotten_entries = FALSE;
 
+	self->priv->environments = NULL;
+
 	return;
 }
 
@@ -289,6 +293,11 @@ static void
 indicator_object_finalize (GObject *object)
 {
 	IndicatorObjectPrivate * priv = INDICATOR_OBJECT_GET_PRIVATE(object);
+
+	if (priv->environments != NULL) {
+		g_strfreev(priv->environments);
+		priv->environments = NULL;
+	}
 
 	if (priv->module != NULL) {
 		/* Wow, this is convoluted.  So basically we want to unref
@@ -584,6 +593,14 @@ indicator_object_entry_close (IndicatorObject * io, IndicatorObjectEntry * entry
 void
 indicator_object_set_environment (IndicatorObject * io, const GStrv env)
 {
+	g_return_if_fail(INDICATOR_IS_OBJECT(io));
+
+	if (io->priv->environments != NULL) {
+		g_strfreev(io->priv->environments);
+		io->priv->environments = NULL;
+	}
+
+	io->priv->environments = g_strdupv(env);
 
 	return;
 }
@@ -601,7 +618,6 @@ indicator_object_set_environment (IndicatorObject * io, const GStrv env)
 const GStrv
 indicator_object_get_environment (IndicatorObject * io)
 {
-
-
-	return;
+	g_return_val_if_fail(INDICATOR_IS_OBJECT(io), NULL);
+	return io->priv->environments;
 }
