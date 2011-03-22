@@ -621,3 +621,33 @@ indicator_object_get_environment (IndicatorObject * io)
 	g_return_val_if_fail(INDICATOR_IS_OBJECT(io), NULL);
 	return io->priv->environments;
 }
+
+/**
+	indicator_object_check_environment:
+	@io: #IndicatorObject to check on
+	@env: Environment that we're looking for
+
+	Convience function to check to see if the specified environment
+	@env is in our list of environments.
+
+	Return Value: Whether we're in environment @env
+*/
+gboolean
+indicator_object_check_environment (IndicatorObject * io, const gchar * env)
+{
+	g_return_val_if_fail(INDICATOR_IS_OBJECT(io), FALSE);
+	g_return_val_if_fail(env != NULL, FALSE);
+
+	if (io->priv->environments == NULL) {
+		return FALSE;
+	}
+
+	int i;
+	for (i = 0; io->priv->environments[i] != NULL; i++) {
+		if (g_strcmp0(env, io->priv->environments[i]) == 0) {
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}

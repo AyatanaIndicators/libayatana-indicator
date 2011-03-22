@@ -181,6 +181,7 @@ void    indicator_object_entry_close (IndicatorObject * io, IndicatorObjectEntry
 
 void    indicator_object_set_environment (IndicatorObject * io, const GStrv env);
 const GStrv indicator_object_get_environment (IndicatorObject * io);
+gboolean indicator_object_check_environment (IndicatorObject * io, const gchar * env);
 
 G_END_DECLS
 
