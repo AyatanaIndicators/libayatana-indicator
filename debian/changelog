@@ -1,3 +1,11 @@
+libindicator (0.3.21-0ubuntu2~ppa1) UNRELEASED; urgency=low
+
+  * Upstream Merge
+    * Adding the ability to know the environment the indicator
+      object is in.
+
+ -- Ted Gould <ted@ubuntu.com>  Tue, 22 Mar 2011 14:59:11 -0500
+
 libindicator (0.3.21-0ubuntu1) natty; urgency=low
 
   * New upstream release.
