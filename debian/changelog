@@ -1,4 +1,4 @@
-libindicator (0.3.21-0ubuntu1~ppa1) natty; urgency=low
+libindicator (0.3.21-0ubuntu1) natty; urgency=low
 
   * New upstream release.
     ∘ Don't check for TargetEnvironment on the desktop group
