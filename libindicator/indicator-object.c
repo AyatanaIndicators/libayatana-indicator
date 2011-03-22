@@ -571,3 +571,37 @@ indicator_object_entry_close (IndicatorObject * io, IndicatorObjectEntry * entry
 
 	return;
 }
+
+/**
+	indicator_object_set_environment:
+	@io: #IndicatorObject to set on
+	@env: List of enviroment names to use
+
+	Sets the names of the environment that the indicator is being
+	loaded into.  This allows for indicators to behave differently
+	in different hosts if need be.
+*/
+void
+indicator_object_set_environment (IndicatorObject * io, const GStrv env)
+{
+
+	return;
+}
+
+/**
+	indicator_object_get_environment:
+	@io: #IndicatorObject to get the environment from
+
+	Gets the list of environment strings that this object is
+	placed into.
+
+	Return value: (transfer none): Gets the list of strings that
+	represent the environment or NULL if none were given.
+*/
+const GStrv
+indicator_object_get_environment (IndicatorObject * io)
+{
+
+
+	return;
+}

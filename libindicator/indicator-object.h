@@ -179,8 +179,8 @@ guint   indicator_object_get_show_now (IndicatorObject * io, IndicatorObjectEntr
 void    indicator_object_entry_activate (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp);
 void    indicator_object_entry_close (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp);
 
-void    indicator_object_set_environment (IndicatorObject * io, const GStrv * env);
-const GStrv * indicator_object_get_environment (IndicatorObject * io);
+void    indicator_object_set_environment (IndicatorObject * io, const GStrv env);
+const GStrv indicator_object_get_environment (IndicatorObject * io);
 
 G_END_DECLS
 
