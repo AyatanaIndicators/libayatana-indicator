@@ -1,10 +1,10 @@
 
-AC_INIT(libindicator, 0.3.21, ted@canonical.com)
+AC_INIT(libindicator, 0.3.22, ted@canonical.com)
 
 AC_PREREQ(2.53)
 
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(libindicator, 0.3.21)
+AM_INIT_AUTOMAKE(libindicator, 0.3.22)
 
 AM_MAINTAINER_MODE
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES])
