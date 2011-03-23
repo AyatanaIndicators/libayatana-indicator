@@ -48,6 +48,8 @@ struct _IndicatorObjectPrivate {
 	/* For get_entries_default */
 	IndicatorObjectEntry entry;
 	gboolean gotten_entries;
+
+	GStrv environments;
 };
 
 #define INDICATOR_OBJECT_GET_PRIVATE(o) (INDICATOR_OBJECT(o)->priv)
@@ -260,6 +262,8 @@ indicator_object_init (IndicatorObject *self)
 
 	self->priv->gotten_entries = FALSE;
 
+	self->priv->environments = NULL;
+
 	return;
 }
 
@@ -289,6 +293,11 @@ static void
 indicator_object_finalize (GObject *object)
 {
 	IndicatorObjectPrivate * priv = INDICATOR_OBJECT_GET_PRIVATE(object);
+
+	if (priv->environments != NULL) {
+		g_strfreev(priv->environments);
+		priv->environments = NULL;
+	}
 
 	if (priv->module != NULL) {
 		/* Wow, this is convoluted.  So basically we want to unref
@@ -570,4 +579,75 @@ indicator_object_entry_close (IndicatorObject * io, IndicatorObjectEntry * entry
 	}
 
 	return;
+}
+
+/**
+	indicator_object_set_environment:
+	@io: #IndicatorObject to set on
+	@env: List of enviroment names to use
+
+	Sets the names of the environment that the indicator is being
+	loaded into.  This allows for indicators to behave differently
+	in different hosts if need be.
+*/
+void
+indicator_object_set_environment (IndicatorObject * io, const GStrv env)
+{
+	g_return_if_fail(INDICATOR_IS_OBJECT(io));
+
+	if (io->priv->environments != NULL) {
+		g_strfreev(io->priv->environments);
+		io->priv->environments = NULL;
+	}
+
+	io->priv->environments = g_strdupv(env);
+
+	return;
+}
+
+/**
+	indicator_object_get_environment:
+	@io: #IndicatorObject to get the environment from
+
+	Gets the list of environment strings that this object is
+	placed into.
+
+	Return value: (transfer none): Gets the list of strings that
+	represent the environment or NULL if none were given.
+*/
+const GStrv
+indicator_object_get_environment (IndicatorObject * io)
+{
+	g_return_val_if_fail(INDICATOR_IS_OBJECT(io), NULL);
+	return io->priv->environments;
+}
+
+/**
+	indicator_object_check_environment:
+	@io: #IndicatorObject to check on
+	@env: Environment that we're looking for
+
+	Convience function to check to see if the specified environment
+	@env is in our list of environments.
+
+	Return Value: Whether we're in environment @env
+*/
+gboolean
+indicator_object_check_environment (IndicatorObject * io, const gchar * env)
+{
+	g_return_val_if_fail(INDICATOR_IS_OBJECT(io), FALSE);
+	g_return_val_if_fail(env != NULL, FALSE);
+
+	if (io->priv->environments == NULL) {
+		return FALSE;
+	}
+
+	int i;
+	for (i = 0; io->priv->environments[i] != NULL; i++) {
+		if (g_strcmp0(env, io->priv->environments[i]) == 0) {
+			return TRUE;
+		}
+	}
+
+	return FALSE;
 }
