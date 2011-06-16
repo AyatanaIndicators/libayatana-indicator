@@ -1,28 +1,32 @@
+AC_INIT([libindicator],
+        [0.3.22],
+        [http://bugs.launchpad.net/libindicator],
+        [libindicator],
+        [http://launchpad.net/libindicator])
 
-AC_INIT(libindicator, 0.3.22, ted@canonical.com)
+AC_PREREQ([2.64])
 
-AC_PREREQ(2.53)
+AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_AUX_DIR([build-aux])
 
-AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(libindicator, 0.3.22)
+AM_INIT_AUTOMAKE([1.11 -Wall tar-pax])
 
-AM_MAINTAINER_MODE
-m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES])
+AM_MAINTAINER_MODE([enable])
 
-AC_ISC_POSIX
+AM_SILENT_RULES([yes])]
+
+# Check for programs
 AC_PROG_CC
 AM_PROG_CC_C_O
-AC_STDC_HEADERS
-AC_PROG_LIBTOOL
+
+# Initialize libtool
+LT_PREREQ([2.2])
+LT_INIT
 
 AC_PATH_PROG([GLIB_MKENUMS], [glib-mkenums])
-
 AC_PATH_PROG([GLIB_GENMARSHAL], [glib-genmarshal])
 
-AC_SUBST(VERSION)
-AC_CONFIG_MACRO_DIR([m4])
-
-m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
 AC_ARG_ENABLE([deprecations],
   [AS_HELP_STRING([--enable-deprecations],
@@ -49,14 +53,10 @@ AC_ARG_WITH([gtk],
 AS_IF([test "x$with_gtk" = x3],
         [PKG_CHECK_MODULES(LIBINDICATOR,  gtk+-3.0 >= $GTK3_REQUIRED_VERSION
                                           gio-unix-2.0 >= $GIO_UNIX_REQUIRED_VERSION)
-         AC_SUBST(LIBINDICATOR_CFLAGS)
-         AC_SUBST(LIBINDICATOR_LIBS)
         ],
       [test "x$with_gtk" = x2],
         [PKG_CHECK_MODULES(LIBINDICATOR,  gtk+-2.0 >= $GTK_REQUIRED_VERSION
                                           gio-unix-2.0 >= $GIO_UNIX_REQUIRED_VERSION)
-         AC_SUBST(LIBINDICATOR_CFLAGS)
-         AC_SUBST(LIBINDICATOR_LIBS)
         ],
       [AC_MSG_FAILURE([Value for --with-gtk was neither 2 nor 3])]
 )
@@ -100,9 +100,6 @@ EXPANDED_SYSCONFDIR=`eval echo $SYSCONFDIR_TMP`
 prefix=$old_prefix
 AC_SUBST(EXPANDED_SYSCONFDIR)
 
-dnl Save flags to aclocal
-ACLOCAL="$ACLOCAL $ACLOCAL_FLAGS"
-
 AC_DEFINE_PATH(PREFIX, "${prefix}", [prefix directory])
 AC_DEFINE_PATH(SYSCONFDIR, "${sysconfdir}", [system configuration dir])
 AC_DEFINE_PATH(LIBDIR, "${libdir}", [system configuration dir])
@@ -111,7 +108,7 @@ AC_DEFINE_PATH(LIBDIR, "${libdir}", [system configuration dir])
 # Debug symbols
 #########################
 AC_ARG_ENABLE([debug],
-              AC_HELP_STRING([--enable-debug], [build with debug symbols]),,
+              AS_HELP_STRING([--enable-debug],[build with debug symbols]),,
               [enable_debug=no])
 
 if test "x$enable_debug" = "xyes"; then
@@ -125,7 +122,7 @@ AM_CONDITIONAL(ENABLE_DEBUG, test "$enable_debug" = "yes")
 # Files
 ###########################
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
 Makefile
 libindicator/Makefile
 libindicator/indicator.pc
@@ -133,6 +130,7 @@ libindicator/indicator3.pc
 tests/Makefile
 tools/Makefile
 ])
+AC_OUTPUT
 
 ###########################
 # Results
