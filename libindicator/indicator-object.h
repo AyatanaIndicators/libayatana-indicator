@@ -77,6 +77,8 @@ typedef struct _IndicatorObjectEntry   IndicatorObjectEntry;
 		object.
 	@get_accessible_desc: Gets the accessible descriptionfor this
 		object.
+	@get_name_hint: Gets the hint of the type of indicator that this
+		is for the caller.
 	@get_entries: Gets all of the entires for this object returning
 		a #GList of #IndicatorObjectEntries.  The list should be
 		under the ownership of the caller but the entires will
@@ -106,6 +108,7 @@ struct _IndicatorObjectClass {
 	GtkImage * (*get_image) (IndicatorObject * io);
 	GtkMenu  * (*get_menu)  (IndicatorObject * io);
 	const gchar * (*get_accessible_desc) (IndicatorObject * io);
+	const gchar * (*get_name_hint) (IndicatorObject * io);
 
 	GList *    (*get_entries) (IndicatorObject * io);
 	guint      (*get_location) (IndicatorObject * io, IndicatorObjectEntry * entry);
