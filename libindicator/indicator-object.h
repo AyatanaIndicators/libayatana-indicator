@@ -150,6 +150,8 @@ struct _IndicatorObject {
 	@menu: The menu to be added to the menubar
 	@accessible_desc: The accessible description
 		of the indicator
+	@name_hint: A name to describe the indicator being placed to allow
+		the caller to be more aware of the individual entries.
 
 	@reserved1: Reserved for future use
 	@reserved2: Reserved for future use
@@ -161,6 +163,7 @@ struct _IndicatorObjectEntry {
 	GtkImage * image;
 	GtkMenu  * menu;
 	const gchar * accessible_desc;
+	const gchar * name_hint;
 
 	void       (*reserved1)     (void);
 	void       (*reserved2)     (void);
