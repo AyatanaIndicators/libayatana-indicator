@@ -10,8 +10,11 @@ BUILT_SOURCES = indicator-object-enum-types.h indicator-object-enum-types.c
 CLEANFILES =
 DISTCLEANFILES =
 EXTRA_DIST = \
-	indicator3.pc.in \
-	indicator.pc.in
+	indicator3.pc.in.in \
+	indicator.pc.in.in
+
+%.pc: %.pc.in
+	cp $< $@
 
 include $(top_srcdir)/Makefile.am.marshal
 
