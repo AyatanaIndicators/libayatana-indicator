@@ -240,6 +240,7 @@ indicator_object_init (IndicatorObject *self)
 	self->priv->entry.label = NULL;
 	self->priv->entry.image = NULL;
 	self->priv->entry.accessible_desc = NULL;
+	self->priv->entry.name_hint = NULL;
 
 	self->priv->gotten_entries = FALSE;
 
@@ -433,6 +434,10 @@ get_entries_default (IndicatorObject * io)
 
 		if (priv->entry.accessible_desc == NULL) {
 			g_warning("IndicatorObject class does not have an accessible description.");
+		}
+
+		if (class->get_name_hint) {
+			priv->entry.name_hint = class->get_name_hint(io);
 		}
 
 		priv->gotten_entries = TRUE;
