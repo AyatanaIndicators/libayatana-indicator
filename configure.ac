@@ -125,8 +125,8 @@ AM_CONDITIONAL(ENABLE_DEBUG, test "$enable_debug" = "yes")
 AC_CONFIG_FILES([
 Makefile
 libindicator/Makefile
-libindicator/indicator.pc.in
-libindicator/indicator3.pc.in
+libindicator/indicator-0.4.pc.in
+libindicator/indicator3-0.4.pc.in
 tests/Makefile
 tools/Makefile
 ])
