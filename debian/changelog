@@ -1,4 +1,14 @@
-libindicator (0.3.22-0ubuntu1~ppa1) natty; urgency=low
+libindicator (0.3.22-0ubuntu2) oneiric; urgency=low
+
+  * debian/libindicator3-dev.install
+    - Don't install the headers twice, we only need them in libindicator-dev
+  * debian/control
+    - Make libindicator3-dev depend on libindicator-dev (LP: #3803136)
+    - Bump standards version to 3.9.2
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Wed, 29 Jun 2011 10:39:15 +0100
+
+libindicator (0.3.22-0ubuntu1) natty; urgency=low
 
   * New upstream release.
     * Adding the ability to know the environment the indicator
