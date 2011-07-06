@@ -10,12 +10,21 @@ BUILT_SOURCES = indicator-object-enum-types.h indicator-object-enum-types.c
 CLEANFILES =
 DISTCLEANFILES =
 EXTRA_DIST = \
-	indicator3.pc.in \
-	indicator.pc.in
+	indicator3-0.$(INDICATOR_API_VERSION).pc.in.in \
+	indicator-0.$(INDICATOR_API_VERSION).pc.in.in
+
+INDICATOR_ABI_VERSION = 6
+INDICATOR_API_VERSION = 4
+
+%.pc: %.pc.in
+	sed \
+		-e "s|\@indicator_api_version\@|$(INDICATOR_API_VERSION)|" \
+		-e "s|\@indicator_abi_version\@|$(INDICATOR_ABI_VERSION)|" \
+		$< > $@
 
 include $(top_srcdir)/Makefile.am.marshal
 
-libindicatorincludedir=$(includedir)/libindicator$(VER)-0.3/libindicator
+libindicatorincludedir=$(includedir)/libindicator$(VER)-0.$(INDICATOR_API_VERSION)/libindicator
 
 indicator_headers = \
 	indicator.h \
@@ -51,7 +60,7 @@ libindicator_la_LIBADD = \
 	$(LIBINDICATOR_LIBS)
 
 libindicator_la_LDFLAGS = \
-	-version-info 3:0:0 \
+	-version-info $(INDICATOR_ABI_VERSION):0:0 \
 	-no-undefined \
 	-export-symbols-regex "^[^_].*"
 
@@ -66,7 +75,7 @@ libindicator3_la_CFLAGS = $(libindicator_la_CFLAGS)
 libindicator3_la_LIBADD = $(libindicator_la_LIBADD)
 libindicator3_la_LDFLAGS = $(libindicator_la_LDFLAGS)
 
-pkgconfig_DATA = indicator$(VER).pc
+pkgconfig_DATA = indicator$(VER)-0.$(INDICATOR_API_VERSION).pc
 pkgconfigdir = $(libdir)/pkgconfig
 
 glib_marshal_list = indicator-object-marshal.list

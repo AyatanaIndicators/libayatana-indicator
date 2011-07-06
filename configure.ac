@@ -49,7 +49,7 @@ AC_ARG_WITH([gtk],
   [AS_HELP_STRING([--with-gtk],
     [Which version of gtk to use @<:@default=2@:>@])],
   [],
-  [with_gtk=2])
+  [with_gtk=3])
 AS_IF([test "x$with_gtk" = x3],
         [PKG_CHECK_MODULES(LIBINDICATOR,  gtk+-3.0 >= $GTK3_REQUIRED_VERSION
                                           gio-unix-2.0 >= $GIO_UNIX_REQUIRED_VERSION)
@@ -125,8 +125,8 @@ AM_CONDITIONAL(ENABLE_DEBUG, test "$enable_debug" = "yes")
 AC_CONFIG_FILES([
 Makefile
 libindicator/Makefile
-libindicator/indicator.pc
-libindicator/indicator3.pc
+libindicator/indicator-0.4.pc.in
+libindicator/indicator3-0.4.pc.in
 tests/Makefile
 tools/Makefile
 ])
