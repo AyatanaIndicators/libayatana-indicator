@@ -4,10 +4,10 @@ libdir=@libdir@
 bindir=@bindir@
 includedir=@includedir@
 
-indicatordir=${libdir}/indicators/5/
+indicatordir=${libdir}/indicators/@indicator_abi_version@
 iconsdir=@datarootdir@/@PACKAGE@/icons/
 
-Cflags: -I${includedir}/libindicator-0.3
+Cflags: -I${includedir}/libindicator-0.@indicator_api_version@
 Requires: gtk+-2.0
 Libs: -lindicator
 

@@ -59,8 +59,7 @@ enum {
 	ENTRY_ADDED,
 	ENTRY_REMOVED,
 	ENTRY_MOVED,
-	SCROLL,
-	SCROLL_ENTRY,
+	ENTRY_SCROLLED,
 	MENU_SHOW,
 	SHOW_NOW_CHANGED,
 	ACCESSIBLE_DESC_UPDATE,
@@ -151,26 +150,8 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 	                                     _indicator_object_marshal_VOID__POINTER_UINT_UINT,
 	                                     G_TYPE_NONE, 3, G_TYPE_POINTER, G_TYPE_UINT, G_TYPE_UINT, G_TYPE_NONE);
 
-	/**
-		IndicatorObject::scroll:
-		@arg0: The #IndicatorObject object
-		@arg1: The delta of the scroll event
-		@arg2: The orientation of the scroll event.
-
-		When the indicator receives a mouse scroll wheel event
-		from the user, this signal is emitted.
-	*/
-	signals[SCROLL] = g_signal_new (INDICATOR_OBJECT_SIGNAL_SCROLL,
-	                                G_TYPE_FROM_CLASS(klass),
-	                                G_SIGNAL_RUN_LAST,
-	                                G_STRUCT_OFFSET (IndicatorObjectClass, scroll),
-	                                NULL, NULL,
-	                                _indicator_object_marshal_VOID__UINT_ENUM,
-	                                G_TYPE_NONE, 2, G_TYPE_UINT,
-	                                INDICATOR_OBJECT_TYPE_SCROLL_DIRECTION);
-
 /**
-		IndicatorObject::scroll-entry:
+		IndicatorObject::entry-scrolled:
 		@arg0: The #IndicatorObject object
 		@arg1: A pointer to the #IndicatorObjectEntry that
 			receives the scroll event.
@@ -180,10 +161,10 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 		When the indicator receives a mouse scroll wheel event
 		from the user, this signal is emitted.
 	*/
-	signals[SCROLL_ENTRY] = g_signal_new (INDICATOR_OBJECT_SIGNAL_SCROLL_ENTRY,
+	signals[ENTRY_SCROLLED] = g_signal_new (INDICATOR_OBJECT_SIGNAL_ENTRY_SCROLLED,
 	                                G_TYPE_FROM_CLASS(klass),
 	                                G_SIGNAL_RUN_LAST,
-	                                G_STRUCT_OFFSET (IndicatorObjectClass, scroll_entry),
+	                                G_STRUCT_OFFSET (IndicatorObjectClass, entry_scrolled),
 	                                NULL, NULL,
 	                                _indicator_object_marshal_VOID__POINTER_UINT_ENUM,
 	                                G_TYPE_NONE, 3, G_TYPE_POINTER, G_TYPE_UINT,
@@ -259,6 +240,7 @@ indicator_object_init (IndicatorObject *self)
 	self->priv->entry.label = NULL;
 	self->priv->entry.image = NULL;
 	self->priv->entry.accessible_desc = NULL;
+	self->priv->entry.name_hint = NULL;
 
 	self->priv->gotten_entries = FALSE;
 
@@ -452,6 +434,10 @@ get_entries_default (IndicatorObject * io)
 
 		if (priv->entry.accessible_desc == NULL) {
 			g_warning("IndicatorObject class does not have an accessible description.");
+		}
+
+		if (class->get_name_hint) {
+			priv->entry.name_hint = class->get_name_hint(io);
 		}
 
 		priv->gotten_entries = TRUE;
