@@ -44,7 +44,7 @@ entry_added (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_d
 	g_debug("Signal: Entry Added");
 
 	GtkWidget * menuitem = gtk_menu_item_new();
-	GtkWidget * hbox = gtk_hbox_new(FALSE, 3);
+	GtkWidget * hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 3);
 
 	if (entry->image != NULL) {
 		gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(entry->image), FALSE, FALSE, 0);

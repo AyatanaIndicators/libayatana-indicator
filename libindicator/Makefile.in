@@ -54,16 +54,20 @@ build_triplet = @build@
 host_triplet = @host@
 DIST_COMMON = $(libindicator3include_HEADERS) \
 	$(libindicatorinclude_HEADERS) $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in $(srcdir)/indicator.pc.in \
-	$(srcdir)/indicator3.pc.in $(top_srcdir)/Makefile.am.marshal
+	$(srcdir)/Makefile.in $(srcdir)/indicator-0.4.pc.in.in \
+	$(srcdir)/indicator3-0.4.pc.in.in \
+	$(top_srcdir)/Makefile.am.marshal
 subdir = libindicator
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
+	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
-CONFIG_CLEAN_FILES = indicator.pc indicator3.pc
+CONFIG_CLEAN_FILES = indicator-0.4.pc.in indicator3-0.4.pc.in
 CONFIG_CLEAN_VPATH_FILES =
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
@@ -130,7 +134,7 @@ libindicator3_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(libindicator3_la_LDFLAGS) $(LDFLAGS) -o $@
 @USE_GTK3_TRUE@am_libindicator3_la_rpath = -rpath $(libdir)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
-depcomp = $(SHELL) $(top_srcdir)/depcomp
+depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
@@ -294,16 +298,20 @@ top_srcdir = @top_srcdir@
 BUILT_SOURCES = indicator-object-enum-types.h \
 	indicator-object-enum-types.c $(marshal_h) $(marshal_c) \
 	gen-indicator-service.xml.h gen-indicator-service.xml.c
-CLEANFILES = stamp-marshal indicator-object-enum-types.h \
+CLEANFILES = indicator$(VER)-0.$(INDICATOR_API_VERSION).pc \
+	stamp-marshal indicator-object-enum-types.h \
 	indicator-object-enum-types.c s-enum-types-h s-enum-types-c \
 	$(BUILT_SOURCES)
 DISTCLEANFILES = $(marshal_h) $(marshal_c)
-EXTRA_DIST = indicator3.pc.in indicator.pc.in $(glib_marshal_list) \
-	indicator-object-enum-types.h.template \
+EXTRA_DIST = indicator3-0.$(INDICATOR_API_VERSION).pc.in.in \
+	indicator-0.$(INDICATOR_API_VERSION).pc.in.in \
+	$(glib_marshal_list) indicator-object-enum-types.h.template \
 	indicator-object-enum-types.c.template $(DBUS_SPECS)
+INDICATOR_ABI_VERSION = 6
+INDICATOR_API_VERSION = 4
 marshal_h = $(glib_marshal_list:.list=.h)
 marshal_c = $(glib_marshal_list:.list=.c)
-libindicatorincludedir = $(includedir)/libindicator$(VER)-0.3/libindicator
+libindicatorincludedir = $(includedir)/libindicator$(VER)-0.$(INDICATOR_API_VERSION)/libindicator
 indicator_headers = \
 	indicator.h \
 	indicator-desktop-shortcuts.h \
@@ -338,7 +346,7 @@ libindicator_la_LIBADD = \
 	$(LIBINDICATOR_LIBS)
 
 libindicator_la_LDFLAGS = \
-	-version-info 3:0:0 \
+	-version-info $(INDICATOR_ABI_VERSION):0:0 \
 	-no-undefined \
 	-export-symbols-regex "^[^_].*"
 
@@ -353,7 +361,7 @@ libindicator3_la_SOURCES = $(libindicator_la_SOURCES)
 libindicator3_la_CFLAGS = $(libindicator_la_CFLAGS)
 libindicator3_la_LIBADD = $(libindicator_la_LIBADD)
 libindicator3_la_LDFLAGS = $(libindicator_la_LDFLAGS)
-pkgconfig_DATA = indicator$(VER).pc
+pkgconfig_DATA = indicator$(VER)-0.$(INDICATOR_API_VERSION).pc
 pkgconfigdir = $(libdir)/pkgconfig
 glib_marshal_list = indicator-object-marshal.list
 glib_marshal_prefix = _indicator_object_marshal
@@ -399,9 +407,9 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
-indicator.pc: $(top_builddir)/config.status $(srcdir)/indicator.pc.in
+indicator-0.4.pc.in: $(top_builddir)/config.status $(srcdir)/indicator-0.4.pc.in.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-indicator3.pc: $(top_builddir)/config.status $(srcdir)/indicator3.pc.in
+indicator3-0.4.pc.in: $(top_builddir)/config.status $(srcdir)/indicator3-0.4.pc.in.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 install-libLTLIBRARIES: $(lib_LTLIBRARIES)
 	@$(NORMAL_INSTALL)
@@ -892,6 +900,12 @@ uninstall-am: uninstall-libLTLIBRARIES \
 	uninstall-libLTLIBRARIES uninstall-libindicator3includeHEADERS \
 	uninstall-libindicatorincludeHEADERS uninstall-pkgconfigDATA
 
+
+%.pc: %.pc.in
+	sed \
+		-e "s|\@indicator_api_version\@|$(INDICATOR_API_VERSION)|" \
+		-e "s|\@indicator_abi_version\@|$(INDICATOR_ABI_VERSION)|" \
+		$< > $@
 
 stamp-marshal: $(glib_marshal_list)
 	$(QUIET_GEN)$(GLIB_GENMARSHAL) \
