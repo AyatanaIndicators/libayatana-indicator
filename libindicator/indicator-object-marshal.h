@@ -14,15 +14,7 @@ extern void _indicator_object_marshal_VOID__POINTER_UINT_UINT (GClosure     *clo
                                                                gpointer      invocation_hint,
                                                                gpointer      marshal_data);
 
-/* VOID:UINT,ENUM (./indicator-object-marshal.list:2) */
-extern void _indicator_object_marshal_VOID__UINT_ENUM (GClosure     *closure,
-                                                       GValue       *return_value,
-                                                       guint         n_param_values,
-                                                       const GValue *param_values,
-                                                       gpointer      invocation_hint,
-                                                       gpointer      marshal_data);
-
-/* VOID:POINTER,UINT,ENUM (./indicator-object-marshal.list:3) */
+/* VOID:POINTER,UINT,ENUM (./indicator-object-marshal.list:2) */
 extern void _indicator_object_marshal_VOID__POINTER_UINT_ENUM (GClosure     *closure,
                                                                GValue       *return_value,
                                                                guint         n_param_values,
@@ -30,7 +22,7 @@ extern void _indicator_object_marshal_VOID__POINTER_UINT_ENUM (GClosure     *clo
                                                                gpointer      invocation_hint,
                                                                gpointer      marshal_data);
 
-/* VOID:POINTER,UINT (./indicator-object-marshal.list:4) */
+/* VOID:POINTER,UINT (./indicator-object-marshal.list:3) */
 extern void _indicator_object_marshal_VOID__POINTER_UINT (GClosure     *closure,
                                                           GValue       *return_value,
                                                           guint         n_param_values,
@@ -38,7 +30,7 @@ extern void _indicator_object_marshal_VOID__POINTER_UINT (GClosure     *closure,
                                                           gpointer      invocation_hint,
                                                           gpointer      marshal_data);
 
-/* VOID:POINTER,BOOLEAN (./indicator-object-marshal.list:5) */
+/* VOID:POINTER,BOOLEAN (./indicator-object-marshal.list:4) */
 extern void _indicator_object_marshal_VOID__POINTER_BOOLEAN (GClosure     *closure,
                                                              GValue       *return_value,
                                                              guint         n_param_values,

@@ -49,10 +49,8 @@ typedef enum
 #define INDICATOR_OBJECT_SIGNAL_ENTRY_REMOVED_ID  (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_ENTRY_REMOVED, INDICATOR_OBJECT_TYPE))
 #define INDICATOR_OBJECT_SIGNAL_ENTRY_MOVED       "entry-moved"
 #define INDICATOR_OBJECT_SIGNAL_ENTRY_MOVED_ID    (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_ENTRY_MOVED, INDICATOR_OBJECT_TYPE))
-#define INDICATOR_OBJECT_SIGNAL_SCROLL            "scroll"
-#define INDICATOR_OBJECT_SIGNAL_SCROLL_ID         (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_SCROLL, INDICATOR_OBJECT_TYPE))
-#define INDICATOR_OBJECT_SIGNAL_SCROLL_ENTRY      "scroll-entry"
-#define INDICATOR_OBJECT_SIGNAL_SCROLL_ENTRY_ID   (g_signal_lookup(#define INDICATOR_OBJECT_SIGNAL_SCROLL_ENTRY, INDICATOR_OBJECT_TYPE))
+#define INDICATOR_OBJECT_SIGNAL_ENTRY_SCROLLED    "entry-scrolled"
+#define INDICATOR_OBJECT_SIGNAL_ENTRY_SCROLLED_ID (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_ENTRY_SCROLLED, INDICATOR_OBJECT_TYPE))
 #define INDICATOR_OBJECT_SIGNAL_MENU_SHOW         "menu-show"
 #define INDICATOR_OBJECT_SIGNAL_MENU_SHOW_ID      (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_MENU_SHOW, INDICATOR_OBJECT_TYPE))
 #define INDICATOR_OBJECT_SIGNAL_SHOW_NOW_CHANGED  "show-now-changed"
@@ -79,6 +77,8 @@ typedef struct _IndicatorObjectEntry   IndicatorObjectEntry;
 		object.
 	@get_accessible_desc: Gets the accessible descriptionfor this
 		object.
+	@get_name_hint: Gets the hint of the type of indicator that this
+		is for the caller.
 	@get_entries: Gets all of the entires for this object returning
 		a #GList of #IndicatorObjectEntries.  The list should be
 		under the ownership of the caller but the entires will
@@ -96,6 +96,7 @@ typedef struct _IndicatorObjectEntry   IndicatorObjectEntry;
 	@entry_removed: Slot for #IndicatorObject::entry-removed
 	@entry_moved: Slot for #IndicatorObject::entry-moved
 	@menu_show: Slot for #IndicatorObject::menu-show
+	@entry_scrolled: Slot for #IndicatorObject::entry-scrolled
 	@show_now_changed: Slot for #IndicatorObject::show-now-changed
 	@accessible_desc_update: Slot for #IndicatorObject::accessible-desc-update
 */
@@ -107,6 +108,7 @@ struct _IndicatorObjectClass {
 	GtkImage * (*get_image) (IndicatorObject * io);
 	GtkMenu  * (*get_menu)  (IndicatorObject * io);
 	const gchar * (*get_accessible_desc) (IndicatorObject * io);
+	const gchar * (*get_name_hint) (IndicatorObject * io);
 
 	GList *    (*get_entries) (IndicatorObject * io);
 	guint      (*get_location) (IndicatorObject * io, IndicatorObjectEntry * entry);
@@ -119,10 +121,9 @@ struct _IndicatorObjectClass {
 	void       (*entry_added)   (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data);
 	void       (*entry_removed) (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data);
 	void       (*entry_moved)   (IndicatorObject * io, IndicatorObjectEntry * entry, guint old_pos, guint new_pos, gpointer user_data);
-	void       (*scroll)        (IndicatorObject * io, gint delta, IndicatorScrollDirection direction);
+	void       (*entry_scrolled)  (IndicatorObject * io, IndicatorObjectEntry * entry, gint delta, IndicatorScrollDirection direction);
 	void       (*menu_show)     (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp, gpointer user_data);
 	void       (*show_now_changed) (IndicatorObject * io, IndicatorObjectEntry * entry, gboolean show_now_state, gpointer user_data);
-	void       (*scroll_entry)  (IndicatorObject * io, IndicatorObjectEntry * entry, gint delta, IndicatorScrollDirection direction);
 	void       (*accessible_desc_update) (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data);
 
 	/* Reserved */
@@ -152,6 +153,8 @@ struct _IndicatorObject {
 	@menu: The menu to be added to the menubar
 	@accessible_desc: The accessible description
 		of the indicator
+	@name_hint: A name to describe the indicator being placed to allow
+		the caller to be more aware of the individual entries.
 
 	@reserved1: Reserved for future use
 	@reserved2: Reserved for future use
@@ -163,6 +166,7 @@ struct _IndicatorObjectEntry {
 	GtkImage * image;
 	GtkMenu  * menu;
 	const gchar * accessible_desc;
+	const gchar * name_hint;
 
 	void       (*reserved1)     (void);
 	void       (*reserved2)     (void);

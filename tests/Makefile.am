@@ -6,6 +6,7 @@ endif
 
 TESTS =
 DISTCLEANFILES =
+XFAIL_TESTS =
 
 check_PROGRAMS = 
 
@@ -257,6 +258,8 @@ service-manager-connect-tester: service-manager-connect service-manager-connect-
 
 TESTS += service-manager-connect-tester
 DISTCLEANFILES += service-manager-connect-tester session.conf service-manager-connect.service
+# Bug 806690
+XFAIL_TESTS += service-manager-connect-tester
 
 #############################
 # Service Versions
@@ -320,6 +323,8 @@ service-version-tester: service-version-manager service-version-bad-service serv
 
 TESTS += service-version-tester
 DISTCLEANFILES += service-version-tester service-version-bad.service service-version-good.service
+# Bug 806691
+XFAIL_TESTS += service-version-tester
 
 #############################
 # Service Versions
@@ -377,6 +382,8 @@ service-version-multiwatch-tester: service-version-multiwatch-manager service-ve
 
 TESTS += service-version-multiwatch-tester
 DISTCLEANFILES += service-version-multiwatch-tester
+# Bug 806692
+XFAIL_TESTS += service-version-multiwatch-tester
 
 #############################
 # Service Manager Shutdown

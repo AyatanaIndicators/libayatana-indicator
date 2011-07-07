@@ -49,7 +49,10 @@ check_PROGRAMS = test-loader$(EXEEXT) test-desktop-shortcuts$(EXEEXT) \
 subdir = tests
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
+	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -241,7 +244,7 @@ test_loader_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(test_loader_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
-depcomp = $(SHELL) $(top_srcdir)/depcomp
+depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
@@ -444,6 +447,11 @@ DISTCLEANFILES = test-desktop-shortcuts-tester \
 	service-version-multiwatch-tester \
 	service-manager-connect-nostart-tester loader-tester \
 	$(XML_REPORT) $(HTML_REPORT)
+# Bug 806690
+# Bug 806691
+# Bug 806692
+XFAIL_TESTS = service-manager-connect-tester service-version-tester \
+	service-version-multiwatch-tester
 lib_LTLIBRARIES = \
 	libdummy-indicator-blank.la \
 	libdummy-indicator-null.la \
