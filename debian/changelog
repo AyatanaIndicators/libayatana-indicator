@@ -9,8 +9,9 @@ libindicator (0.3.90-0ubuntu1~ppa1) UNRELEASED; urgency=low
     * Merging scroll functions into a single good one (LP: #804618)
   * debian/*install, control: Changing ABI version number bump in package names
   * debian/rules: Making GTK2 the special case as GTK3 is default now
+  * debian/*install: Fixing pkgconfig file names
 
- -- Ted Gould <ted@ubuntu.com>  Thu, 07 Jul 2011 00:37:34 -0500
+ -- Ted Gould <ted@ubuntu.com>  Thu, 07 Jul 2011 00:40:35 -0500
 
 libindicator (0.3.22-0ubuntu2) oneiric; urgency=low
 
