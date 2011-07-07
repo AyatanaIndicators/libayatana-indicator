@@ -9,31 +9,31 @@ DEB_BUILDDIR = $(DEB_SRCDIR)/build
 
 LDFLAGS += -Wl,-z,defs -Wl,--as-needed
 
-DEB_DH_MAKESHLIBS_ARGS_libindicator3 += -V 'libindicator3 (>= 0.3.19)'
-DEB_DH_MAKESHLIBS_ARGS_libindicator3_3 += -V 'libindicator3-3 (>= 0.3.19)'
+DEB_DH_MAKESHLIBS_ARGS_libindicator4 += -V 'libindicator4 (>= 0.3.90)'
+DEB_DH_MAKESHLIBS_ARGS_libindicator3_4 += -V 'libindicator3-4 (>= 0.3.90)'
 
-configure/libindicator3-3:: stamp-configure-gtk3
-stamp-configure-gtk3:
-	: # configure for GTK+ 3.0
+configure/libindicator4:: stamp-configure-gtk2
+stamp-configure-gtk2:
+	: # configure for GTK+ 2.0
 	set -e; \
-	rm -rf build-gtk3; \
-	mkdir build-gtk3; \
-	cd build-gtk3; \
-	$(DEB_CONFIGURE_SCRIPT_ENV) ../configure --with-gtk=3 \
+	rm -rf build-gtk2; \
+	mkdir build-gtk2; \
+	cd build-gtk2; \
+	$(DEB_CONFIGURE_SCRIPT_ENV) ../configure --with-gtk=2 \
 		$(filter-out --srcdir=%, $(DEB_CONFIGURE_NORMAL_ARGS) $(DEB_CONFIGURE_EXTRA_FLAGS)); \
 	cd ..;
-	touch stamp-configure-gtk3
+	touch stamp-configure-gtk2
 
-build/libindicator3-3:: stamp-build-gtk3
-stamp-build-gtk3: stamp-configure-gtk3
-	: # build for GTK+ 3.0
-	$(MAKE) -C build-gtk3;
-	touch stamp-build-gtk3
+build/libindicator4:: stamp-build-gtk2
+stamp-build-gtk2: stamp-configure-gtk2
+	: # build for GTK+ 2.0
+	$(MAKE) -C build-gtk2;
+	touch stamp-build-gtk2
 
-common-install-prehook-arch:: stamp-build-gtk3
-	: # install for GTK+ 3.0
-	$(MAKE) -C build-gtk3 DESTDIR=$(CURDIR)/debian/tmp install
+common-install-prehook-arch:: stamp-build-gtk2
+	: # install for GTK+ 2.0
+	$(MAKE) -C build-gtk2 DESTDIR=$(CURDIR)/debian/tmp install
 
 clean::
-	rm -f stamp-*-gtk3
-	rm -rf build-gtk3
+	rm -f stamp-*-gtk2
+	rm -rf build-gtk2
