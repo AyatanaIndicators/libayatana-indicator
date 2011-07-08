@@ -4,6 +4,9 @@
 # make debugging difficult and are not recommended for
 # daily use.  Development use only!
 
+# To use: either copy or symbolicly link this file to the
+# Xsession dictory.  Specifically: /etc/X11/Xsession.d
+
 # Timeout after 1 minute
 export INDICATOR_SERVICE_SHUTDOWN_TIMEOUT=60000
 
