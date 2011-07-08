@@ -77,6 +77,8 @@ typedef struct _IndicatorObjectEntry   IndicatorObjectEntry;
 		object.
 	@get_accessible_desc: Gets the accessible descriptionfor this
 		object.
+	@get_name_hint: Gets the hint of the type of indicator that this
+		is for the caller.
 	@get_entries: Gets all of the entires for this object returning
 		a #GList of #IndicatorObjectEntries.  The list should be
 		under the ownership of the caller but the entires will
@@ -106,6 +108,7 @@ struct _IndicatorObjectClass {
 	GtkImage * (*get_image) (IndicatorObject * io);
 	GtkMenu  * (*get_menu)  (IndicatorObject * io);
 	const gchar * (*get_accessible_desc) (IndicatorObject * io);
+	const gchar * (*get_name_hint) (IndicatorObject * io);
 
 	GList *    (*get_entries) (IndicatorObject * io);
 	guint      (*get_location) (IndicatorObject * io, IndicatorObjectEntry * entry);
@@ -150,6 +153,8 @@ struct _IndicatorObject {
 	@menu: The menu to be added to the menubar
 	@accessible_desc: The accessible description
 		of the indicator
+	@name_hint: A name to describe the indicator being placed to allow
+		the caller to be more aware of the individual entries.
 
 	@reserved1: Reserved for future use
 	@reserved2: Reserved for future use
@@ -161,6 +166,7 @@ struct _IndicatorObjectEntry {
 	GtkImage * image;
 	GtkMenu  * menu;
 	const gchar * accessible_desc;
+	const gchar * name_hint;
 
 	void       (*reserved1)     (void);
 	void       (*reserved2)     (void);
