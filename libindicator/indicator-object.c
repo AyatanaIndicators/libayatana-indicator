@@ -447,15 +447,15 @@ get_entries_default (IndicatorObject * io)
 }
 
 /**
-	indicator_object_get_entires:
+	indicator_object_get_entries:
 	@io: #IndicatorObject to query
 
 	This function looks on the class for the object and calls
 	it's #IndicatorObjectClass::get_entries function.  The
 	list should be owned by the caller, but the individual
-	enteries should not be.
+	entries should not be.
 
-	Return value: A list if #IndicatorObjectEntry structures or
+	Return value: (element-type IndicatorObjectEntry) (transfer container): A list if #IndicatorObjectEntry structures or
 		NULL if there is an error.
 */
 GList *
