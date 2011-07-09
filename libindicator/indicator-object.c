@@ -63,6 +63,7 @@ enum {
 	MENU_SHOW,
 	SHOW_NOW_CHANGED,
 	ACCESSIBLE_DESC_UPDATE,
+	SECONDARY_ACTIVATE,
 	LAST_SIGNAL
 };
 
@@ -149,8 +150,7 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 	                                     NULL, NULL,
 	                                     _indicator_object_marshal_VOID__POINTER_UINT_UINT,
 	                                     G_TYPE_NONE, 3, G_TYPE_POINTER, G_TYPE_UINT, G_TYPE_UINT, G_TYPE_NONE);
-
-/**
+	/**
 		IndicatorObject::entry-scrolled:
 		@arg0: The #IndicatorObject object
 		@arg1: A pointer to the #IndicatorObjectEntry that
@@ -169,6 +169,26 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 	                                _indicator_object_marshal_VOID__POINTER_UINT_ENUM,
 	                                G_TYPE_NONE, 3, G_TYPE_POINTER, G_TYPE_UINT,
 	                                INDICATOR_OBJECT_TYPE_SCROLL_DIRECTION);
+	/**
+		IndicatorObject::secondary-activate:
+		@arg0: The #IndicatorObject object
+		@arg1: A pointer to the #IndicatorObjectEntry that
+			receives the secondary activate event.
+		@arg2: The timestamp of the event
+		@arg3: The X position of the pointer
+		@arg4: The Y position of the pointer
+
+		When the indicator receives a secondary activation event
+		from the user, this signal is emitted.
+	*/
+	signals[SECONDARY_ACTIVATE] = g_signal_new (INDICATOR_OBJECT_SIGNAL_SECONDARY_ACTIVATE,
+	                                G_TYPE_FROM_CLASS(klass),
+	                                G_SIGNAL_RUN_LAST,
+	                                G_STRUCT_OFFSET (IndicatorObjectClass, secondary_activate),
+	                                NULL, NULL,
+	                                _indicator_object_marshal_VOID__POINTER_UINT_INT_INT,
+	                                G_TYPE_NONE, 4, G_TYPE_POINTER, G_TYPE_UINT,
+	                                G_TYPE_INT, G_TYPE_INT);
 
 	/**
 		IndicatorObject::menu-show:

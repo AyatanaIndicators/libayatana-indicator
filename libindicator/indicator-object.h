@@ -57,6 +57,8 @@ typedef enum
 #define INDICATOR_OBJECT_SIGNAL_SHOW_NOW_CHANGED_ID (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_SHOW_NOW_CHANGED, INDICATOR_OBJECT_TYPE))
 #define INDICATOR_OBJECT_SIGNAL_ACCESSIBLE_DESC_UPDATE "accessible-desc-update"
 #define INDICATOR_OBJECT_SIGNAL_ACCESSIBLE_DESC_UPDATE_ID (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_ACCESSIBLE_DESC_UPDATE, INDICATOR_OBJECT_TYPE))
+#define INDICATOR_OBJECT_SIGNAL_SECONDARY_ACTIVATE "secondary-activate"
+#define INDICATOR_OBJECT_SIGNAL_SECONDARY_ACTIVATE_ID (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_SECONDARY_ACTIVATE, INDICATOR_OBJECT_TYPE))
 
 typedef struct _IndicatorObject        IndicatorObject;
 typedef struct _IndicatorObjectClass   IndicatorObjectClass;
@@ -99,6 +101,7 @@ typedef struct _IndicatorObjectEntry   IndicatorObjectEntry;
 	@entry_scrolled: Slot for #IndicatorObject::entry-scrolled
 	@show_now_changed: Slot for #IndicatorObject::show-now-changed
 	@accessible_desc_update: Slot for #IndicatorObject::accessible-desc-update
+	@secondary_activate: Slot for #IndicatorObject::secondary-activate
 */
 struct _IndicatorObjectClass {
 	GObjectClass parent_class;
@@ -125,6 +128,7 @@ struct _IndicatorObjectClass {
 	void       (*menu_show)     (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp, gpointer user_data);
 	void       (*show_now_changed) (IndicatorObject * io, IndicatorObjectEntry * entry, gboolean show_now_state, gpointer user_data);
 	void       (*accessible_desc_update) (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data);
+	void       (*secondary_activate) (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp, gint x, gint y, gpointer user_data);
 
 	/* Reserved */
 	void       (*reserved1)     (void);
@@ -132,7 +136,6 @@ struct _IndicatorObjectClass {
 	void       (*reserved3)     (void);
 	void       (*reserved4)     (void);
 	void       (*reserved5)     (void);
-	void       (*reserved6)     (void);
 };
 
 /**
