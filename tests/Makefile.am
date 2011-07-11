@@ -258,8 +258,6 @@ service-manager-connect-tester: service-manager-connect service-manager-connect-
 
 TESTS += service-manager-connect-tester
 DISTCLEANFILES += service-manager-connect-tester session.conf service-manager-connect.service
-# Bug 806690
-XFAIL_TESTS += service-manager-connect-tester
 
 #############################
 # Service Versions
@@ -323,8 +321,6 @@ service-version-tester: service-version-manager service-version-bad-service serv
 
 TESTS += service-version-tester
 DISTCLEANFILES += service-version-tester service-version-bad.service service-version-good.service
-# Bug 806691
-XFAIL_TESTS += service-version-tester
 
 #############################
 # Service Versions
