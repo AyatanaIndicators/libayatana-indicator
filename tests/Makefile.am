@@ -378,8 +378,6 @@ service-version-multiwatch-tester: service-version-multiwatch-manager service-ve
 
 TESTS += service-version-multiwatch-tester
 DISTCLEANFILES += service-version-multiwatch-tester
-# Bug 806692
-XFAIL_TESTS += service-version-multiwatch-tester
 
 #############################
 # Service Manager Shutdown
