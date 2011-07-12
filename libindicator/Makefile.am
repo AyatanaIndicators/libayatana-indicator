@@ -22,7 +22,7 @@ INDICATOR_API_VERSION = 4
 		-e "s|\@indicator_abi_version\@|$(INDICATOR_ABI_VERSION)|" \
 		$< > $@
 
-CLEANFILES = indicator$(VER)-0.$(INDICATOR_API_VERSION).pc
+CLEANFILES += indicator$(VER)-0.$(INDICATOR_API_VERSION).pc
 
 include $(top_srcdir)/Makefile.am.marshal
 

@@ -32,7 +32,9 @@ activate_entry (GtkWidget * widget, gpointer user_data)
 {
 	g_return_if_fail(INDICATOR_IS_OBJECT(user_data));
 	gpointer entry = g_object_get_data(G_OBJECT(widget), ENTRY_DATA_NAME);
-	g_return_if_fail(entry == NULL);
+	if (entry == NULL) {
+		g_debug("Activation on: (null)");
+	}
 
 	indicator_object_entry_activate(INDICATOR_OBJECT(user_data), (IndicatorObjectEntry *)entry, gtk_get_current_event_time());
 	return;
@@ -99,7 +101,11 @@ entry_removed (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user
 static void
 menu_show (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp, gpointer user_data)
 {
-	g_debug("Show Menu: %s", entry->label != NULL ? gtk_label_get_text(entry->label) : "No Label");
+	if (entry != NULL) {
+		g_debug("Show Menu: %s", entry->label != NULL ? gtk_label_get_text(entry->label) : "No Label");
+	} else {
+		g_debug("Show Menu: (null)");
+	}
 	return;
 }
 

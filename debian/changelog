@@ -1,3 +1,12 @@
+libindicator (0.3.90-0ubuntu2~ppa1) UNRELEASED; urgency=low
+
+  * Upstream Merge
+    * Fix signals with NULL entries in the loader
+    * Adding a comment for setting up debugging options
+    * Adding annotations for GIR files
+
+ -- Ted Gould <ted@ubuntu.com>  Tue, 12 Jul 2011 10:53:54 -0500
+
 libindicator (0.3.90-0ubuntu1) oneiric; urgency=low
 
   [ Ted Gould ]
