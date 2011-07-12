@@ -1,4 +1,4 @@
-libindicator (0.3.90-0ubuntu2~ppa1) UNRELEASED; urgency=low
+libindicator (0.3.90-0ubuntu2~ppa1) oneiric; urgency=low
 
   * Upstream Merge
     * Fix signals with NULL entries in the loader
@@ -8,7 +8,7 @@ libindicator (0.3.90-0ubuntu2~ppa1) UNRELEASED; urgency=low
     * Fix testing so no tests are XFAIL anymore
     * Adding a replace mode for testing indicator services
 
- -- Ted Gould <ted@ubuntu.com>  Tue, 12 Jul 2011 10:55:26 -0500
+ -- Ted Gould <ted@ubuntu.com>  Tue, 12 Jul 2011 10:59:14 -0500
 
 libindicator (0.3.90-0ubuntu1) oneiric; urgency=low
 
