@@ -6,8 +6,9 @@ libindicator (0.3.90-0ubuntu2~ppa1) UNRELEASED; urgency=low
     * Adding annotations for GIR files
     * Fixing watchers hashtable to detect when we have none
     * Fix testing so no tests are XFAIL anymore
+    * Adding a replace mode for testing indicator services
 
- -- Ted Gould <ted@ubuntu.com>  Tue, 12 Jul 2011 10:54:31 -0500
+ -- Ted Gould <ted@ubuntu.com>  Tue, 12 Jul 2011 10:55:26 -0500
 
 libindicator (0.3.90-0ubuntu1) oneiric; urgency=low
 

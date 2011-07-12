@@ -57,6 +57,7 @@ struct _IndicatorServicePrivate {
 	GHashTable * watchers;
 	guint this_service_version;
 	guint dbus_registration;
+	gboolean replace_mode;
 };
 
 /* Signals Stuff */
@@ -192,6 +193,7 @@ indicator_service_init (IndicatorService *self)
 	priv->this_service_version = 0;
 	priv->timeout_length = 500;
 	priv->dbus_registration = 0;
+	priv->replace_mode = FALSE;
 
 	const gchar * timeoutenv = g_getenv("INDICATOR_SERVICE_SHUTDOWN_TIMEOUT");
 	if (timeoutenv != NULL) {
@@ -200,6 +202,12 @@ indicator_service_init (IndicatorService *self)
 			priv->timeout_length = newtimeout;
 			g_debug("Setting shutdown timeout to: %u", priv->timeout_length);
 		}
+	}
+
+	const gchar * replaceenv = g_getenv("INDICATOR_SERVICE_REPLACE_MODE");
+	if (replaceenv != NULL) {
+		priv->replace_mode = TRUE;
+		g_debug("Putting into replace mode");
 	}
 
 	/* NOTE: We're using g_free here because that's what needs to
@@ -397,6 +405,8 @@ bus_method_call (GDBusConnection * connection, const gchar * sender, const gchar
 		retval = bus_watch(service, sender);
 	} else if (g_strcmp0(method, "UnWatch") == 0) {
 		unwatch_core(service, sender);
+	} else if (g_strcmp0(method, "Shutdown") == 0) {
+		g_signal_emit(G_OBJECT(service), signals[SHUTDOWN], 0, TRUE);
 	} else {
 		g_warning("Calling method '%s' on the indicator service and it's unknown", method);
 	}
@@ -462,8 +472,33 @@ try_and_get_name_lost_cb (GDBusConnection * connection, const gchar * name, gpoi
 	g_return_if_fail(connection != NULL);
 	g_return_if_fail(INDICATOR_IS_SERVICE(user_data));
 
-	g_warning("Name request failed.");
-	g_signal_emit(G_OBJECT(user_data), signals[SHUTDOWN], 0, TRUE);
+	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(user_data);
+
+	if (!priv->replace_mode) {
+		g_warning("Name request failed.");
+		g_signal_emit(G_OBJECT(user_data), signals[SHUTDOWN], 0, TRUE);
+	} else {
+		/* If we're in replace mode we can be a little more trickey
+		   here.  We're going to tell the other guy to shutdown and hope
+		   that we get the name. */
+		GDBusMessage * message = NULL;
+		message = g_dbus_message_new_method_call(name,
+		                                         INDICATOR_SERVICE_OBJECT,
+		                                         INDICATOR_SERVICE_INTERFACE,
+		                                         "Shutdown");
+
+		g_dbus_connection_send_message(connection, message, G_DBUS_SEND_MESSAGE_FLAGS_NONE, NULL, NULL);
+		g_object_unref(message);
+
+		/* Check to see if we need to clean up a timeout */
+		if (priv->timeout != 0) {
+			g_source_remove(priv->timeout);
+			priv->timeout = 0;
+		}
+
+		/* Set a timeout for no watchers if we can't get the name */
+		priv->timeout = g_timeout_add(priv->timeout_length * 4, timeout_no_watchers, user_data);
+	}
 
 	return;
 }
