@@ -536,8 +536,9 @@ service_proxy_name_changed (GDBusConnection * connection, const gchar * sender_n
 {
 	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(user_data);
 
-	const gchar * new_name;
-	g_variant_get(parameters, "(&s&s&s)", NULL, NULL, &new_name);
+	const gchar * new_name = NULL;
+	const gchar * prev_name = NULL;
+	g_variant_get(parameters, "(&s&s&s)", NULL, &prev_name, &new_name);
 
 	if (new_name == NULL || new_name[0] == 0) {
 		if (priv->connected) {
@@ -547,9 +548,26 @@ service_proxy_name_changed (GDBusConnection * connection, const gchar * sender_n
 
 		start_service_again(INDICATOR_SERVICE_MANAGER(user_data));
 	} else {
+		/* If we weren't connected before, we are now.  Let's tell the
+		   world! */
 		if (!priv->connected) {
 			priv->connected = TRUE;
 			g_signal_emit(G_OBJECT(user_data), signals[CONNECTION_CHANGE], 0, TRUE, TRUE);
+		}
+
+		/* If the names are both valid, and they're not the same, it means that
+		   we've actually changed.  So we need to tell the new guy that we're
+		   watching them */
+		if (new_name != NULL && prev_name != NULL && new_name[0] != 0 && prev_name != 0 && g_strcmp0(prev_name, new_name) != 0) {
+			/* Send watch */
+			g_dbus_proxy_call(priv->service_proxy,
+			                  "Watch",
+			                  NULL, /* params */
+			                  G_DBUS_CALL_FLAGS_NONE,
+			                  -1,
+			                  priv->watch_cancel,
+			                  watch_cb,
+			                  user_data);
 		}
 	}
 
