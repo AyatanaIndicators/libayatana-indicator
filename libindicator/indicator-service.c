@@ -57,6 +57,7 @@ struct _IndicatorServicePrivate {
 	GHashTable * watchers;
 	guint this_service_version;
 	guint dbus_registration;
+	gboolean replace_mode;
 };
 
 /* Signals Stuff */
@@ -192,6 +193,7 @@ indicator_service_init (IndicatorService *self)
 	priv->this_service_version = 0;
 	priv->timeout_length = 500;
 	priv->dbus_registration = 0;
+	priv->replace_mode = FALSE;
 
 	const gchar * timeoutenv = g_getenv("INDICATOR_SERVICE_SHUTDOWN_TIMEOUT");
 	if (timeoutenv != NULL) {
@@ -200,6 +202,12 @@ indicator_service_init (IndicatorService *self)
 			priv->timeout_length = newtimeout;
 			g_debug("Setting shutdown timeout to: %u", priv->timeout_length);
 		}
+	}
+
+	const gchar * replaceenv = g_getenv("INDICATOR_SERVICE_REPLACE_MODE");
+	if (replaceenv != NULL) {
+		priv->replace_mode = TRUE;
+		g_debug("Putting into replace mode");
 	}
 
 	/* NOTE: We're using g_free here because that's what needs to
