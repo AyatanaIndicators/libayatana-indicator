@@ -405,6 +405,8 @@ bus_method_call (GDBusConnection * connection, const gchar * sender, const gchar
 		retval = bus_watch(service, sender);
 	} else if (g_strcmp0(method, "UnWatch") == 0) {
 		unwatch_core(service, sender);
+	} else if (g_strcmp0(method, "Shutdown") == 0) {
+		g_signal_emit(G_OBJECT(service), signals[SHUTDOWN], 0, TRUE);
 	} else {
 		g_warning("Calling method '%s' on the indicator service and it's unknown", method);
 	}
