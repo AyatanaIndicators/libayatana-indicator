@@ -1,3 +1,3 @@
-debian/tmp/usr/lib/pkgconfig/indicator3-0.4.pc
-debian/tmp/usr/lib/libindicator3.a
-debian/tmp/usr/lib/libindicator3.so
+debian/tmp/gtk3/usr/lib/pkgconfig/indicator3-0.4.pc /usr/lib/pkgconfig/
+debian/tmp/gtk3/usr/lib/libindicator3.a /usr/lib/
+debian/tmp/gtk3/usr/lib/libindicator3.so /usr/lib/

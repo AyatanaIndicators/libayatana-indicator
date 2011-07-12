@@ -1,39 +1,24 @@
 #!/usr/bin/make -f
 
+DEB_BUILDDIR = build
+DEB_MAKE_FLAVORS = gtk2 gtk3
+
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/gnome.mk
-include /usr/share/cdbs/1/rules/autoreconf.mk
 
-DEB_SRCDIR = .
-DEB_BUILDDIR = $(DEB_SRCDIR)/build
+DEB_MAKE_DESTDIRSKEL = $(CURDIR)/debian/tmp/@FLAVOR@
+DEB_DESTDIR = $(CURDIR)/debian/tmp/$(cdbs_make_curflavor)/
+
+DEB_CONFIGURE_FLAGS_gtk2 = --with-gtk=2
+DEB_CONFIGURE_FLAGS_gtk3 = --with-gtk=3
 
 LDFLAGS += -Wl,-z,defs -Wl,--as-needed
 
-DEB_DH_MAKESHLIBS_ARGS_libindicator4 += -V 'libindicator4 (>= 0.3.90)'
-DEB_DH_MAKESHLIBS_ARGS_libindicator3_4 += -V 'libindicator3-4 (>= 0.3.90)'
+DEB_DH_MAKESHLIBS_ARGS_libindicator6 += -V 'libindicator6 (>= 0.3.90)'
+DEB_DH_MAKESHLIBS_ARGS_libindicator3_6 += -V 'libindicator3-6 (>= 0.3.90)'
 
-configure/libindicator4:: stamp-configure-gtk2
-stamp-configure-gtk2:
-	: # configure for GTK+ 2.0
-	set -e; \
-	rm -rf build-gtk2; \
-	mkdir build-gtk2; \
-	cd build-gtk2; \
-	$(DEB_CONFIGURE_SCRIPT_ENV) ../configure --with-gtk=2 \
-		$(filter-out --srcdir=%, $(DEB_CONFIGURE_NORMAL_ARGS) $(DEB_CONFIGURE_EXTRA_FLAGS)); \
-	cd ..;
-	touch stamp-configure-gtk2
+debian/stamp-autotools/gtk2: cdbs_configure_flags += $(DEB_CONFIGURE_FLAGS_gtk2)
+debian/stamp-autotools/gtk3: cdbs_configure_flags += $(DEB_CONFIGURE_FLAGS_gtk3)
 
-build/libindicator4:: stamp-build-gtk2
-stamp-build-gtk2: stamp-configure-gtk2
-	: # build for GTK+ 2.0
-	$(MAKE) -C build-gtk2;
-	touch stamp-build-gtk2
-
-common-install-prehook-arch:: stamp-build-gtk2
-	: # install for GTK+ 2.0
-	$(MAKE) -C build-gtk2 DESTDIR=$(CURDIR)/debian/tmp install
-
-clean::
-	rm -f stamp-*-gtk2
-	rm -rf build-gtk2
+common-install-arch::
+	find debian/tmp -name \*.la -delete

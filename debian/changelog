@@ -1,5 +1,6 @@
-libindicator (0.3.90-0ubuntu1~ppa1) oneiric; urgency=low
+libindicator (0.3.90-0ubuntu1) oneiric; urgency=low
 
+  [ Ted Gould ]
   * New upstream release.
     * Build Fixes
     * Adding license to test files (LP: #684886)
@@ -11,7 +12,17 @@ libindicator (0.3.90-0ubuntu1~ppa1) oneiric; urgency=low
   * debian/rules: Making GTK2 the special case as GTK3 is default now
   * debian/*install: Fixing pkgconfig file names
 
- -- Ted Gould <ted@ubuntu.com>  Thu, 07 Jul 2011 08:29:37 -0500
+  [ Ken VanDine ]
+  * debian/rules
+    - Simplify the dual builds with cdbs
+    - Fixed package names to match soname
+  * debian/*.install fixed paths to work with the dual builds change
+  * tools/Makefile.in
+    - Fixed path for xsessiondir
+  * debian/control
+    - Fixed package names to match soname
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Thu, 07 Jul 2011 10:18:04 -0400
 
 libindicator (0.3.22-0ubuntu2) oneiric; urgency=low
 
