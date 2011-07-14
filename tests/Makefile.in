@@ -34,6 +34,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+XFAIL_TESTS =
 check_PROGRAMS = test-loader$(EXEEXT) test-desktop-shortcuts$(EXEEXT) \
 	service-shutdown-timeout$(EXEEXT) \
 	service-manager-no-connect$(EXEEXT) \
@@ -447,11 +448,6 @@ DISTCLEANFILES = test-desktop-shortcuts-tester \
 	service-version-multiwatch-tester \
 	service-manager-connect-nostart-tester loader-tester \
 	$(XML_REPORT) $(HTML_REPORT)
-# Bug 806690
-# Bug 806691
-# Bug 806692
-XFAIL_TESTS = service-manager-connect-tester service-version-tester \
-	service-version-multiwatch-tester
 lib_LTLIBRARIES = \
 	libdummy-indicator-blank.la \
 	libdummy-indicator-null.la \

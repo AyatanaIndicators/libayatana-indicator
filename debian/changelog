@@ -1,21 +1,15 @@
-libindicator (0.3.90-0ubuntu2~ppa2) oneiric; urgency=low
+libindicator (0.3.91-0ubuntu1~ppa1) UNRELEASED; urgency=low
 
-  * Upstream Merge
-    * Watching new services when the name switches
-
- -- Ted Gould <ted@ubuntu.com>  Tue, 12 Jul 2011 14:36:43 -0500
-
-libindicator (0.3.90-0ubuntu2~ppa1) oneiric; urgency=low
-
-  * Upstream Merge
+  * New upstream release.
     * Fix signals with NULL entries in the loader
     * Adding a comment for setting up debugging options
     * Adding annotations for GIR files
     * Fixing watchers hashtable to detect when we have none
     * Fix testing so no tests are XFAIL anymore
     * Adding a replace mode for testing indicator services
+    * Watching new services when the name switches
 
- -- Ted Gould <ted@ubuntu.com>  Tue, 12 Jul 2011 10:59:14 -0500
+ -- Ted Gould <ted@ubuntu.com>  Thu, 14 Jul 2011 13:34:01 -0500
 
 libindicator (0.3.90-0ubuntu1) oneiric; urgency=low
 
