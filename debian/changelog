@@ -1,4 +1,4 @@
-libindicator (0.3.91-0ubuntu1~ppa1) UNRELEASED; urgency=low
+libindicator (0.3.91-0ubuntu1~ppa1) oneiric; urgency=low
 
   * New upstream release.
     * Fix signals with NULL entries in the loader
@@ -9,7 +9,7 @@ libindicator (0.3.91-0ubuntu1~ppa1) UNRELEASED; urgency=low
     * Adding a replace mode for testing indicator services
     * Watching new services when the name switches
 
- -- Ted Gould <ted@ubuntu.com>  Thu, 14 Jul 2011 13:34:01 -0500
+ -- Ted Gould <ted@ubuntu.com>  Thu, 14 Jul 2011 13:37:42 -0500
 
 libindicator (0.3.90-0ubuntu1) oneiric; urgency=low
 
