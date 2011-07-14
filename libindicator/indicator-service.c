@@ -32,7 +32,7 @@ License along with this library. If not, see
 #include "dbus-shared.h"
 
 static void unwatch_core (IndicatorService * service, const gchar * name);
-static gboolean watchers_remove (gpointer key, gpointer value, gpointer user_data);
+static void watchers_remove (gpointer value);
 static void bus_get_cb (GObject * object, GAsyncResult * res, gpointer user_data);
 static GVariant * bus_watch (IndicatorService * service, const gchar * sender);
 
@@ -211,10 +211,9 @@ indicator_service_init (IndicatorService *self)
 	}
 
 	/* NOTE: We're using g_free here because that's what needs to
-	   happen, but you really should call watchers_remove first as well
-	   since that disconnects the signals.  We can't do that with a callback
-	   here because there is no user data to pass the object as well. */
-	priv->watchers = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+	   happen and we're watchers_remove as well to clean up the dbus
+	   watches we've setup. */
+	priv->watchers = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, watchers_remove);
 
 	priv->bus_cancel = g_cancellable_new();
 	g_bus_get(G_BUS_TYPE_SESSION,
@@ -233,7 +232,8 @@ indicator_service_dispose (GObject *object)
 	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(object);
 
 	if (priv->watchers != NULL) {
-		g_hash_table_foreach_remove(priv->watchers, watchers_remove, object);
+		g_hash_table_destroy(priv->watchers);
+		priv->watchers = NULL;
 	}
 
 	if (priv->timeout != 0) {
@@ -417,11 +417,11 @@ bus_method_call (GDBusConnection * connection, const gchar * sender, const gchar
 
 /* A function to remove the signals on a proxy before we destroy
    it because in this case we've stopped caring. */
-static gboolean
-watchers_remove (gpointer key, gpointer value, gpointer user_data)
+static void
+watchers_remove (gpointer value)
 {
 	g_bus_unwatch_name(GPOINTER_TO_UINT(value));
-	return TRUE;
+	return;
 }
 
 /* This is the function that gets executed if we timeout
@@ -588,8 +588,6 @@ unwatch_core (IndicatorService * service, const gchar * name)
 	/* Remove us from the watcher list here */
 	gpointer watcher_item = g_hash_table_lookup(priv->watchers, name);
 	if (watcher_item != NULL) {
-		/* Free the watcher */
-		watchers_remove((gpointer)name, watcher_item, service);
 		g_hash_table_remove(priv->watchers, name);
 	} else {
 		/* Odd that we couldn't find the person, but, eh */
