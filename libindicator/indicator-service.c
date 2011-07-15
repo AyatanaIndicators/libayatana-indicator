@@ -32,7 +32,7 @@ License along with this library. If not, see
 #include "dbus-shared.h"
 
 static void unwatch_core (IndicatorService * service, const gchar * name);
-static gboolean watchers_remove (gpointer key, gpointer value, gpointer user_data);
+static void watchers_remove (gpointer value);
 static void bus_get_cb (GObject * object, GAsyncResult * res, gpointer user_data);
 static GVariant * bus_watch (IndicatorService * service, const gchar * sender);
 
@@ -57,6 +57,7 @@ struct _IndicatorServicePrivate {
 	GHashTable * watchers;
 	guint this_service_version;
 	guint dbus_registration;
+	gboolean replace_mode;
 };
 
 /* Signals Stuff */
@@ -192,6 +193,7 @@ indicator_service_init (IndicatorService *self)
 	priv->this_service_version = 0;
 	priv->timeout_length = 500;
 	priv->dbus_registration = 0;
+	priv->replace_mode = FALSE;
 
 	const gchar * timeoutenv = g_getenv("INDICATOR_SERVICE_SHUTDOWN_TIMEOUT");
 	if (timeoutenv != NULL) {
@@ -202,11 +204,16 @@ indicator_service_init (IndicatorService *self)
 		}
 	}
 
+	const gchar * replaceenv = g_getenv("INDICATOR_SERVICE_REPLACE_MODE");
+	if (replaceenv != NULL) {
+		priv->replace_mode = TRUE;
+		g_debug("Putting into replace mode");
+	}
+
 	/* NOTE: We're using g_free here because that's what needs to
-	   happen, but you really should call watchers_remove first as well
-	   since that disconnects the signals.  We can't do that with a callback
-	   here because there is no user data to pass the object as well. */
-	priv->watchers = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+	   happen and we're watchers_remove as well to clean up the dbus
+	   watches we've setup. */
+	priv->watchers = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, watchers_remove);
 
 	priv->bus_cancel = g_cancellable_new();
 	g_bus_get(G_BUS_TYPE_SESSION,
@@ -225,7 +232,8 @@ indicator_service_dispose (GObject *object)
 	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(object);
 
 	if (priv->watchers != NULL) {
-		g_hash_table_foreach_remove(priv->watchers, watchers_remove, object);
+		g_hash_table_destroy(priv->watchers);
+		priv->watchers = NULL;
 	}
 
 	if (priv->timeout != 0) {
@@ -397,6 +405,8 @@ bus_method_call (GDBusConnection * connection, const gchar * sender, const gchar
 		retval = bus_watch(service, sender);
 	} else if (g_strcmp0(method, "UnWatch") == 0) {
 		unwatch_core(service, sender);
+	} else if (g_strcmp0(method, "Shutdown") == 0) {
+		g_signal_emit(G_OBJECT(service), signals[SHUTDOWN], 0, TRUE);
 	} else {
 		g_warning("Calling method '%s' on the indicator service and it's unknown", method);
 	}
@@ -407,11 +417,11 @@ bus_method_call (GDBusConnection * connection, const gchar * sender, const gchar
 
 /* A function to remove the signals on a proxy before we destroy
    it because in this case we've stopped caring. */
-static gboolean
-watchers_remove (gpointer key, gpointer value, gpointer user_data)
+static void
+watchers_remove (gpointer value)
 {
 	g_bus_unwatch_name(GPOINTER_TO_UINT(value));
-	return TRUE;
+	return;
 }
 
 /* This is the function that gets executed if we timeout
@@ -462,8 +472,33 @@ try_and_get_name_lost_cb (GDBusConnection * connection, const gchar * name, gpoi
 	g_return_if_fail(connection != NULL);
 	g_return_if_fail(INDICATOR_IS_SERVICE(user_data));
 
-	g_warning("Name request failed.");
-	g_signal_emit(G_OBJECT(user_data), signals[SHUTDOWN], 0, TRUE);
+	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(user_data);
+
+	if (!priv->replace_mode) {
+		g_warning("Name request failed.");
+		g_signal_emit(G_OBJECT(user_data), signals[SHUTDOWN], 0, TRUE);
+	} else {
+		/* If we're in replace mode we can be a little more trickey
+		   here.  We're going to tell the other guy to shutdown and hope
+		   that we get the name. */
+		GDBusMessage * message = NULL;
+		message = g_dbus_message_new_method_call(name,
+		                                         INDICATOR_SERVICE_OBJECT,
+		                                         INDICATOR_SERVICE_INTERFACE,
+		                                         "Shutdown");
+
+		g_dbus_connection_send_message(connection, message, G_DBUS_SEND_MESSAGE_FLAGS_NONE, NULL, NULL);
+		g_object_unref(message);
+
+		/* Check to see if we need to clean up a timeout */
+		if (priv->timeout != 0) {
+			g_source_remove(priv->timeout);
+			priv->timeout = 0;
+		}
+
+		/* Set a timeout for no watchers if we can't get the name */
+		priv->timeout = g_timeout_add(priv->timeout_length * 4, timeout_no_watchers, user_data);
+	}
 
 	return;
 }
@@ -553,8 +588,6 @@ unwatch_core (IndicatorService * service, const gchar * name)
 	/* Remove us from the watcher list here */
 	gpointer watcher_item = g_hash_table_lookup(priv->watchers, name);
 	if (watcher_item != NULL) {
-		/* Free the watcher */
-		watchers_remove((gpointer)name, watcher_item, service);
 		g_hash_table_remove(priv->watchers, name);
 	} else {
 		/* Odd that we couldn't find the person, but, eh */

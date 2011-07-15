@@ -14,6 +14,7 @@ const char * _indicator_service =
 "		<method name=\"UnWatch\">\n"
 "			<annotation name=\"org.freedesktop.DBus.GLib.Async\" value=\"true\" />\n"
 "		</method>\n"
+"		<method name=\"Shutdown\" />\n"
 "\n"
 "<!-- Signals -->\n"
 "		<!-- None currently -->\n"
