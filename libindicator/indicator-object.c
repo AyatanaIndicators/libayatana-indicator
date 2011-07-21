@@ -175,8 +175,6 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 		@arg1: A pointer to the #IndicatorObjectEntry that
 			receives the secondary activate event.
 		@arg2: The timestamp of the event
-		@arg3: The X position of the pointer
-		@arg4: The Y position of the pointer
 
 		When the indicator receives a secondary activation event
 		from the user, this signal is emitted.
@@ -186,9 +184,8 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 	                                G_SIGNAL_RUN_LAST,
 	                                G_STRUCT_OFFSET (IndicatorObjectClass, secondary_activate),
 	                                NULL, NULL,
-	                                _indicator_object_marshal_VOID__POINTER_UINT_INT_INT,
-	                                G_TYPE_NONE, 4, G_TYPE_POINTER, G_TYPE_UINT,
-	                                G_TYPE_INT, G_TYPE_INT);
+	                                _indicator_object_marshal_VOID__POINTER_UINT,
+	                                G_TYPE_NONE, 2, G_TYPE_POINTER, G_TYPE_UINT);
 
 	/**
 		IndicatorObject::menu-show:

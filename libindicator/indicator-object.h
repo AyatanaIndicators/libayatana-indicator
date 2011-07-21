@@ -128,7 +128,7 @@ struct _IndicatorObjectClass {
 	void       (*menu_show)     (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp, gpointer user_data);
 	void       (*show_now_changed) (IndicatorObject * io, IndicatorObjectEntry * entry, gboolean show_now_state, gpointer user_data);
 	void       (*accessible_desc_update) (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data);
-	void       (*secondary_activate) (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp, gint x, gint y, gpointer user_data);
+	void       (*secondary_activate) (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp, gpointer user_data);
 
 	/* Reserved */
 	void       (*reserved1)     (void);
