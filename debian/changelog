@@ -1,4 +1,4 @@
-libindicator (0.3.92-0ubuntu1) UNRELEASED; urgency=low
+libindicator (0.3.92-0ubuntu1) oneiric; urgency=low
 
   * New upstream release.
     * Adding support for a secondary activate signal
