@@ -44,6 +44,11 @@ refresh_image (GtkImage * image)
 	/* Look through the themes for that icon */
 	icon_info = gtk_icon_theme_lookup_by_gicon(default_theme, icon_names, icon_size, 0);
 	if (icon_info == NULL) {
+		/* Maybe the icon was just added to the theme, see if a rescan helps */
+		gtk_icon_theme_rescan_if_needed(default_theme);
+		icon_info = gtk_icon_theme_lookup_by_gicon(default_theme, icon_names, icon_size, 0);
+	}
+	if (icon_info == NULL) {
 		/* Try using the second item in the names, which should be the original filename supplied */
 		const gchar * const * names = g_themed_icon_get_names(G_THEMED_ICON( icon_names ));
 		if (names) {
