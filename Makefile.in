@@ -746,6 +746,10 @@ uninstall-am:
 	ps ps-am tags tags-recursive uninstall uninstall-am
 
 
+tests: libindicator
+
+tools: libindicator
+
 dist-hook:
 	@if test -d "$(top_srcdir)/.bzr"; \
 		then \
