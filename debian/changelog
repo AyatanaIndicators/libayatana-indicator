@@ -1,7 +1,10 @@
 libindicator (0.3.93-0ubuntu1) oneiric; urgency=low
 
-  * New upstream release.
-    * Rescan icon theme if icon can't be loaded
+  * debian/rules: 
+    - update the translations template
+
+  [ Ted Gould ]
+  * New upstream release
 
  -- Sebastien Bacher <seb128@ubuntu.com>  Thu, 11 Aug 2011 21:16:12 +0200
 
