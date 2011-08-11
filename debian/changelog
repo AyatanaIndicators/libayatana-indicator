@@ -1,9 +1,9 @@
-libindicator (0.3.93-0ubuntu1~ppa1) UNRELEASED; urgency=low
+libindicator (0.3.93-0ubuntu1~ppa1) oneiric; urgency=low
 
   * New upstream release.
     * Rescan icon theme if icon can't be loaded
 
- -- Ted Gould <ted@ubuntu.com>  Thu, 11 Aug 2011 09:42:45 -0500
+ -- Ted Gould <ted@ubuntu.com>  Thu, 11 Aug 2011 09:44:35 -0500
 
 libindicator (0.3.92-0ubuntu1~ppa1) oneiric; urgency=low
 
