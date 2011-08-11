@@ -311,7 +311,7 @@ INDICATOR_ABI_VERSION = 6
 INDICATOR_API_VERSION = 4
 marshal_h = $(glib_marshal_list:.list=.h)
 marshal_c = $(glib_marshal_list:.list=.c)
-libindicatorincludedir = $(includedir)/libindicator$(VER)-0.$(INDICATOR_API_VERSION)/libindicator
+libindicatorincludedir = $(includedir)/libindicator-0.$(INDICATOR_API_VERSION)/libindicator
 indicator_headers = \
 	indicator.h \
 	indicator-desktop-shortcuts.h \

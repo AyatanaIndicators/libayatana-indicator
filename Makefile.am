@@ -5,6 +5,10 @@ SUBDIRS = \
 	tests \
 	tools
 
+tests: libindicator
+
+tools: libindicator
+
 DISTCHECK_CONFIGURE_FLAGS = --disable-deprecations
 
 DISTCLEANFILES = \
