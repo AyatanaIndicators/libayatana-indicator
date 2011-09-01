@@ -1,11 +1,11 @@
-libindicator (0.3.93-0ubuntu2) UNRELEASED; urgency=low
+libindicator (0.3.93-0ubuntu2) oneiric; urgency=low
 
   * Drop the Breaks: against old versions of libindicator and libindicator3;
     there are no file conflicts between the libraries, so this doesn't
     accurately reflect the package relationships but does make it harder to
     calculate upgrades from natty.  LP: #839098.
 
- -- Steve Langasek <steve.langasek@ubuntu.com>  Thu, 01 Sep 2011 14:20:26 -0700
+ -- Steve Langasek <steve.langasek@ubuntu.com>  Thu, 01 Sep 2011 14:22:12 -0700
 
 libindicator (0.3.93-0ubuntu1) oneiric; urgency=low
 
