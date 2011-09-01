@@ -23,9 +23,6 @@ Section: libs
 Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends}
-Breaks: libindicator1 (<= ${binary:Version}),
-        libindicator2 (<= ${binary:Version}),
-        libindicator3 (<= ${binary:Version})
 Description: panel indicator applet - shared library
  This library contains information to build indicators to go into
  the indicator applet.
@@ -61,8 +58,6 @@ Section: libs
 Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends}
-Breaks: libindicator3-2 (<= ${binary:Version}),
-        libindicator3-3 (<= ${binary:Version})
 Description: panel indicator applet - shared library
  This library contains information to build indicators to go into
  the indicator applet.
