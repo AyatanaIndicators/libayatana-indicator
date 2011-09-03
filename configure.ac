@@ -62,6 +62,9 @@ AS_IF([test "x$with_gtk" = x3],
 )
 AM_CONDITIONAL(USE_GTK3, [test "x$with_gtk" = x3])
 
+LT_LIB_M
+LIBINDICATOR_LIBS+="$LIBM"
+
 ##############################
 # Custom Junk
 ##############################
