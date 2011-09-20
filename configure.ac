@@ -1,5 +1,5 @@
 AC_INIT([libindicator],
-        [0.3.93],
+        [0.4.0],
         [http://bugs.launchpad.net/libindicator],
         [libindicator],
         [http://launchpad.net/libindicator])
@@ -61,6 +61,9 @@ AS_IF([test "x$with_gtk" = x3],
       [AC_MSG_FAILURE([Value for --with-gtk was neither 2 nor 3])]
 )
 AM_CONDITIONAL(USE_GTK3, [test "x$with_gtk" = x3])
+
+LT_LIB_M
+LIBINDICATOR_LIBS+="$LIBM"
 
 ##############################
 # Custom Junk
