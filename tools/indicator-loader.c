@@ -153,6 +153,9 @@ destroy (gpointer data)
 int
 main (int argc, char ** argv)
 {
+	/* Make sure we don't proxy to ourselves */
+	g_unsetenv("UBUNTU_MENUPROXY");
+
 	gtk_init(&argc, &argv);
 
 	if (argc != 2) {
