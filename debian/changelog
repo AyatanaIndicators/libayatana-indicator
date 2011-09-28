@@ -1,4 +1,4 @@
-libindicator (0.4.1-0ubuntu1~ppa1) oneiric; urgency=low
+libindicator (0.4.1-0ubuntu1) oneiric; urgency=low
 
   * New upstream release.
     * Ensure loader doesn't use menu proxy
