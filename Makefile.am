@@ -2,12 +2,16 @@ ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
 
 SUBDIRS = \
 	libindicator \
-	tests \
 	tools
 
-tests: libindicator
-
 tools: libindicator
+
+if WANT_TESTS
+SUBDIRS += \
+	tests
+
+tests: libindicator
+endif
 
 DISTCHECK_CONFIGURE_FLAGS = --disable-deprecations
 
