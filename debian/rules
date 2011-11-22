@@ -23,4 +23,3 @@ debian/stamp-autotools/gtk3: cdbs_configure_flags += $(DEB_CONFIGURE_FLAGS_gtk3)
 common-install-arch::
 	find debian/tmp -name \*.la -delete
 	cd po; intltool-update --pot --verbose
-

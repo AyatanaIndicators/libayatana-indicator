@@ -1,8 +1,7 @@
 Source: libindicator
 Section: libs
 Priority: optional
-Maintainer: Ubuntu Core Developers <ubuntu-devel-discuss@lists.ubuntu.com>
-XSBC-Original-Maintainer: The Ayatana Packagers <pkg-ayatana-devel@lists.alioth.debian.org>
+Maintainer: The Ayatana Packagers <pkg-ayatana-devel@lists.alioth.debian.org>
 Uploaders: Evgeni Golov <evgeni@debian.org>, Kartik Mistry <kartik@debian.org>
 Build-Depends: debhelper (>= 5.0),
                cdbs (>= 0.4.41),
@@ -15,8 +14,8 @@ Build-Depends: debhelper (>= 5.0),
                dh-autoreconf
 Standards-Version: 3.9.2
 Homepage: https://launchpad.net/libindicator
-Vcs-Bzr: https://code.launchpad.net/~ubuntu-desktop/libindicator/ubuntu
-Vcs-Browser: http://bazaar.launchpad.net/~ubuntu-desktop/libindicator/ubuntu
+Vcs-Bzr: http://bzr.debian.org/bzr/pkg-ayatana/libindicator/debian
+Vcs-Browser: http://bzr.debian.org/loggerhead/pkg-ayatana/libindicator/debian
 
 Package: libindicator6
 Section: libs
