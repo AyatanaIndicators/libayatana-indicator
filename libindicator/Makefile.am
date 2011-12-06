@@ -55,6 +55,7 @@ libindicator_la_SOURCES = \
 
 libindicator_la_CFLAGS = \
 	$(LIBINDICATOR_CFLAGS) \
+	$(COVERAGE_CFLAGS) \
 	-DG_LOG_DOMAIN=\"libindicator\" \
 	-Wall -Werror
 
@@ -62,6 +63,7 @@ libindicator_la_LIBADD = \
 	$(LIBINDICATOR_LIBS)
 
 libindicator_la_LDFLAGS = \
+	$(COVERAGE_LDFLAGS) \
 	-version-info $(INDICATOR_ABI_VERSION):0:0 \
 	-no-undefined \
 	-export-symbols-regex "^[^_].*"

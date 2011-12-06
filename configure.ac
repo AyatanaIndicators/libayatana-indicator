@@ -122,6 +122,15 @@ fi
 AM_CONDITIONAL(ENABLE_DEBUG, test "$enable_debug" = "yes")
 
 ###########################
+# gcov coverage reporting
+###########################
+m4_include([m4/gcov.m4])
+AC_TDD_GCOV
+AC_SUBST(COVERAGE_CFLAGS)
+AC_SUBST(COVERAGE_CXXFLAGS)
+AC_SUBST(COVERAGE_LDFLAGS)
+
+###########################
 # Files
 ###########################
 
@@ -147,4 +156,5 @@ Libindicator Configuration:
 	GTK+ Version:           $with_gtk
 	
 	Enable debugging:       $enable_debug
+	Coverage reporting:     $use_gcov
 ])
