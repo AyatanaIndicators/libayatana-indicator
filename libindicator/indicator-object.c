@@ -49,6 +49,10 @@ struct _IndicatorObjectPrivate {
 	IndicatorObjectEntry entry;
 	gboolean gotten_entries;
 
+	/* For indicator objects that monitor a GSettings schema-id */
+	GSettings * gsettings;
+	gchar * gsettings_schema_id;
+
 	GStrv environments;
 };
 
@@ -67,6 +71,15 @@ enum {
 	LAST_SIGNAL
 };
 
+/* Properties */
+/* Enum for the properties so that they can be quickly
+   found and looked up. */
+enum {
+	PROP_0,
+	PROP_SETTINGS_SCHEMA_ID,
+};
+
+
 static guint signals[LAST_SIGNAL] = { 0 };
 
 /* GObject stuff */
@@ -74,8 +87,15 @@ static void indicator_object_class_init (IndicatorObjectClass *klass);
 static void indicator_object_init       (IndicatorObject *self);
 static void indicator_object_dispose    (GObject *object);
 static void indicator_object_finalize   (GObject *object);
+static void set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec);
+static void get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec);
 
+static void schema_clear (IndicatorObject * object);
+static void schema_set (IndicatorObject * object, const char * schema_id);
 static GList * get_entries_default (IndicatorObject * io);
+static GList * get_all_entries (IndicatorObject * io);
+
+static void stop_listening_for_menu_visibility_changes (IndicatorObject * io);
 
 G_DEFINE_TYPE (IndicatorObject, indicator_object, G_TYPE_OBJECT);
 
@@ -84,12 +104,16 @@ G_DEFINE_TYPE (IndicatorObject, indicator_object, G_TYPE_OBJECT);
 static void
 indicator_object_class_init (IndicatorObjectClass *klass)
 {
+	GParamSpec * param_spec;
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
 	g_type_class_add_private (klass, sizeof (IndicatorObjectPrivate));
 
 	object_class->dispose = indicator_object_dispose;
 	object_class->finalize = indicator_object_finalize;
+	object_class->set_property = set_property;
+	object_class->get_property = get_property;
+
 
 	klass->get_label =  NULL;
 	klass->get_menu =   NULL;
@@ -241,6 +265,13 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 	                                     g_cclosure_marshal_VOID__POINTER,
 	                                     G_TYPE_NONE, 1, G_TYPE_POINTER, G_TYPE_NONE);
 
+	/* Properties */
+	param_spec = g_param_spec_string (INDICATOR_OBJECT_GSETTINGS_SCHEMA_ID,
+	                                  "gsettings-schema-id",
+	                                  "The schema-id of the GSettings (if any) to monitor.",
+	                                  NULL,
+	                                  G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+	g_object_class_install_property (object_class, PROP_SETTINGS_SCHEMA_ID, param_spec);
 
 	return;
 }
@@ -263,6 +294,9 @@ indicator_object_init (IndicatorObject *self)
 
 	self->priv->environments = NULL;
 
+	self->priv->gsettings = NULL;
+	self->priv->gsettings_schema_id = NULL;
+
 	return;
 }
 
@@ -270,6 +304,10 @@ indicator_object_init (IndicatorObject *self)
 static void
 indicator_object_dispose (GObject *object)
 {
+	IndicatorObject * io = INDICATOR_OBJECT(object);
+
+	schema_clear (io);
+	stop_listening_for_menu_visibility_changes (io);
 
 	G_OBJECT_CLASS (indicator_object_parent_class)->dispose (object);
 	return;
@@ -463,14 +501,119 @@ get_entries_default (IndicatorObject * io)
 	return g_list_append(NULL, &(priv->entry));
 }
 
+/* finds the IndicatorObjectEntry* which contains the specified menu */
+static IndicatorObjectEntry*
+find_entry_from_menu (IndicatorObject * io, GtkMenu * menu)
+{
+	GList * l;
+	GList * all_entries;
+	static IndicatorObjectEntry * match = NULL;
+
+	g_return_val_if_fail (GTK_IS_MENU(menu), NULL);
+	g_return_val_if_fail (INDICATOR_IS_OBJECT(io), NULL);
+
+	all_entries = get_all_entries (io);
+	for (l=all_entries; l && !match; l=l->next) {
+		IndicatorObjectEntry * entry = l->data;
+		if (menu == entry->menu)
+			match = entry;
+	}
+
+	g_list_free (all_entries);
+	return match;
+}
+
+static void
+on_menu_show(GtkMenu * menu, gpointer io)
+{
+	IndicatorObjectEntry * entry = find_entry_from_menu (io, menu);
+	g_return_if_fail (entry != NULL);
+	g_signal_emit_by_name (io, INDICATOR_OBJECT_SIGNAL_ENTRY_ADDED, entry);
+}
+
+static void
+on_menu_hide(GtkMenu * menu, gpointer io)
+{
+	IndicatorObjectEntry * entry = find_entry_from_menu (io, menu);
+	g_return_if_fail (entry != NULL);
+	g_signal_emit_by_name (io, INDICATOR_OBJECT_SIGNAL_ENTRY_REMOVED, entry);
+}
+
+static void
+ensure_signal_handler_is_connected(GObject * o, const char * key,
+                                   const char * signal_name,
+                                   GCallback callback, gpointer user_data)
+{
+	if (g_object_get_data (o, key) == NULL)
+	{
+		gulong * handler_id = g_new(gulong, 1);
+		*handler_id = g_signal_connect (o, signal_name, callback, user_data);
+		g_object_set_data (o, key, handler_id);
+	}
+}
+
+#define HIDE_SIGNAL_KEY "indicator-object-signal-handler-id-hide"
+#define SHOW_SIGNAL_KEY "indicator-object-signal-handler-id-show"
+
+/* returns a list of all IndicatorObjectEntires whether they're visible or not */
+static GList*
+get_all_entries (IndicatorObject * io)
+{
+	GList * l;
+	GList * all_entries;
+
+	g_return_val_if_fail(INDICATOR_IS_OBJECT(io), NULL);
+	IndicatorObjectClass * class = INDICATOR_OBJECT_GET_CLASS(io);
+
+	if (class->get_entries == NULL)
+		g_error("No get_entries function on object.  It must have been deleted?!?!");
+
+	all_entries = class->get_entries(io);
+
+	/* N.B. probably bad form to have side-effects in a simple accessor...
+	   We're doing it this way to add visibility support without changing
+	   before freeze. */
+	for (l=all_entries; l!=NULL; l=l->next) {
+		IndicatorObjectEntry * entry = l->data;
+		GObject * o = G_OBJECT(entry->menu);
+		ensure_signal_handler_is_connected (o, HIDE_SIGNAL_KEY, "hide", G_CALLBACK(on_menu_hide), io);
+		ensure_signal_handler_is_connected (o, SHOW_SIGNAL_KEY, "show", G_CALLBACK(on_menu_show), io);
+	}
+
+	return all_entries;
+}
+
+static void
+stop_listening_for_menu_visibility_changes (IndicatorObject * io)
+{
+	GList * l;
+	GList * entries = get_all_entries (io);
+
+	for (l=entries; l!=NULL; l=l->next)
+	{
+		gulong * handler_id;
+		GObject * menu = G_OBJECT(((IndicatorObjectEntry*)l->data)->menu);
+
+		if((handler_id = g_object_get_data(menu, SHOW_SIGNAL_KEY))) {
+			g_signal_handler_disconnect(menu, *handler_id);
+			g_free (handler_id);
+		}
+
+		if((handler_id = g_object_get_data(menu, HIDE_SIGNAL_KEY))) {
+			g_signal_handler_disconnect(menu, *handler_id);
+			g_free (handler_id);
+		}
+	}
+}
+
 /**
 	indicator_object_get_entries:
 	@io: #IndicatorObject to query
 
-	This function looks on the class for the object and calls
-	it's #IndicatorObjectClass::get_entries function.  The
-	list should be owned by the caller, but the individual
-	entries should not be.
+	This function calls the object's #IndicatorObjectClass::get_entries virtual
+	function, filters out invisible entries, and returns a GList of visible ones.
+	Callers should free the GList with g_list_free(), but the entries are owned
+	by the IndicatorObject and should not be freed.
 
 	Return value: (element-type IndicatorObjectEntry) (transfer container): A list if #IndicatorObjectEntry structures or
 		NULL if there is an error.
@@ -478,15 +621,18 @@ get_entries_default (IndicatorObject * io)
 GList *
 indicator_object_get_entries (IndicatorObject * io)
 {
-	g_return_val_if_fail(INDICATOR_IS_OBJECT(io), NULL);
-	IndicatorObjectClass * class = INDICATOR_OBJECT_GET_CLASS(io);
+	GList * l;
+	GList * visible_entries = NULL;
+	GList * all_entries = get_all_entries (io);
 
-	if (class->get_entries) {
-		return class->get_entries(io);
+	for (l=all_entries; l!=NULL; l=l->next) {
+		IndicatorObjectEntry * entry = l->data;
+		if(gtk_widget_get_visible(GTK_WIDGET(entry->menu)))
+			visible_entries = g_list_append (visible_entries, entry);
 	}
 
-	g_error("No get_entries function on object.  It must have been deleted?!?!");
-	return NULL;
+	g_list_free (all_entries);
+		return visible_entries;
 }
 
 /**
@@ -653,4 +799,115 @@ indicator_object_check_environment (IndicatorObject * io, const gchar * env)
 	}
 
 	return FALSE;
+}
+
+static void
+get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec)
+{
+        IndicatorObject * self = INDICATOR_OBJECT(object);
+        g_return_if_fail(self != NULL);
+
+        IndicatorObjectPrivate * priv = INDICATOR_OBJECT_GET_PRIVATE(self);
+        g_return_if_fail(priv != NULL);
+
+        switch (prop_id) {
+        /* *********************** */
+        case PROP_SETTINGS_SCHEMA_ID:
+                if (G_VALUE_HOLDS_STRING(value)) {
+                        g_value_set_string(value, priv->gsettings_schema_id);
+                } else {
+                        g_warning("Name property requires a string value.");
+                }
+                break;
+        /* *********************** */
+        default:
+                G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+                break;
+        }
+}
+
+static void
+set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec)
+{
+        IndicatorObject * self = INDICATOR_OBJECT(object);
+        g_return_if_fail (self != NULL);
+
+        IndicatorObjectPrivate * priv = INDICATOR_OBJECT_GET_PRIVATE(self);
+        g_return_if_fail (priv != NULL);
+
+
+        switch (prop_id) {
+
+        /* *********************** */
+        case PROP_SETTINGS_SCHEMA_ID:
+                if (G_VALUE_HOLDS_STRING(value)) {
+                        schema_set (self, g_value_get_string (value));
+                } else {
+                        g_warning("Name property requires a string value.");
+                }
+                break;
+    
+        default:
+                G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+                break;
+        }
+
+        return;
+}
+
+static void
+on_settings_changed (GSettings * gsettings, gchar * key, gpointer user_data)
+{
+        g_message ("settings changed: %s", key);
+
+        if (!g_strcmp0 (key, "visible"))
+        {
+                const gboolean visible = g_settings_get_boolean (gsettings, key);
+                const char * signal_name = visible ? "entry-added" : "entry-removed";
+
+                IndicatorObject * self = INDICATOR_OBJECT (user_data);
+                GList * entries = indicator_object_get_entries (self);
+                GList * walk;
+
+                for (walk=entries; walk!=NULL; walk=walk->next) {
+                        g_signal_emit_by_name (self, signal_name, walk->data);
+                }
+
+                g_list_free (entries);
+        }
+}
+
+static void
+schema_set (IndicatorObject * object, const char * gsettings_schema_id)
+{
+        schema_clear (object);
+
+        IndicatorObjectPrivate * priv = INDICATOR_OBJECT_GET_PRIVATE(object);
+        g_return_if_fail (priv != NULL);
+
+        priv->gsettings_schema_id = g_strdup (gsettings_schema_id);
+        if (priv->gsettings_schema_id != NULL) {
+                priv->gsettings = g_settings_new (priv->gsettings_schema_id);
+                if (priv->gsettings != NULL) {
+                        g_signal_connect (G_OBJECT(priv->gsettings), "changed", G_CALLBACK(on_settings_changed), object);
+                        g_debug ("indicator %p is listening for GSettings change events from %s", priv->gsettings, gsettings_schema_id);
+                }
+        }
+}
+
+static void
+schema_clear (IndicatorObject * self)
+{
+        IndicatorObjectPrivate * priv = INDICATOR_OBJECT_GET_PRIVATE(self);
+        g_return_if_fail (priv != NULL);
+
+        if (priv->gsettings != NULL) {
+                g_object_unref (priv->gsettings);
+                priv->gsettings = NULL;
+        }
+
+        if (priv->gsettings_schema_id != NULL) {
+                g_free (priv->gsettings_schema_id);
+                priv->gsettings_schema_id = NULL;
+        }
 }

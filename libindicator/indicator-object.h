@@ -60,6 +60,9 @@ typedef enum
 #define INDICATOR_OBJECT_SIGNAL_SECONDARY_ACTIVATE "secondary-activate"
 #define INDICATOR_OBJECT_SIGNAL_SECONDARY_ACTIVATE_ID (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_SECONDARY_ACTIVATE, INDICATOR_OBJECT_TYPE))
 
+/* the name of the GSettings schema-id property */
+#define INDICATOR_OBJECT_GSETTINGS_SCHEMA_ID       "gsettings-schema-id"
+
 typedef struct _IndicatorObject        IndicatorObject;
 typedef struct _IndicatorObjectClass   IndicatorObjectClass;
 typedef struct _IndicatorObjectPrivate IndicatorObjectPrivate;
