@@ -538,6 +538,14 @@ indicator_object_get_show_now (IndicatorObject * io, IndicatorObjectEntry * entr
 	return FALSE;
 }
 
+void
+indicator_object_entry_activate_window (IndicatorObject * io, IndicatorObjectEntry * entry, guint windowid, guint timestamp)
+{
+
+
+	return;
+}
+
 /**
 	indicator_object_entry_activate:
 	@io: #IndicatorObject to query
