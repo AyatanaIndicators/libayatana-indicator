@@ -7,7 +7,7 @@ includedir=@includedir@
 indicatordir=${libdir}/indicators3/@indicator_abi_version@/
 iconsdir=@datarootdir@/@PACKAGE@/icons/
 
-Cflags: -I${includedir}/libindicator-0.@indicator_api_version@
+Cflags: -I${includedir}/libindicator3-0.@indicator_api_version@
 Requires: gtk+-3.0
 Libs: -lindicator3
 

@@ -26,7 +26,7 @@ CLEANFILES += indicator$(VER)-0.$(INDICATOR_API_VERSION).pc
 
 include $(top_srcdir)/Makefile.am.marshal
 
-libindicatorincludedir=$(includedir)/libindicator-0.$(INDICATOR_API_VERSION)/libindicator
+libindicatorincludedir=$(includedir)/libindicator$(VER)-0.$(INDICATOR_API_VERSION)/libindicator
 
 indicator_headers = \
 	indicator.h \
