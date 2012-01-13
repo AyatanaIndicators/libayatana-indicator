@@ -557,7 +557,14 @@ indicator_object_get_show_now (IndicatorObject * io, IndicatorObjectEntry * entr
 void
 indicator_object_entry_activate_window (IndicatorObject * io, IndicatorObjectEntry * entry, guint windowid, guint timestamp)
 {
+	g_return_if_fail(INDICATOR_IS_OBJECT(io));
+	IndicatorObjectClass * class = INDICATOR_OBJECT_GET_CLASS(io);
 
+	if (class->entry_activate_window != NULL) {
+		return class->entry_activate_window(io, entry, windowid, timestamp);
+	} else {
+		indicator_object_entry_activate(io, entry, timestamp);
+	}
 
 	return;
 }
