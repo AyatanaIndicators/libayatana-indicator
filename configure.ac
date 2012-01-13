@@ -108,6 +108,14 @@ AC_DEFINE_PATH(SYSCONFDIR, "${sysconfdir}", [system configuration dir])
 AC_DEFINE_PATH(LIBDIR, "${libdir}", [system configuration dir])
 
 #########################
+# Check if build tests
+#########################
+AC_ARG_ENABLE([tests],
+	AC_HELP_STRING([--disable-tests], [disable tests]),,
+	[enable_tests=yes])
+AM_CONDITIONAL([WANT_TESTS], [test "x$enable_tests" != "xno"])
+
+#########################
 # Debug symbols
 #########################
 AC_ARG_ENABLE([debug],
@@ -146,5 +154,6 @@ Libindicator Configuration:
 	Prefix:                 $prefix
 	GTK+ Version:           $with_gtk
 	
+	Enable tests:           $enable_tests
 	Enable debugging:       $enable_debug
 ])
