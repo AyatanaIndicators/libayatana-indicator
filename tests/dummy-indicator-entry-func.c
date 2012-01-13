@@ -52,6 +52,28 @@ get_accessible_desc (IndicatorObject * io)
 	return NULL;
 }
 
+static void
+entry_activate (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp)
+{
+
+	return;
+}
+
+static void
+entry_activate_window (IndicatorObject * io, IndicatorObjectEntry * entry, guint windowid, guint timestamp)
+{
+
+	return;
+}
+
+static void
+entry_close (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp)
+{
+
+	return;
+}
+
+
 static void dummy_indicator_entry_func_class_init (DummyIndicatorEntryFuncClass *klass);
 static void dummy_indicator_entry_func_init       (DummyIndicatorEntryFunc *self);
 static void dummy_indicator_entry_func_dispose    (GObject *object);
@@ -73,6 +95,10 @@ dummy_indicator_entry_func_class_init (DummyIndicatorEntryFuncClass *klass)
 	io_class->get_image = get_icon;
 	io_class->get_menu = get_menu;
 	io_class->get_accessible_desc = get_accessible_desc;
+
+	io_class->entry_activate = entry_activate;
+	io_class->entry_activate_window = entry_activate_window;
+	io_class->entry_close = entry_close;
 
 	return;
 }
