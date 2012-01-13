@@ -61,7 +61,10 @@ typedef enum
 #define INDICATOR_OBJECT_SIGNAL_SECONDARY_ACTIVATE_ID (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_SECONDARY_ACTIVATE, INDICATOR_OBJECT_TYPE))
 
 /* the name of the GSettings schema-id property */
-#define INDICATOR_OBJECT_GSETTINGS_SCHEMA_ID       "gsettings-schema-id"
+#define INDICATOR_OBJECT_GSETTINGS_SCHEMA_ID       "indicator-object-gsettings-schema-id"
+
+/* the name of the property to decide whether or not entries are visible by default */
+#define INDICATOR_OBJECT_DEFAULT_VISIBILITY        "indicator-object-default-visibility"
 
 typedef struct _IndicatorObject        IndicatorObject;
 typedef struct _IndicatorObjectClass   IndicatorObjectClass;
@@ -186,6 +189,7 @@ IndicatorObject * indicator_object_new_from_file (const gchar * file);
 GList * indicator_object_get_entries (IndicatorObject * io);
 guint   indicator_object_get_location (IndicatorObject * io, IndicatorObjectEntry * entry);
 guint   indicator_object_get_show_now (IndicatorObject * io, IndicatorObjectEntry * entry);
+void	indicator_object_set_visible (IndicatorObject * io, gboolean visible);
 void    indicator_object_entry_activate (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp);
 void    indicator_object_entry_close (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp);
 
