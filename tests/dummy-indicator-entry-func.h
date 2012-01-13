@@ -47,6 +47,10 @@ struct _DummyIndicatorEntryFuncClass {
 
 struct _DummyIndicatorEntryFunc {
 	IndicatorObject parent;
+
+	gboolean entry_activate_called;
+	gboolean entry_activate_window_called;
+	gboolean entry_close_called;
 };
 
 #endif /* __DUMMY_INDICATOR_ENTRY_FUNC__ */
