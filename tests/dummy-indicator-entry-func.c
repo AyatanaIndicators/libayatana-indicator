@@ -20,30 +20,8 @@ License along with this library. If not, see
 <http://www.gnu.org/licenses/>.
 */
 
+#include "dummy-indicator-entry-func.h"
 
-#include <glib.h>
-#include <glib-object.h>
-
-#include "libindicator/indicator.h"
-#include "libindicator/indicator-object.h"
-
-#define DUMMY_INDICATOR_ENTRY_FUNC_TYPE            (dummy_indicator_entry_func_get_type ())
-#define DUMMY_INDICATOR_ENTRY_FUNC(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), DUMMY_INDICATOR_ENTRY_FUNC_TYPE, DummyIndicatorEntryFunc))
-#define DUMMY_INDICATOR_ENTRY_FUNC_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), DUMMY_INDICATOR_ENTRY_FUNC_TYPE, DummyIndicatorEntryFuncClass))
-#define IS_DUMMY_INDICATOR_ENTRY_FUNC(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), DUMMY_INDICATOR_ENTRY_FUNC_TYPE))
-#define IS_DUMMY_INDICATOR_ENTRY_FUNC_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), DUMMY_INDICATOR_ENTRY_FUNC_TYPE))
-#define DUMMY_INDICATOR_ENTRY_FUNC_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), DUMMY_INDICATOR_ENTRY_FUNC_TYPE, DummyIndicatorEntryFuncClass))
-
-typedef struct _DummyIndicatorEntryFunc      DummyIndicatorEntryFunc;
-typedef struct _DummyIndicatorEntryFuncClass DummyIndicatorEntryFuncClass;
-
-struct _DummyIndicatorEntryFuncClass {
-	IndicatorObjectClass parent_class;
-};
-
-struct _DummyIndicatorEntryFunc {
-	IndicatorObject parent;
-};
 
 GType dummy_indicator_entry_func_get_type (void);
 
