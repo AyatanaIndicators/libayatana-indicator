@@ -99,6 +99,10 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 	klass->get_entries = get_entries_default;
 	klass->get_location = NULL;
 
+	klass->entry_activate = NULL;
+	klass->entry_activate_window = NULL;
+	klass->entry_close = NULL;
+
 	/**
 		IndicatorObject::entry-added:
 		@arg0: The #IndicatorObject object
