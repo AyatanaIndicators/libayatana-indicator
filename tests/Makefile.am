@@ -167,7 +167,8 @@ libdummy_indicator_simple_la_LDFLAGS = \
 #############################
 
 libdummy_indicator_entry_func_la_SOURCES = \
-	dummy-indicator-entry-func.c
+	dummy-indicator-entry-func.c \
+	dummy-indicator-entry-func.h
 
 libdummy_indicator_entry_func_la_CFLAGS = \
 	-Wall -Werror \
