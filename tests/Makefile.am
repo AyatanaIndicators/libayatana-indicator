@@ -433,7 +433,7 @@ DISTCLEANFILES += service-manager-connect-nostart-tester
 XML_REPORT  = loader-check-results.xml
 HTML_REPORT = loader-check-results.html
 
-loader-tester: test-loader libdummy-indicator-null.la libdummy-indicator-simple.la Makefile
+loader-tester: test-loader libdummy-indicator-null.la libdummy-indicator-simple.la libdummy-indicator-entry-func.la Makefile
 	@echo "#!/bin/bash" > loader-tester
 	@echo $(XVFB_RUN) >> $@
 	@echo gtester -k --verbose -o=$(XML_REPORT) ./test-loader >> loader-tester
