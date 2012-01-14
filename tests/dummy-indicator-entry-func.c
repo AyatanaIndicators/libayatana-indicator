@@ -55,21 +55,24 @@ get_accessible_desc (IndicatorObject * io)
 static void
 entry_activate (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp)
 {
-
+	DummyIndicatorEntryFunc * self = DUMMY_INDICATOR_ENTRY_FUNC(io);
+	self->entry_activate_called = TRUE;
 	return;
 }
 
 static void
 entry_activate_window (IndicatorObject * io, IndicatorObjectEntry * entry, guint windowid, guint timestamp)
 {
-
+	DummyIndicatorEntryFunc * self = DUMMY_INDICATOR_ENTRY_FUNC(io);
+	self->entry_activate_window_called = TRUE;
 	return;
 }
 
 static void
 entry_close (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp)
 {
-
+	DummyIndicatorEntryFunc * self = DUMMY_INDICATOR_ENTRY_FUNC(io);
+	self->entry_close_called = TRUE;
 	return;
 }
 
