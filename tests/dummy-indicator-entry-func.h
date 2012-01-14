@@ -53,4 +53,6 @@ struct _DummyIndicatorEntryFunc {
 	gboolean entry_close_called;
 };
 
+void dummy_indicator_entry_func_support_window(DummyIndicatorEntryFunc * ind, gboolean different);
+
 #endif /* __DUMMY_INDICATOR_ENTRY_FUNC__ */

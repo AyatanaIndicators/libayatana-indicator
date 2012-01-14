@@ -128,3 +128,17 @@ dummy_indicator_entry_func_finalize (GObject *object)
 	G_OBJECT_CLASS (dummy_indicator_entry_func_parent_class)->finalize (object);
 	return;
 }
+
+void
+dummy_indicator_entry_func_support_window(DummyIndicatorEntryFunc * ind, gboolean different)
+{
+	DummyIndicatorEntryFuncClass * entry_class = DUMMY_INDICATOR_ENTRY_FUNC_GET_CLASS(ind);
+
+	if (different) {
+		entry_class->parent_class.entry_activate_window = entry_activate_window;
+	} else {
+		entry_class->parent_class.entry_activate_window = NULL;
+	}
+
+	return;
+}
