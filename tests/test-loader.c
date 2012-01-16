@@ -26,6 +26,31 @@ License along with this library. If not, see
 #include "dummy-indicator-entry-func.h"
 
 void
+test_loader_entry_func_window (void)
+{
+	IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/.libs/libdummy-indicator-entry-func.so");
+	g_assert(object != NULL);
+
+	DummyIndicatorEntryFunc * entryfunc = (DummyIndicatorEntryFunc *)(object);
+
+	entryfunc->entry_activate_called = FALSE;
+	entryfunc->entry_activate_window_called = FALSE;
+	entryfunc->entry_close_called = FALSE;
+
+	dummy_indicator_entry_func_support_window(entryfunc, FALSE);
+	indicator_object_entry_activate_window(object, NULL, 0, 0);
+	g_assert(entryfunc->entry_activate_called);
+
+	dummy_indicator_entry_func_support_window(entryfunc, TRUE);
+	indicator_object_entry_activate_window(object, NULL, 0, 0);
+	g_assert(entryfunc->entry_activate_window_called);
+
+	g_object_unref(object);
+
+	return;
+}
+
+void
 test_loader_entry_funcs (void)
 {
 	IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/.libs/libdummy-indicator-entry-func.so");
@@ -203,6 +228,7 @@ test_loader_creation_deletion_suite (void)
 	g_test_add_func ("/libindicator/loader/dummy/simple_location", test_loader_filename_dummy_simple_location);
 	g_test_add_func ("/libindicator/loader/dummy/signaler",  test_loader_filename_dummy_signaler);
 	g_test_add_func ("/libindicator/loader/dummy/entry_funcs",  test_loader_entry_funcs);
+	g_test_add_func ("/libindicator/loader/dummy/entry_func_window",  test_loader_entry_func_window);
 
 	return;
 }
