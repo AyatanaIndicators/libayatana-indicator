@@ -26,6 +26,25 @@ License along with this library. If not, see
 #include "dummy-indicator-entry-func.h"
 
 void
+entry_func_swap (IndicatorObject * io)
+{
+	static void (*saved_func) (IndicatorObject * io, IndicatorObjectEntry * entry, guint windowid, guint timestamp) = NULL;
+	IndicatorObjectClass * klass = INDICATOR_OBJECT_GET_CLASS(io);
+
+	if (saved_func == NULL) {
+		saved_func = klass->entry_activate_window;
+	}
+
+	if (klass->entry_activate_window == NULL) {
+		klass->entry_activate_window = saved_func;
+	} else {
+		klass->entry_activate_window = NULL;
+	}
+
+	return;
+}
+
+void
 test_loader_entry_func_window (void)
 {
 	IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/.libs/libdummy-indicator-entry-func.so");
@@ -37,11 +56,11 @@ test_loader_entry_func_window (void)
 	entryfunc->entry_activate_window_called = FALSE;
 	entryfunc->entry_close_called = FALSE;
 
-	dummy_indicator_entry_func_support_window(entryfunc, FALSE);
+	entry_func_swap(object);
 	indicator_object_entry_activate_window(object, NULL, 0, 0);
 	g_assert(entryfunc->entry_activate_called);
 
-	dummy_indicator_entry_func_support_window(entryfunc, TRUE);
+	entry_func_swap(object);
 	indicator_object_entry_activate_window(object, NULL, 0, 0);
 	g_assert(entryfunc->entry_activate_window_called);
 
