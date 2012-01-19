@@ -179,3 +179,5 @@ libindicator/libindicator3_la-gen-indicator-service.xml.lo
 tools/indicator-loader3
 libindicator-[0-9]*.[0-9]*.[0-9]*
 build-aux
+libdummy_indicator_entry_func_la-dummy-indicator-entry-func.lo
+libdummy-indicator-entry-func.la

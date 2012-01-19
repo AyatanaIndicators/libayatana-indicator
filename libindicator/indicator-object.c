@@ -99,6 +99,10 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 	klass->get_entries = get_entries_default;
 	klass->get_location = NULL;
 
+	klass->entry_activate = NULL;
+	klass->entry_activate_window = NULL;
+	klass->entry_close = NULL;
+
 	/**
 		IndicatorObject::entry-added:
 		@arg0: The #IndicatorObject object
@@ -536,6 +540,37 @@ indicator_object_get_show_now (IndicatorObject * io, IndicatorObjectEntry * entr
 	}
 
 	return FALSE;
+}
+
+/**
+	indicator_object_entry_activate_window:
+	@io: #IndicatorObject to query
+	@entry: The #IndicatorObjectEntry whose entry was shown
+	@windowid: ID of the window that is currently focused (or will
+		be very shortly)
+	@timestamp: The X11 timestamp of the event
+
+	Used to signal to the indicator that the menu on an entry has
+	been clicked on.  This can either be an activate or a showing
+	of the menu.  Also includes a window ID so that we can know what
+	application is going to be getting focused soon.  If there is
+	no override of this function, it is the same as calling
+	indicator_object_entry_activate and in general is preferable
+	if you have that information available.
+*/
+void
+indicator_object_entry_activate_window (IndicatorObject * io, IndicatorObjectEntry * entry, guint windowid, guint timestamp)
+{
+	g_return_if_fail(INDICATOR_IS_OBJECT(io));
+	IndicatorObjectClass * class = INDICATOR_OBJECT_GET_CLASS(io);
+
+	if (class->entry_activate_window != NULL) {
+		return class->entry_activate_window(io, entry, windowid, timestamp);
+	} else {
+		indicator_object_entry_activate(io, entry, timestamp);
+	}
+
+	return;
 }
 
 /**
