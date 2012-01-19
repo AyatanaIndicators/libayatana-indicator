@@ -257,6 +257,7 @@ indicator_object_init (IndicatorObject *self)
 
 	self->priv->module = NULL;
 
+	self->priv->entry.parent_object = self;
 	self->priv->entry.menu = NULL;
 	self->priv->entry.label = NULL;
 	self->priv->entry.image = NULL;
