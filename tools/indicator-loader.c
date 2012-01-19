@@ -45,6 +45,10 @@ entry_added (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_d
 {
 	g_debug("Signal: Entry Added");
 
+	if (entry->parent_object == NULL) {
+		g_warning("Entry '%p' does not have a parent object", entry);
+	}
+
 	GtkWidget * menuitem = gtk_menu_item_new();
 #if GTK_CHECK_VERSION(3,0,0)
 	GtkWidget * hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 3);
