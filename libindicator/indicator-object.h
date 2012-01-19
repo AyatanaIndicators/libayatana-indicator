@@ -152,6 +152,7 @@ struct _IndicatorObject {
 
 /**
 	IndicatorObjectEntry:
+	@parent_object: The #IndicatorObject that created this entry
 	@label: The label to be shown on the panel
 	@image: The image to be shown on the panel
 	@menu: The menu to be added to the menubar
@@ -166,6 +167,7 @@ struct _IndicatorObject {
 	@reserved4: Reserved for future use
 */
 struct _IndicatorObjectEntry {
+	IndicatorObject * parent_object;
 	GtkLabel * label;
 	GtkImage * image;
 	GtkMenu  * menu;
