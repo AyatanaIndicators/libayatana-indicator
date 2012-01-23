@@ -26,7 +26,7 @@ CLEANFILES += indicator$(VER)-0.$(INDICATOR_API_VERSION).pc
 
 include $(top_srcdir)/Makefile.am.marshal
 
-libindicatorincludedir=$(includedir)/libindicator-0.$(INDICATOR_API_VERSION)/libindicator
+libindicatorincludedir=$(includedir)/libindicator$(VER)-0.$(INDICATOR_API_VERSION)/libindicator
 
 indicator_headers = \
 	indicator.h \
@@ -55,6 +55,7 @@ libindicator_la_SOURCES = \
 
 libindicator_la_CFLAGS = \
 	$(LIBINDICATOR_CFLAGS) \
+	$(COVERAGE_CFLAGS) \
 	-DG_LOG_DOMAIN=\"libindicator\" \
 	-Wall -Werror
 
@@ -62,6 +63,7 @@ libindicator_la_LIBADD = \
 	$(LIBINDICATOR_LIBS)
 
 libindicator_la_LDFLAGS = \
+	$(COVERAGE_LDFLAGS) \
 	-version-info $(INDICATOR_ABI_VERSION):0:0 \
 	-no-undefined \
 	-export-symbols-regex "^[^_].*"
