@@ -60,9 +60,6 @@ typedef enum
 #define INDICATOR_OBJECT_SIGNAL_SECONDARY_ACTIVATE "secondary-activate"
 #define INDICATOR_OBJECT_SIGNAL_SECONDARY_ACTIVATE_ID (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_SECONDARY_ACTIVATE, INDICATOR_OBJECT_TYPE))
 
-/* the name of the GSettings schema-id property */
-#define INDICATOR_OBJECT_GSETTINGS_SCHEMA_ID       "indicator-object-gsettings-schema-id"
-
 /* the name of the property to decide whether or not entries are visible by default */
 #define INDICATOR_OBJECT_DEFAULT_VISIBILITY        "indicator-object-default-visibility"
 
@@ -97,6 +94,12 @@ typedef struct _IndicatorObjectEntry   IndicatorObjectEntry;
 	@get_show_now: Returns whether the entry is requesting to
 		be shown "right now" in that it has something important
 		to tell the user.
+	@entry_being_removed: Called before an entry is removed.
+		The default implementation is to ref and unparent the
+		entry's widgets so that they can be re-added later.
+	@entry_was_added: Called after an entry is added.
+		The default implementation is to unref the entry's widgets if
+		previously reffed by entry_being_removed's default impementation
 	@entry_activate: Should be called when the menus for a given
 		entry are shown to the user.
 	@entry_close: Called when the menu is closed.
@@ -122,6 +125,9 @@ struct _IndicatorObjectClass {
 	GList *    (*get_entries) (IndicatorObject * io);
 	guint      (*get_location) (IndicatorObject * io, IndicatorObjectEntry * entry);
 	gboolean   (*get_show_now) (IndicatorObject * io, IndicatorObjectEntry * entry);
+
+	void       (*entry_being_removed) (IndicatorObject * io, IndicatorObjectEntry * entry);
+	void       (*entry_was_added) (IndicatorObject * io, IndicatorObjectEntry * entry);
 
 	void       (*entry_activate) (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp);
 	void       (*entry_close) (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp);

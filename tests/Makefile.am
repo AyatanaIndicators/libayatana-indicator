@@ -14,7 +14,8 @@ lib_LTLIBRARIES = \
 	libdummy-indicator-blank.la \
 	libdummy-indicator-null.la \
 	libdummy-indicator-signaler.la \
-	libdummy-indicator-simple.la
+	libdummy-indicator-simple.la \
+	libdummy-indicator-visible.la
 
 DBUS_RUNNER=dbus-test-runner --dbus-config /usr/share/dbus-test-runner/session.conf
 XVFB_RUN=". $(srcdir)/run-xvfb.sh"
@@ -158,6 +159,26 @@ libdummy_indicator_simple_la_LIBADD = \
 	$(INDICATOR_LIB)
 
 libdummy_indicator_simple_la_LDFLAGS = \
+	-module \
+	-avoid-version
+
+#############################
+# Dummy Indicator Visible
+#############################
+
+libdummy_indicator_visible_la_SOURCES = \
+	dummy-indicator-visible.c
+
+libdummy_indicator_visible_la_CFLAGS = \
+	-Wall -Werror \
+	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
+
+libdummy_indicator_visible_la_LIBADD = \
+	$(LIBINDICATOR_LIBS) \
+	-L$(top_builddir)/libindicator/.libs \
+	$(INDICATOR_LIB)
+
+libdummy_indicator_visible_la_LDFLAGS = \
 	-module \
 	-avoid-version
 
