@@ -152,6 +152,7 @@ test_loader_filename_dummy_simple_location (void)
 
 	g_assert(indicator_object_get_location(object, (IndicatorObjectEntry *)entries->data) == 0);
 	g_assert(indicator_object_get_location(object, NULL) == 0);
+	g_assert(((IndicatorObjectEntry *)entries->data)->parent_object != NULL);
 
 	g_object_unref(object);
 
