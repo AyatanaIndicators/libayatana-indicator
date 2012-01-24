@@ -1,4 +1,4 @@
-libindicator (0.4.90-0ubuntu1~ppa1) UNRELEASED; urgency=low
+libindicator (0.4.90-0ubuntu1~ppa1) precise; urgency=low
 
   [ Ken VanDine ]
   * debian/control
@@ -11,7 +11,7 @@ libindicator (0.4.90-0ubuntu1~ppa1) UNRELEASED; urgency=low
     * Adding activate function to include Window ID
   * debian/control: Bumping ABI version of lib
 
- -- Ted Gould <ted@ubuntu.com>  Tue, 24 Jan 2012 10:15:17 -0600
+ -- Ted Gould <ted@ubuntu.com>  Tue, 24 Jan 2012 10:17:00 -0600
 
 libindicator (0.4.1-1) experimental; urgency=low
 
