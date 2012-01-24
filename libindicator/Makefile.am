@@ -13,7 +13,7 @@ EXTRA_DIST = \
 	indicator3-0.$(INDICATOR_API_VERSION).pc.in.in \
 	indicator-0.$(INDICATOR_API_VERSION).pc.in.in
 
-INDICATOR_ABI_VERSION = 6
+INDICATOR_ABI_VERSION = 7
 INDICATOR_API_VERSION = 4
 
 %.pc: %.pc.in
