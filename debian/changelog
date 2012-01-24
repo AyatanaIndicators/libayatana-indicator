@@ -1,9 +1,17 @@
-libindicator (0.4.1-1ubuntu1) UNRELEASED; urgency=low
+libindicator (0.4.90-0ubuntu1~ppa1) precise; urgency=low
 
+  [ Ken VanDine ]
   * debian/control
     - set ubuntu-desktop VCS and maintainer
 
- -- Ken VanDine <ken.vandine@canonical.com>  Tue, 22 Nov 2011 14:39:15 -0500
+  [ Ted Gould ]
+  * New upstream release.
+    * Support hiding and showing indicators
+    * Track the parent object in the entry
+    * Adding activate function to include Window ID
+  * debian/control: Bumping ABI version of lib
+
+ -- Ted Gould <ted@ubuntu.com>  Tue, 24 Jan 2012 10:17:00 -0600
 
 libindicator (0.4.1-1) experimental; urgency=low
 

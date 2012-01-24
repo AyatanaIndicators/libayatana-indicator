@@ -60,6 +60,9 @@ typedef enum
 #define INDICATOR_OBJECT_SIGNAL_SECONDARY_ACTIVATE "secondary-activate"
 #define INDICATOR_OBJECT_SIGNAL_SECONDARY_ACTIVATE_ID (g_signal_lookup(INDICATOR_OBJECT_SIGNAL_SECONDARY_ACTIVATE, INDICATOR_OBJECT_TYPE))
 
+/* the name of the property to decide whether or not entries are visible by default */
+#define INDICATOR_OBJECT_DEFAULT_VISIBILITY        "indicator-object-default-visibility"
+
 typedef struct _IndicatorObject        IndicatorObject;
 typedef struct _IndicatorObjectClass   IndicatorObjectClass;
 typedef struct _IndicatorObjectPrivate IndicatorObjectPrivate;
@@ -91,6 +94,12 @@ typedef struct _IndicatorObjectEntry   IndicatorObjectEntry;
 	@get_show_now: Returns whether the entry is requesting to
 		be shown "right now" in that it has something important
 		to tell the user.
+	@entry_being_removed: Called before an entry is removed.
+		The default implementation is to ref and unparent the
+		entry's widgets so that they can be re-added later.
+	@entry_was_added: Called after an entry is added.
+		The default implementation is to unref the entry's widgets if
+		previously reffed by entry_being_removed's default impementation
 	@entry_activate: Should be called when the menus for a given
 		entry are shown to the user.
 	@entry_close: Called when the menu is closed.
@@ -117,7 +126,11 @@ struct _IndicatorObjectClass {
 	guint      (*get_location) (IndicatorObject * io, IndicatorObjectEntry * entry);
 	gboolean   (*get_show_now) (IndicatorObject * io, IndicatorObjectEntry * entry);
 
+	void       (*entry_being_removed) (IndicatorObject * io, IndicatorObjectEntry * entry);
+	void       (*entry_was_added) (IndicatorObject * io, IndicatorObjectEntry * entry);
+
 	void       (*entry_activate) (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp);
+	void       (*entry_activate_window) (IndicatorObject * io, IndicatorObjectEntry * entry, guint windowid, guint timestamp);
 	void       (*entry_close) (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp);
 
 	/* Signals */
@@ -151,6 +164,7 @@ struct _IndicatorObject {
 
 /**
 	IndicatorObjectEntry:
+	@parent_object: The #IndicatorObject that created this entry
 	@label: The label to be shown on the panel
 	@image: The image to be shown on the panel
 	@menu: The menu to be added to the menubar
@@ -165,6 +179,7 @@ struct _IndicatorObject {
 	@reserved4: Reserved for future use
 */
 struct _IndicatorObjectEntry {
+	IndicatorObject * parent_object;
 	GtkLabel * label;
 	GtkImage * image;
 	GtkMenu  * menu;
@@ -183,7 +198,9 @@ IndicatorObject * indicator_object_new_from_file (const gchar * file);
 GList * indicator_object_get_entries (IndicatorObject * io);
 guint   indicator_object_get_location (IndicatorObject * io, IndicatorObjectEntry * entry);
 guint   indicator_object_get_show_now (IndicatorObject * io, IndicatorObjectEntry * entry);
+void	indicator_object_set_visible (IndicatorObject * io, gboolean visible);
 void    indicator_object_entry_activate (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp);
+void    indicator_object_entry_activate_window (IndicatorObject * io, IndicatorObjectEntry * entry, guint windowid, guint timestamp);
 void    indicator_object_entry_close (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp);
 
 void    indicator_object_set_environment (IndicatorObject * io, const GStrv env);

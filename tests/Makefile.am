@@ -14,7 +14,9 @@ lib_LTLIBRARIES = \
 	libdummy-indicator-blank.la \
 	libdummy-indicator-null.la \
 	libdummy-indicator-signaler.la \
-	libdummy-indicator-simple.la
+	libdummy-indicator-simple.la \
+	libdummy-indicator-visible.la \
+	libdummy-indicator-entry-func.la
 
 DBUS_RUNNER=dbus-test-runner --dbus-config /usr/share/dbus-test-runner/session.conf
 XVFB_RUN=". $(srcdir)/run-xvfb.sh"
@@ -158,6 +160,47 @@ libdummy_indicator_simple_la_LIBADD = \
 	$(INDICATOR_LIB)
 
 libdummy_indicator_simple_la_LDFLAGS = \
+	-module \
+	-avoid-version
+
+#############################
+# Dummy Indicator Entry Func
+#############################
+
+libdummy_indicator_entry_func_la_SOURCES = \
+	dummy-indicator-entry-func.c \
+	dummy-indicator-entry-func.h
+
+libdummy_indicator_entry_func_la_CFLAGS = \
+	-Wall -Werror \
+	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
+
+libdummy_indicator_entry_func_la_LIBADD = \
+	$(LIBINDICATOR_LIBS) \
+	-L$(top_builddir)/libindicator/.libs \
+	$(INDICATOR_LIB)
+
+libdummy_indicator_entry_func_la_LDFLAGS = \
+	-module \
+	-avoid-version
+
+#############################
+# Dummy Indicator Visible
+#############################
+
+libdummy_indicator_visible_la_SOURCES = \
+	dummy-indicator-visible.c
+
+libdummy_indicator_visible_la_CFLAGS = \
+	-Wall -Werror \
+	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
+
+libdummy_indicator_visible_la_LIBADD = \
+	$(LIBINDICATOR_LIBS) \
+	-L$(top_builddir)/libindicator/.libs \
+	$(INDICATOR_LIB)
+
+libdummy_indicator_visible_la_LDFLAGS = \
 	-module \
 	-avoid-version
 
@@ -412,7 +455,7 @@ DISTCLEANFILES += service-manager-connect-nostart-tester
 XML_REPORT  = loader-check-results.xml
 HTML_REPORT = loader-check-results.html
 
-loader-tester: test-loader libdummy-indicator-null.la libdummy-indicator-simple.la Makefile
+loader-tester: test-loader libdummy-indicator-null.la libdummy-indicator-simple.la libdummy-indicator-entry-func.la Makefile
 	@echo "#!/bin/bash" > loader-tester
 	@echo $(XVFB_RUN) >> $@
 	@echo gtester -k --verbose -o=$(XML_REPORT) ./test-loader >> loader-tester
