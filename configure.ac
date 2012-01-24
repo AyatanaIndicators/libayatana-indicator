@@ -1,5 +1,5 @@
 AC_INIT([libindicator],
-        [0.4.1],
+        [0.4.90],
         [http://bugs.launchpad.net/libindicator],
         [libindicator],
         [http://launchpad.net/libindicator])
@@ -108,6 +108,14 @@ AC_DEFINE_PATH(SYSCONFDIR, "${sysconfdir}", [system configuration dir])
 AC_DEFINE_PATH(LIBDIR, "${libdir}", [system configuration dir])
 
 #########################
+# Check if build tests
+#########################
+AC_ARG_ENABLE([tests],
+	AC_HELP_STRING([--disable-tests], [disable tests]),,
+	[enable_tests=yes])
+AM_CONDITIONAL([WANT_TESTS], [test "x$enable_tests" != "xno"])
+
+#########################
 # Debug symbols
 #########################
 AC_ARG_ENABLE([debug],
@@ -120,6 +128,15 @@ if test "x$enable_debug" = "xyes"; then
 fi
 
 AM_CONDITIONAL(ENABLE_DEBUG, test "$enable_debug" = "yes")
+
+###########################
+# gcov coverage reporting
+###########################
+m4_include([m4/gcov.m4])
+AC_TDD_GCOV
+AC_SUBST(COVERAGE_CFLAGS)
+AC_SUBST(COVERAGE_CXXFLAGS)
+AC_SUBST(COVERAGE_LDFLAGS)
 
 ###########################
 # Files
@@ -146,5 +163,7 @@ Libindicator Configuration:
 	Prefix:                 $prefix
 	GTK+ Version:           $with_gtk
 	
+	Enable tests:           $enable_tests
 	Enable debugging:       $enable_debug
+	Coverage reporting:     $use_gcov
 ])

@@ -99,6 +99,8 @@ dummy_indicator_signaler_class_init (DummyIndicatorSignalerClass *klass)
 	io_class->get_image = get_icon;
 	io_class->get_menu = get_menu;
 	io_class->get_accessible_desc = get_accessible_desc;
+	io_class->entry_being_removed  = NULL;
+	io_class->entry_was_added  = NULL;
 
 	return;
 }

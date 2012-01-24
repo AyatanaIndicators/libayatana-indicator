@@ -369,7 +369,7 @@ should_show (GKeyFile * keyfile, const gchar * group, const gchar * identity, gb
 	return TRUE;
 }
 
-/* Looks through the nicks ot see if this one is in the list,
+/* Looks through the nicks to see if this one is in the list,
    and thus valid to use. */
 static gboolean
 is_valid_nick (gchar ** list, const gchar * nick)
