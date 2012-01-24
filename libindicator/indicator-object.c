@@ -31,6 +31,24 @@ License along with this library. If not, see
 #include "indicator-object-enum-types.h"
 
 /**
+	@ENTRY_INIT: The entry hasn't been initialized yet, so its
+		visibility will depend upon the inital-visibility property.
+	@ENTRY_VISIBLE: The entry is visible
+	@ENTRY_INVISIBLE: The entry is invisible
+*/
+typedef enum {
+    ENTRY_INIT,
+    ENTRY_VISIBLE,
+    ENTRY_INVISIBLE
+}
+EntryVisibility;
+
+typedef struct _IndicatorObjectEntryPrivate {
+     EntryVisibility visibility;
+}
+IndicatorObjectEntryPrivate;
+
+/**
 	IndicatorObjectPrivate:
 	@module: The loaded module representing the object.  Note to
 		subclasses: This will not be set when you're initalized.
@@ -49,10 +67,15 @@ struct _IndicatorObjectPrivate {
 	IndicatorObjectEntry entry;
 	gboolean gotten_entries;
 
+	/* Whether or not entries are visible by default */
+	gboolean default_visibility;
+	GHashTable * entry_privates;
+
 	GStrv environments;
 };
 
 #define INDICATOR_OBJECT_GET_PRIVATE(o) (INDICATOR_OBJECT(o)->priv)
+
 
 /* Signals Stuff */
 enum {
@@ -67,6 +90,16 @@ enum {
 	LAST_SIGNAL
 };
 
+/* Properties */
+/* Enum for the properties so that they can be quickly
+   found and looked up. */
+enum {
+	PROP_0,
+	PROP_GSETTINGS_SCHEMA_ID,
+	PROP_DEFAULT_VISIBILITY,
+};
+
+
 static guint signals[LAST_SIGNAL] = { 0 };
 
 /* GObject stuff */
@@ -74,8 +107,17 @@ static void indicator_object_class_init (IndicatorObjectClass *klass);
 static void indicator_object_init       (IndicatorObject *self);
 static void indicator_object_dispose    (GObject *object);
 static void indicator_object_finalize   (GObject *object);
+static void set_property (GObject*, guint prop_id, const GValue*, GParamSpec* );
+static void get_property (GObject*, guint prop_id,       GValue*, GParamSpec* );
 
-static GList * get_entries_default (IndicatorObject * io);
+/* entries' visibility */
+static GList * get_entries_default               (IndicatorObject*);
+static GList * get_all_entries                   (IndicatorObject*);
+static void entry_being_removed_default          (IndicatorObject*, IndicatorObjectEntry*);
+static void indicator_object_entry_being_removed (IndicatorObject*, IndicatorObjectEntry*);
+static void entry_was_added_default              (IndicatorObject*, IndicatorObjectEntry*);
+static void indicator_object_entry_was_added     (IndicatorObject*, IndicatorObjectEntry*);
+static IndicatorObjectEntryPrivate * entry_get_private (IndicatorObject*, IndicatorObjectEntry*);
 
 G_DEFINE_TYPE (IndicatorObject, indicator_object, G_TYPE_OBJECT);
 
@@ -90,14 +132,21 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 
 	object_class->dispose = indicator_object_dispose;
 	object_class->finalize = indicator_object_finalize;
+	object_class->set_property = set_property;
+	object_class->get_property = get_property;
 
 	klass->get_label =  NULL;
-	klass->get_menu =   NULL;
+	klass->get_menu  =  NULL;
 	klass->get_image =  NULL;
 	klass->get_accessible_desc = NULL;
-
 	klass->get_entries = get_entries_default;
 	klass->get_location = NULL;
+	klass->entry_being_removed = entry_being_removed_default;
+	klass->entry_was_added = entry_was_added_default;
+
+	klass->entry_activate = NULL;
+	klass->entry_activate_window = NULL;
+	klass->entry_close = NULL;
 
 	/**
 		IndicatorObject::entry-added:
@@ -241,38 +290,68 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 	                                     g_cclosure_marshal_VOID__POINTER,
 	                                     G_TYPE_NONE, 1, G_TYPE_POINTER, G_TYPE_NONE);
 
+	/* Properties */
 
-	return;
+	GParamSpec * pspec = g_param_spec_boolean (INDICATOR_OBJECT_DEFAULT_VISIBILITY,
+			"default visibility",
+			"Whether or not entries should initially be visible.",
+			TRUE,
+			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+	g_object_class_install_property (object_class, PROP_DEFAULT_VISIBILITY, pspec);
 }
 
 /* Initialize an instance */
 static void
 indicator_object_init (IndicatorObject *self)
 {
-	self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self, INDICATOR_OBJECT_TYPE, IndicatorObjectPrivate);
+	IndicatorObjectPrivate * priv = G_TYPE_INSTANCE_GET_PRIVATE (self, INDICATOR_OBJECT_TYPE, IndicatorObjectPrivate);
 
-	self->priv->module = NULL;
+	priv->module = NULL;
 
-	self->priv->entry.menu = NULL;
-	self->priv->entry.label = NULL;
-	self->priv->entry.image = NULL;
-	self->priv->entry.accessible_desc = NULL;
-	self->priv->entry.name_hint = NULL;
+	priv->entry.parent_object = self;
+	priv->entry.menu = NULL;
+	priv->entry.label = NULL;
+	priv->entry.image = NULL;
+	priv->entry.accessible_desc = NULL;
+	priv->entry.name_hint = NULL;
 
-	self->priv->gotten_entries = FALSE;
+	priv->gotten_entries = FALSE;
+	priv->default_visibility = TRUE;
+	priv->entry_privates = g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, g_free);
 
-	self->priv->environments = NULL;
+	priv->environments = NULL;
 
-	return;
+	self->priv = priv;
+
+	GObject * o = G_OBJECT(self);
+	/* Invoke the entry-being-removed virtual function first */
+	g_signal_connect (o, INDICATOR_OBJECT_SIGNAL_ENTRY_REMOVED,
+	                  G_CALLBACK(indicator_object_entry_being_removed), NULL);
+	/* Invoke the entry-was-added virtual function last */
+	g_signal_connect_after (o, INDICATOR_OBJECT_SIGNAL_ENTRY_ADDED,
+	                        G_CALLBACK(indicator_object_entry_was_added), NULL);
 }
 
 /* Unref the objects that we're holding on to. */
 static void
 indicator_object_dispose (GObject *object)
 {
+	IndicatorObject * io = INDICATOR_OBJECT(object);
+
+	/* Ensure that hidden entries are re-added so their widgetry will
+	   be cleaned up properly by the client */
+	GList * l;
+	GList * entries = get_all_entries (io);
+	const GQuark detail = (GQuark)0;
+	for (l=entries; l!=NULL; l=l->next) {
+		IndicatorObjectEntry * entry = l->data;
+		if (entry_get_private(io, entry)->visibility == ENTRY_INVISIBLE) {
+			g_signal_emit(io, signals[ENTRY_ADDED], detail, entry);
+		}
+	}
+	g_list_free (entries);
 
 	G_OBJECT_CLASS (indicator_object_parent_class)->dispose (object);
-	return;
 }
 
 /* A small helper function that closes a module but
@@ -293,6 +372,11 @@ indicator_object_finalize (GObject *object)
 {
 	IndicatorObjectPrivate * priv = INDICATOR_OBJECT_GET_PRIVATE(object);
 
+	if (priv->entry_privates != NULL) {
+		g_hash_table_destroy (priv->entry_privates);
+		priv->entry_privates = NULL;
+	}
+
 	if (priv->environments != NULL) {
 		g_strfreev(priv->environments);
 		priv->environments = NULL;
@@ -301,7 +385,7 @@ indicator_object_finalize (GObject *object)
 	if (priv->module != NULL) {
 		/* Wow, this is convoluted.  So basically we want to unref
 		   the module which will cause the code it included to be
-		   removed.  But, since it's finalize function is the function
+		   removed.  But, since its finalize function is the function
 		   that called this one, we can't really remove it before
 		   it finishes being executed.  So we're putting the job into
 		   the main loop to remove it the next time it gets a chance.
@@ -463,30 +547,81 @@ get_entries_default (IndicatorObject * io)
 	return g_list_append(NULL, &(priv->entry));
 }
 
+/* returns a list of all IndicatorObjectEntires, visible or not */
+static GList*
+get_all_entries (IndicatorObject * io)
+{
+	GList * all_entries = NULL;
+
+	g_return_val_if_fail(INDICATOR_IS_OBJECT(io), NULL);
+	IndicatorObjectClass * class = INDICATOR_OBJECT_GET_CLASS(io);
+
+	if (class->get_entries == NULL)
+		g_error("No get_entries function on object.  It must have been deleted?!?!");
+	else
+		all_entries = class->get_entries(io);
+
+	return all_entries;
+}
+
+/* get the private structure that corresponds to a caller-specified entry */
+static IndicatorObjectEntryPrivate *
+entry_get_private (IndicatorObject * io, IndicatorObjectEntry * entry)
+{
+	g_return_val_if_fail (INDICATOR_IS_OBJECT(io), NULL);
+	g_return_val_if_fail (io->priv != NULL, NULL);
+
+	GHashTable * h = io->priv->entry_privates;
+	IndicatorObjectEntryPrivate * priv = g_hash_table_lookup (h, entry);
+	if (priv == NULL)
+	{
+		priv = g_new0 (IndicatorObjectEntryPrivate, 1);
+		priv->visibility = ENTRY_INIT;
+		g_hash_table_insert (h, entry, priv);
+	}
+
+	return priv;
+}
+
 /**
 	indicator_object_get_entries:
 	@io: #IndicatorObject to query
 
-	This function looks on the class for the object and calls
-	it's #IndicatorObjectClass::get_entries function.  The
-	list should be owned by the caller, but the individual
-	entries should not be.
+	This function returns a list of visible entries. The list is built
+	by calling the object's #IndicatorObjectClass::get_entries
+	virtual function and testing each of the results for visibility.
+	Callers should free the GList with g_list_free(), but the entries
+	are owned by the IndicatorObject and should not be freed.
 
-	Return value: (element-type IndicatorObjectEntry) (transfer container): A list if #IndicatorObjectEntry structures or
-		NULL if there is an error.
+	Return value: (element-type IndicatorObjectEntry) (transfer container):
+		A list if #IndicatorObjectEntry structures or NULL on error.
 */
 GList *
 indicator_object_get_entries (IndicatorObject * io)
 {
-	g_return_val_if_fail(INDICATOR_IS_OBJECT(io), NULL);
-	IndicatorObjectClass * class = INDICATOR_OBJECT_GET_CLASS(io);
+	GList * l;
+	GList * ret = NULL;
+	GList * all_entries = get_all_entries (io);
+	const gboolean default_visibility = INDICATOR_OBJECT_GET_PRIVATE(io)->default_visibility;
 
-	if (class->get_entries) {
-		return class->get_entries(io);
+	for (l=all_entries; l!=NULL; l=l->next)
+	{
+		gboolean show_me;
+		IndicatorObjectEntry * entry = l->data;
+
+		switch (entry_get_private(io,entry)->visibility) {
+			case ENTRY_VISIBLE:   show_me = TRUE; break;
+			case ENTRY_INVISIBLE: show_me = FALSE; break;
+			case ENTRY_INIT:      show_me = default_visibility; break;
+			default:              show_me = TRUE; g_warn_if_reached(); break;
+		}
+
+		if (show_me)
+			ret = g_list_prepend (ret, entry);
 	}
 
-	g_error("No get_entries function on object.  It must have been deleted?!?!");
-	return NULL;
+	g_list_free (all_entries);
+	return g_list_reverse (ret);
 }
 
 /**
@@ -539,6 +674,37 @@ indicator_object_get_show_now (IndicatorObject * io, IndicatorObjectEntry * entr
 }
 
 /**
+	indicator_object_entry_activate_window:
+	@io: #IndicatorObject to query
+	@entry: The #IndicatorObjectEntry whose entry was shown
+	@windowid: ID of the window that is currently focused (or will
+		be very shortly)
+	@timestamp: The X11 timestamp of the event
+
+	Used to signal to the indicator that the menu on an entry has
+	been clicked on.  This can either be an activate or a showing
+	of the menu.  Also includes a window ID so that we can know what
+	application is going to be getting focused soon.  If there is
+	no override of this function, it is the same as calling
+	indicator_object_entry_activate and in general is preferable
+	if you have that information available.
+*/
+void
+indicator_object_entry_activate_window (IndicatorObject * io, IndicatorObjectEntry * entry, guint windowid, guint timestamp)
+{
+	g_return_if_fail(INDICATOR_IS_OBJECT(io));
+	IndicatorObjectClass * class = INDICATOR_OBJECT_GET_CLASS(io);
+
+	if (class->entry_activate_window != NULL) {
+		return class->entry_activate_window(io, entry, windowid, timestamp);
+	} else {
+		indicator_object_entry_activate(io, entry, timestamp);
+	}
+
+	return;
+}
+
+/**
 	indicator_object_entry_activate:
 	@io: #IndicatorObject to query
 	@entry: The #IndicatorObjectEntry whose entry was shown
@@ -584,6 +750,30 @@ indicator_object_entry_close (IndicatorObject * io, IndicatorObjectEntry * entry
 	return;
 }
 
+static void
+indicator_object_entry_being_removed (IndicatorObject * io, IndicatorObjectEntry * entry)
+{
+	g_return_if_fail(INDICATOR_IS_OBJECT(io));
+	IndicatorObjectClass * class = INDICATOR_OBJECT_GET_CLASS(io);
+
+	entry_get_private (io, entry)->visibility = ENTRY_INVISIBLE;
+
+	if (class->entry_being_removed != NULL)
+		class->entry_being_removed (io, entry);
+}
+
+static void
+indicator_object_entry_was_added (IndicatorObject * io, IndicatorObjectEntry * entry)
+{
+	g_return_if_fail(INDICATOR_IS_OBJECT(io));
+	IndicatorObjectClass * class = INDICATOR_OBJECT_GET_CLASS(io);
+
+	entry_get_private (io, entry)->visibility = ENTRY_VISIBLE;
+
+	if (class->entry_was_added != NULL)
+		class->entry_was_added (io, entry);
+}
+
 /**
 	indicator_object_set_environment:
 	@io: #IndicatorObject to set on
@@ -596,6 +786,7 @@ indicator_object_entry_close (IndicatorObject * io, IndicatorObjectEntry * entry
 void
 indicator_object_set_environment (IndicatorObject * io, const GStrv env)
 {
+	/* FIXME: should this be a property? */
 	g_return_if_fail(INDICATOR_IS_OBJECT(io));
 
 	if (io->priv->environments != NULL) {
@@ -653,4 +844,143 @@ indicator_object_check_environment (IndicatorObject * io, const gchar * env)
 	}
 
 	return FALSE;
+}
+
+/**
+	indicator_object_set_visible:
+	@io: #IndicatorObject to check on
+	@visible: whether or not the entries should be visible
+
+	Used to set all of an indicator's entries to be visible or hidden.
+*/
+void
+indicator_object_set_visible (IndicatorObject * io, gboolean visible)
+{
+	g_return_if_fail(INDICATOR_IS_OBJECT(io));
+
+	GList * l;
+	GList * entries = get_all_entries (io);
+	const guint signal_id = signals[visible ? ENTRY_ADDED : ENTRY_REMOVED];
+	const GQuark detail = (GQuark)0;
+	for (l=entries; l!=NULL; l=l->next)
+		g_signal_emit(io, signal_id, detail, l->data);
+	g_list_free (entries);
+}
+
+static void
+get_property (GObject     * object,
+              guint         prop_id,
+              GValue      * value,
+              GParamSpec  * pspec)
+{
+        IndicatorObject * self = INDICATOR_OBJECT(object);
+        g_return_if_fail(self != NULL);
+
+        IndicatorObjectPrivate * priv = INDICATOR_OBJECT_GET_PRIVATE(self);
+        g_return_if_fail(priv != NULL);
+
+        switch (prop_id) {
+        /* *********************** */
+        case PROP_DEFAULT_VISIBILITY:
+                if (G_VALUE_HOLDS_BOOLEAN(value)) {
+                        g_value_set_boolean(value, priv->default_visibility);
+                } else {
+                        g_warning("default-visibility property requires a boolean value.");
+                }
+                break;
+        /* *********************** */
+        default:
+                G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+                break;
+        }
+}
+
+static void
+set_property (GObject       * object,
+              guint           prop_id,
+              const GValue  * value,
+              GParamSpec    * pspec)
+{
+        IndicatorObject * self = INDICATOR_OBJECT(object);
+        g_return_if_fail (self != NULL);
+
+        IndicatorObjectPrivate * priv = INDICATOR_OBJECT_GET_PRIVATE(self);
+        g_return_if_fail (priv != NULL);
+
+
+        switch (prop_id) {
+
+        /* *********************** */
+        case PROP_DEFAULT_VISIBILITY:
+                if (G_VALUE_HOLDS_BOOLEAN(value)) {
+                        priv->default_visibility = g_value_get_boolean (value);
+                } else {
+                        g_warning("default-visibility property requires a boolean value.");
+                }
+                break;
+    
+    
+        default:
+                G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+                break;
+        }
+}
+
+/***
+****
+***/
+
+/* Cloaked entries are ones which are hidden but may be re-added later.
+   They are reffed + unparented so that they'll survive even if the
+   rest of the widgetry is destroyed */
+#define CLOAKED_KEY "entry-is-cloaked"
+
+static void
+decloak_widget (gpointer w)
+{
+	if (w != NULL) {
+		GObject * o = G_OBJECT(w);
+		if (g_object_steal_data (o, CLOAKED_KEY) != NULL) {
+			g_object_unref (o);
+		}
+	}
+}
+
+static void
+entry_was_added_default (IndicatorObject * io, IndicatorObjectEntry * entry)
+{
+	decloak_widget (entry->image);
+	decloak_widget (entry->label);
+	decloak_widget (entry->menu);
+}
+
+static void
+cloak_widget (gpointer w)
+{
+	if (w != NULL) {
+		GtkWidget * parent;
+
+		/* tag this object as cloaked */
+		GObject * o = G_OBJECT(w);
+		g_object_ref (o);
+		g_object_set_data (o, CLOAKED_KEY, GINT_TO_POINTER(1));
+
+		/* remove it from its surrounding widgetry */
+		if(GTK_IS_MENU(w)) {
+			if (gtk_menu_get_attach_widget (GTK_MENU(w)) != NULL) {
+				gtk_menu_detach (GTK_MENU(w));
+			}
+		}
+		else if((parent = gtk_widget_get_parent(w))) {
+			gtk_container_remove(GTK_CONTAINER(parent), w);
+		}
+	}
+}
+
+static void
+entry_being_removed_default (IndicatorObject * io, IndicatorObjectEntry * entry)
+{
+	cloak_widget (entry->image);
+	cloak_widget (entry->label);
+	cloak_widget (entry->menu);
 }

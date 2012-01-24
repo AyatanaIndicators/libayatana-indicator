@@ -23,6 +23,78 @@ License along with this library. If not, see
 #include <gtk/gtk.h>
 #include "libindicator/indicator-object.h"
 
+#include "dummy-indicator-entry-func.h"
+
+void
+entry_func_swap (IndicatorObject * io)
+{
+	static void (*saved_func) (IndicatorObject * io, IndicatorObjectEntry * entry, guint windowid, guint timestamp) = NULL;
+	IndicatorObjectClass * klass = INDICATOR_OBJECT_GET_CLASS(io);
+
+	if (saved_func == NULL) {
+		saved_func = klass->entry_activate_window;
+	}
+
+	if (klass->entry_activate_window == NULL) {
+		klass->entry_activate_window = saved_func;
+	} else {
+		klass->entry_activate_window = NULL;
+	}
+
+	return;
+}
+
+void
+test_loader_entry_func_window (void)
+{
+	IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/.libs/libdummy-indicator-entry-func.so");
+	g_assert(object != NULL);
+
+	DummyIndicatorEntryFunc * entryfunc = (DummyIndicatorEntryFunc *)(object);
+
+	entryfunc->entry_activate_called = FALSE;
+	entryfunc->entry_activate_window_called = FALSE;
+	entryfunc->entry_close_called = FALSE;
+
+	entry_func_swap(object);
+	indicator_object_entry_activate_window(object, NULL, 0, 0);
+	g_assert(entryfunc->entry_activate_called);
+
+	entry_func_swap(object);
+	indicator_object_entry_activate_window(object, NULL, 0, 0);
+	g_assert(entryfunc->entry_activate_window_called);
+
+	g_object_unref(object);
+
+	return;
+}
+
+void
+test_loader_entry_funcs (void)
+{
+	IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/.libs/libdummy-indicator-entry-func.so");
+	g_assert(object != NULL);
+
+	DummyIndicatorEntryFunc * entryfunc = (DummyIndicatorEntryFunc *)(object);
+
+	entryfunc->entry_activate_called = FALSE;
+	entryfunc->entry_activate_window_called = FALSE;
+	entryfunc->entry_close_called = FALSE;
+
+	indicator_object_entry_activate(object, NULL, 0);
+	g_assert(entryfunc->entry_activate_called);
+
+	indicator_object_entry_activate_window(object, NULL, 0, 0);
+	g_assert(entryfunc->entry_activate_window_called);
+
+	indicator_object_entry_close(object, NULL, 0);
+	g_assert(entryfunc->entry_close_called);
+
+	g_object_unref(object);
+
+	return;
+}
+
 void destroy_cb (gpointer data, GObject * object);
 
 void
@@ -68,6 +140,95 @@ test_loader_filename_dummy_signaler (void)
 	return;
 }
 
+/***
+****
+***/
+
+static void
+visible_entry_added (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer box)
+{
+	// make a frame for the entry, and add the frame to the box
+	GtkWidget * frame = gtk_frame_new (NULL);
+	GtkWidget * child = GTK_WIDGET(entry->label);
+	g_assert (child != NULL);
+	gtk_container_add (GTK_CONTAINER(frame), child);
+	gtk_box_pack_start (GTK_BOX(box), frame, FALSE, FALSE, 0);
+	g_object_set_data (G_OBJECT(child), "frame-parent", frame);
+}
+
+static void
+visible_entry_removed (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer box)
+{
+	// destroy this entry's frame
+	gpointer parent = g_object_steal_data (G_OBJECT(entry->label), "frame-parent");
+	if (GTK_IS_WIDGET(parent))
+		gtk_widget_destroy(GTK_WIDGET(parent));
+}
+
+void
+test_loader_filename_dummy_visible (void)
+{
+	const GQuark is_hidden_quark = g_quark_from_static_string ("is-hidden");
+	IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/.libs/libdummy-indicator-visible.so");
+	g_assert(object != NULL);
+
+	// create our local parent widgetry
+#if GTK_CHECK_VERSION(3,0,0)
+	GtkWidget * box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+#else
+	GtkWidget * box = gtk_hbox_new (TRUE, 0);
+#endif
+	g_signal_connect(object, INDICATOR_OBJECT_SIGNAL_ENTRY_ADDED,
+	                 G_CALLBACK(visible_entry_added), box);
+	g_signal_connect(object, INDICATOR_OBJECT_SIGNAL_ENTRY_REMOVED,
+	                 G_CALLBACK(visible_entry_removed), box);
+
+	// on startup, DummyVisible has one entry and it has a label
+	GList * list = indicator_object_get_entries(object);
+	g_assert(g_list_length(list) == 1);
+	IndicatorObjectEntry * entry = list->data;
+	g_assert(entry != NULL);
+	g_list_free(list);
+	g_assert(GTK_IS_LABEL(entry->label));
+	GtkWidget * label = GTK_WIDGET(entry->label);
+        g_assert(g_object_get_qdata(G_OBJECT(label), is_hidden_quark) == NULL);
+
+	// add the inital entry to our local parent widgetry
+	visible_entry_added (object, entry, box);
+	entry = NULL;
+	list = gtk_container_get_children (GTK_CONTAINER(box));
+	g_assert(g_list_length(list) == 1);
+	g_list_free(list);
+	
+	// hide the entries and confirm that the label survived
+	indicator_object_set_visible (object, FALSE);
+	while (g_main_context_pending(NULL))
+		g_main_context_iteration(NULL, TRUE);
+	g_assert(GTK_IS_LABEL(label));
+        g_assert(g_object_get_qdata(G_OBJECT(label), is_hidden_quark) != NULL);
+	list = gtk_container_get_children (GTK_CONTAINER(box));
+	g_assert(g_list_length(list) == 0);
+	g_list_free(list);
+
+	// restore the entries and confirm that the label survived
+	indicator_object_set_visible (object, TRUE);
+	while (g_main_context_pending(NULL))
+		g_main_context_iteration(NULL, TRUE);
+	g_assert(GTK_IS_LABEL(label));
+        g_assert(g_object_get_qdata(G_OBJECT(label), is_hidden_quark) == NULL);
+	list = gtk_container_get_children (GTK_CONTAINER(box));
+	g_assert(g_list_length(list) == 1);
+	g_list_free(list);
+
+	// cleanup
+	g_object_unref(object);
+	gtk_widget_destroy(box);
+}
+
+/***
+****
+***/
+
 void
 test_loader_filename_dummy_simple_location (void)
 {
@@ -80,6 +241,7 @@ test_loader_filename_dummy_simple_location (void)
 
 	g_assert(indicator_object_get_location(object, (IndicatorObjectEntry *)entries->data) == 0);
 	g_assert(indicator_object_get_location(object, NULL) == 0);
+	g_assert(((IndicatorObjectEntry *)entries->data)->parent_object != NULL);
 
 	g_object_unref(object);
 
@@ -174,6 +336,9 @@ test_loader_creation_deletion_suite (void)
 	g_test_add_func ("/libindicator/loader/dummy/simple_accessors", test_loader_filename_dummy_simple_accessors);
 	g_test_add_func ("/libindicator/loader/dummy/simple_location", test_loader_filename_dummy_simple_location);
 	g_test_add_func ("/libindicator/loader/dummy/signaler",  test_loader_filename_dummy_signaler);
+	g_test_add_func ("/libindicator/loader/dummy/entry_funcs",  test_loader_entry_funcs);
+	g_test_add_func ("/libindicator/loader/dummy/entry_func_window",  test_loader_entry_func_window);
+	g_test_add_func ("/libindicator/loader/dummy/visible",  test_loader_filename_dummy_visible);
 
 	return;
 }
