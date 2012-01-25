@@ -348,7 +348,9 @@ indicator_object_dispose (GObject *object)
 		if (entry_get_private(io, entry)->visibility == ENTRY_INVISIBLE) {
 			g_signal_emit(io, signals[ENTRY_ADDED], detail, entry);
 		}
-		entry->parent_object = NULL;
+
+		if (entry)
+			entry->parent_object = NULL;
 	}
 	g_list_free (entries);
 
@@ -568,7 +570,9 @@ get_all_entries (IndicatorObject * io)
 		for (l = all_entries; l; l = l->next)
 		{
 			IndicatorObjectEntry *entry = l->data;
-			entry->parent_object = io;
+
+			if (entry)
+				entry->parent_object = io;
 		}
 	}
 
@@ -768,10 +772,14 @@ indicator_object_entry_being_removed (IndicatorObject * io, IndicatorObjectEntry
 	IndicatorObjectClass * class = INDICATOR_OBJECT_GET_CLASS(io);
 
 	entry_get_private (io, entry)->visibility = ENTRY_INVISIBLE;
-	entry->parent_object = NULL;
 
 	if (class->entry_being_removed != NULL)
+	{
+		if (entry)
+			entry->parent_object = NULL;
+
 		class->entry_being_removed (io, entry);
+	}
 }
 
 static void
@@ -781,10 +789,14 @@ indicator_object_entry_was_added (IndicatorObject * io, IndicatorObjectEntry * e
 	IndicatorObjectClass * class = INDICATOR_OBJECT_GET_CLASS(io);
 
 	entry_get_private (io, entry)->visibility = ENTRY_VISIBLE;
-	entry->parent_object = io;
 
 	if (class->entry_was_added != NULL)
+	{
+		if (entry)
+			entry->parent_object = io;
+
 		class->entry_was_added (io, entry);
+	}
 }
 
 /**
