@@ -102,6 +102,7 @@ entry_change_cb (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer da
 {
 	IndicatorObjectEntry *other_entry = data;
 	other_entry->name_hint = entry->name_hint;
+	other_entry->parent_object = entry->parent_object;
 	return;
 }
 
@@ -139,6 +140,9 @@ test_loader_filename_dummy_signaler (void)
 	g_assert(g_strcmp0(added_entry->name_hint, "added") == 0);
 	g_assert(g_strcmp0(removed_entry->name_hint, "removed") == 0);
 	g_assert(g_strcmp0(moved_entry->name_hint, "moved") == 0);
+
+	g_assert(added_entry->parent_object == object);
+	g_assert(removed_entry->parent_object == NULL);
 
 	g_object_unref(object);
 
