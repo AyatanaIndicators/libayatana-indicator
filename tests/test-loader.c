@@ -190,6 +190,8 @@ test_loader_filename_dummy_visible (void)
 	g_assert(entry != NULL);
 	g_list_free(list);
 	g_assert(GTK_IS_LABEL(entry->label));
+	g_assert(entry->parent_object == object);
+	g_assert(INDICATOR_IS_OBJECT(entry->parent_object));
 	GtkWidget * label = GTK_WIDGET(entry->label);
         g_assert(g_object_get_qdata(G_OBJECT(label), is_hidden_quark) == NULL);
 
@@ -239,9 +241,11 @@ test_loader_filename_dummy_simple_location (void)
 	g_assert(entries != NULL);
 	g_assert(g_list_length(entries) == 1);
 
-	g_assert(indicator_object_get_location(object, (IndicatorObjectEntry *)entries->data) == 0);
+	IndicatorObjectEntry *entry = entries->data;
+
+	g_assert(indicator_object_get_location(object, entry) == 0);
 	g_assert(indicator_object_get_location(object, NULL) == 0);
-	g_assert(((IndicatorObjectEntry *)entries->data)->parent_object != NULL);
+	g_assert(entry->parent_object == object);
 
 	g_object_unref(object);
 
