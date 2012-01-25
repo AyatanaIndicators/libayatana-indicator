@@ -14,8 +14,8 @@ DEB_CONFIGURE_FLAGS_gtk3 = --with-gtk=3
 
 LDFLAGS += -Wl,-z,defs -Wl,--as-needed
 
-DEB_DH_MAKESHLIBS_ARGS_libindicator6 += -V 'libindicator6 (>= 0.3.90)'
-DEB_DH_MAKESHLIBS_ARGS_libindicator3_6 += -V 'libindicator3-6 (>= 0.3.90)'
+DEB_DH_MAKESHLIBS_ARGS_libindicator7 += -V 'libindicator7 (>= 0.4.90)'
+DEB_DH_MAKESHLIBS_ARGS_libindicator3_7 += -V 'libindicator3-7 (>= 0.4.90)'
 
 debian/stamp-autotools/gtk2: cdbs_configure_flags += $(DEB_CONFIGURE_FLAGS_gtk2)
 debian/stamp-autotools/gtk3: cdbs_configure_flags += $(DEB_CONFIGURE_FLAGS_gtk3)
