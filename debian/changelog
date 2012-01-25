@@ -1,8 +1,11 @@
-libindicator (0.4.90-0ubuntu1~ppa1) precise; urgency=low
+libindicator (0.4.90-0ubuntu2) precise; urgency=low
 
-  [ Ken VanDine ]
   * debian/control
-    - set ubuntu-desktop VCS and maintainer
+    - dropped the Conflicts with libindicator6 and libindicator3-6
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Tue, 24 Jan 2012 21:44:30 -0500
+
+libindicator (0.4.90-0ubuntu1) precise; urgency=low
 
   [ Ted Gould ]
   * New upstream release.
@@ -11,7 +14,15 @@ libindicator (0.4.90-0ubuntu1~ppa1) precise; urgency=low
     * Adding activate function to include Window ID
   * debian/control: Bumping ABI version of lib
 
- -- Ted Gould <ted@ubuntu.com>  Tue, 24 Jan 2012 10:17:00 -0600
+  [ Ken VanDine ]
+  * debian/control
+    - set ubuntu-desktop VCS and maintainer
+  * debian/rules
+    - Updated shlibs
+  * debian/libindicator3-dev.install
+    - include headers 
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Tue, 24 Jan 2012 12:13:51 -0500
 
 libindicator (0.4.1-1) experimental; urgency=low
 
