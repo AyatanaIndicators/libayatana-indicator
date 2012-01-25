@@ -110,9 +110,20 @@ idle_signal (gpointer data)
 {
 	DummyIndicatorSignaler * self = DUMMY_INDICATOR_SIGNALER(data);
 
-	g_signal_emit(G_OBJECT(self), INDICATOR_OBJECT_SIGNAL_ENTRY_ADDED_ID, 0,   GUINT_TO_POINTER(5), TRUE);
-	g_signal_emit(G_OBJECT(self), INDICATOR_OBJECT_SIGNAL_ENTRY_REMOVED_ID, 0, GUINT_TO_POINTER(5), TRUE);
-	g_signal_emit(G_OBJECT(self), INDICATOR_OBJECT_SIGNAL_ENTRY_MOVED_ID, 0, GUINT_TO_POINTER(5), 0, 1, TRUE);
+	IndicatorObjectEntry *added_entry, *removed_entry, *moved_entry;
+	IndicatorObjectEntry *entries = g_new0(IndicatorObjectEntry, 3);
+
+	added_entry = &entries[0];
+	moved_entry = &entries[1];
+	removed_entry = &entries[2];
+
+	added_entry->name_hint = "added";
+	moved_entry->name_hint = "moved";
+	removed_entry->name_hint = "removed";
+
+	g_signal_emit(G_OBJECT(self), INDICATOR_OBJECT_SIGNAL_ENTRY_ADDED_ID, 0, added_entry);
+	g_signal_emit(G_OBJECT(self), INDICATOR_OBJECT_SIGNAL_ENTRY_MOVED_ID, 0, moved_entry, 0, 1);
+	g_signal_emit(G_OBJECT(self), INDICATOR_OBJECT_SIGNAL_ENTRY_REMOVED_ID, 0, removed_entry);
 
 	return FALSE; /* Don't queue again */
 }
