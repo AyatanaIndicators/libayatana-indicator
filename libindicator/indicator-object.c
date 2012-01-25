@@ -773,11 +773,11 @@ indicator_object_entry_being_removed (IndicatorObject * io, IndicatorObjectEntry
 
 	entry_get_private (io, entry)->visibility = ENTRY_INVISIBLE;
 
+	if (entry)
+		entry->parent_object = NULL;
+
 	if (class->entry_being_removed != NULL)
 	{
-		if (entry)
-			entry->parent_object = NULL;
-
 		class->entry_being_removed (io, entry);
 	}
 }
@@ -790,11 +790,11 @@ indicator_object_entry_was_added (IndicatorObject * io, IndicatorObjectEntry * e
 
 	entry_get_private (io, entry)->visibility = ENTRY_VISIBLE;
 
+	if (entry)
+		entry->parent_object = io;
+
 	if (class->entry_was_added != NULL)
 	{
-		if (entry)
-			entry->parent_object = io;
-
 		class->entry_was_added (io, entry);
 	}
 }
