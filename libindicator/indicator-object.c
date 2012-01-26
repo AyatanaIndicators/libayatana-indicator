@@ -756,7 +756,7 @@ indicator_object_entry_being_removed (IndicatorObject * io, IndicatorObjectEntry
 	g_return_if_fail(INDICATOR_IS_OBJECT(io));
 	IndicatorObjectClass * class = INDICATOR_OBJECT_GET_CLASS(io);
 
-	//entry_get_private (io, entry)->visibility = ENTRY_INVISIBLE;
+	entry_get_private (io, entry)->visibility = ENTRY_INVISIBLE;
 
 	if (class->entry_being_removed != NULL)
 		class->entry_being_removed (io, entry);
@@ -768,7 +768,7 @@ indicator_object_entry_was_added (IndicatorObject * io, IndicatorObjectEntry * e
 	g_return_if_fail(INDICATOR_IS_OBJECT(io));
 	IndicatorObjectClass * class = INDICATOR_OBJECT_GET_CLASS(io);
 
-	//entry_get_private (io, entry)->visibility = ENTRY_VISIBLE;
+	entry_get_private (io, entry)->visibility = ENTRY_VISIBLE;
 
 	if (class->entry_was_added != NULL)
 		class->entry_was_added (io, entry);
