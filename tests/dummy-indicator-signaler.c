@@ -42,6 +42,7 @@ struct _DummyIndicatorSignalerClass {
 
 struct _DummyIndicatorSignaler {
 	IndicatorObject parent;
+	IndicatorObjectEntry *entries;
 };
 
 GType dummy_indicator_signaler_get_type (void);
@@ -111,11 +112,10 @@ idle_signal (gpointer data)
 	DummyIndicatorSignaler * self = DUMMY_INDICATOR_SIGNALER(data);
 
 	IndicatorObjectEntry *added_entry, *removed_entry, *moved_entry;
-	IndicatorObjectEntry *entries = g_new0(IndicatorObjectEntry, 3);
 
-	added_entry = &entries[0];
-	moved_entry = &entries[1];
-	removed_entry = &entries[2];
+	added_entry = &self->entries[0];
+	moved_entry = &self->entries[1];
+	removed_entry = &self->entries[2];
 
 	added_entry->name_hint = "added";
 	moved_entry->name_hint = "moved";
@@ -131,6 +131,7 @@ idle_signal (gpointer data)
 static void
 dummy_indicator_signaler_init (DummyIndicatorSignaler *self)
 {
+	self->entries = g_new0(IndicatorObjectEntry, 3);
 	g_idle_add(idle_signal, self);
 	return;
 }
@@ -146,7 +147,8 @@ dummy_indicator_signaler_dispose (GObject *object)
 static void
 dummy_indicator_signaler_finalize (GObject *object)
 {
-
+	DummyIndicatorSignaler * self = DUMMY_INDICATOR_SIGNALER(object);
+	g_free (self->entries);
 	G_OBJECT_CLASS (dummy_indicator_signaler_parent_class)->finalize (object);
 	return;
 }
