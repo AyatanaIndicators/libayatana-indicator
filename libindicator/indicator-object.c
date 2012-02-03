@@ -348,6 +348,9 @@ indicator_object_dispose (GObject *object)
 		if (entry_get_private(io, entry)->visibility == ENTRY_INVISIBLE) {
 			g_signal_emit(io, signals[ENTRY_ADDED], detail, entry);
 		}
+
+		if (entry)
+			entry->parent_object = NULL;
 	}
 	g_list_free (entries);
 
@@ -507,6 +510,8 @@ get_entries_default (IndicatorObject * io)
 	if (!priv->gotten_entries) {
 		IndicatorObjectClass * class = INDICATOR_OBJECT_GET_CLASS(io);
 
+		priv->entry.parent_object = io;
+
 		if (class->get_label) {
 			priv->entry.label = class->get_label(io);
 		}
@@ -551,7 +556,7 @@ get_entries_default (IndicatorObject * io)
 static GList*
 get_all_entries (IndicatorObject * io)
 {
-	GList * all_entries = NULL;
+	GList * all_entries = NULL, *l;
 
 	g_return_val_if_fail(INDICATOR_IS_OBJECT(io), NULL);
 	IndicatorObjectClass * class = INDICATOR_OBJECT_GET_CLASS(io);
@@ -559,7 +564,17 @@ get_all_entries (IndicatorObject * io)
 	if (class->get_entries == NULL)
 		g_error("No get_entries function on object.  It must have been deleted?!?!");
 	else
+	{
 		all_entries = class->get_entries(io);
+
+		for (l = all_entries; l; l = l->next)
+		{
+			IndicatorObjectEntry *entry = l->data;
+
+			if (entry)
+				entry->parent_object = io;
+		}
+	}
 
 	return all_entries;
 }
@@ -758,8 +773,13 @@ indicator_object_entry_being_removed (IndicatorObject * io, IndicatorObjectEntry
 
 	entry_get_private (io, entry)->visibility = ENTRY_INVISIBLE;
 
+	if (entry)
+		entry->parent_object = NULL;
+
 	if (class->entry_being_removed != NULL)
+	{
 		class->entry_being_removed (io, entry);
+	}
 }
 
 static void
@@ -770,8 +790,13 @@ indicator_object_entry_was_added (IndicatorObject * io, IndicatorObjectEntry * e
 
 	entry_get_private (io, entry)->visibility = ENTRY_VISIBLE;
 
+	if (entry)
+		entry->parent_object = io;
+
 	if (class->entry_was_added != NULL)
+	{
 		class->entry_was_added (io, entry);
+	}
 }
 
 /**
