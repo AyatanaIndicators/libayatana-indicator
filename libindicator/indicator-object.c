@@ -886,9 +886,16 @@ indicator_object_set_visible (IndicatorObject * io, gboolean visible)
 	GList * l;
 	GList * entries = get_all_entries (io);
 	const guint signal_id = signals[visible ? ENTRY_ADDED : ENTRY_REMOVED];
+	EntryVisibility visibility = visible ? ENTRY_VISIBLE : ENTRY_INVISIBLE;
 	const GQuark detail = (GQuark)0;
+
 	for (l=entries; l!=NULL; l=l->next)
-		g_signal_emit(io, signal_id, detail, l->data);
+	{
+		IndicatorObjectEntry *entry = l->data;
+		EntryVisibility v = entry_get_private (io, entry)->visibility;
+		if (v == ENTRY_INIT || v != visibility)
+			g_signal_emit(io, signal_id, detail, entry);
+	}
 	g_list_free (entries);
 }
 
