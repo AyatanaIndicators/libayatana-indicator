@@ -336,13 +336,9 @@ indicator_object_init (IndicatorObject *self)
 static void
 indicator_object_dispose (GObject *object)
 {
-	IndicatorObject * io = INDICATOR_OBJECT(object);
-	GList * entries = get_all_entries (io);
-
 	/* Ensure that hidden entries are re-added so their widgetry will
 	   be cleaned up properly by the client */
-	indicator_object_set_visible (io, TRUE);
-	g_list_free (entries);
+	indicator_object_set_visible (INDICATOR_OBJECT (object), TRUE);
 
 	G_OBJECT_CLASS (indicator_object_parent_class)->dispose (object);
 }
