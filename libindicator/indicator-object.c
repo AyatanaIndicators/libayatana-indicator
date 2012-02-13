@@ -889,11 +889,9 @@ indicator_object_set_visible (IndicatorObject * io, gboolean visible)
 	EntryVisibility visibility = visible ? ENTRY_VISIBLE : ENTRY_INVISIBLE;
 	const GQuark detail = (GQuark)0;
 
-	for (l=entries; l!=NULL; l=l->next)
-	{
+	for (l=entries; l!=NULL; l=l->next) {
 		IndicatorObjectEntry *entry = l->data;
-		EntryVisibility v = entry_get_private (io, entry)->visibility;
-		if (v == ENTRY_INIT || v != visibility)
+		if (entry_get_private (io, entry)->visibility != visibility)
 			g_signal_emit(io, signal_id, detail, entry);
 	}
 	g_list_free (entries);
