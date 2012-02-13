@@ -336,23 +336,9 @@ indicator_object_init (IndicatorObject *self)
 static void
 indicator_object_dispose (GObject *object)
 {
-	IndicatorObject * io = INDICATOR_OBJECT(object);
-
 	/* Ensure that hidden entries are re-added so their widgetry will
 	   be cleaned up properly by the client */
-	GList * l;
-	GList * entries = get_all_entries (io);
-	const GQuark detail = (GQuark)0;
-	for (l=entries; l!=NULL; l=l->next) {
-		IndicatorObjectEntry * entry = l->data;
-		if (entry_get_private(io, entry)->visibility == ENTRY_INVISIBLE) {
-			g_signal_emit(io, signals[ENTRY_ADDED], detail, entry);
-		}
-
-		if (entry)
-			entry->parent_object = NULL;
-	}
-	g_list_free (entries);
+	indicator_object_set_visible (INDICATOR_OBJECT (object), TRUE);
 
 	G_OBJECT_CLASS (indicator_object_parent_class)->dispose (object);
 }
@@ -886,9 +872,14 @@ indicator_object_set_visible (IndicatorObject * io, gboolean visible)
 	GList * l;
 	GList * entries = get_all_entries (io);
 	const guint signal_id = signals[visible ? ENTRY_ADDED : ENTRY_REMOVED];
+	EntryVisibility visibility = visible ? ENTRY_VISIBLE : ENTRY_INVISIBLE;
 	const GQuark detail = (GQuark)0;
-	for (l=entries; l!=NULL; l=l->next)
-		g_signal_emit(io, signal_id, detail, l->data);
+
+	for (l=entries; l!=NULL; l=l->next) {
+		IndicatorObjectEntry *entry = l->data;
+		if (entry_get_private (io, entry)->visibility != visibility)
+			g_signal_emit(io, signal_id, detail, entry);
+	}
 	g_list_free (entries);
 }
 
