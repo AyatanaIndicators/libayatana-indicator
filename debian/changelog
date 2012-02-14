@@ -1,3 +1,18 @@
+libindicator (0.4.91-0ubuntu1) precise; urgency=low
+
+  * New upstream release.
+    * Visibility fixes for indicators using that functionality
+    * Ensure that parent_object is more aggressively set
+    * Fix memory leak on groups of items in desktop files (lp: #923629)
+  * Dropping debian/patches
+  * Upstream Merge
+    * Explicitly add in gmodule as a required library
+  * debian/control, debian/rules:
+    * Adding in autoreconf support
+    * Adding a check rule and requiring new build deps
+
+ -- Ted Gould <ted@ubuntu.com>  Tue, 14 Feb 2012 14:29:51 -0600
+
 libindicator (0.4.90-0ubuntu4) precise; urgency=low
 
   * libindicator/indicator-object.c

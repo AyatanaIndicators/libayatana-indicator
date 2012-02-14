@@ -281,6 +281,7 @@ parse_keyfile (IndicatorDesktopShortcuts * ids)
 
 		gchar * nickalloc = g_strdup(nicks[i]);
 		g_array_append_val(priv->nicks, nickalloc);
+		g_free(groupname);
 	}
 
 	if (nicks != NULL) {

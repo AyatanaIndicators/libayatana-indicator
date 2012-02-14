@@ -5,6 +5,7 @@ Maintainer: Ubuntu Core Developers <ubuntu-devel-discuss@lists.ubuntu.com>
 XSBC-Original-Maintainer: The Ayatana Packagers <pkg-ayatana-devel@lists.alioth.debian.org>
 Uploaders: Evgeni Golov <evgeni@debian.org>, Kartik Mistry <kartik@debian.org>
 Build-Depends: debhelper (>= 5.0),
+               dh-autoreconf,
                cdbs (>= 0.4.41),
                libglib2.0-dev (>= 2.22),
                libgtk2.0-dev (>= 2.18),
@@ -12,7 +13,8 @@ Build-Depends: debhelper (>= 5.0),
                libtool,
                intltool,
                gtk-doc-tools,
-               dh-autoreconf
+               dbus-test-runner,
+               xvfb
 Standards-Version: 3.9.2
 Homepage: https://launchpad.net/libindicator
 Vcs-Bzr: https://code.launchpad.net/~ubuntu-desktop/libindicator/ubuntu

@@ -100,8 +100,9 @@ void destroy_cb (gpointer data, GObject * object);
 void
 entry_change_cb (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer data)
 {
-	gpointer * valuestore = (gpointer *)data;
-	*valuestore = entry;
+	IndicatorObjectEntry *other_entry = data;
+	other_entry->name_hint = entry->name_hint;
+	other_entry->parent_object = entry->parent_object;
 	return;
 }
 
@@ -117,11 +118,16 @@ test_loader_filename_dummy_signaler (void)
 	IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/.libs/libdummy-indicator-signaler.so");
 	g_assert(object != NULL);
 
-	gpointer added_value = NULL, removed_value = NULL, moved_value = NULL;
+	IndicatorObjectEntry *added_entry, *moved_entry, *removed_entry;
+	IndicatorObjectEntry entries[3];
 
-	g_signal_connect(G_OBJECT(object), INDICATOR_OBJECT_SIGNAL_ENTRY_ADDED,   G_CALLBACK(entry_change_cb), &added_value);
-	g_signal_connect(G_OBJECT(object), INDICATOR_OBJECT_SIGNAL_ENTRY_REMOVED, G_CALLBACK(entry_change_cb), &removed_value);
-	g_signal_connect(G_OBJECT(object), INDICATOR_OBJECT_SIGNAL_ENTRY_MOVED,   G_CALLBACK(entry_move_cb),   &moved_value);
+	added_entry = &entries[0];
+	moved_entry = &entries[1];
+	removed_entry = &entries[2];
+
+	g_signal_connect_after(G_OBJECT(object), INDICATOR_OBJECT_SIGNAL_ENTRY_ADDED,   G_CALLBACK(entry_change_cb), added_entry);
+	g_signal_connect_after(G_OBJECT(object), INDICATOR_OBJECT_SIGNAL_ENTRY_MOVED,   G_CALLBACK(entry_move_cb), moved_entry);
+	g_signal_connect_after(G_OBJECT(object), INDICATOR_OBJECT_SIGNAL_ENTRY_REMOVED, G_CALLBACK(entry_change_cb), removed_entry);
 
 	GList * list = indicator_object_get_entries(object);
 	g_assert(list != NULL);
@@ -131,9 +137,12 @@ test_loader_filename_dummy_signaler (void)
 		g_main_context_iteration(NULL, TRUE);
 	}
 
-	g_assert(GPOINTER_TO_UINT(added_value) == 5);
-	g_assert(GPOINTER_TO_UINT(removed_value) == 5);
-	g_assert(GPOINTER_TO_UINT(moved_value) == 5);
+	g_assert(g_strcmp0(added_entry->name_hint, "added") == 0);
+	g_assert(g_strcmp0(removed_entry->name_hint, "removed") == 0);
+	g_assert(g_strcmp0(moved_entry->name_hint, "moved") == 0);
+
+	g_assert(added_entry->parent_object == object);
+	g_assert(removed_entry->parent_object == NULL);
 
 	g_object_unref(object);
 
@@ -190,6 +199,8 @@ test_loader_filename_dummy_visible (void)
 	g_assert(entry != NULL);
 	g_list_free(list);
 	g_assert(GTK_IS_LABEL(entry->label));
+	g_assert(entry->parent_object == object);
+	g_assert(INDICATOR_IS_OBJECT(entry->parent_object));
 	GtkWidget * label = GTK_WIDGET(entry->label);
         g_assert(g_object_get_qdata(G_OBJECT(label), is_hidden_quark) == NULL);
 
@@ -239,9 +250,11 @@ test_loader_filename_dummy_simple_location (void)
 	g_assert(entries != NULL);
 	g_assert(g_list_length(entries) == 1);
 
-	g_assert(indicator_object_get_location(object, (IndicatorObjectEntry *)entries->data) == 0);
+	IndicatorObjectEntry *entry = entries->data;
+
+	g_assert(indicator_object_get_location(object, entry) == 0);
 	g_assert(indicator_object_get_location(object, NULL) == 0);
-	g_assert(((IndicatorObjectEntry *)entries->data)->parent_object != NULL);
+	g_assert(entry->parent_object == object);
 
 	g_object_unref(object);
 
