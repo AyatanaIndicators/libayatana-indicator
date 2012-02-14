@@ -1,3 +1,12 @@
+libindicator (0.4.91-0ubuntu1~ppa1) UNRELEASED; urgency=low
+
+  * New upstream release.
+    * Visibility fixes for indicators using that functionality
+    * Ensure that parent_object is more aggressively set
+    * Fix memory leak on groups of items in desktop files
+
+ -- Ted Gould <ted@ubuntu.com>  Tue, 14 Feb 2012 11:49:19 -0600
+
 libindicator (0.4.90-0ubuntu4) precise; urgency=low
 
   * libindicator/indicator-object.c

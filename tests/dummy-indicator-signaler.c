@@ -42,6 +42,7 @@ struct _DummyIndicatorSignalerClass {
 
 struct _DummyIndicatorSignaler {
 	IndicatorObject parent;
+	IndicatorObjectEntry *entries;
 };
 
 GType dummy_indicator_signaler_get_type (void);
@@ -110,9 +111,19 @@ idle_signal (gpointer data)
 {
 	DummyIndicatorSignaler * self = DUMMY_INDICATOR_SIGNALER(data);
 
-	g_signal_emit(G_OBJECT(self), INDICATOR_OBJECT_SIGNAL_ENTRY_ADDED_ID, 0,   GUINT_TO_POINTER(5), TRUE);
-	g_signal_emit(G_OBJECT(self), INDICATOR_OBJECT_SIGNAL_ENTRY_REMOVED_ID, 0, GUINT_TO_POINTER(5), TRUE);
-	g_signal_emit(G_OBJECT(self), INDICATOR_OBJECT_SIGNAL_ENTRY_MOVED_ID, 0, GUINT_TO_POINTER(5), 0, 1, TRUE);
+	IndicatorObjectEntry *added_entry, *removed_entry, *moved_entry;
+
+	added_entry = &self->entries[0];
+	moved_entry = &self->entries[1];
+	removed_entry = &self->entries[2];
+
+	added_entry->name_hint = "added";
+	moved_entry->name_hint = "moved";
+	removed_entry->name_hint = "removed";
+
+	g_signal_emit(G_OBJECT(self), INDICATOR_OBJECT_SIGNAL_ENTRY_ADDED_ID, 0, added_entry);
+	g_signal_emit(G_OBJECT(self), INDICATOR_OBJECT_SIGNAL_ENTRY_MOVED_ID, 0, moved_entry, 0, 1);
+	g_signal_emit(G_OBJECT(self), INDICATOR_OBJECT_SIGNAL_ENTRY_REMOVED_ID, 0, removed_entry);
 
 	return FALSE; /* Don't queue again */
 }
@@ -120,6 +131,7 @@ idle_signal (gpointer data)
 static void
 dummy_indicator_signaler_init (DummyIndicatorSignaler *self)
 {
+	self->entries = g_new0(IndicatorObjectEntry, 3);
 	g_idle_add(idle_signal, self);
 	return;
 }
@@ -135,7 +147,8 @@ dummy_indicator_signaler_dispose (GObject *object)
 static void
 dummy_indicator_signaler_finalize (GObject *object)
 {
-
+	DummyIndicatorSignaler * self = DUMMY_INDICATOR_SIGNALER(object);
+	g_free (self->entries);
 	G_OBJECT_CLASS (dummy_indicator_signaler_parent_class)->finalize (object);
 	return;
 }
