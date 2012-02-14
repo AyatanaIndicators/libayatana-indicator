@@ -52,10 +52,12 @@ AC_ARG_WITH([gtk],
   [with_gtk=3])
 AS_IF([test "x$with_gtk" = x3],
         [PKG_CHECK_MODULES(LIBINDICATOR,  gtk+-3.0 >= $GTK3_REQUIRED_VERSION
+                                          gmodule-2.0
                                           gio-unix-2.0 >= $GIO_UNIX_REQUIRED_VERSION)
         ],
       [test "x$with_gtk" = x2],
         [PKG_CHECK_MODULES(LIBINDICATOR,  gtk+-2.0 >= $GTK_REQUIRED_VERSION
+                                          gmodule-2.0
                                           gio-unix-2.0 >= $GIO_UNIX_REQUIRED_VERSION)
         ],
       [AC_MSG_FAILURE([Value for --with-gtk was neither 2 nor 3])]
