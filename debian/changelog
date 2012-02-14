@@ -7,8 +7,9 @@ libindicator (0.4.91-0ubuntu1~ppa1) UNRELEASED; urgency=low
   * Dropping debian/patches
   * Upstream Merge
     * Explicitly add in gmodule as a required library
+  * debian/control, debian/rules: Adding in autoreconf support
 
- -- Ted Gould <ted@ubuntu.com>  Tue, 14 Feb 2012 14:21:17 -0600
+ -- Ted Gould <ted@ubuntu.com>  Tue, 14 Feb 2012 14:22:50 -0600
 
 libindicator (0.4.90-0ubuntu4) precise; urgency=low
 
