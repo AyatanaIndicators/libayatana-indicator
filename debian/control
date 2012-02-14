@@ -13,7 +13,8 @@ Build-Depends: debhelper (>= 5.0),
                libtool,
                intltool,
                gtk-doc-tools,
-               dh-autoreconf
+               dbus-test-runner,
+               xvfb
 Standards-Version: 3.9.2
 Homepage: https://launchpad.net/libindicator
 Vcs-Bzr: https://code.launchpad.net/~ubuntu-desktop/libindicator/ubuntu
