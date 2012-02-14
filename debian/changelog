@@ -5,8 +5,10 @@ libindicator (0.4.91-0ubuntu1~ppa1) UNRELEASED; urgency=low
     * Ensure that parent_object is more aggressively set
     * Fix memory leak on groups of items in desktop files
   * Dropping debian/patches
+  * Upstream Merge
+    * Explicitly add in gmodule as a required library
 
- -- Ted Gould <ted@ubuntu.com>  Tue, 14 Feb 2012 11:51:52 -0600
+ -- Ted Gould <ted@ubuntu.com>  Tue, 14 Feb 2012 14:21:17 -0600
 
 libindicator (0.4.90-0ubuntu4) precise; urgency=low
 
