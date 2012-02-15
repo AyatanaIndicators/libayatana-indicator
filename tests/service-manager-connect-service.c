@@ -55,7 +55,7 @@ main (int argc, char ** argv)
 	IndicatorService * is = indicator_service_new("org.ayatana.test");
 	g_signal_connect(G_OBJECT(is), INDICATOR_SERVICE_SIGNAL_SHUTDOWN, shutdown, NULL);
 
-	g_timeout_add_seconds(1, timeout, NULL);
+	g_timeout_add_seconds(5, timeout, NULL);
 
 	mainloop = g_main_loop_new(NULL, FALSE);
 	g_main_loop_run(mainloop);
