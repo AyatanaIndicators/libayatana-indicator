@@ -1,3 +1,11 @@
+libindicator (0.4.91-0ubuntu2) precise; urgency=low
+
+  * Upstream Merge
+    * Increasing the test timeout to ensure that's not our issue
+  * debian/rules: Adding messages
+
+ -- Ted Gould <ted@ubuntu.com>  Tue, 14 Feb 2012 21:11:29 -0600
+
 libindicator (0.4.91-0ubuntu1) precise; urgency=low
 
   * New upstream release.
