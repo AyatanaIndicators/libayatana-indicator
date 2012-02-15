@@ -1,8 +1,8 @@
-libindicator (0.4.91-0ubuntu3) UNRELEASED; urgency=low
+libindicator (0.4.91-0ubuntu3) precise; urgency=low
 
-  * Restore revision dropped by error, not sure what happened with the vcs
+  * Restore revision dropped by error, change to format v1 for that
 
- -- Sebastien Bacher <seb128@ubuntu.com>  Wed, 15 Feb 2012 13:08:41 +0100
+ -- Sebastien Bacher <seb128@ubuntu.com>  Wed, 15 Feb 2012 13:09:05 +0100
 
 libindicator (0.4.91-0ubuntu2) precise; urgency=low
 
