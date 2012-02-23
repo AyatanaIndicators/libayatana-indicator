@@ -795,7 +795,7 @@ indicator_object_entry_was_added (IndicatorObject * io, IndicatorObjectEntry * e
 	in different hosts if need be.
 */
 void
-indicator_object_set_environment (IndicatorObject * io, const GStrv env)
+indicator_object_set_environment (IndicatorObject * io, GStrv env)
 {
 	/* FIXME: should this be a property? */
 	g_return_if_fail(INDICATOR_IS_OBJECT(io));
@@ -820,7 +820,7 @@ indicator_object_set_environment (IndicatorObject * io, const GStrv env)
 	Return value: (transfer none): Gets the list of strings that
 	represent the environment or NULL if none were given.
 */
-const GStrv
+GStrv
 indicator_object_get_environment (IndicatorObject * io)
 {
 	g_return_val_if_fail(INDICATOR_IS_OBJECT(io), NULL);
