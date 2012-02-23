@@ -1,22 +1,23 @@
-libindicator (0.4.91-0ubuntu1~ppa3) precise; urgency=low
+libindicator (0.4.91-0ubuntu3) precise; urgency=low
+
+  * Restore revision dropped by error, change to format v1 for that
+
+ -- Sebastien Bacher <seb128@ubuntu.com>  Wed, 15 Feb 2012 13:09:05 +0100
+
+libindicator (0.4.91-0ubuntu2) precise; urgency=low
 
   * Upstream Merge
     * Increasing the test timeout to ensure that's not our issue
+  * debian/rules: Adding messages
 
  -- Ted Gould <ted@ubuntu.com>  Tue, 14 Feb 2012 21:11:29 -0600
 
-libindicator (0.4.91-0ubuntu1~ppa2) precise; urgency=low
-
-  * debian/rules: Adding messages
-
- -- Ted Gould <ted@ubuntu.com>  Tue, 14 Feb 2012 16:48:11 -0600
-
-libindicator (0.4.91-0ubuntu1~ppa1) precise; urgency=low
+libindicator (0.4.91-0ubuntu1) precise; urgency=low
 
   * New upstream release.
     * Visibility fixes for indicators using that functionality
     * Ensure that parent_object is more aggressively set
-    * Fix memory leak on groups of items in desktop files
+    * Fix memory leak on groups of items in desktop files (lp: #923629)
   * Dropping debian/patches
   * Upstream Merge
     * Explicitly add in gmodule as a required library
