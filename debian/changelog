@@ -1,3 +1,11 @@
+libindicator (0.4.92-0ubuntu1~ppa1) UNRELEASED; urgency=low
+
+  * New upstream release.
+    * Removing unenforcable consts (LP: #937387)
+    * Explicitly add in gmodule as a required library
+
+ -- Ted Gould <ted@ubuntu.com>  Thu, 23 Feb 2012 00:24:11 -0600
+
 libindicator (0.4.91-0ubuntu3) precise; urgency=low
 
   * Restore revision dropped by error, change to format v1 for that
