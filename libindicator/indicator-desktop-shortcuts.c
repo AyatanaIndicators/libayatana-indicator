@@ -285,6 +285,7 @@ parse_keyfile (IndicatorDesktopShortcuts * ids)
 	   look for in the rest of the file */
 	const gchar * list_name = NULL;
 	const gchar * group_format = NULL;
+	gboolean should_have_target = FALSE;
 
 	switch (priv->actions) {
 	case ACTIONS_NONE:
@@ -293,10 +294,12 @@ parse_keyfile (IndicatorDesktopShortcuts * ids)
 	case ACTIONS_XAYATANA:
 		list_name = OLD_SHORTCUTS_KEY;
 		group_format = "%s " OLD_GROUP_SUFFIX;
+		should_have_target = TRUE;
 		break;
 	case ACTIONS_DESKTOP_SPEC:
 		list_name = ACTIONS_KEY;
 		group_format = ACTION_GROUP_PREFIX " %s";
+		should_have_target = FALSE;
 		break;
 	default:
 		g_assert_not_reached();
@@ -324,7 +327,7 @@ parse_keyfile (IndicatorDesktopShortcuts * ids)
 			continue;
 		}
 
-		if (!should_show(priv->keyfile, groupname, priv->identity, TRUE)) {
+		if (!should_show(priv->keyfile, groupname, priv->identity, should_have_target)) {
 			g_free(groupname);
 			continue;
 		}
@@ -367,10 +370,6 @@ should_show (GKeyFile * keyfile, const gchar * group, const gchar * identity, gb
 			return FALSE;
 		}
 		return TRUE;	
-	} else {
-		if (should_have_target) {
-			g_warning(OLD_GROUP_SUFFIX " does not have key '" OLD_ENVIRON_KEY "' falling back to deprecated use of '" G_KEY_FILE_DESKTOP_KEY_ONLY_SHOW_IN "' and '" G_KEY_FILE_DESKTOP_KEY_NOT_SHOW_IN "'.");
-		}
 	}
 
 	/* If there is a list of OnlyShowIn entries we need to check
