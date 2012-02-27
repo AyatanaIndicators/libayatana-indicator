@@ -199,6 +199,7 @@ set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec 
 		/* But fallback if we can't */
 		if (priv->actions == ACTIONS_NONE && g_key_file_has_key(keyfile, G_KEY_FILE_DESKTOP_GROUP, OLD_SHORTCUTS_KEY, NULL)) {
 			priv->actions = ACTIONS_XAYATANA;
+			g_warning("Desktop file '%s' is using a depracted format for it's actions that will be dropped soon.", g_value_get_string(value));
 		}
 
 		if (priv->actions == ACTIONS_NONE) {
