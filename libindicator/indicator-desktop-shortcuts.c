@@ -174,6 +174,12 @@ set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec 
 
 	switch(prop_id) {
 	case PROP_DESKTOP_FILE: {
+		if (priv->keyfile != NULL) {
+			g_key_file_free(priv->keyfile);
+			priv->keyfile = NULL;
+			priv->actions = ACTIONS_NONE;
+		}
+
 		GError * error = NULL;
 		GKeyFile * keyfile = g_key_file_new();
 		g_key_file_load_from_file(keyfile, g_value_get_string(value), G_KEY_FILE_NONE, &error);
@@ -185,7 +191,17 @@ set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec 
 			break;
 		}
 
-		if (!g_key_file_has_key(keyfile, G_KEY_FILE_DESKTOP_GROUP, OLD_SHORTCUTS_KEY, NULL)) {
+		/* Always prefer the desktop spec if we can get it */
+		if (priv->actions == ACTIONS_NONE && g_key_file_has_key(keyfile, G_KEY_FILE_DESKTOP_GROUP, ACTIONS_KEY, NULL)) {
+			priv->actions = ACTIONS_DESKTOP_SPEC;
+		}
+
+		/* But fallback if we can't */
+		if (priv->actions == ACTIONS_NONE && g_key_file_has_key(keyfile, G_KEY_FILE_DESKTOP_GROUP, OLD_SHORTCUTS_KEY, NULL)) {
+			priv->actions = ACTIONS_XAYATANA;
+		}
+
+		if (priv->actions == ACTIONS_NONE) {
 			g_key_file_free(keyfile);
 			break;
 		}
