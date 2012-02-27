@@ -28,9 +28,12 @@ License along with this library. If not, see
 #include <gio/gdesktopappinfo.h>
 #include "indicator-desktop-shortcuts.h"
 
-#define GROUP_SUFFIX          "Shortcut Group"
-#define SHORTCUTS_KEY         "X-Ayatana-Desktop-Shortcuts"
-#define ENVIRON_KEY           "TargetEnvironment"
+#define ACTIONS_KEY               "Actions"
+#define ACTION_GROUP_PREFIX       "Desktop Action"
+
+#define OLD_GROUP_SUFFIX          "Shortcut Group"
+#define OLD_SHORTCUTS_KEY         "X-Ayatana-Desktop-Shortcuts"
+#define OLD_ENVIRON_KEY           "TargetEnvironment"
 
 #define PROP_DESKTOP_FILE_S   "desktop-file"
 #define PROP_IDENTITY_S       "identity"
@@ -173,7 +176,7 @@ set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec 
 			break;
 		}
 
-		if (!g_key_file_has_key(keyfile, G_KEY_FILE_DESKTOP_GROUP, SHORTCUTS_KEY, NULL)) {
+		if (!g_key_file_has_key(keyfile, G_KEY_FILE_DESKTOP_GROUP, OLD_SHORTCUTS_KEY, NULL)) {
 			g_key_file_free(keyfile);
 			break;
 		}
@@ -256,13 +259,13 @@ parse_keyfile (IndicatorDesktopShortcuts * ids)
 	/* Okay, we've got everything we need.  Let's get it on! */
 	gint i;
 	gsize num_nicks = 0;
-	gchar ** nicks = g_key_file_get_string_list(priv->keyfile, G_KEY_FILE_DESKTOP_GROUP, SHORTCUTS_KEY, &num_nicks, NULL);
+	gchar ** nicks = g_key_file_get_string_list(priv->keyfile, G_KEY_FILE_DESKTOP_GROUP, OLD_SHORTCUTS_KEY, &num_nicks, NULL);
 
 	/* If there is an error from get_string_list num_nicks should still
 	   be zero, so this loop will drop out. */
 	for (i = 0; i < num_nicks; i++) {
 		/* g_debug("Looking at group nick %s", nicks[i]); */
-		gchar * groupname = g_strdup_printf("%s " GROUP_SUFFIX, nicks[i]);
+		gchar * groupname = g_strdup_printf("%s " OLD_GROUP_SUFFIX, nicks[i]);
 		if (!g_key_file_has_group(priv->keyfile, groupname)) {
 			g_warning("Unable to find group '%s'", groupname);
 			g_free(groupname);
@@ -296,12 +299,12 @@ parse_keyfile (IndicatorDesktopShortcuts * ids)
 static gboolean
 should_show (GKeyFile * keyfile, const gchar * group, const gchar * identity, gboolean should_have_target)
 {
-	if (should_have_target && g_key_file_has_key(keyfile, group, ENVIRON_KEY, NULL)) {
+	if (should_have_target && g_key_file_has_key(keyfile, group, OLD_ENVIRON_KEY, NULL)) {
 		/* If we've got this key, we're going to return here and not
 		   process the deprecated keys. */
 		gint j;
 		gsize num_env = 0;
-		gchar ** envs = g_key_file_get_string_list(keyfile, group, ENVIRON_KEY, &num_env, NULL);
+		gchar ** envs = g_key_file_get_string_list(keyfile, group, OLD_ENVIRON_KEY, &num_env, NULL);
 
 		for (j = 0; j < num_env; j++) {
 			if (g_strcmp0(envs[j], identity) == 0) {
@@ -319,7 +322,7 @@ should_show (GKeyFile * keyfile, const gchar * group, const gchar * identity, gb
 		return TRUE;	
 	} else {
 		if (should_have_target) {
-			g_warning(GROUP_SUFFIX " does not have key '" ENVIRON_KEY "' falling back to deprecated use of '" G_KEY_FILE_DESKTOP_KEY_ONLY_SHOW_IN "' and '" G_KEY_FILE_DESKTOP_KEY_NOT_SHOW_IN "'.");
+			g_warning(OLD_GROUP_SUFFIX " does not have key '" OLD_ENVIRON_KEY "' falling back to deprecated use of '" G_KEY_FILE_DESKTOP_KEY_ONLY_SHOW_IN "' and '" G_KEY_FILE_DESKTOP_KEY_NOT_SHOW_IN "'.");
 		}
 	}
 
@@ -452,7 +455,7 @@ indicator_desktop_shortcuts_nick_get_name (IndicatorDesktopShortcuts * ids, cons
 	g_return_val_if_fail(priv->keyfile != NULL, NULL);
 	g_return_val_if_fail(is_valid_nick((gchar **)priv->nicks->data, nick), NULL);
 
-	gchar * groupheader = g_strdup_printf("%s " GROUP_SUFFIX, nick);
+	gchar * groupheader = g_strdup_printf("%s " OLD_GROUP_SUFFIX, nick);
 	if (!g_key_file_has_group(priv->keyfile, groupheader)) {
 		g_warning("The group for nick '%s' doesn't exist anymore.", nick);
 		g_free(groupheader);
@@ -512,7 +515,7 @@ indicator_desktop_shortcuts_nick_exec (IndicatorDesktopShortcuts * ids, const gc
 	g_return_val_if_fail(priv->keyfile != NULL, FALSE);
 	g_return_val_if_fail(is_valid_nick((gchar **)priv->nicks->data, nick), FALSE);
 
-	gchar * groupheader = g_strdup_printf("%s " GROUP_SUFFIX, nick);
+	gchar * groupheader = g_strdup_printf("%s " OLD_GROUP_SUFFIX, nick);
 	if (!g_key_file_has_group(priv->keyfile, groupheader)) {
 		g_warning("The group for nick '%s' doesn't exist anymore.", nick);
 		g_free(groupheader);
