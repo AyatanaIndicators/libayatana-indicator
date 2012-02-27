@@ -281,16 +281,38 @@ parse_keyfile (IndicatorDesktopShortcuts * ids)
 		priv->domain = g_key_file_get_string(priv->keyfile, G_KEY_FILE_DESKTOP_GROUP, "X-Ubuntu-Gettext-Domain", NULL);
 	}
 
+	/* We need to figure out what we're looking for and what we want to
+	   look for in the rest of the file */
+	const gchar * list_name = NULL;
+	const gchar * group_format = NULL;
+
+	switch (priv->actions) {
+	case ACTIONS_NONE:
+		/* None, let's just get outta here */
+		return;
+	case ACTIONS_XAYATANA:
+		list_name = OLD_SHORTCUTS_KEY;
+		group_format = "%s " OLD_GROUP_SUFFIX;
+		break;
+	case ACTIONS_DESKTOP_SPEC:
+		list_name = ACTIONS_KEY;
+		group_format = ACTION_GROUP_PREFIX " %s";
+		break;
+	default:
+		g_assert_not_reached();
+		return;
+	}
+
 	/* Okay, we've got everything we need.  Let's get it on! */
 	gint i;
 	gsize num_nicks = 0;
-	gchar ** nicks = g_key_file_get_string_list(priv->keyfile, G_KEY_FILE_DESKTOP_GROUP, OLD_SHORTCUTS_KEY, &num_nicks, NULL);
+	gchar ** nicks = g_key_file_get_string_list(priv->keyfile, G_KEY_FILE_DESKTOP_GROUP, list_name, &num_nicks, NULL);
 
 	/* If there is an error from get_string_list num_nicks should still
 	   be zero, so this loop will drop out. */
 	for (i = 0; i < num_nicks; i++) {
 		/* g_debug("Looking at group nick %s", nicks[i]); */
-		gchar * groupname = g_strdup_printf("%s " OLD_GROUP_SUFFIX, nicks[i]);
+		gchar * groupname = g_strdup_printf(group_format, nicks[i]);
 		if (!g_key_file_has_group(priv->keyfile, groupname)) {
 			g_warning("Unable to find group '%s'", groupname);
 			g_free(groupname);
