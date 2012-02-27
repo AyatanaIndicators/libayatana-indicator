@@ -578,7 +578,21 @@ indicator_desktop_shortcuts_nick_exec (IndicatorDesktopShortcuts * ids, const gc
 	g_return_val_if_fail(priv->keyfile != NULL, FALSE);
 	g_return_val_if_fail(is_valid_nick((gchar **)priv->nicks->data, nick), FALSE);
 
-	gchar * groupheader = g_strdup_printf("%s " OLD_GROUP_SUFFIX, nick);
+	const gchar * group_format = NULL;
+
+	switch (priv->actions) {
+	case ACTIONS_XAYATANA:
+		group_format = "%s " OLD_GROUP_SUFFIX;
+		break;
+	case ACTIONS_DESKTOP_SPEC:
+		group_format = ACTION_GROUP_PREFIX " %s";
+		break;
+	default:
+		g_assert_not_reached();
+		return FALSE;
+	}
+
+	gchar * groupheader = g_strdup_printf(group_format, nick);
 	if (!g_key_file_has_group(priv->keyfile, groupheader)) {
 		g_warning("The group for nick '%s' doesn't exist anymore.", nick);
 		g_free(groupheader);
