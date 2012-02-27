@@ -38,8 +38,16 @@ License along with this library. If not, see
 #define PROP_DESKTOP_FILE_S   "desktop-file"
 #define PROP_IDENTITY_S       "identity"
 
+typedef enum _actions_t actions_t;
+enum _actions_t {
+	ACTIONS_NONE,
+	ACTIONS_XAYATANA,
+	ACTIONS_DESKTOP_SPEC
+};
+
 typedef struct _IndicatorDesktopShortcutsPrivate IndicatorDesktopShortcutsPrivate;
 struct _IndicatorDesktopShortcutsPrivate {
+	actions_t actions;
 	GKeyFile * keyfile;
 	gchar * identity;
 	GArray * nicks;
@@ -107,6 +115,7 @@ indicator_desktop_shortcuts_init (IndicatorDesktopShortcuts *self)
 	priv->identity = NULL;
 	priv->domain = NULL;
 	priv->nicks = g_array_new(TRUE, TRUE, sizeof(gchar *));
+	priv->actions = ACTIONS_NONE;
 
 	return;
 }
@@ -452,6 +461,7 @@ indicator_desktop_shortcuts_nick_get_name (IndicatorDesktopShortcuts * ids, cons
 	g_return_val_if_fail(INDICATOR_IS_DESKTOP_SHORTCUTS(ids), NULL);
 	IndicatorDesktopShortcutsPrivate * priv = INDICATOR_DESKTOP_SHORTCUTS_GET_PRIVATE(ids);
 
+	g_return_val_if_fail(priv->actions != ACTIONS_NONE, NULL);
 	g_return_val_if_fail(priv->keyfile != NULL, NULL);
 	g_return_val_if_fail(is_valid_nick((gchar **)priv->nicks->data, nick), NULL);
 
@@ -512,6 +522,7 @@ indicator_desktop_shortcuts_nick_exec (IndicatorDesktopShortcuts * ids, const gc
 	g_return_val_if_fail(INDICATOR_IS_DESKTOP_SHORTCUTS(ids), FALSE);
 	IndicatorDesktopShortcutsPrivate * priv = INDICATOR_DESKTOP_SHORTCUTS_GET_PRIVATE(ids);
 
+	g_return_val_if_fail(priv->actions != ACTIONS_NONE, FALSE);
 	g_return_val_if_fail(priv->keyfile != NULL, FALSE);
 	g_return_val_if_fail(is_valid_nick((gchar **)priv->nicks->data, nick), FALSE);
 
