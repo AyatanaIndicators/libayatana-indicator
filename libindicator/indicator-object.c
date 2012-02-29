@@ -473,12 +473,8 @@ indicator_object_new_from_file (const gchar * file)
 	/* Error, let's drop the object and return NULL.  Sad when
 	   this happens. */
 unrefandout:
-	if (object != NULL) {
-		g_object_unref(object);
-	}
-	if (module != NULL) {
-		g_object_unref(module);
-	}
+	g_clear_object (&object);
+	g_clear_object (&module);
 	g_warning("Error building IndicatorObject from file: %s", file);
 	return NULL;
 }
