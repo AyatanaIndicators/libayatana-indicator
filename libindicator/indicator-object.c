@@ -464,9 +464,8 @@ indicator_object_new_from_file (const gchar * file)
 		goto unrefandout;
 	}
 
-	IndicatorObjectPrivate * priv = INDICATOR_OBJECT_GET_PRIVATE(object);
 	/* Now we can track the module */
-	priv->module = module;
+	INDICATOR_OBJECT_GET_PRIVATE(object)->module = module;
 
 	return INDICATOR_OBJECT(object);
 
