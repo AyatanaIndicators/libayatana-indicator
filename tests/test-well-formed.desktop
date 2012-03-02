@@ -2,23 +2,23 @@
 Name=My Application
 Exec=ls
 NotShowIn=Germany
-X-Ayatana-Desktop-Shortcuts=bob;alvin;jim;touch
+Actions=bob;alvin;jim;touch
 
-[bob Shortcut Group]
+[Desktop Action bob]
 Name=bob's shortcut
 Exec=ls bob
 
-[alvin Shortcut Group]
+[Desktop Action alvin]
 Name=alvin's shortcut
 Exec=ls alvin
 OnlyShowIn=France
 
-[jim Shortcut Group]
+[Desktop Action jim]
 Name=Jim's shortcut
 Exec=ls jim
 NotShowIn=France
 
-[touch Shortcut Group]
+[Desktop Action touch]
 Name=Touch Test
 Exec=touch test-desktop-shortcuts-touch-test
 OnlyShowIn=TouchTest

@@ -28,15 +28,26 @@ License along with this library. If not, see
 #include <gio/gdesktopappinfo.h>
 #include "indicator-desktop-shortcuts.h"
 
-#define GROUP_SUFFIX          "Shortcut Group"
-#define SHORTCUTS_KEY         "X-Ayatana-Desktop-Shortcuts"
-#define ENVIRON_KEY           "TargetEnvironment"
+#define ACTIONS_KEY               "Actions"
+#define ACTION_GROUP_PREFIX       "Desktop Action"
+
+#define OLD_GROUP_SUFFIX          "Shortcut Group"
+#define OLD_SHORTCUTS_KEY         "X-Ayatana-Desktop-Shortcuts"
+#define OLD_ENVIRON_KEY           "TargetEnvironment"
 
 #define PROP_DESKTOP_FILE_S   "desktop-file"
 #define PROP_IDENTITY_S       "identity"
 
+typedef enum _actions_t actions_t;
+enum _actions_t {
+	ACTIONS_NONE,
+	ACTIONS_XAYATANA,
+	ACTIONS_DESKTOP_SPEC
+};
+
 typedef struct _IndicatorDesktopShortcutsPrivate IndicatorDesktopShortcutsPrivate;
 struct _IndicatorDesktopShortcutsPrivate {
+	actions_t actions;
 	GKeyFile * keyfile;
 	gchar * identity;
 	GArray * nicks;
@@ -104,6 +115,7 @@ indicator_desktop_shortcuts_init (IndicatorDesktopShortcuts *self)
 	priv->identity = NULL;
 	priv->domain = NULL;
 	priv->nicks = g_array_new(TRUE, TRUE, sizeof(gchar *));
+	priv->actions = ACTIONS_NONE;
 
 	return;
 }
@@ -162,6 +174,12 @@ set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec 
 
 	switch(prop_id) {
 	case PROP_DESKTOP_FILE: {
+		if (priv->keyfile != NULL) {
+			g_key_file_free(priv->keyfile);
+			priv->keyfile = NULL;
+			priv->actions = ACTIONS_NONE;
+		}
+
 		GError * error = NULL;
 		GKeyFile * keyfile = g_key_file_new();
 		g_key_file_load_from_file(keyfile, g_value_get_string(value), G_KEY_FILE_NONE, &error);
@@ -173,7 +191,18 @@ set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec 
 			break;
 		}
 
-		if (!g_key_file_has_key(keyfile, G_KEY_FILE_DESKTOP_GROUP, SHORTCUTS_KEY, NULL)) {
+		/* Always prefer the desktop spec if we can get it */
+		if (priv->actions == ACTIONS_NONE && g_key_file_has_key(keyfile, G_KEY_FILE_DESKTOP_GROUP, ACTIONS_KEY, NULL)) {
+			priv->actions = ACTIONS_DESKTOP_SPEC;
+		}
+
+		/* But fallback if we can't */
+		if (priv->actions == ACTIONS_NONE && g_key_file_has_key(keyfile, G_KEY_FILE_DESKTOP_GROUP, OLD_SHORTCUTS_KEY, NULL)) {
+			priv->actions = ACTIONS_XAYATANA;
+			g_warning("Desktop file '%s' is using a depracted format for it's actions that will be dropped soon.", g_value_get_string(value));
+		}
+
+		if (priv->actions == ACTIONS_NONE) {
 			g_key_file_free(keyfile);
 			break;
 		}
@@ -253,16 +282,41 @@ parse_keyfile (IndicatorDesktopShortcuts * ids)
 		priv->domain = g_key_file_get_string(priv->keyfile, G_KEY_FILE_DESKTOP_GROUP, "X-Ubuntu-Gettext-Domain", NULL);
 	}
 
+	/* We need to figure out what we're looking for and what we want to
+	   look for in the rest of the file */
+	const gchar * list_name = NULL;
+	const gchar * group_format = NULL;
+	gboolean should_have_target = FALSE;
+
+	switch (priv->actions) {
+	case ACTIONS_NONE:
+		/* None, let's just get outta here */
+		return;
+	case ACTIONS_XAYATANA:
+		list_name = OLD_SHORTCUTS_KEY;
+		group_format = "%s " OLD_GROUP_SUFFIX;
+		should_have_target = TRUE;
+		break;
+	case ACTIONS_DESKTOP_SPEC:
+		list_name = ACTIONS_KEY;
+		group_format = ACTION_GROUP_PREFIX " %s";
+		should_have_target = FALSE;
+		break;
+	default:
+		g_assert_not_reached();
+		return;
+	}
+
 	/* Okay, we've got everything we need.  Let's get it on! */
 	gint i;
 	gsize num_nicks = 0;
-	gchar ** nicks = g_key_file_get_string_list(priv->keyfile, G_KEY_FILE_DESKTOP_GROUP, SHORTCUTS_KEY, &num_nicks, NULL);
+	gchar ** nicks = g_key_file_get_string_list(priv->keyfile, G_KEY_FILE_DESKTOP_GROUP, list_name, &num_nicks, NULL);
 
 	/* If there is an error from get_string_list num_nicks should still
 	   be zero, so this loop will drop out. */
 	for (i = 0; i < num_nicks; i++) {
 		/* g_debug("Looking at group nick %s", nicks[i]); */
-		gchar * groupname = g_strdup_printf("%s " GROUP_SUFFIX, nicks[i]);
+		gchar * groupname = g_strdup_printf(group_format, nicks[i]);
 		if (!g_key_file_has_group(priv->keyfile, groupname)) {
 			g_warning("Unable to find group '%s'", groupname);
 			g_free(groupname);
@@ -274,7 +328,7 @@ parse_keyfile (IndicatorDesktopShortcuts * ids)
 			continue;
 		}
 
-		if (!should_show(priv->keyfile, groupname, priv->identity, TRUE)) {
+		if (!should_show(priv->keyfile, groupname, priv->identity, should_have_target)) {
 			g_free(groupname);
 			continue;
 		}
@@ -296,12 +350,12 @@ parse_keyfile (IndicatorDesktopShortcuts * ids)
 static gboolean
 should_show (GKeyFile * keyfile, const gchar * group, const gchar * identity, gboolean should_have_target)
 {
-	if (should_have_target && g_key_file_has_key(keyfile, group, ENVIRON_KEY, NULL)) {
+	if (should_have_target && g_key_file_has_key(keyfile, group, OLD_ENVIRON_KEY, NULL)) {
 		/* If we've got this key, we're going to return here and not
 		   process the deprecated keys. */
 		gint j;
 		gsize num_env = 0;
-		gchar ** envs = g_key_file_get_string_list(keyfile, group, ENVIRON_KEY, &num_env, NULL);
+		gchar ** envs = g_key_file_get_string_list(keyfile, group, OLD_ENVIRON_KEY, &num_env, NULL);
 
 		for (j = 0; j < num_env; j++) {
 			if (g_strcmp0(envs[j], identity) == 0) {
@@ -317,10 +371,6 @@ should_show (GKeyFile * keyfile, const gchar * group, const gchar * identity, gb
 			return FALSE;
 		}
 		return TRUE;	
-	} else {
-		if (should_have_target) {
-			g_warning(GROUP_SUFFIX " does not have key '" ENVIRON_KEY "' falling back to deprecated use of '" G_KEY_FILE_DESKTOP_KEY_ONLY_SHOW_IN "' and '" G_KEY_FILE_DESKTOP_KEY_NOT_SHOW_IN "'.");
-		}
 	}
 
 	/* If there is a list of OnlyShowIn entries we need to check
@@ -449,10 +499,25 @@ indicator_desktop_shortcuts_nick_get_name (IndicatorDesktopShortcuts * ids, cons
 	g_return_val_if_fail(INDICATOR_IS_DESKTOP_SHORTCUTS(ids), NULL);
 	IndicatorDesktopShortcutsPrivate * priv = INDICATOR_DESKTOP_SHORTCUTS_GET_PRIVATE(ids);
 
+	g_return_val_if_fail(priv->actions != ACTIONS_NONE, NULL);
 	g_return_val_if_fail(priv->keyfile != NULL, NULL);
 	g_return_val_if_fail(is_valid_nick((gchar **)priv->nicks->data, nick), NULL);
 
-	gchar * groupheader = g_strdup_printf("%s " GROUP_SUFFIX, nick);
+	const gchar * group_format = NULL;
+
+	switch (priv->actions) {
+	case ACTIONS_XAYATANA:
+		group_format = "%s " OLD_GROUP_SUFFIX;
+		break;
+	case ACTIONS_DESKTOP_SPEC:
+		group_format = ACTION_GROUP_PREFIX " %s";
+		break;
+	default:
+		g_assert_not_reached();
+		return NULL;
+	}
+
+	gchar * groupheader = g_strdup_printf(group_format, nick);
 	if (!g_key_file_has_group(priv->keyfile, groupheader)) {
 		g_warning("The group for nick '%s' doesn't exist anymore.", nick);
 		g_free(groupheader);
@@ -509,10 +574,25 @@ indicator_desktop_shortcuts_nick_exec (IndicatorDesktopShortcuts * ids, const gc
 	g_return_val_if_fail(INDICATOR_IS_DESKTOP_SHORTCUTS(ids), FALSE);
 	IndicatorDesktopShortcutsPrivate * priv = INDICATOR_DESKTOP_SHORTCUTS_GET_PRIVATE(ids);
 
+	g_return_val_if_fail(priv->actions != ACTIONS_NONE, FALSE);
 	g_return_val_if_fail(priv->keyfile != NULL, FALSE);
 	g_return_val_if_fail(is_valid_nick((gchar **)priv->nicks->data, nick), FALSE);
 
-	gchar * groupheader = g_strdup_printf("%s " GROUP_SUFFIX, nick);
+	const gchar * group_format = NULL;
+
+	switch (priv->actions) {
+	case ACTIONS_XAYATANA:
+		group_format = "%s " OLD_GROUP_SUFFIX;
+		break;
+	case ACTIONS_DESKTOP_SPEC:
+		group_format = ACTION_GROUP_PREFIX " %s";
+		break;
+	default:
+		g_assert_not_reached();
+		return FALSE;
+	}
+
+	gchar * groupheader = g_strdup_printf(group_format, nick);
 	if (!g_key_file_has_group(priv->keyfile, groupheader)) {
 		g_warning("The group for nick '%s' doesn't exist anymore.", nick);
 		g_free(groupheader);
