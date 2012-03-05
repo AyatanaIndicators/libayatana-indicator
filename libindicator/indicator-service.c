@@ -588,7 +588,9 @@ unwatch_core (IndicatorService * service, const gchar * name)
 	/* Remove us from the watcher list here */
 	gpointer watcher_item = g_hash_table_lookup(priv->watchers, name);
 	if (watcher_item != NULL) {
-		g_hash_table_remove(priv->watchers, name);
+		gchar * safe_name = g_strdup(name);
+		g_hash_table_remove(priv->watchers, safe_name);
+		g_free(safe_name);
 	} else {
 		/* Odd that we couldn't find the person, but, eh */
 		g_warning("Unable to find watcher who is unwatching: %s", name);
