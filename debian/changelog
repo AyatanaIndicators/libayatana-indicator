@@ -1,3 +1,12 @@
+libindicator (0.4.93-0ubuntu1~ppa1) UNRELEASED; urgency=low
+
+  * New upstream release.
+    * Fix branching past initialization of variables (LP: #939061)
+    * Support new FD.o Desktop Actions (LP: #942042)
+    * Fix valgrind error on unload (LP: #719457)
+
+ -- Ted Gould <ted@ubuntu.com>  Wed, 07 Mar 2012 14:10:26 -0600
+
 libindicator (0.4.92-0ubuntu2) precise; urgency=low
 
   * Backport support for the fdo desktop action spec, that's required
