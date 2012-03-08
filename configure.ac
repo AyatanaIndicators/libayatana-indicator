@@ -1,5 +1,5 @@
 AC_INIT([libindicator],
-        [0.4.92],
+        [0.4.93],
         [http://bugs.launchpad.net/libindicator],
         [libindicator],
         [http://launchpad.net/libindicator])
