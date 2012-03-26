@@ -74,6 +74,9 @@ refresh_image (GtkImage * image)
 
 	if (pixbuf == NULL) {
 		g_warning("Unable to load icon from file '%s' because: %s", icon_filename, error == NULL ? "I don't know" : error->message);
+		if (error != NULL) {
+			g_error_free(error);
+		}
 		gtk_image_clear(image);
 		return;
 	}
