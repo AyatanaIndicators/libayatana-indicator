@@ -1,4 +1,4 @@
-libindicator (0.4.94-0ubuntu1~ppa1) precise; urgency=low
+libindicator (0.4.94-0ubuntu1) precise; urgency=low
 
   * New upstream release.
     * Fix a leaked GError (LP: #965459)
