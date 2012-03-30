@@ -1,5 +1,5 @@
 AC_INIT([libindicator],
-        [0.4.93],
+        [0.4.94],
         [http://bugs.launchpad.net/libindicator],
         [libindicator],
         [http://launchpad.net/libindicator])
@@ -9,6 +9,7 @@ AC_PREREQ([2.64])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([build-aux])
+AC_SUBST([ac_aux_dir])
 
 AM_INIT_AUTOMAKE([1.11 -Wall tar-pax])
 

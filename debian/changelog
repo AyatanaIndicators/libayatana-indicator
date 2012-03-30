@@ -1,3 +1,11 @@
+libindicator (0.4.94-0ubuntu1~ppa1) precise; urgency=low
+
+  * New upstream release.
+    * Fix a leaked GError (LP: #965459)
+    * Fix memory leak when the proxy's name changes.
+
+ -- Charles Kerr <charles.kerr@canonical.com>  Thu, 29 Mar 2012 13:56:59 -0700
+
 libindicator (0.4.93-0ubuntu1) precise; urgency=low
 
   * New upstream release.
