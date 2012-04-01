@@ -571,9 +571,6 @@ service_proxy_name_changed (GDBusConnection * connection, const gchar * sender_n
 		}
 	}
 
-	g_free (new_name);
-	g_free (prev_name);
-
 	return;
 }
 
