@@ -1,3 +1,9 @@
+libindicator (0.4.94-0ubuntu2) UNRELEASED; urgency=low
+
+  * Revert r457 it's creating invalid free errors
+
+ -- Sebastien Bacher <seb128@ubuntu.com>  Mon, 02 Apr 2012 11:06:50 +0200
+
 libindicator (0.4.94-0ubuntu1) precise; urgency=low
 
   * New upstream release.
