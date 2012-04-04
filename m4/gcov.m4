@@ -5,11 +5,10 @@
 #  * gcovr
 # 
 # Sets ac_cv_check_gcov to yes if tooling is present
-# and reports the executables to the variables LCOV, GCOVR and GENHTML. 
+# and reports the executables to the variables LCOV, GCOVR and GENHTML.
 AC_DEFUN([AC_TDD_GCOV],
-[AC_CACHE_CHECK([whether code coverage tools are available], ac_cv_check_gcov,
 [
-AC_ARG_ENABLE(gcov,
+  AC_ARG_ENABLE(gcov,
   AS_HELP_STRING([--enable-gcov],
 		 [enable coverage testing with gcov]),
   [use_gcov=$enableval], [use_gcov=no])
@@ -34,7 +33,6 @@ AC_ARG_ENABLE(gcov,
   lcov_version_list="1.6 1.7 1.8 1.9"
   AC_CHECK_PROG(LCOV, lcov, lcov)
   AC_CHECK_PROG(GENHTML, genhtml, genhtml)
-  AC_CHECK_PROG(GCOVR, gcovr, gcovr)
 
   if test "$LCOV"; then
     AC_CACHE_CHECK([for lcov version], glib_cv_lcov_version, [
@@ -63,10 +61,8 @@ AC_ARG_ENABLE(gcov,
     AC_MSG_ERROR([Could not find genhtml from the lcov package])
   fi
 
-  if test -z "$GCOVR"; then
-    AC_MSG_ERROR([Could not find gcovr; easy_install (or pip) gcovr])
-  fi
-
+  ac_cv_check_gcov=yes
+  ac_cv_check_lcov=yes
 
   # Remove all optimization flags from CFLAGS
   changequote({,})
@@ -78,5 +74,13 @@ AC_ARG_ENABLE(gcov,
   COVERAGE_CXXFLAGS="-O0 -fprofile-arcs -ftest-coverage"	
   COVERAGE_LDFLAGS="-lgcov"
 
+  # Check availability of gcovr
+  AC_CHECK_PROG(GCOVR, gcovr, gcovr)
+  if test -z "$GCOVR"; then
+    ac_cv_check_gcovr=no
+  else
+    ac_cv_check_gcovr=yes
+  fi
+
 fi
-])]) # AC_TDD_GCOV
+]) # AC_TDD_GCOV
