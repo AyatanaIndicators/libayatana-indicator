@@ -19,7 +19,6 @@ indicator_loader_SOURCES = \
 indicator_loader_CFLAGS = \
 	-Wall -Werror \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir) \
-        -Wall -Werror \
 	-DBUILD_DIR="\"$(builddir)\""
 
 indicator_loader_LDADD = \
