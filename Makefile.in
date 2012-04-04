@@ -14,6 +14,8 @@
 # PARTICULAR PURPOSE.
 
 @SET_MAKE@
+
+# Coverage targets
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -36,13 +38,15 @@ host_triplet = @host@
 @WANT_TESTS_TRUE@am__append_1 = \
 @WANT_TESTS_TRUE@	tests
 
-subdir = .
 DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
-	$(top_srcdir)/configure AUTHORS COPYING ChangeLog INSTALL NEWS \
-	build-aux/compile build-aux/config.guess build-aux/config.sub \
-	build-aux/depcomp build-aux/install-sh build-aux/ltmain.sh \
-	build-aux/missing
+	$(top_srcdir)/Makefile.am.coverage $(top_srcdir)/configure \
+	AUTHORS COPYING ChangeLog INSTALL NEWS build-aux/compile \
+	build-aux/config.guess build-aux/config.sub build-aux/depcomp \
+	build-aux/install-sh build-aux/ltmain.sh build-aux/missing \
+	compile config.guess config.sub depcomp install-sh ltmain.sh \
+	missing
+subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
 	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
@@ -266,7 +270,7 @@ all: config.h
 .SUFFIXES:
 am--refresh: Makefile
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/Makefile.am.coverage $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -289,6 +293,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe);; \
 	esac;
+$(top_srcdir)/Makefile.am.coverage:
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
@@ -808,40 +813,43 @@ dist-hook:
 			echo Failed to generate AUTHORS: not a branch >&2; \
 	fi
 
-# Coverage targets
+.PHONY: clean-gcno clean-gcda \
+	coverage-html generate-coverage-html clean-coverage-html \
+	coverage-gcovr generate-coverage-gcovr clean-coverage-gcovr
 
-.PHONY: clean-gcda
-clean-gcda:
-	@echo Removing old coverage results
-	-find -name '*.gcda' -print | xargs -r rm
+clean-local: clean-gcno clean-coverage-html clean-coverage-gcovr
 
-.PHONY: coverage-html generate-coverage-html clean-coverage-html
-coverage-html: clean-gcda
-	-$(MAKE) $(AM_MAKEFLAGS) -k check
-	$(MAKE) $(AM_MAKEFLAGS) generate-coverage-html
+@HAVE_GCOV_TRUE@clean-gcno:
+@HAVE_GCOV_TRUE@	@echo Removing old coverage instrumentation
+@HAVE_GCOV_TRUE@	-find -name '*.gcno' -print | xargs -r rm
 
-generate-coverage-html:
-	@echo Collecting coverage data
-	$(LCOV) --directory $(top_builddir) --capture --output-file coverage.info --no-checksum --compat-libtool
-	LANG=C $(GENHTML) --prefix $(top_builddir) --output-directory coveragereport --title "Code Coverage" --legend --show-details coverage.info
+@HAVE_GCOV_TRUE@clean-gcda:
+@HAVE_GCOV_TRUE@	@echo Removing old coverage results
+@HAVE_GCOV_TRUE@	-find -name '*.gcda' -print | xargs -r rm
 
-clean-coverage-html: clean-gcda
-	-$(LCOV) --directory $(top_builddir) -z
-	-rm -rf coverage.info coveragereport
+@HAVE_GCOV_TRUE@coverage-html: clean-gcda
+@HAVE_GCOV_TRUE@	-$(MAKE) $(AM_MAKEFLAGS) -k check
+@HAVE_GCOV_TRUE@	$(MAKE) $(AM_MAKEFLAGS) generate-coverage-html
 
-.PHONY: coverage-xml generate-coverage-xml clean-coverage-xml
-coverage-xml: clean-gcda
-	-$(MAKE) $(AM_MAKEFLAGS) -k check
-	$(MAKE) $(AM_MAKEFLAGS) generate-coverage-xml
+@HAVE_GCOV_TRUE@generate-coverage-html:
+@HAVE_GCOV_TRUE@	@echo Collecting coverage data
+@HAVE_GCOV_TRUE@	$(LCOV) --directory $(top_builddir) --capture --output-file coverage.info --no-checksum --compat-libtool
+@HAVE_GCOV_TRUE@	LANG=C $(GENHTML) --prefix $(top_builddir) --output-directory coveragereport --title "Code Coverage" --legend --show-details coverage.info
 
-generate-coverage-xml:
-	@echo Generating coverage XML report
-	$(GCOVR) -x -r $(top_builddir) -o $(top_builddir)/coverage.xml
+@HAVE_GCOV_TRUE@clean-coverage-html: clean-gcda
+@HAVE_GCOV_TRUE@	-$(LCOV) --directory $(top_builddir) -z
+@HAVE_GCOV_TRUE@	-rm -rf coverage.info coveragereport
 
-clean-coverage-xml: clean-gcda
-	-rm -rf $(top_builddir)/coverage.xml
+@HAVE_GCOVR_TRUE@@HAVE_GCOV_TRUE@coverage-gcovr: clean-gcda
+@HAVE_GCOVR_TRUE@@HAVE_GCOV_TRUE@	-$(MAKE) $(AM_MAKEFLAGS) -k check
+@HAVE_GCOVR_TRUE@@HAVE_GCOV_TRUE@	$(MAKE) $(AM_MAKEFLAGS) generate-coverage-gcovr
 
-clean-local: clean-coverage-html clean-coverage-xml
+@HAVE_GCOVR_TRUE@@HAVE_GCOV_TRUE@generate-coverage-gcovr:
+@HAVE_GCOVR_TRUE@@HAVE_GCOV_TRUE@	@echo Generating coverage GCOVR report
+@HAVE_GCOVR_TRUE@@HAVE_GCOV_TRUE@	$(GCOVR) -x -r $(top_builddir) -o $(top_builddir)/coverage.xml
+
+@HAVE_GCOVR_TRUE@@HAVE_GCOV_TRUE@clean-coverage-gcovr: clean-gcda
+@HAVE_GCOVR_TRUE@@HAVE_GCOV_TRUE@	-rm -rf $(top_builddir)/coverage.xml
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

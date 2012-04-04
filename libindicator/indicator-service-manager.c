@@ -536,8 +536,8 @@ service_proxy_name_changed (GDBusConnection * connection, const gchar * sender_n
 {
 	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(user_data);
 
-	gchar * new_name = NULL;
-	gchar * prev_name = NULL;
+	const gchar * new_name = NULL;
+	const gchar * prev_name = NULL;
 	g_variant_get(parameters, "(&s&s&s)", NULL, &prev_name, &new_name);
 
 	if (new_name == NULL || new_name[0] == 0) {
@@ -570,9 +570,6 @@ service_proxy_name_changed (GDBusConnection * connection, const gchar * sender_n
 			                  user_data);
 		}
 	}
-
-	g_free (new_name);
-	g_free (prev_name);
 
 	return;
 }
