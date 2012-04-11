@@ -143,7 +143,7 @@ indicator_image_helper_update (GtkImage * image, const gchar * name)
 {
 	g_return_if_fail(name != NULL);
 	g_return_if_fail(name[0] != '\0');
-	g_return_if_fail(image != NULL);
+	g_return_if_fail(GTK_IS_IMAGE(image));
 	gboolean seen_previously = FALSE;
 
 	/* Build us a GIcon */
