@@ -1,4 +1,4 @@
-libindicator (0.5.0-0ubuntu1~ppa1) precise; urgency=low
+libindicator (0.5.0-0ubuntu1) precise; urgency=low
 
   * New upstream release.
     * Validate images in image_helper_update() (LP: #946408)
