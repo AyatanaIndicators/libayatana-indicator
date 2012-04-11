@@ -1,4 +1,4 @@
-libindicator (0.4.95-0ubuntu1~ppa1) precise; urgency=low
+libindicator (0.4.95-0ubuntu1) precise; urgency=low
 
   * New upstream release.
     * Fix a free that shouldn't be (LP: #969360)
