@@ -1,3 +1,10 @@
+libindicator (0.5.0-0ubuntu1~ppa1) precise; urgency=low
+
+  * New upstream release.
+    * Validate images in image_helper_update() (LP: #946408)
+
+ -- Charles Kerr <charles.kerr@canonical.com>  Wed, 11 Apr 2012 10:54:42 -0500
+
 libindicator (0.4.95-0ubuntu1) precise; urgency=low
 
   * New upstream release.
