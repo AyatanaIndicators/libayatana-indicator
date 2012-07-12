@@ -1,8 +1,8 @@
-libindicator (12.10.0-0ubuntu1) UNRELEASED; urgency=low
+libindicator (12.10.0-0ubuntu1) quantal; urgency=low
 
   * New upstream release.
 
- -- Sebastien Bacher <seb128@ubuntu.com>  Thu, 12 Jul 2012 17:36:01 +0200
+ -- Sebastien Bacher <seb128@ubuntu.com>  Thu, 12 Jul 2012 17:44:46 +0200
 
 libindicator (0.5.0-0ubuntu1) precise; urgency=low
 
