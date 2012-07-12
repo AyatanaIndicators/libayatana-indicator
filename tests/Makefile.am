@@ -371,7 +371,7 @@ DISTCLEANFILES += service-version-tester service-version-bad.service service-ver
 
 check_PROGRAMS += service-version-multiwatch-manager
 
-service_version_manager_SOURCES = \
+service_version_multiwatch_manager_SOURCES = \
 	service-version-values.h \
 	service-version-multiwatch-manager.c
 
@@ -386,7 +386,7 @@ service_version_multiwatch_manager_LDADD = \
 
 check_PROGRAMS += service-version-multiwatch-manager-impolite
 
-service_version_manager_impolite_SOURCES = \
+service_version_multiwatch_manager_impolite_SOURCES = \
 	service-version-values.h \
 	service-version-multiwatch-manager-impolite.c
 
