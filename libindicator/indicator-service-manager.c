@@ -636,7 +636,7 @@ start_service_again (IndicatorServiceManager * manager)
 		object.
 */
 IndicatorServiceManager *
-indicator_service_manager_new (gchar * dbus_name)
+indicator_service_manager_new (const gchar * dbus_name)
 {
 	GObject * obj = g_object_new(INDICATOR_SERVICE_MANAGER_TYPE,
 	                             PROP_NAME_S, dbus_name,
@@ -660,7 +660,7 @@ indicator_service_manager_new (gchar * dbus_name)
 		object.
 */
 IndicatorServiceManager *
-indicator_service_manager_new_version (gchar * dbus_name, guint version)
+indicator_service_manager_new_version (const gchar * dbus_name, guint version)
 {
 	GObject * obj = g_object_new(INDICATOR_SERVICE_MANAGER_TYPE,
 	                             PROP_NAME_S, dbus_name,
