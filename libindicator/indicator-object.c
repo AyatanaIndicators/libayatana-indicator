@@ -113,9 +113,7 @@ static void get_property (GObject*, guint prop_id,       GValue*, GParamSpec* );
 /* entries' visibility */
 static GList * get_entries_default               (IndicatorObject*);
 static GList * get_all_entries                   (IndicatorObject*);
-static void entry_being_removed_default          (IndicatorObject*, IndicatorObjectEntry*);
 static void indicator_object_entry_being_removed (IndicatorObject*, IndicatorObjectEntry*);
-static void entry_was_added_default              (IndicatorObject*, IndicatorObjectEntry*);
 static void indicator_object_entry_was_added     (IndicatorObject*, IndicatorObjectEntry*);
 static IndicatorObjectEntryPrivate * entry_get_private (IndicatorObject*, IndicatorObjectEntry*);
 
@@ -141,8 +139,8 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 	klass->get_accessible_desc = NULL;
 	klass->get_entries = get_entries_default;
 	klass->get_location = NULL;
-	klass->entry_being_removed = entry_being_removed_default;
-	klass->entry_was_added = entry_was_added_default;
+	klass->entry_being_removed = NULL;
+	klass->entry_was_added = NULL;
 
 	klass->entry_activate = NULL;
 	klass->entry_activate_window = NULL;
@@ -935,63 +933,4 @@ set_property (GObject       * object,
                 G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
                 break;
         }
-}
-
-/***
-****
-***/
-
-/* Cloaked entries are ones which are hidden but may be re-added later.
-   They are reffed + unparented so that they'll survive even if the
-   rest of the widgetry is destroyed */
-#define CLOAKED_KEY "entry-is-cloaked"
-
-static void
-decloak_widget (gpointer w)
-{
-	if (w != NULL) {
-		GObject * o = G_OBJECT(w);
-		if (g_object_steal_data (o, CLOAKED_KEY) != NULL) {
-			g_object_unref (o);
-		}
-	}
-}
-
-static void
-entry_was_added_default (IndicatorObject * io, IndicatorObjectEntry * entry)
-{
-	decloak_widget (entry->image);
-	decloak_widget (entry->label);
-	decloak_widget (entry->menu);
-}
-
-static void
-cloak_widget (gpointer w)
-{
-	if (w != NULL) {
-		GtkWidget * parent;
-
-		/* tag this object as cloaked */
-		GObject * o = G_OBJECT(w);
-		g_object_ref (o);
-		g_object_set_data (o, CLOAKED_KEY, GINT_TO_POINTER(1));
-
-		/* remove it from its surrounding widgetry */
-		if(GTK_IS_MENU(w)) {
-			if (gtk_menu_get_attach_widget (GTK_MENU(w)) != NULL) {
-				gtk_menu_detach (GTK_MENU(w));
-			}
-		}
-		else if((parent = gtk_widget_get_parent(w))) {
-			gtk_container_remove(GTK_CONTAINER(parent), w);
-		}
-	}
-}
-
-static void
-entry_being_removed_default (IndicatorObject * io, IndicatorObjectEntry * entry)
-{
-	cloak_widget (entry->image);
-	cloak_widget (entry->label);
-	cloak_widget (entry->menu);
 }
