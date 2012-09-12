@@ -934,3 +934,4 @@ set_property (GObject       * object,
                 break;
         }
 }
+
