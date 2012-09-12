@@ -25,6 +25,8 @@ License along with this library. If not, see
 #include <gtk/gtk.h>
 #include <libindicator/indicator-object.h>
 
+static GHashTable * entry_to_menuitem = NULL;
+
 #define ENTRY_DATA_NAME "indicator-custom-entry-data"
 
 static void
@@ -40,20 +42,18 @@ activate_entry (GtkWidget * widget, gpointer user_data)
 	return;
 }
 
-static void
-entry_added (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data)
+static GtkWidget*
+create_menu_item (IndicatorObjectEntry * entry)
 {
-	g_debug("Signal: Entry Added");
+	GtkWidget * hbox;
+	GtkWidget * menuitem;
 
-	if (entry->parent_object == NULL) {
-		g_warning("Entry '%p' does not have a parent object", entry);
-	}
+	menuitem = gtk_menu_item_new();
 
-	GtkWidget * menuitem = gtk_menu_item_new();
 #if GTK_CHECK_VERSION(3,0,0)
-	GtkWidget * hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 3);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 3);
 #else
-	GtkWidget * hbox = gtk_hbox_new(FALSE, 3);
+	hbox = gtk_hbox_new(FALSE, 3);
 #endif
 
 	if (entry->image != NULL) {
@@ -69,26 +69,34 @@ entry_added (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_d
 		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), GTK_WIDGET(entry->menu));
 	}
 
-	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(activate_entry), io);
-
-	gtk_menu_shell_append(GTK_MENU_SHELL(user_data), menuitem);
-	gtk_widget_show(menuitem);
-
-	g_object_set_data(G_OBJECT(menuitem), ENTRY_DATA_NAME, entry);
-
-	return;
+	return menuitem;
 }
 
 static void
-entry_removed_cb (GtkWidget * widget, gpointer userdata)
+entry_added (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data)
 {
-	gpointer data = g_object_get_data(G_OBJECT(widget), ENTRY_DATA_NAME);
+	GtkWidget * menuitem;
 
-	if (data != userdata) {
-		return;
+	g_debug("Signal: Entry Added");
+
+	if (entry->parent_object == NULL) {
+		g_warning("Entry '%p' does not have a parent object", entry);
 	}
 
-	gtk_widget_destroy(widget);
+	menuitem = g_hash_table_lookup (entry_to_menuitem, entry);
+	if (menuitem == NULL) {
+		g_debug ("This is the first time this entry's been added -- creating a new menuitem for it");
+		menuitem = create_menu_item (entry);
+		g_hash_table_insert (entry_to_menuitem, entry, menuitem);
+
+		g_object_set_data(G_OBJECT(menuitem), ENTRY_DATA_NAME, entry);
+		g_signal_connect (G_OBJECT(menuitem), "activate", G_CALLBACK(activate_entry), io);
+
+		gtk_menu_shell_append (GTK_MENU_SHELL(user_data), menuitem);
+
+	}
+	gtk_widget_show (menuitem);
+
 	return;
 }
 
@@ -97,7 +105,9 @@ entry_removed (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user
 {
 	g_debug("Signal: Entry Removed");
 
-	gtk_container_foreach(GTK_CONTAINER(user_data), entry_removed_cb, entry);
+	GtkWidget * menuitem = g_hash_table_lookup (entry_to_menuitem, entry);
+	if (menuitem != NULL)
+		gtk_widget_hide (menuitem);
 
 	return;
 }
@@ -162,6 +172,8 @@ main (int argc, char ** argv)
 
 	gtk_init(&argc, &argv);
 
+	entry_to_menuitem = g_hash_table_new (g_direct_hash, g_direct_equal);
+
 	if (argc != 2) {
 		g_error("Need filename");
 		return 1;
@@ -183,5 +195,6 @@ main (int argc, char ** argv)
 
 	gtk_main();
 
+	g_hash_table_destroy (entry_to_menuitem);
 	return 0;
 }
