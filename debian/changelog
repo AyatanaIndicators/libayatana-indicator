@@ -1,8 +1,8 @@
-libindicator (12.10.0-0ubuntu2) UNRELEASED; urgency=low
+libindicator (12.10.0-0ubuntu2) quantal; urgency=low
 
   * Backport a fix so that libroffice doesn't hang on on startup (LP: #1045372)
 
- -- Didier Roche <didrocks@ubuntu.com>  Mon, 17 Sep 2012 11:10:59 +0200
+ -- Didier Roche <didrocks@ubuntu.com>  Mon, 17 Sep 2012 11:13:49 +0200
 
 libindicator (12.10.0-0ubuntu1) quantal; urgency=low
 
