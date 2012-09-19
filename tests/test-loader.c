@@ -156,22 +156,24 @@ test_loader_filename_dummy_signaler (void)
 static void
 visible_entry_added (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer box)
 {
-	// make a frame for the entry, and add the frame to the box
-	GtkWidget * frame = gtk_frame_new (NULL);
-	GtkWidget * child = GTK_WIDGET(entry->label);
+	GtkWidget * child = GTK_WIDGET (entry->label);
 	g_assert (child != NULL);
-	gtk_container_add (GTK_CONTAINER(frame), child);
-	gtk_box_pack_start (GTK_BOX(box), frame, FALSE, FALSE, 0);
-	g_object_set_data (G_OBJECT(child), "frame-parent", frame);
+
+	if (g_object_get_data (G_OBJECT(child), "frame-parent") == NULL)
+	{
+		GtkWidget * frame = gtk_frame_new (NULL);
+		gtk_container_add (GTK_CONTAINER(frame), child);
+		gtk_box_pack_start (GTK_BOX(box), frame, FALSE, FALSE, 0);
+		g_object_set_data (G_OBJECT(child), "frame-parent", frame);
+	}
 }
 
 static void
 visible_entry_removed (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer box)
 {
-	// destroy this entry's frame
-	gpointer parent = g_object_steal_data (G_OBJECT(entry->label), "frame-parent");
-	if (GTK_IS_WIDGET(parent))
-		gtk_widget_destroy(GTK_WIDGET(parent));
+	GtkWidget * child = GTK_WIDGET (entry->label);
+	g_assert (child != NULL);
+	g_assert (g_object_get_data (G_OBJECT(child), "frame-parent") != NULL);
 }
 
 void
@@ -218,7 +220,7 @@ test_loader_filename_dummy_visible (void)
 	g_assert(GTK_IS_LABEL(label));
         g_assert(g_object_get_qdata(G_OBJECT(label), is_hidden_quark) != NULL);
 	list = gtk_container_get_children (GTK_CONTAINER(box));
-	g_assert(g_list_length(list) == 0);
+	g_assert(g_list_length(list) == 1);
 	g_list_free(list);
 
 	// restore the entries and confirm that the label survived

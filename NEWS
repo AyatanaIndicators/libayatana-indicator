@@ -1,3 +1,9 @@
+12.10.1
+
+ - merge lp:~charlesk/libindicator/lp-1045372 to remove the 'cloak'
+   code that caused libreoffice's menubars in unity  to be greyed
+   out after opening any dialog or switching windows (lp: 1045372)
+
 12.10.0
 
  - merge lp:~evgeni/libindicator/multiarch-same-devheaders so that we

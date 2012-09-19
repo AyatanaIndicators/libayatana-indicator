@@ -88,17 +88,25 @@ G_DEFINE_TYPE (DummyIndicatorVisible, dummy_indicator_visible, INDICATOR_OBJECT_
 static void
 dummy_indicator_entry_being_removed (IndicatorObject * io, IndicatorObjectEntry * entry)
 {
+	IndicatorObjectClass * indicator_object_class = INDICATOR_OBJECT_CLASS (dummy_indicator_visible_parent_class);
+
 	g_object_set_data(G_OBJECT(entry->label), "is-hidden", GINT_TO_POINTER(1));
 
-        INDICATOR_OBJECT_CLASS(dummy_indicator_visible_parent_class)->entry_being_removed (io, entry);
+	if (indicator_object_class->entry_being_removed != NULL) {
+		indicator_object_class->entry_being_removed (io, entry);
+	}
 }
 
 static void
 dummy_indicator_entry_was_added (IndicatorObject * io, IndicatorObjectEntry * entry)
 {
+	IndicatorObjectClass * indicator_object_class = INDICATOR_OBJECT_CLASS (dummy_indicator_visible_parent_class);
+
 	g_object_steal_data(G_OBJECT(entry->label), "is-hidden");
 
-        INDICATOR_OBJECT_CLASS(dummy_indicator_visible_parent_class)->entry_was_added (io, entry);
+	if (indicator_object_class->entry_was_added != NULL) {
+		indicator_object_class->entry_was_added (io, entry);
+	}
 }
 
 static void
