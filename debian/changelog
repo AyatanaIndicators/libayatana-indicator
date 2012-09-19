@@ -1,3 +1,11 @@
+libindicator (12.10.1-0ubuntu1) quantal; urgency=low
+
+  * New upstream release.
+    - remove the 'cloak' code that caused libreoffice's menubars in unity to be 
+      greyed out after opening any dialog or switching windows (LP: #1045372)
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Wed, 19 Sep 2012 16:00:14 -0400
+
 libindicator (12.10.0-0ubuntu2) quantal; urgency=low
 
   * Backport a fix so that libroffice doesn't hang on on startup (LP: #1045372)
