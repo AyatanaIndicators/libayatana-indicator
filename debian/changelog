@@ -4,6 +4,7 @@ libindicator (12.10.2-0ubuntu1) UNRELEASED; urgency=low
     - Reorganize Build-Depends for clarity.
     - Update style to be consistent with other indicator stack packages.
     - Bump debhelper Build-Depends to (>= 9).
+    - Drop Build-Depends on cdbs.
   * debian/rules:
     - Convert to using the dh9 sequencer.
 
