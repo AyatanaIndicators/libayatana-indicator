@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Ubuntu Core Developers <ubuntu-devel-discuss@lists.ubuntu.com>
 XSBC-Original-Maintainer: The Ayatana Packagers <pkg-ayatana-devel@lists.alioth.debian.org>
 Uploaders: Evgeni Golov <evgeni@debian.org>, Kartik Mistry <kartik@debian.org>
-Build-Depends: debhelper (>= 5.0),
+Build-Depends: debhelper (>= 9),
                dh-autoreconf,
                libtool,
                intltool,
