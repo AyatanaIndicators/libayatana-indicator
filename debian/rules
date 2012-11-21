@@ -12,6 +12,9 @@ export G_MESSAGES_DEBUG = all
 %:
 	dh $@ --with autoreconf
 
+override_dh_autoreconf:
+	NOCONFIGURE=1 dh_autoreconf ./autogen.sh
+
 override_dh_auto_configure: $(FLAVORS:%=doconfigure-%)
 
 doconfigure-%:
