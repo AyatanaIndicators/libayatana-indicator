@@ -1,30 +1,39 @@
 #!/usr/bin/make -f
 
-DEB_BUILDDIR = build
-DEB_MAKE_FLAVORS = gtk2 gtk3
+FLAVORS = gtk2 gtk3
 
-include /usr/share/cdbs/1/rules/debhelper.mk
-include /usr/share/cdbs/1/class/gnome.mk
-include /usr/share/cdbs/1/rules/autoreconf.mk
-
-export G_MESSAGES_DEBUG = all
-
-DEB_MAKE_DESTDIRSKEL = $(CURDIR)/debian/tmp/@FLAVOR@
-DEB_DESTDIR = $(CURDIR)/debian/tmp/$(cdbs_make_curflavor)/
-
-DEB_CONFIGURE_FLAGS_gtk2 = --with-gtk=2
-DEB_CONFIGURE_FLAGS_gtk3 = --with-gtk=3
-
-#DEB_MAKE_CHECK_TARGET := check
+CONFIGURE_FLAGS_gtk2 = --with-gtk=2
+CONFIGURE_FLAGS_gtk3 = --with-gtk=3
 
 LDFLAGS += -Wl,-z,defs -Wl,--as-needed
 
-DEB_DH_MAKESHLIBS_ARGS_libindicator7 += -V 'libindicator7 (>= 0.4.90)'
-DEB_DH_MAKESHLIBS_ARGS_libindicator3_7 += -V 'libindicator3-7 (>= 0.4.90)'
+export G_MESSAGES_DEBUG = all
 
-debian/stamp-autotools/gtk2: cdbs_configure_flags += $(DEB_CONFIGURE_FLAGS_gtk2)
-debian/stamp-autotools/gtk3: cdbs_configure_flags += $(DEB_CONFIGURE_FLAGS_gtk3)
+%:
+	dh $@ --with autoreconf
 
-common-install-arch::
+override_dh_auto_configure: $(FLAVORS:%=doconfigure-%)
+
+doconfigure-%:
+	DH_VERBOSE=1 dh_auto_configure --builddirectory=builddir/$* -- $(CONFIGURE_FLAGS_$*)
+
+override_dh_auto_build: $(FLAVORS:%=dobuild-%)
+
+dobuild-%:
+	dh_auto_build --builddirectory=builddir/$*
+
+override_dh_auto_install: $(FLAVORS:%=doinstall-%)
+
+doinstall-%:
+	dh_auto_install --builddirectory=builddir/$* --destdir=debian/tmp/$*
+
+override_dh_install:
 	find debian/tmp -name \*.la -delete
-	cd po; intltool-update --pot --verbose
+	find debian/tmp -name libdummy-indicator\* -delete
+	rm -f debian/tmp/gtk3/usr/share/libindicator/80indicator-debugging
+	dh_install --fail-missing
+
+override_dh_makeshlibs:
+	dh_makeshlibs -plibindicator7 -V 'libindicator7 (>= 0.4.90)'
+	dh_makeshlibs -plibindicator3-7 -V 'libindicator3-7 (>= 0.4.90)'
+
