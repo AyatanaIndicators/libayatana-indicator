@@ -1,1 +1,1 @@
-debian/tmp/gtk3/usr/lib/libindicator/indicator-loader3 /usr/lib/libindicator/
+usr/lib/*/indicator-loader3

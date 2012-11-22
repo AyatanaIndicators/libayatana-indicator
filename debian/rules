@@ -34,7 +34,12 @@ override_dh_install:
 	find debian/tmp -name \*.la -delete
 	find debian/tmp -name libdummy-indicator\* -delete
 	rm -f debian/tmp/gtk3/usr/share/libindicator/80indicator-debugging
-	dh_install --fail-missing
+	dh_install -plibindicator7 --fail-missing --sourcedir=debian/tmp/gtk2
+	dh_install -plibindicator-dev --fail-missing --sourcedir=debian/tmp/gtk2
+	dh_install -plibindicator-tools --fail-missing --sourcedir=debian/tmp/gtk2
+	dh_install -plibindicator3-7 --fail-missing --sourcedir=debian/tmp/gtk3
+	dh_install -plibindicator3-dev --fail-missing --sourcedir=debian/tmp/gtk3
+	dh_install -plibindicator3-tools --fail-missing --sourcedir=debian/tmp/gtk3
 
 override_dh_makeshlibs:
 	dh_makeshlibs -plibindicator7 -V 'libindicator7 (>= 0.4.90)'
