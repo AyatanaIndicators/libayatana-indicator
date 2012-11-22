@@ -61,6 +61,7 @@ Description: Tools for libindicator
 Package: libindicator3-7
 Section: libs
 Architecture: any
+Pre-Depends: multiarch-support
 Depends: ${shlibs:Depends},
          ${misc:Depends},
 Description: panel indicator applet - shared library
