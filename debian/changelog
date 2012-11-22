@@ -6,6 +6,7 @@ libindicator (12.10.2-0ubuntu1) UNRELEASED; urgency=low
     - Bump debhelper Build-Depends to (>= 9).
     - Drop Build-Depends on cdbs.
     - Add a Build-Depends on gnome-common.
+    - Update Vcs-Bzr, Vcs-Browser and add a notice to uploaders.
   * debian/rules:
     - Convert to using the dh9 sequencer.
     - Override dh_autoreconf to run autogen.sh and not call configure.
