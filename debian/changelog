@@ -13,6 +13,7 @@ libindicator (12.10.2-0ubuntu1) UNRELEASED; urgency=low
     - Override dh_autoreconf to run autogen.sh and not call configure.
     - Use calls to dh_install per-package to use the right source
       directories.
+    - Add and export DPKG_GENSYMBOLS_CHECK_LEVEL.
   * debian/compat: bump compat level to 9. 
   * debian/*.install: drop the debian/tmp/gtk* path elements and update for
     multiarch.

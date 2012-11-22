@@ -8,6 +8,7 @@ CONFIGURE_FLAGS_gtk3 = --with-gtk=3
 LDFLAGS += -Wl,-z,defs -Wl,--as-needed
 
 export G_MESSAGES_DEBUG = all
+export DPKG_GENSYMBOLS_CHECK_LEVEL = 4
 
 %:
 	dh $@ --with autoreconf
