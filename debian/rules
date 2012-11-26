@@ -1,0 +1,48 @@
+#!/usr/bin/make -f
+
+FLAVORS = gtk2 gtk3
+
+CONFIGURE_FLAGS_gtk2 = --with-gtk=2
+CONFIGURE_FLAGS_gtk3 = --with-gtk=3
+
+LDFLAGS += -Wl,-z,defs -Wl,--as-needed
+
+export G_MESSAGES_DEBUG = all
+export DPKG_GENSYMBOLS_CHECK_LEVEL = 4
+
+%:
+	dh $@ --with autoreconf
+
+override_dh_autoreconf:
+	NOCONFIGURE=1 dh_autoreconf ./autogen.sh
+
+override_dh_auto_configure: $(FLAVORS:%=doconfigure-%)
+
+doconfigure-%:
+	DH_VERBOSE=1 dh_auto_configure --builddirectory=builddir/$* -- $(CONFIGURE_FLAGS_$*)
+
+override_dh_auto_build: $(FLAVORS:%=dobuild-%)
+
+dobuild-%:
+	dh_auto_build --builddirectory=builddir/$*
+
+override_dh_auto_install: $(FLAVORS:%=doinstall-%)
+
+doinstall-%:
+	dh_auto_install --builddirectory=builddir/$* --destdir=debian/tmp/$*
+
+override_dh_install:
+	find debian/tmp -name \*.la -delete
+	find debian/tmp -name libdummy-indicator\* -delete
+	rm -f debian/tmp/gtk3/usr/share/libindicator/80indicator-debugging
+	dh_install -plibindicator7 --fail-missing --sourcedir=debian/tmp/gtk2
+	dh_install -plibindicator-dev --fail-missing --sourcedir=debian/tmp/gtk2
+	dh_install -plibindicator-tools --fail-missing --sourcedir=debian/tmp/gtk2
+	dh_install -plibindicator3-7 --fail-missing --sourcedir=debian/tmp/gtk3
+	dh_install -plibindicator3-dev --fail-missing --sourcedir=debian/tmp/gtk3
+	dh_install -plibindicator3-tools --fail-missing --sourcedir=debian/tmp/gtk3
+
+override_dh_makeshlibs:
+	dh_makeshlibs -plibindicator7 -V 'libindicator7 (>= 0.4.90)'
+	dh_makeshlibs -plibindicator3-7 -V 'libindicator3-7 (>= 0.4.90)'
+

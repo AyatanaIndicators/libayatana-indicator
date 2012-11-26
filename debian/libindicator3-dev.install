@@ -1,0 +1,4 @@
+usr/include /usr/
+usr/lib/*/pkgconfig/indicator3-0.4.pc
+usr/lib/*/libindicator3.a
+usr/lib/*/libindicator3.so
