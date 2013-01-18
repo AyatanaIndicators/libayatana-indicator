@@ -24,7 +24,10 @@ License along with this library. If not, see
 
 #include <gtk/gtk.h>
 #include <libindicator/indicator-object.h>
+
+#if GTK_MAJOR_VERSION == 3
 #include <libindicator/indicator-ng.h>
+#endif
 
 static GHashTable * entry_to_menuitem = NULL;
 
@@ -137,6 +140,7 @@ load_module (const gchar * name, GtkWidget * menu)
 	if (g_str_has_suffix(name, G_MODULE_SUFFIX)) {
 		io = indicator_object_new_from_file(name);
 	}
+#if GTK_MAJOR_VERSION == 3
 	else if (g_str_has_suffix(name, ".indicator")) {
 		GError *error = NULL;
 
@@ -147,6 +151,7 @@ load_module (const gchar * name, GtkWidget * menu)
 			return FALSE;
 		}
 	}
+#endif
 	else
 		return FALSE;
 

@@ -51,9 +51,13 @@ libindicator_la_SOURCES = \
 	indicator-object-marshal.h \
 	indicator-object-marshal.c \
 	indicator-service.c \
-	indicator-service-manager.c \
+	indicator-service-manager.c
+
+if USE_GTK3
+libindicator_la_SOURCES += \
 	indicator-ng.c \
 	indicator-ng.h
+endif
 
 libindicator_la_CFLAGS = \
 	$(LIBINDICATOR_CFLAGS) \
