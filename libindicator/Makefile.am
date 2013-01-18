@@ -51,7 +51,9 @@ libindicator_la_SOURCES = \
 	indicator-object-marshal.h \
 	indicator-object-marshal.c \
 	indicator-service.c \
-	indicator-service-manager.c
+	indicator-service-manager.c \
+	indicator-ng.c \
+	indicator-ng.h
 
 libindicator_la_CFLAGS = \
 	$(LIBINDICATOR_CFLAGS) \

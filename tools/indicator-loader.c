@@ -24,6 +24,7 @@ License along with this library. If not, see
 
 #include <gtk/gtk.h>
 #include <libindicator/indicator-object.h>
+#include <libindicator/indicator-ng.h>
 
 static GHashTable * entry_to_menuitem = NULL;
 
@@ -129,14 +130,25 @@ load_module (const gchar * name, GtkWidget * menu)
 	g_debug("Looking at Module: %s", name);
 	g_return_val_if_fail(name != NULL, FALSE);
 
-	if (!g_str_has_suffix(name, G_MODULE_SUFFIX)) {
-		return FALSE;
-	}
-
 	g_debug("Loading Module: %s", name);
 
 	/* Build the object for the module */
-	IndicatorObject * io = indicator_object_new_from_file(name);
+	IndicatorObject *io;
+	if (g_str_has_suffix(name, G_MODULE_SUFFIX)) {
+		io = indicator_object_new_from_file(name);
+	}
+	else if (g_str_has_suffix(name, ".indicator")) {
+		GError *error = NULL;
+
+		io = INDICATOR_OBJECT(indicator_ng_new(name, &error));
+		if (!io) {
+			g_warning ("could not load indicator from '%s': %s", name, error->message);
+			g_error_free (error);
+			return FALSE;
+		}
+	}
+	else
+		return FALSE;
 
 	/* Connect to it's signals */
 	g_signal_connect(G_OBJECT(io), INDICATOR_OBJECT_SIGNAL_ENTRY_ADDED,   G_CALLBACK(entry_added),    menu);
