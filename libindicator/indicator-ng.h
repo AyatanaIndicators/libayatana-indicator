@@ -1,7 +1,7 @@
 #ifndef __INDICATOR_NG_H__
 #define __INDICATOR_NG_H__
 
-#include <libindicator/indicator-object.h>
+#include "indicator-object.h"
 
 #define INDICATOR_TYPE_NG            (indicator_ng_get_type ())
 #define INDICATOR_NG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), INDICATOR_TYPE_NG, IndicatorNg))
