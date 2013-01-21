@@ -22,4 +22,8 @@ IndicatorNg *      indicator_ng_new_for_profile     (const gchar  *service_file,
                                                      const gchar  *profile,
                                                      GError      **error);
 
+const gchar *      indicator_ng_get_service_file    (IndicatorNg *indicator);
+
+const gchar *      indicator_ng_get_profile         (IndicatorNg *indicator);
+
 #endif

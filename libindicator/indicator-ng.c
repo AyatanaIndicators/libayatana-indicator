@@ -458,3 +458,19 @@ indicator_ng_new_for_profile (const gchar  *service_file,
                          "profile", profile,
                          NULL);
 }
+
+const gchar *
+indicator_ng_get_service_file (IndicatorNg *self)
+{
+  g_return_val_if_fail (INDICATOR_IS_NG (self), NULL);
+
+  return self->service_file;
+}
+
+const gchar *
+indicator_ng_get_profile (IndicatorNg *self)
+{
+  g_return_val_if_fail (INDICATOR_IS_NG (self), NULL);
+
+  return self->profile;
+}
