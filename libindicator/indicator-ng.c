@@ -114,7 +114,6 @@ indicator_ng_dispose (GObject *object)
 
   indicator_ng_free_actions_and_menu (self);
 
-  g_clear_object (&self->service_file);
   g_clear_object (&self->label);
   g_clear_object (&self->image);
   g_clear_object (&self->gtkmenu);
