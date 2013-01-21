@@ -13,9 +13,13 @@
 typedef struct _IndicatorNg   IndicatorNg;
 typedef IndicatorObjectClass IndicatorNgClass;
 
-GType              indicator_ng_get_type     (void);
+GType              indicator_ng_get_type            (void);
 
-IndicatorNg *      indicator_ng_new          (const gchar  *service_file,
-                                              GError      **error);
+IndicatorNg *      indicator_ng_new                 (const gchar  *service_file,
+                                                     GError      **error);
+
+IndicatorNg *      indicator_ng_new_for_profile     (const gchar  *service_file,
+                                                     const gchar  *profile,
+                                                     GError      **error);
 
 #endif

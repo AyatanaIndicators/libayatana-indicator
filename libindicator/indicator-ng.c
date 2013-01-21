@@ -447,3 +447,14 @@ indicator_ng_new (const gchar  *service_file,
                          "service-file", service_file,
                          NULL);
 }
+
+IndicatorNg *
+indicator_ng_new_for_profile (const gchar  *service_file,
+                              const gchar  *profile,
+                              GError      **error)
+{
+  return g_initable_new (INDICATOR_TYPE_NG, NULL, error,
+                         "service-file", service_file,
+                         "profile", profile,
+                         NULL);
+}
