@@ -466,3 +466,28 @@ DISTCLEANFILES += loader-tester
 
 DISTCLEANFILES += $(XML_REPORT) $(HTML_REPORT)
 
+#############################
+# Indicator-ng
+#############################
+
+if USE_GTK3
+
+check_PROGRAMS += test-indicator-ng
+
+test_indicator_ng_SOURCES = test-indicator-ng.c
+
+test_indicator_ng_CFLAGS = \
+	$(LIBINDICATOR_CFLAGS) \
+	-I$(top_srcdir) \
+	-DSRCDIR="\"$(srcdir)\"" \
+	-Wall
+
+test_indicator_ng_LDADD = \
+	$(LIBINDICATOR_LIBS) \
+	-L$(top_builddir)/libindicator/.libs \
+	$(INDICATOR_LIB)
+
+TESTS += test-indicator-ng
+DISTCLEANFILES = test-indicator-ng
+
+endif
