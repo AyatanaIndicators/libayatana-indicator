@@ -431,6 +431,12 @@ indicator_ng_init (IndicatorNg *self)
   self->image = g_object_ref_sink (gtk_image_new ());
   self->gtkmenu = g_object_ref_sink (gtk_menu_new ());
 
+  /* work around IndicatorObject's warning that the accessible
+   * description is missing. We never set it on construction, but when
+   * the menu model has arrived on the bus.
+   */
+  self->accessible_desc = g_strdup ("");
+
   indicator_object_set_visible (INDICATOR_OBJECT (self), FALSE);
 }
 
