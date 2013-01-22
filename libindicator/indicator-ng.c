@@ -89,7 +89,7 @@ indicator_ng_free_actions_and_menu (IndicatorNg *self)
 {
   if (self->actions)
     {
-      gtk_widget_insert_action_group (self->gtkmenu, self->name, self->actions);
+      gtk_widget_insert_action_group (self->gtkmenu, "indicator", NULL);
       g_signal_handlers_disconnect_by_data (self->actions, self);
       g_clear_object (&self->actions);
     }
