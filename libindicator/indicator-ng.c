@@ -38,6 +38,21 @@ enum
 
 static GParamSpec *properties[N_PROPERTIES];
 
+static IndicatorObjectEntry *
+indicator_ng_get_entry (IndicatorNg *self)
+{
+  GList *entries;
+  IndicatorObjectEntry *entry;
+
+  entries = INDICATOR_OBJECT_GET_CLASS (self)->get_entries (INDICATOR_OBJECT (self));
+  g_return_val_if_fail (entries != NULL, NULL);
+
+  entry = entries->data;
+
+  g_list_free (entries);
+  return entry;
+}
+
 static void
 indicator_ng_get_property (GObject    *object,
                            guint       property_id,
@@ -183,18 +198,14 @@ static void
 indicator_ng_set_accessible_desc (IndicatorNg *self,
                                   const gchar *accessible_desc)
 {
-  GList *entries;
+  IndicatorObjectEntry *entry;
+
+  entry = indicator_ng_get_entry (self);
 
   g_free (self->accessible_desc);
-
   self->accessible_desc = g_strdup (accessible_desc);
 
-  entries = INDICATOR_OBJECT_GET_CLASS (self)->get_entries (INDICATOR_OBJECT (self));
-  g_return_if_fail (entries != NULL);
-
-  g_signal_emit_by_name (self, INDICATOR_OBJECT_SIGNAL_ACCESSIBLE_DESC_UPDATE, entries->data);
-
-  g_list_free (entries);
+  g_signal_emit_by_name (self, INDICATOR_OBJECT_SIGNAL_ACCESSIBLE_DESC_UPDATE, entry);
 }
 
 static gboolean
@@ -366,6 +377,10 @@ indicator_ng_initable_init (GInitable     *initable,
       (bus_name = g_key_file_get_string (keyfile, "Indicator Service", "BusName", error)) &&
       (self->object_path = g_key_file_get_string (keyfile, "Indicator Service", "ObjectPath", error)))
     {
+      IndicatorObjectEntry *entry;
+
+      entry = indicator_ng_get_entry (self);
+      entry->name_hint = self->name;
 
       self->name_watch_id = g_bus_watch_name (G_BUS_TYPE_SESSION,
                                               bus_name,
