@@ -189,7 +189,7 @@ indicator_ng_set_accessible_desc (IndicatorNg *self,
 
   self->accessible_desc = g_strdup (accessible_desc);
 
-  entries = indicator_object_get_entries (INDICATOR_OBJECT (self));
+  entries = INDICATOR_OBJECT_GET_CLASS (self)->get_entries (INDICATOR_OBJECT (self));
   g_return_if_fail (entries != NULL);
 
   g_signal_emit_by_name (self, INDICATOR_OBJECT_SIGNAL_ACCESSIBLE_DESC_UPDATE, entries->data);
