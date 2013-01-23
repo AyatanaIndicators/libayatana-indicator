@@ -57,6 +57,21 @@ test_instantiation (void)
   g_assert_cmpstr (indicator_ng_get_service_file (indicator), ==, SRCDIR "/com.canonical.test.nosuchservice.indicator");
   g_assert_cmpstr (indicator_ng_get_profile (indicator), ==, "desktop");
 
+  {
+    gchar *service_file;
+    gchar *profile;
+
+    g_object_get (indicator, "service-file", &service_file,
+                             "profile", &profile,
+                             NULL);
+
+    g_assert_cmpstr (service_file, ==, SRCDIR "/com.canonical.test.nosuchservice.indicator");
+    g_assert_cmpstr (profile, ==, "desktop");
+
+    g_free (service_file);
+    g_free (profile);
+  }
+
   loop = g_main_loop_new (NULL, FALSE);
   g_timeout_add (200, stop_main_loop, loop);
   g_main_loop_run (loop);
