@@ -369,7 +369,7 @@ indicator_ng_initable_init (GInitable     *initable,
 
       self->name_watch_id = g_bus_watch_name (G_BUS_TYPE_SESSION,
                                               bus_name,
-                                              G_BUS_NAME_WATCHER_FLAGS_NONE,
+                                              G_BUS_NAME_WATCHER_FLAGS_AUTO_START,
                                               indicator_ng_service_appeared,
                                               indicator_ng_service_vanished,
                                               self, NULL);
