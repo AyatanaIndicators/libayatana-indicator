@@ -18,9 +18,7 @@ struct _IndicatorNg
   GActionGroup *actions;
   GMenuModel *menu;
 
-  GtkWidget *label;
-  GtkWidget *image;
-  GtkWidget *gtkmenu;
+  IndicatorObjectEntry entry;
   gchar *accessible_desc;
 };
 
@@ -37,21 +35,6 @@ enum
 };
 
 static GParamSpec *properties[N_PROPERTIES];
-
-static IndicatorObjectEntry *
-indicator_ng_get_entry (IndicatorNg *self)
-{
-  GList *entries;
-  IndicatorObjectEntry *entry;
-
-  entries = INDICATOR_OBJECT_GET_CLASS (self)->get_entries (INDICATOR_OBJECT (self));
-  g_return_val_if_fail (entries != NULL, NULL);
-
-  entry = entries->data;
-
-  g_list_free (entries);
-  return entry;
-}
 
 static void
 indicator_ng_get_property (GObject    *object,
@@ -104,7 +87,7 @@ indicator_ng_free_actions_and_menu (IndicatorNg *self)
 {
   if (self->actions)
     {
-      gtk_widget_insert_action_group (self->gtkmenu, "indicator", NULL);
+      gtk_widget_insert_action_group (GTK_WIDGET (self->entry.menu), "indicator", NULL);
       g_signal_handlers_disconnect_by_data (self->actions, self);
       g_clear_object (&self->actions);
     }
@@ -129,9 +112,9 @@ indicator_ng_dispose (GObject *object)
 
   indicator_ng_free_actions_and_menu (self);
 
-  g_clear_object (&self->label);
-  g_clear_object (&self->image);
-  g_clear_object (&self->gtkmenu);
+  g_clear_object (&self->entry.label);
+  g_clear_object (&self->entry.image);
+  g_clear_object (&self->entry.menu);
 
   G_OBJECT_CLASS (indicator_ng_parent_class)->dispose (object);
 }
@@ -150,62 +133,23 @@ indicator_ng_finalize (GObject *object)
   G_OBJECT_CLASS (indicator_ng_parent_class)->finalize (object);
 }
 
-static GtkLabel *
-indicator_ng_get_label (IndicatorObject *io)
+static GList *
+indicator_ng_get_entries (IndicatorObject *io)
 {
   IndicatorNg *self = INDICATOR_NG (io);
 
-  gtk_widget_show (self->label);
-
-  return GTK_LABEL (self->label);
-}
-
-static GtkImage *
-indicator_ng_get_image (IndicatorObject *io)
-{
-  IndicatorNg *self = INDICATOR_NG (io);
-
-  gtk_widget_show (self->image);
-
-  return GTK_IMAGE (self->image);
-}
-
-static GtkMenu *
-indicator_ng_get_menu (IndicatorObject *io)
-{
-  IndicatorNg *self = INDICATOR_NG (io);
-
-  return GTK_MENU (self->gtkmenu);
-}
-
-static const gchar *
-indicator_ng_get_accessible_desc (IndicatorObject *io)
-{
-  IndicatorNg *self = INDICATOR_NG (io);
-
-  return self->accessible_desc;
-}
-
-static const gchar *
-indicator_ng_get_name_hint (IndicatorObject *io)
-{
-  IndicatorNg *self = INDICATOR_NG (io);
-
-  return self->name;
+  return g_list_append (NULL, &self->entry);
 }
 
 static void
 indicator_ng_set_accessible_desc (IndicatorNg *self,
                                   const gchar *accessible_desc)
 {
-  IndicatorObjectEntry *entry;
-
-  entry = indicator_ng_get_entry (self);
-
   g_free (self->accessible_desc);
   self->accessible_desc = g_strdup (accessible_desc);
 
-  g_signal_emit_by_name (self, INDICATOR_OBJECT_SIGNAL_ACCESSIBLE_DESC_UPDATE, entry);
+  self->entry.accessible_desc = self->accessible_desc;
+  g_signal_emit_by_name (self, INDICATOR_OBJECT_SIGNAL_ACCESSIBLE_DESC_UPDATE, &self->entry);
 }
 
 static gboolean
@@ -255,12 +199,15 @@ indicator_ng_update_entry (IndicatorNg *self)
       gchar *iconstr;
       gchar *accessible_desc;
       gboolean visible;
+      gboolean has_icon;
 
       g_variant_get (state, "(sssb)", &label, &iconstr, &accessible_desc, &visible);
 
-      gtk_label_set_label (GTK_LABEL (self->label), label);
-      if (!gtk_image_set_from_gicon_string (GTK_IMAGE (self->image), iconstr))
-        gtk_widget_hide (self->image);
+      gtk_label_set_label (GTK_LABEL (self->entry.label), label);
+
+      has_icon = gtk_image_set_from_gicon_string (self->entry.image, iconstr);
+      gtk_widget_set_visible (GTK_WIDGET (self->entry.image), has_icon);
+
       indicator_ng_set_accessible_desc (self, accessible_desc);
       indicator_object_set_visible (INDICATOR_OBJECT (self), visible);
 
@@ -303,7 +250,7 @@ indicator_ng_menu_changed (GMenuModel *menu,
       popup = g_menu_model_get_item_link (self->menu, 0, G_MENU_LINK_SUBMENU);
       if (popup)
         {
-          gtk_menu_shell_bind_model (GTK_MENU_SHELL (self->gtkmenu), popup, NULL, TRUE);
+          gtk_menu_shell_bind_model (GTK_MENU_SHELL (self->entry.menu), popup, NULL, TRUE);
           g_object_unref (popup);
         }
 
@@ -326,7 +273,7 @@ indicator_ng_service_appeared (GDBusConnection *connection,
   g_assert (!self->menu);
 
   self->actions = G_ACTION_GROUP (g_dbus_action_group_get (connection, name_owner, self->object_path));
-  gtk_widget_insert_action_group (self->gtkmenu, "indicator", self->actions);
+  gtk_widget_insert_action_group (GTK_WIDGET (self->entry.menu), "indicator", self->actions);
   g_signal_connect_swapped (self->actions, "action-added", G_CALLBACK (indicator_ng_update_entry), self);
   g_signal_connect_swapped (self->actions, "action-removed", G_CALLBACK (indicator_ng_update_entry), self);
   g_signal_connect_swapped (self->actions, "action-state-changed", G_CALLBACK (indicator_ng_update_entry), self);
@@ -377,10 +324,7 @@ indicator_ng_initable_init (GInitable     *initable,
       (bus_name = g_key_file_get_string (keyfile, "Indicator Service", "BusName", error)) &&
       (self->object_path = g_key_file_get_string (keyfile, "Indicator Service", "ObjectPath", error)))
     {
-      IndicatorObjectEntry *entry;
-
-      entry = indicator_ng_get_entry (self);
-      entry->name_hint = self->name;
+      self->entry.name_hint = self->name;
 
       self->name_watch_id = g_bus_watch_name (G_BUS_TYPE_SESSION,
                                               bus_name,
@@ -407,11 +351,7 @@ indicator_ng_class_init (IndicatorNgClass *class)
   object_class->dispose = indicator_ng_dispose;
   object_class->finalize = indicator_ng_finalize;
 
-  io_class->get_label = indicator_ng_get_label;
-  io_class->get_image = indicator_ng_get_image;
-  io_class->get_menu = indicator_ng_get_menu;
-  io_class->get_accessible_desc = indicator_ng_get_accessible_desc;
-  io_class->get_name_hint = indicator_ng_get_name_hint;
+  io_class->get_entries = indicator_ng_get_entries;
 
   properties[PROP_SERVICE_FILE] = g_param_spec_string ("service-file",
                                                        "Service file",
@@ -441,15 +381,18 @@ indicator_ng_initable_iface_init (GInitableIface *initable)
 static void
 indicator_ng_init (IndicatorNg *self)
 {
-  self->label = g_object_ref_sink (gtk_label_new (NULL));
-  self->image = g_object_ref_sink (gtk_image_new ());
-  self->gtkmenu = g_object_ref_sink (gtk_menu_new ());
+  self->entry.label = g_object_ref_sink (gtk_label_new (NULL));
+  gtk_widget_show (GTK_WIDGET (self->entry.label));
+
+  self->entry.image = g_object_ref_sink (gtk_image_new ());
+  self->entry.menu = g_object_ref_sink (gtk_menu_new ());
 
   /* work around IndicatorObject's warning that the accessible
    * description is missing. We never set it on construction, but when
    * the menu model has arrived on the bus.
    */
   self->accessible_desc = g_strdup ("");
+  self->entry.accessible_desc = self->accessible_desc;
 
   indicator_object_set_visible (INDICATOR_OBJECT (self), FALSE);
 }
