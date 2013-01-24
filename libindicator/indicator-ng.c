@@ -228,6 +228,10 @@ indicator_ng_menu_changed (GMenuModel *menu,
 {
   IndicatorNg *self = user_data;
 
+  /* The menu may only contain one item (the indicator title menu).
+   * Thus, the position is always 0, and there is either exactly one
+   * item added or exactly one item removed.
+   */
   g_return_if_fail (position == 0);
   g_return_if_fail (added < 2 && removed < 2 && added ^ removed);
 
