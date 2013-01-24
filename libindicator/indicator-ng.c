@@ -200,21 +200,17 @@ indicator_ng_update_entry (IndicatorNg *self)
   state = g_action_group_get_action_state (self->actions, self->header_action);
   if (state && g_variant_is_of_type (state, G_VARIANT_TYPE ("(sssb)")))
     {
-      gchar *label;
-      gchar *iconstr;
-      gchar *accessible_desc;
+      const gchar *label;
+      const gchar *iconstr;
+      const gchar *accessible_desc;
       gboolean visible;
 
-      g_variant_get (state, "(sssb)", &label, &iconstr, &accessible_desc, &visible);
+      g_variant_get (state, "(&s&s&sb)", &label, &iconstr, &accessible_desc, &visible);
 
       gtk_label_set_label (GTK_LABEL (self->entry.label), label);
       indicator_ng_set_icon_from_string (self, iconstr);
       indicator_ng_set_accessible_desc (self, accessible_desc);
       indicator_object_set_visible (INDICATOR_OBJECT (self), visible);
-
-      g_free (label);
-      g_free (iconstr);
-      g_free (accessible_desc);
     }
   else
     g_warning ("the action of the indicator menu item must have state with type (sssb)");
