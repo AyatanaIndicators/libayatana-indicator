@@ -152,28 +152,33 @@ indicator_ng_set_accessible_desc (IndicatorNg *self,
   g_signal_emit_by_name (self, INDICATOR_OBJECT_SIGNAL_ACCESSIBLE_DESC_UPDATE, &self->entry);
 }
 
-static gboolean
-gtk_image_set_from_gicon_string (GtkImage    *img,
-                                 const gchar *str)
+static void
+indicator_ng_set_icon_from_string (IndicatorNg *self,
+                                   const gchar *str)
 {
   GIcon *icon;
   GError *error = NULL;
 
-  icon = str ? g_icon_new_for_string (str, &error) : NULL;
+  if (str == NULL || *str == '\0')
+    {
+      gtk_image_clear (self->entry.image);
+      gtk_widget_hide (GTK_WIDGET (self->entry.image));
+      return;
+    }
+
+  gtk_widget_show (GTK_WIDGET (self->entry.image));
+
+  icon = g_icon_new_for_string (str, &error);
   if (icon)
     {
-      gtk_image_set_from_gicon (img, icon, GTK_ICON_SIZE_LARGE_TOOLBAR);
+      gtk_image_set_from_gicon (self->entry.image, icon, GTK_ICON_SIZE_LARGE_TOOLBAR);
       g_object_unref (icon);
-      return TRUE;
     }
   else
     {
-      if (error)
-        {
-          g_warning ("invalid icon string '%s': %s", str, error->message);
-          g_error_free (error);
-        }
-      return FALSE;
+      g_warning ("invalid icon string '%s': %s", str, error->message);
+      gtk_image_set_from_stock (self->entry.image, GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_LARGE_TOOLBAR);
+      g_error_free (error);
     }
 }
 
@@ -199,15 +204,11 @@ indicator_ng_update_entry (IndicatorNg *self)
       gchar *iconstr;
       gchar *accessible_desc;
       gboolean visible;
-      gboolean has_icon;
 
       g_variant_get (state, "(sssb)", &label, &iconstr, &accessible_desc, &visible);
 
       gtk_label_set_label (GTK_LABEL (self->entry.label), label);
-
-      has_icon = gtk_image_set_from_gicon_string (self->entry.image, iconstr);
-      gtk_widget_set_visible (GTK_WIDGET (self->entry.image), has_icon);
-
+      indicator_ng_set_icon_from_string (self, iconstr);
       indicator_ng_set_accessible_desc (self, accessible_desc);
       indicator_object_set_visible (INDICATOR_OBJECT (self), visible);
 
