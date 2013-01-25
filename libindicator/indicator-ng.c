@@ -161,10 +161,16 @@ indicator_ng_set_icon_from_string (IndicatorNg *self,
 
   if (str == NULL || *str == '\0')
     {
-      gtk_image_clear (self->entry.image);
-      gtk_widget_hide (GTK_WIDGET (self->entry.image));
+      if (self->entry.image)
+        {
+          gtk_image_clear (self->entry.image);
+          gtk_widget_hide (GTK_WIDGET (self->entry.image));
+        }
       return;
     }
+
+  if (!self->entry.image)
+    self->entry.image = g_object_ref_sink (gtk_image_new ());
 
   gtk_widget_show (GTK_WIDGET (self->entry.image));
 
@@ -180,6 +186,24 @@ indicator_ng_set_icon_from_string (IndicatorNg *self,
       gtk_image_set_from_stock (self->entry.image, GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_LARGE_TOOLBAR);
       g_error_free (error);
     }
+}
+
+static void
+indicator_ng_set_label (IndicatorNg *self,
+                        const gchar *label)
+{
+  if (label == NULL || *label == '\0')
+    {
+      if (self->entry.label)
+        gtk_widget_hide (GTK_WIDGET (self->entry.label));
+      return;
+    }
+
+  if (!self->entry.label)
+    self->entry.label = g_object_ref_sink (gtk_label_new (NULL));
+
+  gtk_label_set_label (GTK_LABEL (self->entry.label), label);
+  gtk_widget_show (GTK_WIDGET (self->entry.label));
 }
 
 static void
@@ -207,7 +231,7 @@ indicator_ng_update_entry (IndicatorNg *self)
 
       g_variant_get (state, "(&s&s&sb)", &label, &iconstr, &accessible_desc, &visible);
 
-      gtk_label_set_label (GTK_LABEL (self->entry.label), label);
+      indicator_ng_set_label (self, label);
       indicator_ng_set_icon_from_string (self, iconstr);
       indicator_ng_set_accessible_desc (self, accessible_desc);
       indicator_object_set_visible (INDICATOR_OBJECT (self), visible);
@@ -407,10 +431,6 @@ indicator_ng_initable_iface_init (GInitableIface *initable)
 static void
 indicator_ng_init (IndicatorNg *self)
 {
-  self->entry.label = g_object_ref_sink (gtk_label_new (NULL));
-  gtk_widget_show (GTK_WIDGET (self->entry.label));
-
-  self->entry.image = g_object_ref_sink (gtk_image_new ());
   self->entry.menu = g_object_ref_sink (gtk_menu_new ());
 
   /* work around IndicatorObject's warning that the accessible
