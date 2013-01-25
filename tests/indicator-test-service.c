@@ -81,6 +81,7 @@ main (int argc, char **argv)
   submenu = g_menu_new ();
   g_menu_append (submenu, "Show", "indicator.show");
   item = g_menu_item_new (NULL, "indicator._header");
+  g_menu_item_set_attribute (item, "x-canonical-type", "s", "com.canonical.indicator.root");
   g_menu_item_set_submenu (item, G_MENU_MODEL (submenu));
   indicator.menu = g_menu_new ();
   g_menu_append_item (indicator.menu, item);

@@ -219,6 +219,23 @@ indicator_ng_update_entry (IndicatorNg *self)
     g_variant_unref (state);
 }
 
+static gboolean
+indicator_ng_menu_item_is_of_type (GMenuModel  *menu,
+                                   gint         index,
+                                   const gchar *expected_type)
+{
+  gchar *type;
+  gboolean has_type = FALSE;
+
+  if (g_menu_model_get_item_attribute (menu, index, "x-canonical-type", "s", &type))
+    {
+      has_type = g_str_equal (type, expected_type);
+      g_free (type);
+    }
+
+  return has_type;
+}
+
 static void
 indicator_ng_menu_changed (GMenuModel *menu,
                            gint        position,
@@ -240,26 +257,32 @@ indicator_ng_menu_changed (GMenuModel *menu,
 
   if (added)
     {
-      GMenuModel *popup;
-      gchar *action;
-
       g_clear_pointer (&self->header_action, g_free);
-      if (g_menu_model_get_item_attribute (self->menu, 0, G_MENU_ATTRIBUTE_ACTION, "s", &action) &&
-          g_str_has_prefix (action, "indicator."))
+
+      if (indicator_ng_menu_item_is_of_type (self->menu, 0, "com.canonical.indicator.root"))
         {
-          self->header_action = g_strdup (action + 10);
+          GMenuModel *popup;
+          gchar *action;
+
+          if (g_menu_model_get_item_attribute (self->menu, 0, G_MENU_ATTRIBUTE_ACTION, "s", &action) &&
+              g_str_has_prefix (action, "indicator."))
+            {
+              self->header_action = g_strdup (action + 10);
+            }
+
+          popup = g_menu_model_get_item_link (self->menu, 0, G_MENU_LINK_SUBMENU);
+          if (popup)
+            {
+              gtk_menu_shell_bind_model (GTK_MENU_SHELL (self->entry.menu), popup, NULL, TRUE);
+              g_object_unref (popup);
+            }
+
+          indicator_ng_update_entry (self);
+
+          g_free (action);
         }
-
-      popup = g_menu_model_get_item_link (self->menu, 0, G_MENU_LINK_SUBMENU);
-      if (popup)
-        {
-          gtk_menu_shell_bind_model (GTK_MENU_SHELL (self->entry.menu), popup, NULL, TRUE);
-          g_object_unref (popup);
-        }
-
-      indicator_ng_update_entry (self);
-
-      g_free (action);
+      else
+        g_warning ("indicator menu item must be of type 'com.canonical.indicator.root'");
     }
 }
 
