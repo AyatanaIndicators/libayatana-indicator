@@ -1,5 +1,23 @@
 #!/usr/bin/python
 
+# Copyright 2013 Canonical Ltd.
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# version 3.0 as published by the Free Software Foundation.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License version 3.0 for more details.
+#
+# You should have received a copy of the GNU General Public
+# License along with this library. If not, see
+# <http://www.gnu.org/licenses/>.
+#
+# Author: Ryan Lortie <desrt@desrt.ca>
+
+
 # This script removes branch and/or line coverage data for lines that
 # contain a particular substring.
 #
@@ -10,8 +28,6 @@
 #
 # This script intentionally avoids checking for errors.  Any exceptions
 # will trigger make to fail.
-#
-# Author: Ryan Lortie <desrt@desrt.ca>
 
 import sys
 
