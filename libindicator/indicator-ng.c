@@ -292,7 +292,7 @@ indicator_ng_menu_changed (GMenuModel *menu,
           if (g_menu_model_get_item_attribute (self->menu, 0, G_MENU_ATTRIBUTE_ACTION, "s", &action) &&
               g_str_has_prefix (action, "indicator."))
             {
-              self->header_action = g_strdup (action + 10);
+              self->header_action = g_strdup (action + strlen ("indicator."));
             }
 
           popup = g_menu_model_get_item_link (self->menu, 0, G_MENU_LINK_SUBMENU);
