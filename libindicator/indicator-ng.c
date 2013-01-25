@@ -1,5 +1,6 @@
 
 #include "indicator-ng.h"
+#include "indicator-image-helper.h"
 
 #include <string.h>
 
@@ -177,7 +178,7 @@ indicator_ng_set_icon_from_string (IndicatorNg *self,
   icon = g_icon_new_for_string (str, &error);
   if (icon)
     {
-      gtk_image_set_from_gicon (self->entry.image, icon, GTK_ICON_SIZE_LARGE_TOOLBAR);
+      indicator_image_helper_update_from_gicon (self->entry.image, icon);
       g_object_unref (icon);
     }
   else

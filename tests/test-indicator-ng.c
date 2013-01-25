@@ -122,18 +122,7 @@ test_menu (void)
   g_assert_cmpstr (entry->name_hint, ==, "indicator-test");
   g_assert_cmpstr (entry->accessible_desc, ==, "Test indicator");
   g_assert_cmpstr (gtk_label_get_label (entry->label), ==, "Test");
-  {
-    GIcon *icon;
-    gchar *iconstr;
-
-    gtk_image_get_gicon (entry->image, &icon, NULL);
-    g_assert (icon);
-
-    iconstr = g_icon_to_string (icon);
-    g_assert_cmpstr (iconstr, ==, "indicator-test");
-
-    g_free (iconstr);
-  }
+  g_assert (gtk_image_get_storage_type (entry->image) == GTK_IMAGE_STOCK);
   {
     GList *children;
     GtkMenuItem *item;
