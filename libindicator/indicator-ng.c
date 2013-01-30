@@ -362,29 +362,28 @@ indicator_ng_initable_init (GInitable     *initable,
   gchar *bus_name = NULL;
 
   keyfile = g_key_file_new ();
-  if (!g_key_file_load_from_file (keyfile,
-                                  self->service_file,
-                                  G_KEY_FILE_NONE,
-                                  error))
-    {
-      g_key_file_free (keyfile);
-      return FALSE;
-    }
+  if (!g_key_file_load_from_file (keyfile, self->service_file, G_KEY_FILE_NONE, error))
+    goto out;
 
-  if ((self->name = g_key_file_get_string (keyfile, "Indicator Service", "Name", error)) &&
-      (bus_name = g_key_file_get_string (keyfile, "Indicator Service", "BusName", error)) &&
-      (self->object_path = g_key_file_get_string (keyfile, "Indicator Service", "ObjectPath", error)))
-    {
-      self->entry.name_hint = self->name;
+  if (!(self->name = g_key_file_get_string (keyfile, "Indicator Service", "Name", error)))
+    goto out;
 
-      self->name_watch_id = g_bus_watch_name (G_BUS_TYPE_SESSION,
-                                              bus_name,
-                                              G_BUS_NAME_WATCHER_FLAGS_AUTO_START,
-                                              indicator_ng_service_appeared,
-                                              indicator_ng_service_vanished,
-                                              self, NULL);
-    }
+  self->entry.name_hint = self->name;
 
+  if (!(bus_name = g_key_file_get_string (keyfile, "Indicator Service", "BusName", error)))
+    goto out;
+
+  if (!(self->object_path = g_key_file_get_string (keyfile, "Indicator Service", "ObjectPath", error)))
+    goto out;
+
+  self->name_watch_id = g_bus_watch_name (G_BUS_TYPE_SESSION,
+                                          bus_name,
+                                          G_BUS_NAME_WATCHER_FLAGS_AUTO_START,
+                                          indicator_ng_service_appeared,
+                                          indicator_ng_service_vanished,
+                                          self, NULL);
+
+out:
   g_free (bus_name);
   g_key_file_free (keyfile);
 
