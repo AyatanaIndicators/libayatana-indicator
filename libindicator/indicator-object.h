@@ -199,6 +199,7 @@ GList * indicator_object_get_entries (IndicatorObject * io);
 guint   indicator_object_get_location (IndicatorObject * io, IndicatorObjectEntry * entry);
 guint   indicator_object_get_show_now (IndicatorObject * io, IndicatorObjectEntry * entry);
 void	indicator_object_set_visible (IndicatorObject * io, gboolean visible);
+gboolean indicator_object_entry_is_visible (IndicatorObject * io, IndicatorObjectEntry * entry);
 void    indicator_object_entry_activate (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp);
 void    indicator_object_entry_activate_window (IndicatorObject * io, IndicatorObjectEntry * entry, guint windowid, guint timestamp);
 void    indicator_object_entry_close (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp);

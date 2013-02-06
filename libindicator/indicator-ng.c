@@ -11,16 +11,20 @@ struct _IndicatorNg
   gchar *service_file;
   gchar *name;
   gchar *object_path;
+  gchar *bus_name;
   gchar *profile;
   gchar *header_action;
 
   guint name_watch_id;
 
+  GDBusConnection *session_bus;
   GActionGroup *actions;
   GMenuModel *menu;
 
   IndicatorObjectEntry entry;
   gchar *accessible_desc;
+
+  gint64 last_service_restart;
 };
 
 static void indicator_ng_initable_iface_init (GInitableIface *initable);
@@ -111,6 +115,8 @@ indicator_ng_dispose (GObject *object)
       self->name_watch_id = 0;
     }
 
+  g_clear_object (&self->session_bus);
+
   indicator_ng_free_actions_and_menu (self);
 
   g_clear_object (&self->entry.label);
@@ -128,6 +134,7 @@ indicator_ng_finalize (GObject *object)
   g_free (self->service_file);
   g_free (self->name);
   g_free (self->object_path);
+  g_free (self->bus_name);
   g_free (self->accessible_desc);
   g_free (self->header_action);
 
@@ -323,6 +330,8 @@ indicator_ng_service_appeared (GDBusConnection *connection,
   g_assert (!self->actions);
   g_assert (!self->menu);
 
+  self->session_bus = g_object_ref (connection);
+
   self->actions = G_ACTION_GROUP (g_dbus_action_group_get (connection, name_owner, self->object_path));
   gtk_widget_insert_action_group (GTK_WIDGET (self->entry.menu), "indicator", self->actions);
   g_signal_connect_swapped (self->actions, "action-added", G_CALLBACK (indicator_ng_update_entry), self);
@@ -341,6 +350,41 @@ indicator_ng_service_appeared (GDBusConnection *connection,
 }
 
 static void
+indicator_ng_service_started (GObject      *source_object,
+                              GAsyncResult *result,
+                              gpointer      user_data)
+{
+  IndicatorNg *self = user_data;
+  GError *error = NULL;
+  GVariant *reply;
+
+  reply = g_dbus_connection_call_finish (G_DBUS_CONNECTION (source_object), result, &error);
+  if (!reply)
+    {
+      g_warning ("Could not activate service '%s': %s", self->name, error->message);
+      indicator_object_set_visible (INDICATOR_OBJECT (self), FALSE);
+      g_error_free (error);
+      return;
+    }
+
+  switch (g_variant_get_uint32 (reply))
+    {
+    case 1: /* DBUS_START_REPLY_SUCCESS */
+      break;
+
+    case 2: /* DBUS_START_REPLY_ALREADY_RUNNING */
+      g_warning ("could not start service '%s': it is already running", self->name);
+      indicator_object_set_visible (INDICATOR_OBJECT (self), FALSE);
+      break;
+
+    default:
+      g_assert_not_reached ();
+    }
+
+  g_variant_unref (reply);
+}
+
+static void
 indicator_ng_service_vanished (GDBusConnection *connection,
                                const gchar     *name,
                                gpointer         user_data)
@@ -349,7 +393,34 @@ indicator_ng_service_vanished (GDBusConnection *connection,
 
   indicator_ng_free_actions_and_menu (self);
 
-  indicator_object_set_visible (INDICATOR_OBJECT (self), FALSE);
+  /* Names may vanish because the service decided it doesn't need to
+   * show its indicator anymore, or because it crashed.  Let's assume it
+   * crashes and restart it unless it explicitly hid its indicator. */
+
+  if (indicator_object_entry_is_visible (INDICATOR_OBJECT (self), &self->entry))
+    {
+      gint64 now;
+
+      /* take care not to start it if it repeatedly crashes */
+      now = g_get_monotonic_time ();
+      if (now - self->last_service_restart < 1 * G_USEC_PER_SEC)
+        return;
+
+      self->last_service_restart = now;
+
+      g_dbus_connection_call (self->session_bus,
+                              "org.freedesktop.DBus",
+                              "/",
+                              "org.freedesktop.DBus",
+                              "StartServiceByName",
+                              g_variant_new ("(su)", self->bus_name, 0),
+                              G_VARIANT_TYPE ("(u)"),
+                              G_DBUS_CALL_FLAGS_NONE,
+                              -1,
+                              NULL,
+                              indicator_ng_service_started,
+                              self);
+    }
 }
 
 static gboolean
@@ -359,7 +430,6 @@ indicator_ng_initable_init (GInitable     *initable,
 {
   IndicatorNg *self = INDICATOR_NG (initable);
   GKeyFile *keyfile;
-  gchar *bus_name = NULL;
 
   keyfile = g_key_file_new ();
   if (!g_key_file_load_from_file (keyfile, self->service_file, G_KEY_FILE_NONE, error))
@@ -370,21 +440,20 @@ indicator_ng_initable_init (GInitable     *initable,
 
   self->entry.name_hint = self->name;
 
-  if (!(bus_name = g_key_file_get_string (keyfile, "Indicator Service", "BusName", error)))
+  if (!(self->bus_name = g_key_file_get_string (keyfile, "Indicator Service", "BusName", error)))
     goto out;
 
   if (!(self->object_path = g_key_file_get_string (keyfile, "Indicator Service", "ObjectPath", error)))
     goto out;
 
   self->name_watch_id = g_bus_watch_name (G_BUS_TYPE_SESSION,
-                                          bus_name,
+                                          self->bus_name,
                                           G_BUS_NAME_WATCHER_FLAGS_AUTO_START,
                                           indicator_ng_service_appeared,
                                           indicator_ng_service_vanished,
                                           self, NULL);
 
 out:
-  g_free (bus_name);
   g_key_file_free (keyfile);
 
   return self->name_watch_id > 0;

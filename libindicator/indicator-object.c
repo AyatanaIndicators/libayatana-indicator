@@ -935,3 +935,10 @@ set_property (GObject       * object,
         }
 }
 
+gboolean
+indicator_object_entry_is_visible (IndicatorObject * io, IndicatorObjectEntry * entry)
+{
+	g_return_val_if_fail (INDICATOR_IS_OBJECT (io), FALSE);
+
+	return entry_get_private (io, entry)->visibility == ENTRY_VISIBLE;
+}
