@@ -374,7 +374,6 @@ indicator_ng_service_started (GObject      *source_object,
 
     case 2: /* DBUS_START_REPLY_ALREADY_RUNNING */
       g_warning ("could not start service '%s': it is already running", self->name);
-      indicator_object_set_visible (INDICATOR_OBJECT (self), FALSE);
       break;
 
     default:
