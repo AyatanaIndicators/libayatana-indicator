@@ -1,6 +1,8 @@
 
 # Coverage targets
 
+EXTRA_DIST = trim-lcov.py
+
 .PHONY: clean-gcno clean-gcda \
 	coverage-html generate-coverage-html clean-coverage-html \
 	coverage-gcovr generate-coverage-gcovr clean-coverage-gcovr
@@ -23,7 +25,7 @@ coverage-html: clean-gcda
   
 generate-coverage-html:
 	@echo Collecting coverage data
-	$(LCOV) --directory $(top_builddir) --capture --output-file coverage.info --no-checksum --compat-libtool
+	$(LCOV) --directory $(top_builddir) --capture --no-checksum --compat-libtool | $(top_srcdir)/trim-lcov.py > coverage.info
 	LANG=C $(GENHTML) --prefix $(top_builddir) --output-directory coveragereport --title "Code Coverage" --legend --show-details coverage.info
   
 clean-coverage-html: clean-gcda

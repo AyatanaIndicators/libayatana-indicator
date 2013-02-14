@@ -26,7 +26,8 @@ EXTRA_DIST = \
 	session.conf.in \
 	service-manager-connect.service.in \
 	service-version-bad.service.in \
-	service-version-good.service.in
+	service-version-good.service.in \
+	com.canonical.indicator.test.service.in
 
 #############################
 # Test Loader
@@ -466,3 +467,43 @@ DISTCLEANFILES += loader-tester
 
 DISTCLEANFILES += $(XML_REPORT) $(HTML_REPORT)
 
+#############################
+# Indicator-ng
+#############################
+
+if USE_GTK3
+
+com.canonical.indicator.test.service: com.canonical.indicator.test.service.in Makefile.am
+	sed -e "s|\@builddir\@|$(abspath $(builddir))|" $< > $@
+
+check_PROGRAMS += test-indicator-ng
+
+test_indicator_ng_SOURCES = test-indicator-ng.c
+
+test_indicator_ng_CFLAGS = \
+	$(LIBINDICATOR_CFLAGS) \
+	-I$(top_srcdir) \
+	-DSRCDIR="\"$(srcdir)\"" \
+	-DBUILD_DIR="\"$(abs_builddir)\"" \
+	-Wall
+
+test_indicator_ng_LDADD = \
+	$(LIBINDICATOR_LIBS) \
+	-L$(top_builddir)/libindicator/.libs \
+	$(INDICATOR_LIB)
+
+TESTS += test-indicator-ng
+DISTCLEANFILES += test-indicator-ng
+
+# Mock indicator service
+check_PROGRAMS += indicator-test-service
+
+indicator_test_service_SOURCES = indicator-test-service.c
+indicator_test_service_CFLAGS = $(LIBINDICATOR_CFLAGS)
+indicator_test_service_LDADD = $(LIBINDICATOR_LIBS)
+
+EXTRA_indicator_test_service_DEPENDENCIES = com.canonical.indicator.test.service
+
+DISTCLEANFILES += indicator-test-service com.canonical.indicator.test.service
+
+endif

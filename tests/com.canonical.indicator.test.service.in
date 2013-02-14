@@ -1,0 +1,3 @@
+[D-BUS Service]
+Name=com.canonical.indicator.test
+Exec=@builddir@/indicator-test-service

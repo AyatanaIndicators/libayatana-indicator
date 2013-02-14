@@ -43,7 +43,7 @@ AS_IF([test "x$enable_deprecations" = xno],
 ##############################
 
 GTK_REQUIRED_VERSION=2.18
-GTK3_REQUIRED_VERSION=2.91
+GTK3_REQUIRED_VERSION=3.6
 GIO_UNIX_REQUIRED_VERSION=2.22
 
 AC_ARG_WITH([gtk],

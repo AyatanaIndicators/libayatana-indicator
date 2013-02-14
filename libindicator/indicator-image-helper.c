@@ -62,7 +62,12 @@ refresh_image (GtkImage * image)
 		/* Grab the filename */
 		icon_filename = gtk_icon_info_get_filename(icon_info);
 	}
-	g_return_if_fail(icon_filename != NULL); /* An error because we don't have a filename */
+
+	/* show a broken image if we don't have a filename */
+	if (icon_filename == NULL) {
+		gtk_image_set_from_stock (image, GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_LARGE_TOOLBAR);
+		return;
+	}
 
 	/* Build a pixbuf */
 	GError * error = NULL;
@@ -132,7 +137,8 @@ indicator_image_helper (const gchar * name)
 	/* Build us an image */
 	GtkImage * image = GTK_IMAGE(gtk_image_new());
 
-	indicator_image_helper_update(image, name);
+	if (name)
+		indicator_image_helper_update(image, name);
 
 	return image;
 }
@@ -144,17 +150,27 @@ indicator_image_helper_update (GtkImage * image, const gchar * name)
 	g_return_if_fail(name != NULL);
 	g_return_if_fail(name[0] != '\0');
 	g_return_if_fail(GTK_IS_IMAGE(image));
-	gboolean seen_previously = FALSE;
 
 	/* Build us a GIcon */
 	GIcon * icon_names = g_themed_icon_new_with_default_fallbacks(name);
 	g_warn_if_fail(icon_names != NULL);
 	g_return_if_fail(icon_names != NULL);
 
+	indicator_image_helper_update_from_gicon (image, icon_names);
+
+	g_object_unref (icon_names);
+	return;
+}
+
+void
+indicator_image_helper_update_from_gicon (GtkImage *image, GIcon *icon)
+{
+	gboolean seen_previously = FALSE;
+
 	seen_previously = (g_object_get_data(G_OBJECT(image), INDICATOR_NAMES_DATA) != NULL);
 
 	/* Attach our names to the image */
-	g_object_set_data_full(G_OBJECT(image), INDICATOR_NAMES_DATA, icon_names, g_object_unref);
+	g_object_set_data_full(G_OBJECT(image), INDICATOR_NAMES_DATA, g_object_ref (icon), g_object_unref);
 
 	/* Put the pixbuf in */
 	refresh_image(image);

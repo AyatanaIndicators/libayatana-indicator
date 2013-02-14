@@ -36,6 +36,10 @@ indicator_headers = \
 	indicator-service.h \
 	indicator-service-manager.h
 
+if USE_GTK3
+indicator_headers += indicator-ng.h
+endif
+
 libindicatorinclude_HEADERS = \
 	$(indicator_headers)
 
@@ -52,6 +56,10 @@ libindicator_la_SOURCES = \
 	indicator-object-marshal.c \
 	indicator-service.c \
 	indicator-service-manager.c
+
+if USE_GTK3
+libindicator_la_SOURCES += indicator-ng.c
+endif
 
 libindicator_la_CFLAGS = \
 	$(LIBINDICATOR_CFLAGS) \
