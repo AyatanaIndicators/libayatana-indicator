@@ -1,3 +1,13 @@
+libindicator (12.10.2daily13.02.19-0ubuntu1) raring; urgency=low
+
+  [ Michael Terry ]
+  * indicatordir is now multiarch, breaking unity (LP: #1126360)
+
+  [ Automatic PS uploader ]
+  * Automatic snapshot from revision 477
+
+ -- Automatic PS uploader <ps-jenkins@lists.canonical.com>  Tue, 19 Feb 2013 02:02:26 +0000
+
 libindicator (12.10.2daily13.02.15-0ubuntu1) raring; urgency=low
 
   [ Mathieu Trudel-Lapierre ]
