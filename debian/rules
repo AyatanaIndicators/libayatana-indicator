@@ -21,7 +21,7 @@ override_dh_autoreconf:
 override_dh_auto_configure: $(FLAVORS:%=doconfigure-%)
 
 doconfigure-%:
-	DH_VERBOSE=1 dh_auto_configure --builddirectory=builddir/$* -- --disable-silent-rules $(CONFIGURE_FLAGS_$*)
+	DH_VERBOSE=1 dh_auto_configure --builddirectory=builddir/$* -- $(COMMON_CONFIGURE_FLAGS) $(CONFIGURE_FLAGS_$*)
 
 override_dh_auto_build: $(FLAVORS:%=dobuild-%)
 
