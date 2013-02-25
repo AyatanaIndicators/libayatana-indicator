@@ -1,3 +1,9 @@
+libindicator (12.10.2daily13.02.25-0ubuntu1) raring; urgency=low
+
+  * Automatic snapshot from revision 479
+
+ -- Automatic PS uploader <ps-jenkins@lists.canonical.com>  Mon, 25 Feb 2013 02:03:13 +0000
+
 libindicator (12.10.2daily13.02.19-0ubuntu1) raring; urgency=low
 
   [ Michael Terry ]
