@@ -236,6 +236,10 @@ static void
 indicator_ng_update_entry (IndicatorNg *self)
 {
   GVariant *state;
+  const gchar *label = NULL;
+  const gchar *iconstr = NULL;
+  const gchar *accessible_desc = NULL;
+  gboolean visible = TRUE;
 
   g_return_if_fail (self->menu != NULL);
   g_return_if_fail (self->actions != NULL);
@@ -250,20 +254,25 @@ indicator_ng_update_entry (IndicatorNg *self)
   state = g_action_group_get_action_state (self->actions, self->header_action);
   if (state && g_variant_is_of_type (state, G_VARIANT_TYPE ("(sssb)")))
     {
-      const gchar *label;
-      const gchar *iconstr;
-      const gchar *accessible_desc;
-      gboolean visible;
-
       g_variant_get (state, "(&s&s&sb)", &label, &iconstr, &accessible_desc, &visible);
-
-      indicator_ng_set_label (self, label);
-      indicator_ng_set_icon_from_string (self, iconstr);
-      indicator_ng_set_accessible_desc (self, accessible_desc);
-      indicator_object_set_visible (INDICATOR_OBJECT (self), visible);
+    }
+  else if (state && g_variant_is_of_type (state, G_VARIANT_TYPE ("a{sv}")))
+    {
+      g_variant_lookup (state, "label", "&s", &label);
+      g_variant_lookup (state, "icon", "&s", &iconstr);
+      g_variant_lookup (state, "accessible-desc", "&s", &accessible_desc);
+      g_variant_lookup (state, "visible", "b", &visible);
     }
   else
-    g_warning ("the action of the indicator menu item must have state with type (sssb)");
+    g_warning ("the action of the indicator menu item must have state with type (sssb) or a{sv}");
+
+  if (label)
+    indicator_ng_set_label (self, label);
+  if (iconstr)
+      indicator_ng_set_icon_from_string (self, iconstr);
+  if (accessible_desc)
+    indicator_ng_set_accessible_desc (self, accessible_desc);
+  indicator_object_set_visible (INDICATOR_OBJECT (self), visible);
 
   if (state)
     g_variant_unref (state);
