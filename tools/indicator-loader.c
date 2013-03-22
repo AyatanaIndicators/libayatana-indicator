@@ -29,6 +29,15 @@ License along with this library. If not, see
 #include <libindicator/indicator-ng.h>
 #endif
 
+static gchar * profile = "desktop";
+static gchar * title = NULL;
+
+static GOptionEntry entries[] =
+{       
+  { "profile", 'p', 0, G_OPTION_ARG_STRING, &profile, "Profile [default: 'desktop']", NULL },
+  { NULL }
+};      
+
 static GHashTable * entry_to_menuitem = NULL;
 
 #define ENTRY_DATA_NAME "indicator-custom-entry-data"
@@ -144,12 +153,14 @@ load_module (const gchar * name, GtkWidget * menu)
 	else if (g_str_has_suffix(name, ".indicator")) {
 		GError *error = NULL;
 
-		io = INDICATOR_OBJECT(indicator_ng_new(name, &error));
+		io = INDICATOR_OBJECT (indicator_ng_new_for_profile (name, profile, &error));
 		if (!io) {
 			g_warning ("could not load indicator from '%s': %s", name, error->message);
 			g_error_free (error);
 			return FALSE;
 		}
+
+		title = g_strdup_printf ("%s %s", profile, name);
 	}
 #endif
 	else
@@ -184,6 +195,18 @@ destroy (gpointer data)
 int
 main (int argc, char ** argv)
 {
+	/* Parse the command line options */
+	GError * error;
+	GOptionContext * context;
+	context = g_option_context_new ("/path/to/file.indicator");
+	g_option_context_add_main_entries (context, entries, NULL);
+	g_option_context_add_group (context, gtk_get_option_group (TRUE));
+	if (!g_option_context_parse (context, &argc, &argv, &error)) {
+		g_print ("option parsing failed: %s\n", error->message);
+		g_error_free (error);
+		return 1;
+	}
+
 	/* Make sure we don't proxy to ourselves */
 	g_unsetenv("UBUNTU_MENUPROXY");
 
@@ -203,6 +226,8 @@ main (int argc, char ** argv)
 	}
 
 	GtkWidget * window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	if (title != NULL)
+		gtk_window_set_title (GTK_WINDOW(window), title);
 	g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(destroy), NULL);
 
 	gtk_container_add(GTK_CONTAINER(window), menubar);
@@ -212,6 +237,9 @@ main (int argc, char ** argv)
 
 	gtk_main();
 
+    /* cleanup */
 	g_hash_table_destroy (entry_to_menuitem);
+    g_free (title);
+    g_option_context_free (context);
 	return 0;
 }
