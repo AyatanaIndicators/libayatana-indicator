@@ -33,10 +33,10 @@ static gchar * profile = "desktop";
 static gchar * title = NULL;
 
 static GOptionEntry entries[] =
-{       
+{
   { "profile", 'p', 0, G_OPTION_ARG_STRING, &profile, "Profile [default: 'desktop']", NULL },
   { NULL }
-};      
+};
 
 static GHashTable * entry_to_menuitem = NULL;
 
@@ -237,9 +237,9 @@ main (int argc, char ** argv)
 
 	gtk_main();
 
-    /* cleanup */
+	/* cleanup */
 	g_hash_table_destroy (entry_to_menuitem);
-    g_free (title);
-    g_option_context_free (context);
+	g_free (title);
+	g_option_context_free (context);
 	return 0;
 }
