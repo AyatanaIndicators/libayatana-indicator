@@ -196,7 +196,7 @@ int
 main (int argc, char ** argv)
 {
 	/* Parse the command line options */
-	GError * error;
+	GError * error = NULL;
 	GOptionContext * context;
 	context = g_option_context_new ("/path/to/file.indicator");
 	g_option_context_add_main_entries (context, entries, NULL);
