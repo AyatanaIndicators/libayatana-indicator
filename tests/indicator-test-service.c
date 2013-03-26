@@ -70,7 +70,9 @@ main (int argc, char **argv)
   GMenuItem *item;
   GMenu *submenu;
   GActionEntry entries[] = {
-    { "_header", NULL, NULL, "('Test', 'indicator-test', 'Test indicator', true)", NULL },
+    { "_header", NULL, NULL, "{'label': <'Test'>,"
+                             " 'icon': <'indicator-test'>,"
+                             " 'accessible-desc': <'Test indicator'> }", NULL },
     { "show", activate_show, NULL, NULL, NULL }
   };
   GMainLoop *loop;
