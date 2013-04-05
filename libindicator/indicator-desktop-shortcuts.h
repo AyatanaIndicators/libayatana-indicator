@@ -61,19 +61,19 @@ struct _IndicatorDesktopShortcuts {
 	GObject parent;
 };
 
-GType                       indicator_desktop_shortcuts_get_type         (void);
-IndicatorDesktopShortcuts * indicator_desktop_shortcuts_new              (const gchar * file,
-                                                                          const gchar * identity);
-const gchar **              indicator_desktop_shortcuts_get_nicks        (IndicatorDesktopShortcuts * ids);
-gchar *                     indicator_desktop_shortcuts_nick_get_name    (IndicatorDesktopShortcuts * ids,
-                                                                          const gchar * nick);
+GType                       indicator_desktop_shortcuts_get_type               (void);
+IndicatorDesktopShortcuts * indicator_desktop_shortcuts_new                    (const gchar * file,
+                                                                                const gchar * identity);
+const gchar **              indicator_desktop_shortcuts_get_nicks              (IndicatorDesktopShortcuts * ids);
+gchar *                     indicator_desktop_shortcuts_nick_get_name          (IndicatorDesktopShortcuts * ids,
+                                                                                const gchar * nick);
 gboolean                    indicator_desktop_shortcuts_nick_exec_with_context (IndicatorDesktopShortcuts * ids,
                                                                                 const gchar * nick,
                                                                                 GAppLaunchContext * launch_context);
 
 GLIB_DEPRECATED_FOR(indicator_desktop_shortcuts_nick_exec_with_context)
-gboolean                    indicator_desktop_shortcuts_nick_exec        (IndicatorDesktopShortcuts * ids,
-                                                                          const gchar * nick);
+gboolean                    indicator_desktop_shortcuts_nick_exec              (IndicatorDesktopShortcuts * ids,
+                                                                                const gchar * nick);
 
 G_END_DECLS
 
