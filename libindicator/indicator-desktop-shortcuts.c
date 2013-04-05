@@ -567,7 +567,7 @@ indicator_desktop_shortcuts_nick_get_name (IndicatorDesktopShortcuts * ids, cons
 	Return value: #TRUE on success or #FALSE on error.
 */
 gboolean
-indicator_desktop_shortcuts_nick_exec (IndicatorDesktopShortcuts * ids, const gchar * nick)
+indicator_desktop_shortcuts_nick_exec_with_context (IndicatorDesktopShortcuts * ids, const gchar * nick, GAppLaunchContext * launch_context)
 {
 	GError * error = NULL;
 
@@ -654,7 +654,7 @@ indicator_desktop_shortcuts_nick_exec (IndicatorDesktopShortcuts * ids, const gc
 		return FALSE;
 	}
 
-	gboolean launched = g_app_info_launch(G_APP_INFO(appinfo), NULL, NULL, &error);
+	gboolean launched = g_app_info_launch(G_APP_INFO(appinfo), NULL, launch_context, &error);
 
 	if (error != NULL) {
 		g_warning("Unable to launch file from nick '%s': %s", nick, error->message);
@@ -667,4 +667,10 @@ indicator_desktop_shortcuts_nick_exec (IndicatorDesktopShortcuts * ids, const gc
 	g_key_file_free(launcher);
 
 	return launched;
+}
+
+gboolean
+indicator_desktop_shortcuts_nick_exec (IndicatorDesktopShortcuts * ids, const gchar * nick)
+{
+	return indicator_desktop_shortcuts_nick_exec_with_context (ids, nick, NULL);
 }
