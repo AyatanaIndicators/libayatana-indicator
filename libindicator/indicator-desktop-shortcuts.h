@@ -24,6 +24,7 @@ License along with this library. If not, see
 #ifndef __INDICATOR_DESKTOP_SHORTCUTS_H__
 #define __INDICATOR_DESKTOP_SHORTCUTS_H__
 
+#include <gio/gio.h>
 #include <glib.h>
 #include <glib-object.h>
 
@@ -69,6 +70,8 @@ gchar *                     indicator_desktop_shortcuts_nick_get_name    (Indica
 gboolean                    indicator_desktop_shortcuts_nick_exec_with_context (IndicatorDesktopShortcuts * ids,
                                                                                 const gchar * nick,
                                                                                 GAppLaunchContext * launch_context);
+
+GLIB_DEPRECATED_FOR(indicator_desktop_shortcuts_nick_exec_with_context)
 gboolean                    indicator_desktop_shortcuts_nick_exec        (IndicatorDesktopShortcuts * ids,
                                                                           const gchar * nick);
 
