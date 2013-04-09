@@ -555,9 +555,10 @@ indicator_desktop_shortcuts_nick_get_name (IndicatorDesktopShortcuts * ids, cons
 }
 
 /**
-	indicator_desktop_shortcuts_nick_exec:
+	indicator_desktop_shortcuts_nick_exec_with_context:
 	@ids: The #IndicatorDesktopShortcuts object to look in
 	@nick: Which command that we're referencing.
+	@launch_context: The #GAppLaunchContext to use for launching the shortcut
 
 	Here we take a @nick and try and execute the action that is
 	associated with it.  The @nick parameter should be gotten
@@ -630,9 +631,9 @@ indicator_desktop_shortcuts_nick_exec_with_context (IndicatorDesktopShortcuts * 
 	gchar * desktopdata = g_strdup_printf("[" G_KEY_FILE_DESKTOP_GROUP "]\n"
 	                                      G_KEY_FILE_DESKTOP_KEY_TYPE "=" G_KEY_FILE_DESKTOP_TYPE_APPLICATION "\n"
 	                                      G_KEY_FILE_DESKTOP_KEY_NAME "=%s\n"
-	                                      G_KEY_FILE_DESKTOP_KEY_EXEC "=%s\n",
-	                                      name, exec);
-	
+	                                      G_KEY_FILE_DESKTOP_KEY_EXEC "=%s\n"
+	                                      G_KEY_FILE_DESKTOP_KEY_STARTUP_NOTIFY "=%s\n",
+	                                      name, exec, launch_context ? "true" : "false");
 
 	g_free(name); g_free(exec);
 	/* g_debug("Desktop file: \n%s", desktopdata); */
@@ -653,7 +654,6 @@ indicator_desktop_shortcuts_nick_exec_with_context (IndicatorDesktopShortcuts * 
 		g_key_file_free(launcher);
 		return FALSE;
 	}
-
 	gboolean launched = g_app_info_launch(G_APP_INFO(appinfo), NULL, launch_context, &error);
 
 	if (error != NULL) {
@@ -669,6 +669,20 @@ indicator_desktop_shortcuts_nick_exec_with_context (IndicatorDesktopShortcuts * 
 	return launched;
 }
 
+/**
+	indicator_desktop_shortcuts_nick_exec:
+	@ids: The #IndicatorDesktopShortcuts object to look in
+	@nick: Which command that we're referencing.
+
+	Here we take a @nick and try and execute the action that is
+	associated with it.  The @nick parameter should be gotten
+	from #indicator_desktop_shortcuts_get_nicks though it's not
+	required that the exact memory location be the same.
+	This function is deprecated and shouldn't be used in newly
+	written code.
+
+	Return value: #TRUE on success or #FALSE on error.
+*/
 gboolean
 indicator_desktop_shortcuts_nick_exec (IndicatorDesktopShortcuts * ids, const gchar * nick)
 {
