@@ -624,7 +624,8 @@ indicator_desktop_shortcuts_nick_exec_with_context (IndicatorDesktopShortcuts * 
 	                                            G_KEY_FILE_DESKTOP_KEY_EXEC,
 	                                            NULL,
 	                                            NULL);
-	GAppInfoCreateFlags flags = 0;
+
+	GAppInfoCreateFlags flags = G_APP_INFO_CREATE_NONE;
 
 	if (launch_context) {
 		flags |= G_APP_INFO_CREATE_SUPPORTS_STARTUP_NOTIFICATION;
