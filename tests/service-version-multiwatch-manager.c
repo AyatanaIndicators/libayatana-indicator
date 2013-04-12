@@ -64,7 +64,6 @@ delay_start (gpointer data)
 int
 main (int argc, char ** argv)
 {
-	g_type_init();
 	g_log_set_always_fatal(G_LOG_LEVEL_CRITICAL);
 	g_print("Manager: DBUS_SESSION_BUS_ADDRESS = %s\n", g_getenv("DBUS_SESSION_BUS_ADDRESS"));
 

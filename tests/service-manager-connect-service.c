@@ -48,8 +48,6 @@ shutdown (void)
 int
 main (int argc, char ** argv)
 {
-	g_type_init();
-
 	g_debug("Starting service");
 
 	IndicatorService * is = indicator_service_new("org.ayatana.test");

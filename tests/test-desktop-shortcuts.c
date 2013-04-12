@@ -125,7 +125,7 @@ test_desktop_shortcuts_launch (void)
 	const gchar ** nicks = indicator_desktop_shortcuts_get_nicks(ids);
 	g_assert(nicks_contains(nicks, "touch"));
 
-	g_assert(indicator_desktop_shortcuts_nick_exec(ids, "touch"));
+	g_assert(indicator_desktop_shortcuts_nick_exec_with_context(ids, "touch", NULL));
 	g_usleep(100000);
 	g_assert(g_file_test(BUILD_DIR "/test-desktop-shortcuts-touch-test", G_FILE_TEST_EXISTS));
 
@@ -149,7 +149,6 @@ test_desktop_shortcuts_suite (void)
 int
 main (int argc, char ** argv)
 {
-	g_type_init (); 
 	g_test_init (&argc, &argv, NULL);
 	gtk_init(&argc, &argv);
 

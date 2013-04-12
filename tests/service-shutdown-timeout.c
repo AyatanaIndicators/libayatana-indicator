@@ -48,8 +48,6 @@ shutdown (void)
 int
 main (int argc, char ** argv)
 {
-	g_type_init();
-
 	IndicatorService * is = indicator_service_new("my.test.name");
 	g_signal_connect(G_OBJECT(is), INDICATOR_SERVICE_SIGNAL_SHUTDOWN, shutdown, NULL);
 

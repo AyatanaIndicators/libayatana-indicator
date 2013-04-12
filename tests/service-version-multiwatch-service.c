@@ -49,7 +49,6 @@ shutdown (void)
 int
 main (int argc, char ** argv)
 {
-	g_type_init();
 	g_debug("Service starting");
 
 	IndicatorService * is = indicator_service_new_version("org.ayatana.version.good", SERVICE_VERSION_GOOD);
