@@ -649,9 +649,7 @@ indicator_desktop_shortcuts_nick_exec_with_context (IndicatorDesktopShortcuts * 
 
 	if (error != NULL) {
 		g_warning("Unable to launch file from nick '%s': %s", nick, error->message);
-		g_error_free(error);
-		g_object_unref(appinfo);
-		return FALSE;
+		g_clear_error(&error);
 	}
 
 	g_object_unref(appinfo);
