@@ -36,6 +36,20 @@ libindicator (12.10.2daily13.04.08-0ubuntu1) raring; urgency=low
 
  -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Mon, 08 Apr 2013 02:02:11 +0000
 
+libindicator (12.10.2daily13.02.25-0ubuntu2) raring; urgency=low
+
+  [ William Hua ]
+  * debian/control:
+    - Bump GLib to 2.37.
+  * configure.ac:
+    - Bump GLib to 2.37.
+  * libindicator/indicator-image-helper.c:
+    - Support display of GBytesIcons.
+  * libindicator/indicator-ng.c:
+    - Change action state icon type to GVariant.
+
+ -- William Hua <william.hua@canonical.com>  Wed, 17 Apr 2013 17:14:31 -0400
+
 libindicator (12.10.2daily13.02.25-0ubuntu1) raring; urgency=low
 
   * Automatic snapshot from revision 479

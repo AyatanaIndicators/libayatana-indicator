@@ -179,13 +179,12 @@ indicator_ng_set_accessible_desc (IndicatorNg *self,
 }
 
 static void
-indicator_ng_set_icon_from_string (IndicatorNg *self,
-                                   const gchar *str)
+indicator_ng_set_icon_from_variant (IndicatorNg *self,
+                                    GVariant    *variant)
 {
   GIcon *icon;
-  GError *error = NULL;
 
-  if (str == NULL || *str == '\0')
+  if (variant == NULL)
     {
       if (self->entry.image)
         {
@@ -200,7 +199,7 @@ indicator_ng_set_icon_from_string (IndicatorNg *self,
 
   gtk_widget_show (GTK_WIDGET (self->entry.image));
 
-  icon = g_icon_new_for_string (str, &error);
+  icon = g_icon_deserialize (variant);
   if (icon)
     {
       indicator_image_helper_update_from_gicon (self->entry.image, icon);
@@ -208,9 +207,10 @@ indicator_ng_set_icon_from_string (IndicatorNg *self,
     }
   else
     {
-      g_warning ("invalid icon string '%s': %s", str, error->message);
+      gchar *text = g_variant_print (variant, TRUE);
+      g_warning ("invalid icon variant '%s'", text);
       gtk_image_set_from_stock (self->entry.image, GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_LARGE_TOOLBAR);
-      g_error_free (error);
+      g_free (text);
     }
 }
 
@@ -236,9 +236,9 @@ static void
 indicator_ng_update_entry (IndicatorNg *self)
 {
   GVariant *state;
-  const gchar *label = NULL;
-  const gchar *iconstr = NULL;
-  const gchar *accessible_desc = NULL;
+  gchar *label = NULL;
+  GVariant *icon = NULL;
+  gchar *accessible_desc = NULL;
   gboolean visible = TRUE;
 
   g_return_if_fail (self->menu != NULL);
@@ -254,12 +254,20 @@ indicator_ng_update_entry (IndicatorNg *self)
   state = g_action_group_get_action_state (self->actions, self->header_action);
   if (state && g_variant_is_of_type (state, G_VARIANT_TYPE ("(sssb)")))
     {
+      gchar *iconstr = NULL;
+
       g_variant_get (state, "(&s&s&sb)", &label, &iconstr, &accessible_desc, &visible);
+
+      if (iconstr)
+        {
+          icon = g_variant_ref_sink (g_variant_new_string (iconstr));
+          g_free (iconstr);
+        }
     }
   else if (state && g_variant_is_of_type (state, G_VARIANT_TYPE ("a{sv}")))
     {
       g_variant_lookup (state, "label", "&s", &label);
-      g_variant_lookup (state, "icon", "&s", &iconstr);
+      g_variant_lookup (state, "icon", "*", &icon);
       g_variant_lookup (state, "accessible-desc", "&s", &accessible_desc);
       g_variant_lookup (state, "visible", "b", &visible);
     }
@@ -268,12 +276,17 @@ indicator_ng_update_entry (IndicatorNg *self)
 
   if (label)
     indicator_ng_set_label (self, label);
-  if (iconstr)
-      indicator_ng_set_icon_from_string (self, iconstr);
+  if (icon)
+    indicator_ng_set_icon_from_variant (self, icon);
   if (accessible_desc)
     indicator_ng_set_accessible_desc (self, accessible_desc);
   indicator_object_set_visible (INDICATOR_OBJECT (self), visible);
 
+  g_free (accessible_desc);
+  g_free (label);
+
+  if (icon)
+    g_variant_unref (icon);
   if (state)
     g_variant_unref (state);
 }

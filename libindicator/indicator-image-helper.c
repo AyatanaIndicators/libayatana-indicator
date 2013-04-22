@@ -63,25 +63,60 @@ refresh_image (GtkImage * image)
 		icon_filename = gtk_icon_info_get_filename(icon_info);
 	}
 
-	/* show a broken image if we don't have a filename */
-	if (icon_filename == NULL) {
+	if (icon_filename == NULL && !G_IS_BYTES_ICON (icon_names)) {
+		/* show a broken image if we don't have a filename */
 		gtk_image_set_from_stock (image, GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_LARGE_TOOLBAR);
 		return;
 	}
 
 	/* Build a pixbuf */
 	GError * error = NULL;
-	GdkPixbuf * pixbuf = gdk_pixbuf_new_from_file(icon_filename, &error);
+	GdkPixbuf * pixbuf = NULL;
 
-	if (icon_info != NULL) {
-		gtk_icon_info_free(icon_info);
-	}
+	if (icon_filename == NULL) {
+		GInputStream * stream = g_loadable_icon_load (G_LOADABLE_ICON (icon_names), icon_size, NULL, NULL, &error);
 
-	if (pixbuf == NULL) {
-		g_warning("Unable to load icon from file '%s' because: %s", icon_filename, error == NULL ? "I don't know" : error->message);
-		g_clear_error (&error);
-		gtk_image_clear(image);
-		return;
+		if (error == NULL) {
+			pixbuf = gdk_pixbuf_new_from_stream (stream, NULL, &error);
+		}
+
+		if (error != NULL) {
+			if (stream != NULL) {
+				g_input_stream_close (stream, NULL, NULL);
+				g_object_unref (stream);
+			}
+
+			if (icon_info != NULL) {
+				g_object_unref (icon_info);
+			}
+
+			g_warning ("Unable to load icon from data: %s", error->message);
+			g_clear_error (&error);
+			gtk_image_clear (image);
+			return;
+		}
+
+		g_input_stream_close (stream, NULL, &error);
+
+		if (error != NULL) {
+			g_warning ("Unable to close input stream: %s", error->message);
+			g_clear_error (&error);
+		}
+
+		g_object_unref (stream);
+	} else {
+		pixbuf = gdk_pixbuf_new_from_file (icon_filename, &error);
+
+		if (icon_info != NULL) {
+			g_object_unref (icon_info);
+		}
+
+		if (pixbuf == NULL) {
+			g_warning ("Unable to load icon from file '%s' because: %s", icon_filename, error == NULL ? "I don't know" : error->message);
+			g_clear_error (&error);
+			gtk_image_clear (image);
+			return;
+		}
 	}
 
 	/* Scale icon if all we get is something too big. */
