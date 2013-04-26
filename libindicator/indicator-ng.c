@@ -236,9 +236,9 @@ static void
 indicator_ng_update_entry (IndicatorNg *self)
 {
   GVariant *state;
-  gchar *label = NULL;
+  const gchar *label = NULL;
   GVariant *icon = NULL;
-  gchar *accessible_desc = NULL;
+  const gchar *accessible_desc = NULL;
   gboolean visible = TRUE;
 
   g_return_if_fail (self->menu != NULL);
@@ -281,9 +281,6 @@ indicator_ng_update_entry (IndicatorNg *self)
   if (accessible_desc)
     indicator_ng_set_accessible_desc (self, accessible_desc);
   indicator_object_set_visible (INDICATOR_OBJECT (self), visible);
-
-  g_free (accessible_desc);
-  g_free (label);
 
   if (icon)
     g_variant_unref (icon);
