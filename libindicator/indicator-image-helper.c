@@ -64,7 +64,7 @@ refresh_image (GtkImage * image)
 	}
 
 	if (icon_filename == NULL && !G_IS_BYTES_ICON (icon_names)) {
-		/* show a broken image if we don't have a filename */
+		/* show a broken image if we don't have a filename or image data */
 		gtk_image_set_from_stock (image, GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_LARGE_TOOLBAR);
 		return;
 	}
@@ -76,47 +76,35 @@ refresh_image (GtkImage * image)
 	if (icon_filename == NULL) {
 		GInputStream * stream = g_loadable_icon_load (G_LOADABLE_ICON (icon_names), icon_size, NULL, NULL, &error);
 
-		if (error == NULL) {
+		if (stream != NULL) {
 			pixbuf = gdk_pixbuf_new_from_stream (stream, NULL, &error);
+			g_input_stream_close (stream, NULL, NULL);
+			g_object_unref (stream);
 		}
-
-		if (error != NULL) {
-			if (stream != NULL) {
-				g_input_stream_close (stream, NULL, NULL);
-				g_object_unref (stream);
-			}
-
-			if (icon_info != NULL) {
-				g_object_unref (icon_info);
-			}
-
-			g_warning ("Unable to load icon from data: %s", error->message);
-			g_clear_error (&error);
-			gtk_image_clear (image);
-			return;
-		}
-
-		g_input_stream_close (stream, NULL, &error);
-
-		if (error != NULL) {
-			g_warning ("Unable to close input stream: %s", error->message);
-			g_clear_error (&error);
-		}
-
-		g_object_unref (stream);
 	} else {
 		pixbuf = gdk_pixbuf_new_from_file (icon_filename, &error);
+	}
 
-		if (icon_info != NULL) {
-			g_object_unref (icon_info);
+	if (pixbuf == NULL) {
+		const gchar *message = "I don't know";
+
+		if (error != NULL && error->message != NULL) {
+			message = error->message;
 		}
 
-		if (pixbuf == NULL) {
-			g_warning ("Unable to load icon from file '%s' because: %s", icon_filename, error == NULL ? "I don't know" : error->message);
+		if (icon_filename != NULL) {
+			g_warning ("Unable to load icon from file '%s': %s", icon_filename, message);
+		} else {
+			g_warning ("Unable to load icon from data: %s", message);
+		}
+
+		if (error != NULL) {
 			g_clear_error (&error);
-			gtk_image_clear (image);
-			return;
 		}
+
+		gtk_image_set_from_stock (image, GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_LARGE_TOOLBAR);
+
+		goto out;
 	}
 
 	/* Scale icon if all we get is something too big. */
@@ -133,7 +121,10 @@ refresh_image (GtkImage * image)
 	gtk_image_set_from_pixbuf(image, pixbuf);
 	g_object_unref(G_OBJECT(pixbuf));
 
-	return;
+out:
+	if (icon_info != NULL) {
+		gtk_icon_info_free (icon_info);
+	}
 }
 
 /* Handles the theme changed signal to refresh the icon to make
