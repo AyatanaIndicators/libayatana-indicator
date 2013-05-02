@@ -1,3 +1,35 @@
+libindicator (12.10.2daily13.04.10-0ubuntu1) raring; urgency=low
+
+  [ Marco Trevisan (Treviño) ]
+  * Libindicator should use startup-notify when launching application
+    shortcuts (LP: #1166890)
+  * Opening new-window from quicklist static action does not focus the
+    newly opened window (LP: #1164483)
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 486
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 10 Apr 2013 02:02:06 +0000
+
+libindicator (12.10.2daily13.04.09-0ubuntu1) raring; urgency=low
+
+  * Automatic snapshot from revision 484
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Tue, 09 Apr 2013 02:02:03 +0000
+
+libindicator (12.10.2daily13.04.08-0ubuntu1) raring; urgency=low
+
+  [ Marco Trevisan (Treviño) ]
+  * Opening calendar/contacts from quicklist does not focus the new
+    window (LP: #1164483)
+  * Libindicator should pass platform-data when launching application
+    shortcuts (LP: #1164470)
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 483
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Mon, 08 Apr 2013 02:02:11 +0000
+
 libindicator (12.10.2daily13.02.25-0ubuntu1) raring; urgency=low
 
   * Automatic snapshot from revision 479
