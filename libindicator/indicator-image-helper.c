@@ -70,58 +70,54 @@ refresh_image (GtkImage * image)
 	}
 
 	/* Build a pixbuf */
-	GError * error = NULL;
 	GdkPixbuf * pixbuf = NULL;
 
 	if (icon_filename == NULL) {
+		GError * error = NULL;
 		GInputStream * stream = g_loadable_icon_load (G_LOADABLE_ICON (icon_names), icon_size, NULL, NULL, &error);
 
 		if (stream != NULL) {
 			pixbuf = gdk_pixbuf_new_from_stream (stream, NULL, &error);
 			g_input_stream_close (stream, NULL, NULL);
 			g_object_unref (stream);
+
+			if (pixbuf == NULL) {
+				g_warning ("Unable to load icon from data: %s", error->message);
+				g_error_free (error);
+			}
+		} else {
+			g_warning ("Unable to load icon from data: %s", error->message);
+			g_error_free (error);
 		}
 	} else {
+		GError * error = NULL;
+
 		pixbuf = gdk_pixbuf_new_from_file (icon_filename, &error);
+
+		if (pixbuf == NULL) {
+			g_warning ("Unable to load icon from file '%s': %s", icon_filename, error->message);
+			g_error_free (error);
+		}
 	}
 
-	if (pixbuf == NULL) {
-		const gchar *message = "I don't know";
+	if (pixbuf != NULL) {
+		/* Scale icon if all we get is something too big. */
+		if (gdk_pixbuf_get_height(pixbuf) > icon_size) {
+			gfloat scale = (gfloat)icon_size / (gfloat)gdk_pixbuf_get_height(pixbuf);
+			gint width = round(gdk_pixbuf_get_width(pixbuf) * scale);
 
-		if (error != NULL && error->message != NULL) {
-			message = error->message;
+			GdkPixbuf * scaled = gdk_pixbuf_scale_simple(pixbuf, width, icon_size, GDK_INTERP_BILINEAR);
+			g_object_unref(G_OBJECT(pixbuf));
+			pixbuf = scaled;
 		}
 
-		if (icon_filename != NULL) {
-			g_warning ("Unable to load icon from file '%s': %s", icon_filename, message);
-		} else {
-			g_warning ("Unable to load icon from data: %s", message);
-		}
-
-		if (error != NULL) {
-			g_clear_error (&error);
-		}
-
-		gtk_image_set_from_stock (image, GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_LARGE_TOOLBAR);
-
-		goto out;
-	}
-
-	/* Scale icon if all we get is something too big. */
-	if (gdk_pixbuf_get_height(pixbuf) > icon_size) {
-		gfloat scale = (gfloat)icon_size / (gfloat)gdk_pixbuf_get_height(pixbuf);
-		gint width = round(gdk_pixbuf_get_width(pixbuf) * scale);
-
-		GdkPixbuf * scaled = gdk_pixbuf_scale_simple(pixbuf, width, icon_size, GDK_INTERP_BILINEAR);
+		/* Put the pixbuf on the image */
+		gtk_image_set_from_pixbuf(image, pixbuf);
 		g_object_unref(G_OBJECT(pixbuf));
-		pixbuf = scaled;
+	} else {
+		gtk_image_set_from_stock (image, GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	}
 
-	/* Put the pixbuf on the image */
-	gtk_image_set_from_pixbuf(image, pixbuf);
-	g_object_unref(G_OBJECT(pixbuf));
-
-out:
 	if (icon_info != NULL) {
 		gtk_icon_info_free (icon_info);
 	}
