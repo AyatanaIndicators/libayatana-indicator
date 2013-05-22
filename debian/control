@@ -12,7 +12,7 @@ Build-Depends: debhelper (>= 9),
                gtk-doc-tools,
                dbus-test-runner,
                xvfb,
-               libglib2.0-dev (>= 2.22),
+               libglib2.0-dev (>= 2.37),
                libgtk2.0-dev (>= 2.18),
                libgtk-3-dev (>= 2.91.3),
 Standards-Version: 3.9.2
