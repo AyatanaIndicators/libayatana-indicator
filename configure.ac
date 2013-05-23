@@ -45,6 +45,7 @@ AS_IF([test "x$enable_deprecations" = xno],
 GTK_REQUIRED_VERSION=2.18
 GTK3_REQUIRED_VERSION=3.6
 GIO_UNIX_REQUIRED_VERSION=2.37
+IDO_REQUIRED_VERSION=13.10.0
 
 AC_ARG_WITH([gtk],
   [AS_HELP_STRING([--with-gtk],
@@ -54,7 +55,8 @@ AC_ARG_WITH([gtk],
 AS_IF([test "x$with_gtk" = x3],
         [PKG_CHECK_MODULES(LIBINDICATOR,  gtk+-3.0 >= $GTK3_REQUIRED_VERSION
                                           gmodule-2.0
-                                          gio-unix-2.0 >= $GIO_UNIX_REQUIRED_VERSION)
+                                          gio-unix-2.0 >= $GIO_UNIX_REQUIRED_VERSION
+                                          libido3-0.1 >= $IDO_REQUIRED_VERSION)
         ],
       [test "x$with_gtk" = x2],
         [PKG_CHECK_MODULES(LIBINDICATOR,  gtk+-2.0 >= $GTK_REQUIRED_VERSION
