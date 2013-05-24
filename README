@@ -1,0 +1,35 @@
+The indicator service file format
+=================================
+
+Unity's panel finds out about indicator by looking at indicator service
+files in `/usr/share/unity/indicators`. These files have to have the same
+name as the well-known D-Bus name that the corresponding service owns.
+
+An indicator file is a normal key file (like desktop files).  It must have
+an `[Indicator Service]` section, that contains the service's name
+(`Name`) and optionally the object path at which its action group is found
+(`ObjectPath`). For example:
+
+  [Indicator Service]
+  Name=indicator-example
+  ObjectPath=/com/canonical/indicator/example
+
+An indicator can only export one action group, but a menu for each profile
+("desktop", "greeter", "phone") supports. There must be a section for each
+of those profiles, containing the object path on which the menu is
+exported:
+
+  [desktop]
+  ObjectPath=/com/canonical/indicator/example/desktop
+
+  [greeter]
+  ObjectPath=/com/canonical/indicator/example/desktop
+
+  [phone]
+  ObjectPath=/com/canonical/indicator/example/phone
+
+Object paths can be reused for different profiles (the greeter uses the
+same menu as the desktop in the above example).
+
+There are no fallbacks. If a profile is not mentioned in the service file,
+the indicator will not show up for that profile.

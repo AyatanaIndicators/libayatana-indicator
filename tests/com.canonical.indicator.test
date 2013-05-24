@@ -1,4 +1,6 @@
 [Indicator Service]
 Name=indicator-test
-BusName=com.canonical.indicator.test.nosuchservice
 ObjectPath=/com/canonical/indicator/test
+
+[desktop]
+ObjectPath=/com/canonical/indicator/test/desktop

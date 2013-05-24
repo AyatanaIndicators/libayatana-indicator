@@ -29,6 +29,7 @@ struct _IndicatorNg
   gchar *service_file;
   gchar *name;
   gchar *object_path;
+  gchar *menu_object_path;
   gchar *bus_name;
   gchar *profile;
   gchar *header_action;
@@ -152,6 +153,7 @@ indicator_ng_finalize (GObject *object)
   g_free (self->service_file);
   g_free (self->name);
   g_free (self->object_path);
+  g_free (self->menu_object_path);
   g_free (self->bus_name);
   g_free (self->accessible_desc);
   g_free (self->header_action);
@@ -362,10 +364,12 @@ indicator_ng_service_appeared (GDBusConnection *connection,
                                gpointer         user_data)
 {
   IndicatorNg *self = user_data;
-  gchar *menu_object_path;
 
   g_assert (!self->actions);
   g_assert (!self->menu);
+
+  /* watch is not established when menu_object_path == NULL */
+  g_assert (self->menu_object_path);
 
   self->session_bus = g_object_ref (connection);
 
@@ -375,15 +379,12 @@ indicator_ng_service_appeared (GDBusConnection *connection,
   g_signal_connect_swapped (self->actions, "action-removed", G_CALLBACK (indicator_ng_update_entry), self);
   g_signal_connect_swapped (self->actions, "action-state-changed", G_CALLBACK (indicator_ng_update_entry), self);
 
-  menu_object_path = g_strconcat (self->object_path, "/", self->profile, NULL);
-  self->menu = G_MENU_MODEL (g_dbus_menu_model_get (connection, name_owner, menu_object_path));
+  self->menu = G_MENU_MODEL (g_dbus_menu_model_get (connection, name_owner, self->menu_object_path));
   g_signal_connect (self->menu, "items-changed", G_CALLBACK (indicator_ng_menu_changed), self);
   if (g_menu_model_get_n_items (self->menu))
     indicator_ng_menu_changed (self->menu, 0, 0, 1, self);
 
   indicator_ng_update_entry (self);
-
-  g_free (menu_object_path);
 }
 
 static void
@@ -460,22 +461,57 @@ indicator_ng_service_vanished (GDBusConnection *connection,
 }
 
 static gboolean
+indicator_ng_load_from_keyfile (IndicatorNg  *self,
+                                GKeyFile     *keyfile,
+                                GError      **error)
+{
+  g_assert (self->name == NULL);
+  g_assert (self->object_path == NULL);
+  g_assert (self->menu_object_path == NULL);
+
+  self->name = g_key_file_get_string (keyfile, "Indicator Service", "Name", error);
+  if (self->name == NULL)
+    return FALSE;
+
+  self->object_path = g_key_file_get_string (keyfile, "Indicator Service", "ObjectPath", error);
+  if (self->object_path == NULL)
+    return FALSE;
+
+  /*
+   * Don't throw an error when the profile doesn't exist. Non-existant
+   * profiles are silently ignored by not showing an indicator at all.
+   */
+  if (g_key_file_has_group (keyfile, self->profile))
+    {
+      /* however, if the profile exists, it must have "ObjectPath" */
+      self->menu_object_path = g_key_file_get_string (keyfile, self->profile, "ObjectPath", error);
+      if (self->menu_object_path == NULL)
+        return FALSE;
+    }
+
+  return TRUE;
+}
+
+static gboolean
 indicator_ng_initable_init (GInitable     *initable,
                             GCancellable  *cancellable,
                             GError       **error)
 {
   IndicatorNg *self = INDICATOR_NG (initable);
   GKeyFile *keyfile;
+  gboolean success;
+
+  self->bus_name = g_path_get_basename (self->service_file);
 
   keyfile = g_key_file_new ();
-  if (g_key_file_load_from_file (keyfile, self->service_file, G_KEY_FILE_NONE, error))
+  if (g_key_file_load_from_file (keyfile, self->service_file, G_KEY_FILE_NONE, error) &&
+      indicator_ng_load_from_keyfile (self, keyfile, error))
     {
-      if ((self->name = g_key_file_get_string (keyfile, "Indicator Service", "Name", error)) &&
-          (self->bus_name = g_key_file_get_string (keyfile, "Indicator Service", "BusName", error)) &&
-          (self->object_path = g_key_file_get_string (keyfile, "Indicator Service", "ObjectPath", error)))
-        {
-          self->entry.name_hint = self->name;
+      self->entry.name_hint = self->name;
 
+      /* only watch the service when it supports the proile we're interested in */
+      if (self->menu_object_path)
+        {
           self->name_watch_id = g_bus_watch_name (G_BUS_TYPE_SESSION,
                                                   self->bus_name,
                                                   G_BUS_NAME_WATCHER_FLAGS_AUTO_START,
@@ -483,10 +519,12 @@ indicator_ng_initable_init (GInitable     *initable,
                                                   indicator_ng_service_vanished,
                                                   self, NULL);
         }
+
+      success = TRUE;
     }
 
   g_key_file_free (keyfile);
-  return self->name_watch_id > 0;
+  return success;
 }
 
 static void
