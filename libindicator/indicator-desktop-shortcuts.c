@@ -625,46 +625,34 @@ indicator_desktop_shortcuts_nick_exec_with_context (IndicatorDesktopShortcuts * 
 	                                            NULL,
 	                                            NULL);
 
-	/* Build a new desktop file with the name and exec in the desktop
-	   group.  We have to do this with data as apparently there isn't
-	   and add_group function in g_key_file.  Go figure. */
-	gchar * desktopdata = g_strdup_printf("[" G_KEY_FILE_DESKTOP_GROUP "]\n"
-	                                      G_KEY_FILE_DESKTOP_KEY_TYPE "=" G_KEY_FILE_DESKTOP_TYPE_APPLICATION "\n"
-	                                      G_KEY_FILE_DESKTOP_KEY_NAME "=%s\n"
-	                                      G_KEY_FILE_DESKTOP_KEY_EXEC "=%s\n"
-	                                      G_KEY_FILE_DESKTOP_KEY_STARTUP_NOTIFY "=%s\n",
-	                                      name, exec, launch_context ? "true" : "false");
+	GAppInfoCreateFlags flags = G_APP_INFO_CREATE_NONE;
 
+	if (launch_context) {
+		flags |= G_APP_INFO_CREATE_SUPPORTS_STARTUP_NOTIFICATION;
+	}
+
+	GAppInfo * appinfo = g_app_info_create_from_commandline(exec, name, flags, &error);
 	g_free(name); g_free(exec);
-	/* g_debug("Desktop file: \n%s", desktopdata); */
-
-	GKeyFile * launcher = g_key_file_new();
-	g_key_file_load_from_data(launcher, desktopdata, -1, G_KEY_FILE_NONE, &error);
-	g_free(desktopdata);
 
 	if (error != NULL) {
-		g_warning("Unable to build desktop keyfile for executing shortcut '%s': %s", nick, error->message);
+		g_warning("Unable to build Command line App info: %s", error->message);
 		g_error_free(error);
 		return FALSE;
 	}
 
-	GDesktopAppInfo * appinfo = g_desktop_app_info_new_from_keyfile(launcher);
 	if (appinfo == NULL) {
-		g_warning("Unable to build Desktop App info (unknown)");
-		g_key_file_free(launcher);
+		g_warning("Unable to build Command line App info (unknown)");
 		return FALSE;
 	}
-	gboolean launched = g_app_info_launch(G_APP_INFO(appinfo), NULL, launch_context, &error);
+
+	gboolean launched = g_app_info_launch(appinfo, NULL, launch_context, &error);
 
 	if (error != NULL) {
 		g_warning("Unable to launch file from nick '%s': %s", nick, error->message);
-		g_error_free(error);
-		g_key_file_free(launcher);
-		return FALSE;
+		g_clear_error(&error);
 	}
 
 	g_object_unref(appinfo);
-	g_key_file_free(launcher);
 
 	return launched;
 }
