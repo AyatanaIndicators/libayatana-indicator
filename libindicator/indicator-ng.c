@@ -256,15 +256,12 @@ indicator_ng_update_entry (IndicatorNg *self)
   state = g_action_group_get_action_state (self->actions, self->header_action);
   if (state && g_variant_is_of_type (state, G_VARIANT_TYPE ("(sssb)")))
     {
-      gchar *iconstr = NULL;
+      const gchar *iconstr = NULL;
 
       g_variant_get (state, "(&s&s&sb)", &label, &iconstr, &accessible_desc, &visible);
 
       if (iconstr)
-        {
-          icon = g_variant_ref_sink (g_variant_new_string (iconstr));
-          g_free (iconstr);
-        }
+        icon = g_variant_ref_sink (g_variant_new_string (iconstr));
     }
   else if (state && g_variant_is_of_type (state, G_VARIANT_TYPE ("a{sv}")))
     {
