@@ -362,7 +362,6 @@ test_loader_creation_deletion_suite (void)
 int
 main (int argc, char ** argv)
 {
-	g_type_init (); 
 	g_test_init (&argc, &argv, NULL);
 	gtk_init(&argc, &argv);
 

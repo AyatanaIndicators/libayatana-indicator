@@ -48,7 +48,6 @@ connection (void)
 int
 main (int argc, char ** argv)
 {
-	g_type_init();
 	g_log_set_always_fatal(G_LOG_LEVEL_CRITICAL);
 
 	IndicatorServiceManager * is = indicator_service_manager_new("my.test.name");
