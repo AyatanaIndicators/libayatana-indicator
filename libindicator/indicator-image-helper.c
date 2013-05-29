@@ -119,7 +119,13 @@ refresh_image (GtkImage * image)
 	}
 
 	if (icon_info != NULL) {
+#if GTK_CHECK_VERSION(3, 8, 0)
+		g_object_unref(icon_info);
+#else
+		/* NOTE: Leaving this in for lower version as it seems
+		   the object_unref() doesn't work on earlier versions. */
 		gtk_icon_info_free (icon_info);
+#endif
 	}
 }
 
