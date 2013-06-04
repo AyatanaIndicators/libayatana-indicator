@@ -119,7 +119,7 @@ refresh_image (GtkImage * image)
 	}
 
 	if (icon_info != NULL) {
-		g_object_unref(icon_info);
+		gtk_icon_info_free (icon_info);
 	}
 }
 
