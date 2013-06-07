@@ -50,11 +50,11 @@ test_instantiation (void)
   GError *error = NULL;
   GMainLoop *loop;
 
-  indicator = indicator_ng_new (SRCDIR "/com.canonical.test.nosuchservice.indicator", &error);
+  indicator = indicator_ng_new (SRCDIR "/com.canonical.indicator.no-such-service", &error);
   g_assert (indicator);
   g_assert (error == NULL);
 
-  g_assert_cmpstr (indicator_ng_get_service_file (indicator), ==, SRCDIR "/com.canonical.test.nosuchservice.indicator");
+  g_assert_cmpstr (indicator_ng_get_service_file (indicator), ==, SRCDIR "/com.canonical.indicator.no-such-service");
   g_assert_cmpstr (indicator_ng_get_profile (indicator), ==, "desktop");
 
   {
@@ -65,7 +65,7 @@ test_instantiation (void)
                              "profile", &profile,
                              NULL);
 
-    g_assert_cmpstr (service_file, ==, SRCDIR "/com.canonical.test.nosuchservice.indicator");
+    g_assert_cmpstr (service_file, ==, SRCDIR "/com.canonical.indicator.no-such-service");
     g_assert_cmpstr (profile, ==, "desktop");
 
     g_free (service_file);
@@ -89,7 +89,7 @@ test_instantiation_with_profile (void)
   IndicatorNg *indicator;
   GError *error = NULL;
 
-  indicator = indicator_ng_new_for_profile (SRCDIR "/com.canonical.test.indicator", "greeter", &error);
+  indicator = indicator_ng_new_for_profile (SRCDIR "/com.canonical.indicator.test", "greeter", &error);
   g_assert (indicator);
   g_assert (error == NULL);
 
@@ -107,7 +107,7 @@ test_menu (void)
   GList *entries;
   IndicatorObjectEntry *entry;
 
-  indicator = indicator_ng_new (SRCDIR "/com.canonical.test.indicator", &error);
+  indicator = indicator_ng_new (SRCDIR "/com.canonical.indicator.test", &error);
   g_assert (indicator);
   g_assert (error == NULL);
 
