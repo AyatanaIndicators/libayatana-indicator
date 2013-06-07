@@ -48,17 +48,6 @@ Description: panel indicator applet - library development files
  .
  This package contains files that are needed to build applications.
 
-Package: libindicator-tools
-Section: devel
-Architecture: any
-Depends: ${shlibs:Depends},
-         ${misc:Depends},
-         libindicator7 (= ${binary:Version}),
-Description: Tools for libindicator
- Tools useful for developers of applications using indicators.
- .
- This package contains files that are needed to build applications.
-
 Package: libindicator3-7
 Section: libs
 Architecture: any
