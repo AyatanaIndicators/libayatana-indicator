@@ -496,7 +496,7 @@ indicator_ng_initable_init (GInitable     *initable,
 {
   IndicatorNg *self = INDICATOR_NG (initable);
   GKeyFile *keyfile;
-  gboolean success;
+  gboolean success = FALSE;
 
   self->bus_name = g_path_get_basename (self->service_file);
 
