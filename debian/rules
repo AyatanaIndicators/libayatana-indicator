@@ -36,7 +36,7 @@ doinstall-%:
 override_dh_install:
 	find debian/tmp -name \*.la -delete
 	find debian/tmp -name libdummy-indicator\* -delete
-	rm -f debian/tmp/gtk3/usr/share/libindicator/80indicator-debugging
+	rm -f debian/tmp/gtk2/usr/share/libindicator/80indicator-debugging
 	dh_install -plibindicator7 --fail-missing --sourcedir=debian/tmp/gtk2
 	dh_install -plibindicator-dev --fail-missing --sourcedir=debian/tmp/gtk2
 	dh_install -plibindicator-tools --fail-missing --sourcedir=debian/tmp/gtk2

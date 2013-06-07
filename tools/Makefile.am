@@ -2,10 +2,6 @@ if USE_GTK3
 INDICATOR_LIB = -lindicator3
 libexec_PROGRAMS = indicator-loader3
 VER=3
-else
-VER=
-INDICATOR_LIB = -lindicator
-libexec_PROGRAMS = indicator-loader
 endif
 
 
