@@ -24,6 +24,7 @@ License along with this library. If not, see
 
 #include <gtk/gtk.h>
 #include <libindicator/indicator-object.h>
+#include <libido/libido.h>
 
 #if GTK_MAJOR_VERSION == 3
 #include <libindicator/indicator-ng.h>
@@ -212,6 +213,7 @@ main (int argc, char ** argv)
 	g_unsetenv("UBUNTU_MENUPROXY");
 
 	gtk_init(&argc, &argv);
+	ido_init ();
 
 	entry_to_menuitem = g_hash_table_new (g_direct_hash, g_direct_equal);
 
