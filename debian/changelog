@@ -1,3 +1,25 @@
+libindicator (12.10.2daily13.06.07-0ubuntu1) saucy; urgency=low
+
+  [ Ted Gould ]
+  * Migrating away from deprecated gtk_icon_info_free().
+
+  [ William Hua ]
+  * Use GIcon's serialization/deserialization interface for indicator
+    icons so that we can load icons as PNG data transmitted over the
+    bus.
+
+  [ Marco Trevisan (Treviño) ]
+  * IndicatorDesktopShortcuts: Use the proper way to create an AppInfo
+    from command-line Removed the hack that we used to create a .desktop
+    app-info from a locally generated keyfile, using
+    g_app_info_create_from_commandline instead. (LP: #1168373)
+  * tests: fix compilation and make check.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 492
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 07 Jun 2013 02:02:37 +0000
+
 libindicator (12.10.2daily13.05.02-0ubuntu1) saucy; urgency=low
 
   * Automatic snapshot from revision 487
