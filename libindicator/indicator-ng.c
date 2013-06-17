@@ -273,12 +273,9 @@ indicator_ng_update_entry (IndicatorNg *self)
   else
     g_warning ("the action of the indicator menu item must have state with type (sssb) or a{sv}");
 
-  if (label)
-    indicator_ng_set_label (self, label);
-  if (icon)
-    indicator_ng_set_icon_from_variant (self, icon);
-  if (accessible_desc)
-    indicator_ng_set_accessible_desc (self, accessible_desc);
+  indicator_ng_set_label (self, label);
+  indicator_ng_set_icon_from_variant (self, icon);
+  indicator_ng_set_accessible_desc (self, accessible_desc);
   indicator_object_set_visible (INDICATOR_OBJECT (self), visible);
 
   if (icon)
