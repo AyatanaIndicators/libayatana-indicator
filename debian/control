@@ -80,6 +80,8 @@ Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
          libindicator3-7 (= ${binary:Version}),
+Replaces: libindicator-tools,
+Conflicts: libindicator-tools,
 Description: Tools for libindicator
  Tools useful for developers of applications using indicators.
  .
