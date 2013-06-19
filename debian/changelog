@@ -1,3 +1,38 @@
+libindicator (12.10.2daily13.06.19.1-0ubuntu1) saucy; urgency=low
+
+  [ Charles Kerr ]
+  * in indicator_ng_update_entry, unconditionally call set_label,
+    set_icon, set_accessible. Previously these were only called if the
+    respective fields weren't NULL, which made it impossible to, for
+    example, turn off a label or icon once it had been set.
+
+  [ Ted Gould ]
+  * Remove the GTK2 version of the tools.
+
+  [ Didier Roche ]
+  * Add missing conflicts/replaces
+
+  [ Lars Uebernickel ]
+  * Merge lp:~larsu/new-indicator-file-format IndicatorNg: update
+    indicator file format The old file format had some shortcomings: (1)
+    It was impossible to efficiently reuse a menu for different
+    profiles, because the profile name was implicit in the object path.
+    The only way to do this was to export the same menu twice. Now,
+    object paths have to be set explicitly in the indicator file. (2)
+    The well-known dbus name of a service and the name of its service
+    file were similar but slightly different
+    (com.canonical.indicator.test vs com.canonical.test.indicator),
+    which caused some confusion on when to use which. Now, the file name
+    *is* the bus name, and the `BusName` key has been dropped. The new
+    file format is documented in README.
+  * Merge lp:~larsu/call-ido-init
+  * indicator-ng: properly fail when keyfile doesn't exist.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 499
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 19 Jun 2013 10:45:13 +0000
+
 libindicator (12.10.2daily13.06.07-0ubuntu1) saucy; urgency=low
 
   [ Ted Gould ]
