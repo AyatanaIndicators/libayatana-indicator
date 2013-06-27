@@ -383,15 +383,16 @@ indicator_ng_service_appeared (GDBusConnection *connection,
 
 static void
 indicator_ng_service_started (GObject      *source_object,
-                              GAsyncResult *result,
+                              GAsyncResult *res,
                               gpointer      user_data)
 {
   IndicatorNg *self = user_data;
   GError *error = NULL;
-  GVariant *reply;
+  GVariant *result;
+  guint32 start_service_reply;
 
-  reply = g_dbus_connection_call_finish (G_DBUS_CONNECTION (source_object), result, &error);
-  if (!reply)
+  result = g_dbus_connection_call_finish (G_DBUS_CONNECTION (source_object), res, &error);
+  if (!result)
     {
       g_warning ("Could not activate service '%s': %s", self->name, error->message);
       indicator_object_set_visible (INDICATOR_OBJECT (self), FALSE);
@@ -399,7 +400,10 @@ indicator_ng_service_started (GObject      *source_object,
       return;
     }
 
-  switch (g_variant_get_uint32 (reply))
+  start_service_reply = 0;
+  g_variant_get (result, "(u)", &start_service_reply);
+
+  switch (start_service_reply)
     {
     case 1: /* DBUS_START_REPLY_SUCCESS */
       break;
@@ -412,7 +416,7 @@ indicator_ng_service_started (GObject      *source_object,
       g_assert_not_reached ();
     }
 
-  g_variant_unref (reply);
+  g_variant_unref (result);
 }
 
 static void
