@@ -6,13 +6,20 @@ files in `/usr/share/unity/indicators`. These files have to have the same
 name as the well-known D-Bus name that the corresponding service owns.
 
 An indicator file is a normal key file (like desktop files).  It must have
-an `[Indicator Service]` section, that contains the service's name
-(`Name`) and optionally the object path at which its action group is found
-(`ObjectPath`). For example:
+an `[Indicator Service]` section, that must contain the service's name (`Name`)
+and the object path at which its action group is found (`ObjectPath`). For
+example:
 
   [Indicator Service]
   Name=indicator-example
   ObjectPath=/com/canonical/indicator/example
+
+It should also contain a hint to where the indicator should appear in the panel:
+
+  Position=70
+
+The smaller the position, the further to the right (or left when RTL is
+enabled) the indicator appears.
 
 An indicator can only export one action group, but a menu for each profile
 ("desktop", "greeter", "phone") supports. There must be a section for each
