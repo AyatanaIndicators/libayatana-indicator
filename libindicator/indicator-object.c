@@ -783,7 +783,7 @@ indicator_object_entry_was_added (IndicatorObject * io, IndicatorObjectEntry * e
 static gint
 indicator_object_real_get_position (IndicatorObject *io)
 {
-	g_return_if_fail (INDICATOR_IS_OBJECT (io));
+	g_return_val_if_fail (INDICATOR_IS_OBJECT (io), -1);
 
 	return -1;
 }
