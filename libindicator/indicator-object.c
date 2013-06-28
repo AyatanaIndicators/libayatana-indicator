@@ -115,6 +115,7 @@ static GList * get_entries_default               (IndicatorObject*);
 static GList * get_all_entries                   (IndicatorObject*);
 static void indicator_object_entry_being_removed (IndicatorObject*, IndicatorObjectEntry*);
 static void indicator_object_entry_was_added     (IndicatorObject*, IndicatorObjectEntry*);
+static gint indicator_object_real_get_position   (IndicatorObject*);
 static IndicatorObjectEntryPrivate * entry_get_private (IndicatorObject*, IndicatorObjectEntry*);
 
 G_DEFINE_TYPE (IndicatorObject, indicator_object, G_TYPE_OBJECT);
@@ -141,6 +142,7 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 	klass->get_location = NULL;
 	klass->entry_being_removed = NULL;
 	klass->entry_was_added = NULL;
+	klass->get_position = indicator_object_real_get_position;
 
 	klass->entry_activate = NULL;
 	klass->entry_activate_window = NULL;
@@ -778,6 +780,14 @@ indicator_object_entry_was_added (IndicatorObject * io, IndicatorObjectEntry * e
 	}
 }
 
+static gint
+indicator_object_real_get_position (IndicatorObject *io)
+{
+	g_return_if_fail (INDICATOR_IS_OBJECT (io));
+
+	return -1;
+}
+
 /**
 	indicator_object_set_environment:
 	@io: #IndicatorObject to set on
@@ -941,4 +951,12 @@ indicator_object_entry_is_visible (IndicatorObject * io, IndicatorObjectEntry * 
 	g_return_val_if_fail (INDICATOR_IS_OBJECT (io), FALSE);
 
 	return entry_get_private (io, entry)->visibility == ENTRY_VISIBLE;
+}
+
+gint
+indicator_object_get_position (IndicatorObject *io)
+{
+	g_return_val_if_fail (INDICATOR_IS_OBJECT (io), FALSE);
+
+	return INDICATOR_OBJECT_GET_CLASS (io)->get_position (io);
 }

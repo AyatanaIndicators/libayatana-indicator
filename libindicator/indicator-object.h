@@ -111,6 +111,7 @@ typedef struct _IndicatorObjectEntry   IndicatorObjectEntry;
 	@show_now_changed: Slot for #IndicatorObject::show-now-changed
 	@accessible_desc_update: Slot for #IndicatorObject::accessible-desc-update
 	@secondary_activate: Slot for #IndicatorObject::secondary-activate
+	@get_position: returns the desired position on the panel (0 is right-most), or -1
 */
 struct _IndicatorObjectClass {
 	GObjectClass parent_class;
@@ -143,12 +144,13 @@ struct _IndicatorObjectClass {
 	void       (*accessible_desc_update) (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data);
 	void       (*secondary_activate) (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp, gpointer user_data);
 
+	gint       (*get_position) (IndicatorObject *io);
+
 	/* Reserved */
 	void       (*reserved1)     (void);
 	void       (*reserved2)     (void);
 	void       (*reserved3)     (void);
 	void       (*reserved4)     (void);
-	void       (*reserved5)     (void);
 };
 
 /**
@@ -203,6 +205,7 @@ gboolean indicator_object_entry_is_visible (IndicatorObject * io, IndicatorObjec
 void    indicator_object_entry_activate (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp);
 void    indicator_object_entry_activate_window (IndicatorObject * io, IndicatorObjectEntry * entry, guint windowid, guint timestamp);
 void    indicator_object_entry_close (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp);
+gint    indicator_object_get_position (IndicatorObject *io);
 
 void    indicator_object_set_environment (IndicatorObject * io, GStrv env);
 GStrv   indicator_object_get_environment (IndicatorObject * io);

@@ -33,6 +33,7 @@ struct _IndicatorNg
   gchar *bus_name;
   gchar *profile;
   gchar *header_action;
+  gint position;
 
   guint name_watch_id;
 
@@ -167,6 +168,14 @@ indicator_ng_get_entries (IndicatorObject *io)
   IndicatorNg *self = INDICATOR_NG (io);
 
   return g_list_append (NULL, &self->entry);
+}
+
+static gint
+indicator_ng_get_position (IndicatorObject *io)
+{
+  IndicatorNg *self = INDICATOR_NG (io);
+
+  return self->position;
 }
 
 static void
@@ -458,6 +467,27 @@ indicator_ng_service_vanished (GDBusConnection *connection,
     }
 }
 
+/* Get an integer from a keyfile. Returns @default_value if the key
+ * doesn't exist exists or is not an integer */
+static gint
+g_key_file_maybe_get_integer (GKeyFile    *keyfile,
+                              const gchar *group,
+                              const gchar *key,
+                              gint         default_value)
+{
+  GError *error = NULL;
+  gint i;
+
+  i = g_key_file_get_integer (keyfile, group, key, &error);
+  if (error)
+    {
+      g_error_free (error);
+      return default_value;
+    }
+
+  return i;
+}
+
 static gboolean
 indicator_ng_load_from_keyfile (IndicatorNg  *self,
                                 GKeyFile     *keyfile,
@@ -474,6 +504,8 @@ indicator_ng_load_from_keyfile (IndicatorNg  *self,
   self->object_path = g_key_file_get_string (keyfile, "Indicator Service", "ObjectPath", error);
   if (self->object_path == NULL)
     return FALSE;
+
+  self->position = g_key_file_maybe_get_integer (keyfile, "Indicator Service", "Position", -1);
 
   /*
    * Don't throw an error when the profile doesn't exist. Non-existant
@@ -537,6 +569,7 @@ indicator_ng_class_init (IndicatorNgClass *class)
   object_class->finalize = indicator_ng_finalize;
 
   io_class->get_entries = indicator_ng_get_entries;
+  io_class->get_position = indicator_ng_get_position;
 
   properties[PROP_SERVICE_FILE] = g_param_spec_string ("service-file",
                                                        "Service file",
@@ -574,6 +607,8 @@ indicator_ng_init (IndicatorNg *self)
    */
   self->accessible_desc = g_strdup ("");
   self->entry.accessible_desc = self->accessible_desc;
+
+  self->position = -1;
 
   indicator_object_set_visible (INDICATOR_OBJECT (self), FALSE);
 }
