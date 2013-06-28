@@ -1,3 +1,15 @@
+libindicator (12.10.2+13.10.20130628-0ubuntu1) saucy; urgency=low
+
+  [ Charles Kerr ]
+  * Fixes a crasher bug in ng's parsing of the response to
+    org.freedesktop.DBus.StartServiceByName: The result's variant format
+    is "(u)", not "u".
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 501
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 28 Jun 2013 02:02:40 +0000
+
 libindicator (12.10.2daily13.06.19.1-0ubuntu1) saucy; urgency=low
 
   [ Charles Kerr ]
