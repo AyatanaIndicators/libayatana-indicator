@@ -1,3 +1,14 @@
+libindicator (12.10.2+13.10.20130702-0ubuntu1) saucy; urgency=low
+
+  [ Lars Uebernickel ]
+  * Add support for indicators to tell the panel where they'd like to
+    appear Merged from lp:~larsu/libindicator/positionable
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 503
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Tue, 02 Jul 2013 02:02:39 +0000
+
 libindicator (12.10.2+13.10.20130628-0ubuntu1) saucy; urgency=low
 
   [ Charles Kerr ]
