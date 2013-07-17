@@ -625,6 +625,8 @@ indicator_desktop_shortcuts_nick_exec_with_context (IndicatorDesktopShortcuts * 
 	                                            NULL,
 	                                            NULL);
 
+	g_free(groupheader);
+
 	GAppInfoCreateFlags flags = G_APP_INFO_CREATE_NONE;
 
 	if (launch_context) {
