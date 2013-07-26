@@ -26,7 +26,7 @@
 #include <gtk/gtk.h>
 #include <libido/libido.h>
 #include <libindicator/indicator-object.h>
-#if GTK_MAJOR_VERSION == 3
+#if GTK_CHECK_VERSION (3,0,0)
  #include <libindicator/indicator-ng.h>
 #endif
 
@@ -71,9 +71,9 @@ create_menu_item (IndicatorObjectEntry * entry)
 #endif
 
   if ((w = entry->image))
-    gtk_box_pack_start(GTK_BOX (hbox), GTK_WIDGET(w), FALSE, FALSE, 0);
+    gtk_box_pack_start (GTK_BOX (hbox), GTK_WIDGET(w), FALSE, FALSE, 0);
   if ((w = entry->label))
-    gtk_box_pack_start(GTK_BOX (hbox), GTK_WIDGET(w), FALSE, FALSE, 0);
+    gtk_box_pack_start (GTK_BOX (hbox), GTK_WIDGET(w), FALSE, FALSE, 0);
 
   gtk_container_add (GTK_CONTAINER(menu_item), hbox);
   gtk_widget_show (hbox);
@@ -93,10 +93,7 @@ entry_added (IndicatorObject      * io,
 
   g_debug ("Signal: Entry Added");
 
-  if (entry->parent_object == NULL)
-    {
-      g_warning("Entry '%p' does not have a parent object", entry);
-    }
+  g_warn_if_fail (entry->parent_object != NULL);
 
   menu_item = g_hash_table_lookup (entry_to_menu_item, entry);
 
@@ -120,11 +117,12 @@ entry_removed (IndicatorObject      * io,
                IndicatorObjectEntry * entry,
                gpointer               user_data)
 {
+  GtkWidget * w;
+
   g_debug ("Signal: Entry Removed");
 
-  GtkWidget * menuitem = g_hash_table_lookup (entry_to_menu_item, entry);
-  if (menuitem != NULL)
-    gtk_widget_hide (menuitem);
+  if ((w = g_hash_table_lookup (entry_to_menu_item, entry)))
+    gtk_widget_hide (w);
 }
 
 static void
@@ -170,7 +168,7 @@ load_profile (const char * file_name, const char * profile)
 {
   IndicatorObject * io = NULL;
 
-#if GTK_MAJOR_VERSION == 3
+#if GTK_CHECK_VERSION (3,0,0)
 
   GError * error = NULL;
 
@@ -239,8 +237,8 @@ add_menu_to_grid (GtkGrid    * grid,
                        NULL);
 
   g_object_set (menu, "halign", GTK_ALIGN_START,
-                       "hexpand", TRUE,
-                       NULL);
+                      "hexpand", TRUE,
+                      NULL);
 }
 
 /***
@@ -250,16 +248,10 @@ add_menu_to_grid (GtkGrid    * grid,
 int
 main (int argc, char ** argv)
 {
+  int menu_count = 0;
   const gchar * file_name;
   gchar * base_name;
-  GtkWidget * window;
   GtkWidget * grid;
-
-  /* make sure we don't proxy to ourselves */
-  g_unsetenv ("UBUNTU_MENUPROXY");
-
-  gtk_init (&argc, &argv);
-  ido_init ();
 
   if (argc != 2)
     {
@@ -269,20 +261,20 @@ main (int argc, char ** argv)
       return 0;
     }
 
+  /* make sure we don't proxy to ourselves */
+  g_unsetenv ("UBUNTU_MENUPROXY");
+
+  gtk_init (&argc, &argv);
+  ido_init ();
+
   entry_to_menu_item = g_hash_table_new (g_direct_hash, g_direct_equal);
 
   file_name = argv[1];
 
-  window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  base_name = g_path_get_basename (file_name);
-  gtk_window_set_title (GTK_WINDOW(window), base_name);
-  g_free (base_name);
-  g_signal_connect (window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
   grid = g_object_new (GTK_TYPE_GRID, "margin", 4,
                                       "column-spacing", 6,
                                       "row-spacing", 12,
                                       NULL);
-  gtk_container_add (GTK_CONTAINER(window), grid);
 
   /* if it's an old-style indicator... */
   if (g_str_has_suffix (file_name, G_MODULE_SUFFIX))
@@ -291,16 +283,13 @@ main (int argc, char ** argv)
       GtkWidget * menu = gtk_menu_bar_new ();
       add_indicator_to_menu (GTK_MENU_SHELL(menu), io);
       base_name = g_path_get_basename (file_name);
-      add_menu_to_grid (GTK_GRID(grid), 0, base_name, menu);
+      add_menu_to_grid (GTK_GRID(grid), menu_count++, base_name, menu);
       g_free (base_name);
     }
   else /* treat it as a GMenu indicator's keyfile */
     {
       GError * error;
       GKeyFile * key_file;
-      gchar ** groups;
-      int i;
-      int menu_count = 0;
 
       key_file = g_key_file_new ();
       error = NULL;
@@ -309,33 +298,46 @@ main (int argc, char ** argv)
         {
           g_warning ("loading '%s' failed: %s", file_name, error->message);
           g_error_free (error);
-          return 1;
         }
-
-      groups = g_key_file_get_groups (key_file, NULL);
-      for (i=0; groups && groups[i]; i++)
+      else
         {
-          const gchar * const profile = groups[i];
-          IndicatorObject * io;
+          gchar ** groups;
+          int i;
 
-          if (!g_strcmp0 (profile, "Indicator Service"))
-            continue;
-
-          io = load_profile (file_name, profile);
-          if (io != NULL)
+          groups = g_key_file_get_groups (key_file, NULL);
+          for (i=0; groups && groups[i]; i++)
             {
-              GtkWidget * menu = gtk_menu_bar_new ();
-              add_indicator_to_menu (GTK_MENU_SHELL(menu), io);
-              add_menu_to_grid (GTK_GRID(grid), menu_count++, profile, menu);
+              const gchar * const profile = groups[i];
+              IndicatorObject * io;
+
+              if (!g_strcmp0 (profile, "Indicator Service"))
+                continue;
+
+              if ((io = load_profile (file_name, profile)))
+                {
+                  GtkWidget * menu = gtk_menu_bar_new ();
+                  add_indicator_to_menu (GTK_MENU_SHELL(menu), io);
+                  add_menu_to_grid (GTK_GRID(grid), menu_count++, profile, menu);
+                }
             }
+
+          g_strfreev (groups);
         }
 
-      g_strfreev (groups);
       g_key_file_free (key_file);
     }
 
-  gtk_widget_show_all (window);
-  gtk_main ();
+  if (menu_count > 0)
+    {
+      GtkWidget * window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+      base_name = g_path_get_basename (file_name);
+      gtk_window_set_title (GTK_WINDOW(window), base_name);
+      g_free (base_name);
+      g_signal_connect (window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+      gtk_container_add (GTK_CONTAINER(window), grid);
+      gtk_widget_show_all (window);
+      gtk_main ();
+    }
 
   /* cleanup */
   g_hash_table_destroy (entry_to_menu_item);
