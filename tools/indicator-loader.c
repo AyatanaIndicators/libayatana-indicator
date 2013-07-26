@@ -305,6 +305,9 @@ main (int argc, char ** argv)
               add_menu_to_grid (GTK_GRID(grid), menu_count++, profile, menu);
             }
         }
+
+      g_strfreev (groups);
+      g_key_file_free (key_file);
     }
 
   gtk_widget_show_all (window);
