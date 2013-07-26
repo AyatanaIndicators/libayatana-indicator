@@ -262,7 +262,7 @@ main (int argc, char ** argv)
     }
 
   /* make sure we don't proxy to ourselves */
-  g_unsetenv ("UBUNTU_MENUPROXY");
+  g_setenv ("UBUNTU_MENUPROXY", "0", TRUE);
 
   gtk_init (&argc, &argv);
   ido_init ();
