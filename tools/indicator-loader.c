@@ -60,6 +60,7 @@ create_menu_item (IndicatorObjectEntry * entry)
 {
   GtkWidget * menu_item;
   GtkWidget * hbox;
+  gpointer w;
 
   menu_item = gtk_menu_item_new();
 
@@ -69,22 +70,24 @@ create_menu_item (IndicatorObjectEntry * entry)
   hbox = gtk_hbox_new (FALSE, 3);
 #endif
 
-  if (entry->image != NULL)
-    gtk_box_pack_start(GTK_BOX (hbox), GTK_WIDGET(entry->image), FALSE, FALSE, 0);
-  if (entry->label != NULL)
-    gtk_box_pack_start(GTK_BOX (hbox), GTK_WIDGET(entry->label), FALSE, FALSE, 0);
+  if ((w = entry->image))
+    gtk_box_pack_start(GTK_BOX (hbox), GTK_WIDGET(w), FALSE, FALSE, 0);
+  if ((w = entry->label))
+    gtk_box_pack_start(GTK_BOX (hbox), GTK_WIDGET(w), FALSE, FALSE, 0);
 
   gtk_container_add (GTK_CONTAINER(menu_item), hbox);
   gtk_widget_show (hbox);
 
-  if (entry->menu != NULL)
-    gtk_menu_item_set_submenu (GTK_MENU_ITEM(menu_item), GTK_WIDGET(entry->menu));
+  if ((w = entry->menu))
+    gtk_menu_item_set_submenu (GTK_MENU_ITEM(menu_item), GTK_WIDGET(w));
 
   return menu_item;
 }
 
 static void
-entry_added (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data)
+entry_added (IndicatorObject      * io,
+             IndicatorObjectEntry * entry,
+             gpointer               user_data)
 {
   GtkWidget * menu_item;
 
@@ -99,12 +102,12 @@ entry_added (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_d
 
   if (menu_item == NULL)
     {
-      g_debug ("This is the first time this entry's been added -- creating a new menuitem for it");
+      g_debug ("creating a menuitem for new entry %p", entry);
       menu_item = create_menu_item (entry);
       g_hash_table_insert (entry_to_menu_item, entry, menu_item);
 
       g_object_set_qdata (G_OBJECT(menu_item), entry_data_quark(), entry);
-      g_signal_connect (G_OBJECT(menu_item), "activate", G_CALLBACK(activate_entry), io);
+      g_signal_connect (menu_item, "activate", G_CALLBACK(activate_entry), io);
 
       gtk_menu_shell_append (GTK_MENU_SHELL(user_data), menu_item);
     }
@@ -113,9 +116,11 @@ entry_added (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_d
 }
 
 static void 
-entry_removed (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user_data)
+entry_removed (IndicatorObject      * io,
+               IndicatorObjectEntry * entry,
+               gpointer               user_data)
 {
-  g_debug("Signal: Entry Removed");
+  g_debug ("Signal: Entry Removed");
 
   GtkWidget * menuitem = g_hash_table_lookup (entry_to_menu_item, entry);
   if (menuitem != NULL)
@@ -123,12 +128,21 @@ entry_removed (IndicatorObject * io, IndicatorObjectEntry * entry, gpointer user
 }
 
 static void
-menu_show (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp, gpointer user_data)
+menu_show (IndicatorObject      * io,
+           IndicatorObjectEntry * entry,
+           guint                  timestamp,
+           gpointer               user_data)
 {
+  const char * text;
+
   if (entry == NULL)
-    g_debug("Show Menu: (null)");
+    text = "(null)";
+  else if (entry->label == NULL)
+    text = "(no label)";
   else
-    g_debug("Show Menu: %s", entry->label != NULL ? gtk_label_get_text(entry->label) : "No Label");
+    text = gtk_label_get_text (entry->label);
+
+  g_debug ("Show Menu: %s", text);
 }
 
 /***
@@ -160,10 +174,13 @@ load_profile (const char * file_name, const char * profile)
 
   GError * error = NULL;
 
-  io = INDICATOR_OBJECT (indicator_ng_new_for_profile (file_name, profile, &error));
+  io = INDICATOR_OBJECT (indicator_ng_new_for_profile (file_name,
+                                                       profile,
+                                                       &error));
   if (error != NULL)
     {
-      g_warning ("could not load indicator from '%s': %s", file_name, error->message);
+      g_warning ("couldn't load profile '%s' from '%s': %s",
+                 profile, file_name, error->message);
       g_error_free (error);
     }
 
@@ -185,9 +202,12 @@ add_indicator_to_menu (GtkMenuShell * menu_shell, IndicatorObject * io)
   g_return_if_fail (INDICATOR_IS_OBJECT (io));
 
   /* connect to its signals */
-  g_signal_connect (io, INDICATOR_OBJECT_SIGNAL_ENTRY_ADDED,   G_CALLBACK(entry_added),    menu_shell);
-  g_signal_connect (io, INDICATOR_OBJECT_SIGNAL_ENTRY_REMOVED, G_CALLBACK(entry_removed),  menu_shell);
-  g_signal_connect (io, INDICATOR_OBJECT_SIGNAL_MENU_SHOW,     G_CALLBACK(menu_show),      NULL);
+  g_signal_connect (io, INDICATOR_OBJECT_SIGNAL_ENTRY_ADDED,
+                    G_CALLBACK(entry_added), menu_shell);
+  g_signal_connect (io, INDICATOR_OBJECT_SIGNAL_ENTRY_REMOVED,
+                    G_CALLBACK(entry_removed),  menu_shell);
+  g_signal_connect (io, INDICATOR_OBJECT_SIGNAL_MENU_SHOW,
+                    G_CALLBACK(menu_show), NULL);
 
   /* process the entries */
   entries = indicator_object_get_entries(io);
@@ -197,7 +217,10 @@ add_indicator_to_menu (GtkMenuShell * menu_shell, IndicatorObject * io)
 }
 
 static void
-add_menu_to_grid (GtkGrid * grid, int top, const char * text_, GtkWidget * menu)
+add_menu_to_grid (GtkGrid    * grid,
+                  int          top,
+                  const char * text_,
+                  GtkWidget  * menu)
 {
   gchar * text;
   GtkWidget * label;
@@ -238,7 +261,6 @@ main (int argc, char ** argv)
   gtk_init (&argc, &argv);
   ido_init ();
 
-  entry_to_menu_item = g_hash_table_new (g_direct_hash, g_direct_equal);
   if (argc != 2)
     {
       base_name = g_path_get_basename (argv[0]);
@@ -246,6 +268,8 @@ main (int argc, char ** argv)
       g_free (base_name);
       return 0;
     }
+
+  entry_to_menu_item = g_hash_table_new (g_direct_hash, g_direct_equal);
 
   file_name = argv[1];
 
@@ -283,7 +307,7 @@ main (int argc, char ** argv)
       g_key_file_load_from_file (key_file, file_name, G_KEY_FILE_NONE, &error);
       if (error != NULL)
         {
-          g_warning ("parsing '%s' failed: %s", file_name, error->message);
+          g_warning ("loading '%s' failed: %s", file_name, error->message);
           g_error_free (error);
           return 1;
         }
