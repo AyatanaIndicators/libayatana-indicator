@@ -1,3 +1,14 @@
+libindicator (12.10.2+13.10.20130731-0ubuntu1) saucy; urgency=low
+
+  [ Charles Kerr ]
+  * in indicator-loader3, if we're looking at an ng-style indicator,
+    show all of its profiles instead of just one.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 507
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 31 Jul 2013 02:02:40 +0000
+
 libindicator (12.10.2+13.10.20130719-0ubuntu1) saucy; urgency=low
 
   [ Marco Trevisan (Treviño) ]
