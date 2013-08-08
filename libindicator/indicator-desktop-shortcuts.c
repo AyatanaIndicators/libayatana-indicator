@@ -612,6 +612,20 @@ indicator_desktop_shortcuts_nick_exec_with_context (IndicatorDesktopShortcuts * 
 		return FALSE;
 	}
 
+	/* If possible move to the proper launch path */
+	gchar * path = g_key_file_get_locale_string(priv->keyfile,
+	                                            groupheader,
+	                                            G_KEY_FILE_DESKTOP_KEY_PATH,
+	                                            NULL,
+	                                            NULL);
+
+	if (path && *path != '\0' && chdir(path) < 0) {
+		g_warning ("Impossible to run action '%s' from path '%s'", nick, path);
+		g_free(groupheader);
+		g_free(path);
+		return FALSE;
+	}
+
 	/* Grab the name and the exec entries out of our current group */
 	gchar * name = g_key_file_get_locale_string(priv->keyfile,
 	                                            groupheader,
@@ -625,8 +639,6 @@ indicator_desktop_shortcuts_nick_exec_with_context (IndicatorDesktopShortcuts * 
 	                                            NULL,
 	                                            NULL);
 
-	g_free(groupheader);
-
 	GAppInfoCreateFlags flags = G_APP_INFO_CREATE_NONE;
 
 	if (launch_context) {
@@ -634,7 +646,7 @@ indicator_desktop_shortcuts_nick_exec_with_context (IndicatorDesktopShortcuts * 
 	}
 
 	GAppInfo * appinfo = g_app_info_create_from_commandline(exec, name, flags, &error);
-	g_free(name); g_free(exec);
+	g_free(groupheader); g_free(path); g_free(name); g_free(exec);
 
 	if (error != NULL) {
 		g_warning("Unable to build Command line App info: %s", error->message);
