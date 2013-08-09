@@ -613,11 +613,8 @@ indicator_desktop_shortcuts_nick_exec_with_context (IndicatorDesktopShortcuts * 
 	}
 
 	/* If possible move to the proper launch path */
-	gchar * path = g_key_file_get_locale_string(priv->keyfile,
-	                                            groupheader,
-	                                            G_KEY_FILE_DESKTOP_KEY_PATH,
-	                                            NULL,
-	                                            NULL);
+	gchar * path = g_key_file_get_string(priv->keyfile, groupheader,
+	                                     G_KEY_FILE_DESKTOP_KEY_PATH, NULL);
 
 	if (path && *path != '\0' && chdir(path) < 0) {
 		g_warning ("Impossible to run action '%s' from path '%s'", nick, path);
