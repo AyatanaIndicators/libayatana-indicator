@@ -621,7 +621,7 @@ indicator_desktop_shortcuts_nick_exec_with_context (IndicatorDesktopShortcuts * 
 		current_dir = g_get_current_dir();
 
 		if (chdir(path) < 0) {
-			g_warning ("Impossible to run action '%s' from path '%s'", nick, path);
+			g_warning("Impossible to run action '%s' from path '%s'", nick, path);
 			g_free(current_dir);
 			g_free(groupheader);
 			g_free(path);
