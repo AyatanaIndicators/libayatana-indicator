@@ -571,6 +571,7 @@ gboolean
 indicator_desktop_shortcuts_nick_exec_with_context (IndicatorDesktopShortcuts * ids, const gchar * nick, GAppLaunchContext * launch_context)
 {
 	GError * error = NULL;
+	gchar * current_dir = NULL;
 
 	g_return_val_if_fail(INDICATOR_IS_DESKTOP_SHORTCUTS(ids), FALSE);
 	IndicatorDesktopShortcutsPrivate * priv = INDICATOR_DESKTOP_SHORTCUTS_GET_PRIVATE(ids);
@@ -616,11 +617,16 @@ indicator_desktop_shortcuts_nick_exec_with_context (IndicatorDesktopShortcuts * 
 	gchar * path = g_key_file_get_string(priv->keyfile, groupheader,
 	                                     G_KEY_FILE_DESKTOP_KEY_PATH, NULL);
 
-	if (path && *path != '\0' && chdir(path) < 0) {
-		g_warning ("Impossible to run action '%s' from path '%s'", nick, path);
-		g_free(groupheader);
-		g_free(path);
-		return FALSE;
+	if (path && *path != '\0') {
+		current_dir = g_get_current_dir();
+
+		if (chdir(path) < 0) {
+			g_warning ("Impossible to run action '%s' from path '%s'", nick, path);
+			g_free(current_dir);
+			g_free(groupheader);
+			g_free(path);
+			return FALSE;
+		}
 	}
 
 	/* Grab the name and the exec entries out of our current group */
@@ -643,26 +649,36 @@ indicator_desktop_shortcuts_nick_exec_with_context (IndicatorDesktopShortcuts * 
 	}
 
 	GAppInfo * appinfo = g_app_info_create_from_commandline(exec, name, flags, &error);
-	g_free(groupheader); g_free(path); g_free(name); g_free(exec);
+	g_free(groupheader);
+	g_free(path);
+	g_free(name);
+	g_free(exec);
 
 	if (error != NULL) {
 		g_warning("Unable to build Command line App info: %s", error->message);
+		g_free(current_dir);
 		g_error_free(error);
 		return FALSE;
 	}
 
 	if (appinfo == NULL) {
 		g_warning("Unable to build Command line App info (unknown)");
+		g_free(current_dir);
 		return FALSE;
 	}
 
 	gboolean launched = g_app_info_launch(appinfo, NULL, launch_context, &error);
+
+	if (current_dir && chdir(current_dir) < 0)
+		g_warning("Impossible to switch back to default work dir");
+
 
 	if (error != NULL) {
 		g_warning("Unable to launch file from nick '%s': %s", nick, error->message);
 		g_clear_error(&error);
 	}
 
+	g_free(current_dir);
 	g_object_unref(appinfo);
 
 	return launched;
