@@ -33,6 +33,8 @@ struct _IndicatorNg
   gchar *bus_name;
   gchar *profile;
   gchar *header_action;
+  gchar *scroll_action;
+  gchar *secondary_action;
   gint position;
 
   guint name_watch_id;
@@ -158,6 +160,8 @@ indicator_ng_finalize (GObject *object)
   g_free (self->bus_name);
   g_free (self->accessible_desc);
   g_free (self->header_action);
+  g_free (self->scroll_action);
+  g_free (self->secondary_action);
 
   G_OBJECT_CLASS (indicator_ng_parent_class)->finalize (object);
 }
@@ -176,6 +180,37 @@ indicator_ng_get_position (IndicatorObject *io)
   IndicatorNg *self = INDICATOR_NG (io);
 
   return self->position;
+}
+
+static void
+indicator_ng_entry_scrolled (IndicatorObject          *io,
+                             IndicatorObjectEntry     *entry,
+                             gint                      delta,
+                             IndicatorScrollDirection  direction)
+{
+  IndicatorNg *self = INDICATOR_NG (io);
+
+  if (self->actions && self->scroll_action)
+    {
+      if (direction == INDICATOR_OBJECT_SCROLL_DOWN)
+        delta *= -1;
+      g_action_group_activate_action (self->actions, self->scroll_action,
+                                      g_variant_new_int32 (delta));
+    }
+}
+
+void
+indicator_ng_secondary_activate (IndicatorObject      *io,
+                                 IndicatorObjectEntry *entry,
+                                 guint                 timestamp,
+                                 gpointer              user_data)
+{
+  IndicatorNg *self = INDICATOR_NG (io);
+
+  if (self->actions && self->secondary_action)
+    {
+      g_action_group_activate_action (self->actions, self->secondary_action, NULL);
+    }
 }
 
 static void
@@ -332,16 +367,33 @@ indicator_ng_menu_changed (GMenuModel *menu,
   if (added)
     {
       g_clear_pointer (&self->header_action, g_free);
+      g_clear_pointer (&self->scroll_action, g_free);
+      g_clear_pointer (&self->secondary_action, g_free);
 
       if (indicator_ng_menu_item_is_of_type (self->menu, 0, "com.canonical.indicator.root"))
         {
           GMenuModel *popup;
           gchar *action;
 
-          if (g_menu_model_get_item_attribute (self->menu, 0, G_MENU_ATTRIBUTE_ACTION, "s", &action) &&
-              g_str_has_prefix (action, "indicator."))
+          if (g_menu_model_get_item_attribute (self->menu, 0, G_MENU_ATTRIBUTE_ACTION, "s", &action))
             {
-              self->header_action = g_strdup (action + strlen ("indicator."));
+              if (g_str_has_prefix (action, "indicator."))
+                self->header_action = g_strdup (action + strlen ("indicator."));
+              g_free (action);
+            }
+
+          if (g_menu_model_get_item_attribute (self->menu, 0, "x-canonical-scroll-action", "s", &action))
+            {
+              if (g_str_has_prefix (action, "indicator."))
+                self->scroll_action = g_strdup (action + strlen ("indicator."));
+              g_free (action);
+            }
+
+          if (g_menu_model_get_item_attribute (self->menu, 0, "x-canonical-secondary-action", "s", &action))
+            {
+              if (g_str_has_prefix (action, "indicator."))
+                self->secondary_action = g_strdup (action + strlen ("indicator."));
+              g_free (action);
             }
 
           popup = g_menu_model_get_item_link (self->menu, 0, G_MENU_LINK_SUBMENU);
@@ -352,8 +404,6 @@ indicator_ng_menu_changed (GMenuModel *menu,
             }
 
           indicator_ng_update_entry (self);
-
-          g_free (action);
         }
       else
         g_warning ("indicator menu item must be of type 'com.canonical.indicator.root'");
@@ -570,6 +620,8 @@ indicator_ng_class_init (IndicatorNgClass *class)
 
   io_class->get_entries = indicator_ng_get_entries;
   io_class->get_position = indicator_ng_get_position;
+  io_class->entry_scrolled = indicator_ng_entry_scrolled;
+  io_class->secondary_activate = indicator_ng_secondary_activate;
 
   properties[PROP_SERVICE_FILE] = g_param_spec_string ("service-file",
                                                        "Service file",
