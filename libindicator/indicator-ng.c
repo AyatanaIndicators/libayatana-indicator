@@ -207,8 +207,6 @@ indicator_ng_secondary_activate (IndicatorObject      *io,
 {
   IndicatorNg *self = INDICATOR_NG (io);
 
-  g_message ("secondary: %s", self->secondary_action);
-
   if (self->actions && self->secondary_action)
     {
       g_action_group_activate_action (self->actions, self->secondary_action, NULL);
