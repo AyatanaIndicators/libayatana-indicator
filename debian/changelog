@@ -1,3 +1,15 @@
+libindicator (12.10.2+13.10.20130913-0ubuntu1) saucy; urgency=low
+
+  [ Lars Uebernickel ]
+  * Expose scrolling and middle clicking to fix bug #1221242 and
+    #1204036 (make scrolling and middle clicking work on the sound
+    indicator). (LP: #1221242, #1204036)
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 511
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 13 Sep 2013 15:15:37 +0000
+
 libindicator (12.10.2+13.10.20130823-0ubuntu1) saucy; urgency=low
 
   [ Marco Trevisan (Treviño) ]
