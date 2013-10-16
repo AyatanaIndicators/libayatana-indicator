@@ -498,7 +498,11 @@ indicator_ng_service_vanished (GDBusConnection *connection,
       /* take care not to start it if it repeatedly crashes */
       now = g_get_monotonic_time ();
       if (now - self->last_service_restart < 1 * G_USEC_PER_SEC)
-        return;
+        {
+          g_warning ("The indicator '%s' vanished too quickly after appearing. It won't "
+                     "be respawned anymore, as it could be crashing repeatedly.", self->name);
+          return;
+        }
 
       self->last_service_restart = now;
 
