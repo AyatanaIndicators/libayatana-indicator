@@ -233,10 +233,7 @@ indicator_service_dispose (GObject *object)
 {
 	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(object);
 
-	if (priv->watchers != NULL) {
-		g_hash_table_destroy(priv->watchers);
-		priv->watchers = NULL;
-	}
+	g_clear_pointer (&priv->watchers, g_hash_table_destroy);
 
 	if (priv->timeout != 0) {
 		g_source_remove(priv->timeout);
@@ -249,10 +246,7 @@ indicator_service_dispose (GObject *object)
 		priv->dbus_registration = 0;
 	}
 
-	if (priv->bus != NULL) {
-		g_object_unref(priv->bus);
-		priv->bus = NULL;
-	}
+	g_clear_object (&priv->bus);
 
 	if (priv->bus_cancel != NULL) {
 		g_cancellable_cancel(priv->bus_cancel);
@@ -271,14 +265,8 @@ indicator_service_finalize (GObject *object)
 {
 	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(object);
 
-	if (priv->name != NULL) {
-		g_free(priv->name);
-	}
-
-	if (priv->watchers != NULL) {
-		g_hash_table_destroy(priv->watchers);
-		priv->watchers = NULL;
-	}
+	g_free (priv->name);
+	g_clear_pointer (&priv->watchers, g_hash_table_destroy);
 
 	G_OBJECT_CLASS (indicator_service_parent_class)->finalize (object);
 	return;
