@@ -25,6 +25,8 @@ License along with this library. If not, see
 #include "config.h"
 #endif
 
+#include <stdlib.h> /* exit() */
+
 #include <gio/gio.h>
 
 #include "indicator-service.h"
@@ -361,8 +363,9 @@ bus_get_cb (GObject * object, GAsyncResult * res, gpointer user_data)
 	GDBusConnection * connection = g_bus_get_finish(res, &error);
 
 	if (error != NULL) {
-		g_error("OMG! Unable to get a connection to DBus: %s", error->message);
+		g_warning("Unable to get a connection to the session DBus: %s", error->message);
 		g_error_free(error);
+		exit (0);
 		return;
 	}
 
