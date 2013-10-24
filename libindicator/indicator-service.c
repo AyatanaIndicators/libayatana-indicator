@@ -25,6 +25,8 @@ License along with this library. If not, see
 #include "config.h"
 #endif
 
+#include <stdlib.h> /* exit() */
+
 #include <gio/gio.h>
 
 #include "indicator-service.h"
@@ -231,10 +233,7 @@ indicator_service_dispose (GObject *object)
 {
 	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(object);
 
-	if (priv->watchers != NULL) {
-		g_hash_table_destroy(priv->watchers);
-		priv->watchers = NULL;
-	}
+	g_clear_pointer (&priv->watchers, g_hash_table_destroy);
 
 	if (priv->timeout != 0) {
 		g_source_remove(priv->timeout);
@@ -247,10 +246,7 @@ indicator_service_dispose (GObject *object)
 		priv->dbus_registration = 0;
 	}
 
-	if (priv->bus != NULL) {
-		g_object_unref(priv->bus);
-		priv->bus = NULL;
-	}
+	g_clear_object (&priv->bus);
 
 	if (priv->bus_cancel != NULL) {
 		g_cancellable_cancel(priv->bus_cancel);
@@ -269,14 +265,8 @@ indicator_service_finalize (GObject *object)
 {
 	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(object);
 
-	if (priv->name != NULL) {
-		g_free(priv->name);
-	}
-
-	if (priv->watchers != NULL) {
-		g_hash_table_destroy(priv->watchers);
-		priv->watchers = NULL;
-	}
+	g_free (priv->name);
+	g_clear_pointer (&priv->watchers, g_hash_table_destroy);
 
 	G_OBJECT_CLASS (indicator_service_parent_class)->finalize (object);
 	return;
@@ -361,8 +351,9 @@ bus_get_cb (GObject * object, GAsyncResult * res, gpointer user_data)
 	GDBusConnection * connection = g_bus_get_finish(res, &error);
 
 	if (error != NULL) {
-		g_error("OMG! Unable to get a connection to DBus: %s", error->message);
+		g_warning("Unable to get a connection to the session DBus: %s", error->message);
 		g_error_free(error);
+		exit (0);
 		return;
 	}
 
