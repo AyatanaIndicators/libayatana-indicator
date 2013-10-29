@@ -565,6 +565,9 @@ indicator_ng_load_from_keyfile (IndicatorNg  *self,
       self->menu_object_path = g_key_file_get_string (keyfile, self->profile, "ObjectPath", error);
       if (self->menu_object_path == NULL)
         return FALSE;
+
+      /* a position in the profile overrides the global one */
+      self->position = g_key_file_maybe_get_integer (keyfile, self->profile, "Position", self->position);
     }
 
   return TRUE;
