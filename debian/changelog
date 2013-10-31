@@ -1,3 +1,10 @@
+libindicator (12.10.2+13.10.20130913-0ubuntu2) saucy; urgency=low
+
+  * libindicator/indicator-ng.c: backport fix for indicator icons not 
+    updating sometimes (lp: #1220204)
+
+ -- Sebastien Bacher <seb128@ubuntu.com>  Fri, 18 Oct 2013 13:15:30 -0400
+
 libindicator (12.10.2+13.10.20130913-0ubuntu1) saucy; urgency=low
 
   [ Lars Uebernickel ]
