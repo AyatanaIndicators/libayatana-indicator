@@ -1,3 +1,28 @@
+libindicator (12.10.2+14.04.20131125-0ubuntu1) trusty; urgency=low
+
+  [ Charles Kerr ]
+  * When we can't get a handle to the bus, exit gracefully instead of
+    crashing. (LP: #1218222)
+
+  [ Lars Uebernickel ]
+  * Warn when an indicator doesn't get respawned anymore.
+  * indicator-ng: always create entry.label and entry.image They used to
+    be created lazily when the root menu item changed to include and
+    image or a label. However, there is no way to notify a panel that
+    this happened. Panels connect to notify signals on these widgets
+    when an entry gets added. If the widgets don't exist from the very
+    beginning, the panel won't update when they change. . (LP: #1220204)
+  * Allow setting different positions for each profile in indicator
+    files The 'Position' key in a profile section has precedence over
+    the global 'Position' key, but otherwise the same semantics. We need
+    this along with lp:~larsu/unity8/per-profile-indicator-positions to
+    enable different positioning on the desktop and phone.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 517
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Mon, 25 Nov 2013 03:55:11 +0000
+
 libindicator (12.10.2+13.10.20130913-0ubuntu2) saucy; urgency=low
 
   * libindicator/indicator-ng.c: backport fix for indicator icons not 
