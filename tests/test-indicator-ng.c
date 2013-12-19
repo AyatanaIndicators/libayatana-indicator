@@ -98,6 +98,32 @@ test_instantiation_with_profile (void)
   g_object_unref (indicator);
 }
 
+/* From gtk+/testsuite/gtk/gtkmenu.c
+ *
+ * Returns the label of a GtkModelMenuItem, for which
+ * gtk_menu_item_get_label() returns NULL, because it uses its own
+ * widgets to accommodate an icon.
+ *
+ */
+static const gchar *
+get_label (GtkMenuItem *item)
+{
+  GList *children = gtk_container_get_children (GTK_CONTAINER (item));
+  const gchar *label = NULL;
+
+  while (children)
+    {
+      if (GTK_IS_CONTAINER (children->data))
+        children = g_list_concat (children, gtk_container_get_children (children->data));
+      else if (GTK_IS_LABEL (children->data))
+        label = gtk_label_get_text (children->data);
+
+      children = g_list_delete_link (children, children);
+    }
+
+  return label;
+}
+
 static void
 test_menu (void)
 {
@@ -135,7 +161,7 @@ test_menu (void)
     item = children->data;
     g_assert (GTK_IS_MENU_ITEM (item));
     g_assert (gtk_widget_is_sensitive (GTK_WIDGET (item)));
-    g_assert_cmpstr (gtk_menu_item_get_label (item), ==, "Show");
+    g_assert_cmpstr (get_label (item), ==, "Show");
 
     g_list_free (children);
   }
