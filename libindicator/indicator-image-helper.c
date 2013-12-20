@@ -65,7 +65,7 @@ refresh_image (GtkImage * image)
 
 	if (icon_filename == NULL && !G_IS_BYTES_ICON (icon_names)) {
 		/* show a broken image if we don't have a filename or image data */
-		gtk_image_set_from_stock (image, GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_LARGE_TOOLBAR);
+		gtk_image_set_from_icon_name (image, "image-missing", GTK_ICON_SIZE_LARGE_TOOLBAR);
 		return;
 	}
 
@@ -115,7 +115,7 @@ refresh_image (GtkImage * image)
 		gtk_image_set_from_pixbuf(image, pixbuf);
 		g_object_unref(G_OBJECT(pixbuf));
 	} else {
-		gtk_image_set_from_stock (image, GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_LARGE_TOOLBAR);
+		gtk_image_set_from_icon_name (image, "image-missing", GTK_ICON_SIZE_LARGE_TOOLBAR);
 	}
 
 	if (icon_info != NULL) {
