@@ -148,7 +148,7 @@ test_menu (void)
   g_assert_cmpstr (entry->name_hint, ==, "indicator-test");
   g_assert_cmpstr (entry->accessible_desc, ==, "Test indicator");
   g_assert_cmpstr (gtk_label_get_label (entry->label), ==, "Test");
-  g_assert (gtk_image_get_storage_type (entry->image) == GTK_IMAGE_STOCK);
+  g_assert (gtk_image_get_storage_type (entry->image) == GTK_IMAGE_ICON_NAME);
   {
     GList *children;
     GtkMenuItem *item;

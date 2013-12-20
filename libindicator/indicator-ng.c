@@ -252,7 +252,7 @@ indicator_ng_set_icon_from_variant (IndicatorNg *self,
     {
       gchar *text = g_variant_print (variant, TRUE);
       g_warning ("invalid icon variant '%s'", text);
-      gtk_image_set_from_stock (self->entry.image, GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_LARGE_TOOLBAR);
+      gtk_image_set_from_icon_name (self->entry.image, "image-missing", GTK_ICON_SIZE_LARGE_TOOLBAR);
       g_free (text);
     }
 }
