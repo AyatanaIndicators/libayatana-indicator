@@ -35,6 +35,7 @@ struct _IndicatorNg
   gchar *header_action;
   gchar *scroll_action;
   gchar *secondary_action;
+  gchar *submenu_action;
   gint position;
 
   guint name_watch_id;
@@ -162,6 +163,7 @@ indicator_ng_finalize (GObject *object)
   g_free (self->header_action);
   g_free (self->scroll_action);
   g_free (self->secondary_action);
+  g_free (self->submenu_action);
 
   G_OBJECT_CLASS (indicator_ng_parent_class)->finalize (object);
 }
@@ -211,6 +213,28 @@ indicator_ng_secondary_activate (IndicatorObject      *io,
     {
       g_action_group_activate_action (self->actions, self->secondary_action, NULL);
     }
+}
+
+static void
+indicator_ng_menu_shown (GtkWidget *widget,
+                         gpointer   user_data)
+{
+  IndicatorNg *self = user_data;
+
+  if (self->submenu_action)
+    g_action_group_change_action_state (self->actions, self->submenu_action,
+                                        g_variant_new_boolean (TRUE));
+}
+
+static void
+indicator_ng_menu_hidden (GtkWidget *widget,
+                          gpointer   user_data)
+{
+  IndicatorNg *self = user_data;
+
+  if (self->submenu_action)
+    g_action_group_change_action_state (self->actions, self->submenu_action,
+                                        g_variant_new_boolean (FALSE));
 }
 
 static void
@@ -387,6 +411,13 @@ indicator_ng_menu_changed (GMenuModel *menu,
             {
               if (g_str_has_prefix (action, "indicator."))
                 self->secondary_action = g_strdup (action + strlen ("indicator."));
+              g_free (action);
+            }
+
+          if (g_menu_model_get_item_attribute (self->menu, 0, "submenu-action", "s", &action))
+            {
+              if (g_str_has_prefix (action, "indicator."))
+                self->submenu_action = g_strdup (action + strlen ("indicator."));
               g_free (action);
             }
 
@@ -656,6 +687,9 @@ indicator_ng_init (IndicatorNg *self)
   self->entry.image = g_object_ref_sink (gtk_image_new ());
 
   self->entry.menu = g_object_ref_sink (gtk_menu_new ());
+
+  g_signal_connect (self->entry.menu, "show", G_CALLBACK (indicator_ng_menu_shown), self);
+  g_signal_connect (self->entry.menu, "hide", G_CALLBACK (indicator_ng_menu_hidden), self);
 
   /* work around IndicatorObject's warning that the accessible
    * description is missing. We never set it on construction, but when
