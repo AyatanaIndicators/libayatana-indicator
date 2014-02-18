@@ -145,12 +145,12 @@ struct _IndicatorObjectClass {
 	void       (*secondary_activate) (IndicatorObject * io, IndicatorObjectEntry * entry, guint timestamp, gpointer user_data);
 
 	gint       (*get_position) (IndicatorObject *io);
+	guint      (*get_parent_window) (IndicatorObject *io);
 
 	/* Reserved */
 	void       (*reserved1)     (void);
 	void       (*reserved2)     (void);
 	void       (*reserved3)     (void);
-	void       (*reserved4)     (void);
 };
 
 /**
@@ -174,11 +174,11 @@ struct _IndicatorObject {
 		of the indicator
 	@name_hint: A name to describe the indicator being placed to allow
 		the caller to be more aware of the individual entries.
+	@parent_window: the id of the parent window of the indicator entry (if any).
 
 	@reserved1: Reserved for future use
 	@reserved2: Reserved for future use
 	@reserved3: Reserved for future use
-	@reserved4: Reserved for future use
 */
 struct _IndicatorObjectEntry {
 	IndicatorObject * parent_object;
@@ -187,11 +187,11 @@ struct _IndicatorObjectEntry {
 	GtkMenu  * menu;
 	const gchar * accessible_desc;
 	const gchar * name_hint;
+	guint parent_window;
 
 	void       (*reserved1)     (void);
 	void       (*reserved2)     (void);
 	void       (*reserved3)     (void);
-	void       (*reserved4)     (void);
 };
 
 GType indicator_object_get_type (void);

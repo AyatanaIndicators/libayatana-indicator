@@ -314,6 +314,7 @@ indicator_object_init (IndicatorObject *self)
 	priv->entry.image = NULL;
 	priv->entry.accessible_desc = NULL;
 	priv->entry.name_hint = NULL;
+	priv->entry.parent_window = 0;
 
 	priv->gotten_entries = FALSE;
 	priv->default_visibility = TRUE;
@@ -525,6 +526,10 @@ get_entries_default (IndicatorObject * io)
 
 		if (class->get_name_hint) {
 			priv->entry.name_hint = class->get_name_hint(io);
+		}
+
+		if (class->get_parent_window) {
+			priv->entry.parent_window = class->get_parent_window(io);
 		}
 
 		priv->gotten_entries = TRUE;
