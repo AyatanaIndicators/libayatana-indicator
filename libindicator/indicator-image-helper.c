@@ -25,6 +25,7 @@ License along with this library. If not, see
 #include "indicator-image-helper.h"
 
 const gchar * INDICATOR_NAMES_DATA = "indicator-names-data";
+const gint ICON_SIZE = 22;
 
 static void
 refresh_image (GtkImage * image)
@@ -32,21 +33,20 @@ refresh_image (GtkImage * image)
 	g_return_if_fail(GTK_IS_IMAGE(image));
 	const gchar * icon_filename = NULL;
 	GtkIconInfo * icon_info = NULL;
-	gint icon_size = 22;
 
 	GIcon * icon_names = (GIcon *)g_object_get_data(G_OBJECT(image), INDICATOR_NAMES_DATA);
-	g_return_if_fail(icon_names != NULL);
+	g_return_if_fail(G_IS_ICON (icon_names));
 
 	/* Get the default theme */
 	GtkIconTheme * default_theme = gtk_icon_theme_get_default();
 	g_return_if_fail(default_theme != NULL);
 
 	/* Look through the themes for that icon */
-	icon_info = gtk_icon_theme_lookup_by_gicon(default_theme, icon_names, icon_size, 0);
+	icon_info = gtk_icon_theme_lookup_by_gicon(default_theme, icon_names, ICON_SIZE, 0);
 	if (icon_info == NULL) {
 		/* Maybe the icon was just added to the theme, see if a rescan helps */
 		gtk_icon_theme_rescan_if_needed(default_theme);
-		icon_info = gtk_icon_theme_lookup_by_gicon(default_theme, icon_names, icon_size, 0);
+		icon_info = gtk_icon_theme_lookup_by_gicon(default_theme, icon_names, ICON_SIZE, 0);
 	}
 	if (icon_info == NULL) {
 		/* Try using the second item in the names, which should be the original filename supplied */
@@ -69,19 +69,36 @@ refresh_image (GtkImage * image)
 		return;
 	}
 
-	/* Build a pixbuf */
-	GdkPixbuf * pixbuf = NULL;
-
-	if (icon_filename == NULL) {
+	if (icon_info != NULL) {
+		gtk_image_set_from_gicon (image, icon_names, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	} else if (icon_filename != NULL) {
+		gtk_image_set_from_file (image, icon_filename);
+	} else {
+		/* Build a pixbuf if needed */
+		GdkPixbuf * pixbuf = NULL;
 		GError * error = NULL;
-		GInputStream * stream = g_loadable_icon_load (G_LOADABLE_ICON (icon_names), icon_size, NULL, NULL, &error);
+		GInputStream * stream = g_loadable_icon_load (G_LOADABLE_ICON (icon_names), ICON_SIZE, NULL, NULL, &error);
 
 		if (stream != NULL) {
 			pixbuf = gdk_pixbuf_new_from_stream (stream, NULL, &error);
 			g_input_stream_close (stream, NULL, NULL);
 			g_object_unref (stream);
 
-			if (pixbuf == NULL) {
+			if (pixbuf != NULL) {
+				/* Scale icon if all we get is something too big. */
+				if (gdk_pixbuf_get_height(pixbuf) > ICON_SIZE) {
+					gfloat scale = (gfloat)ICON_SIZE / (gfloat)gdk_pixbuf_get_height(pixbuf);
+					gint width = round(gdk_pixbuf_get_width(pixbuf) * scale);
+
+					GdkPixbuf * scaled = gdk_pixbuf_scale_simple(pixbuf, width, ICON_SIZE, GDK_INTERP_BILINEAR);
+					g_object_unref(G_OBJECT(pixbuf));
+					pixbuf = scaled;
+				}
+
+				/* Put the pixbuf on the image */
+				gtk_image_set_from_pixbuf(image, pixbuf);
+				g_object_unref(G_OBJECT(pixbuf));
+			} else {
 				g_warning ("Unable to load icon from data: %s", error->message);
 				g_error_free (error);
 			}
@@ -89,33 +106,6 @@ refresh_image (GtkImage * image)
 			g_warning ("Unable to load icon from data: %s", error->message);
 			g_error_free (error);
 		}
-	} else {
-		GError * error = NULL;
-
-		pixbuf = gdk_pixbuf_new_from_file (icon_filename, &error);
-
-		if (pixbuf == NULL) {
-			g_warning ("Unable to load icon from file '%s': %s", icon_filename, error->message);
-			g_error_free (error);
-		}
-	}
-
-	if (pixbuf != NULL) {
-		/* Scale icon if all we get is something too big. */
-		if (gdk_pixbuf_get_height(pixbuf) > icon_size) {
-			gfloat scale = (gfloat)icon_size / (gfloat)gdk_pixbuf_get_height(pixbuf);
-			gint width = round(gdk_pixbuf_get_width(pixbuf) * scale);
-
-			GdkPixbuf * scaled = gdk_pixbuf_scale_simple(pixbuf, width, icon_size, GDK_INTERP_BILINEAR);
-			g_object_unref(G_OBJECT(pixbuf));
-			pixbuf = scaled;
-		}
-
-		/* Put the pixbuf on the image */
-		gtk_image_set_from_pixbuf(image, pixbuf);
-		g_object_unref(G_OBJECT(pixbuf));
-	} else {
-		gtk_image_set_from_icon_name (image, "image-missing", GTK_ICON_SIZE_LARGE_TOOLBAR);
 	}
 
 	if (icon_info != NULL) {
