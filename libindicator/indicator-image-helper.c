@@ -72,7 +72,7 @@ refresh_image (GtkImage * image)
 	if (icon_info != NULL) {
 		gtk_image_set_from_gicon (image, icon_names, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	} else if (icon_filename != NULL) {
-		gtk_image_set_from_file (image, icon_filename);
+		gtk_image_set_from_icon_name (image, icon_filename, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	} else {
 		/* Build a pixbuf if needed */
 		GdkPixbuf * pixbuf = NULL;
