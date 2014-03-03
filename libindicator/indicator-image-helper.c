@@ -70,9 +70,23 @@ refresh_image (GtkImage * image)
 	}
 
 	if (icon_info != NULL) {
-		gtk_image_set_from_gicon(image, icon_names, GTK_ICON_SIZE_LARGE_TOOLBAR);
+		GdkPixbuf *pixbuf = gtk_icon_info_load_icon(icon_info, NULL);
+
+		if (gdk_pixbuf_get_height(pixbuf) < ICON_SIZE) {
+			gtk_image_set_from_file(image, icon_filename);
+		} else {
+			gtk_image_set_from_gicon(image, icon_names, GTK_ICON_SIZE_LARGE_TOOLBAR);
+		}
+		g_object_unref (pixbuf);
 	} else if (icon_filename != NULL) {
 		gtk_image_set_from_file(image, icon_filename);
+
+		gint height;
+		gdk_pixbuf_get_file_info(icon_filename, NULL, &height);
+
+		if (height > ICON_SIZE) {
+			gtk_image_set_pixel_size(image, ICON_SIZE);
+		}
 	} else if (G_IS_LOADABLE_ICON(icon_names)) {
 		/* Build a pixbuf if needed */
 		GdkPixbuf * pixbuf = NULL;
@@ -107,19 +121,6 @@ refresh_image (GtkImage * image)
 			g_error_free (error);
 		}
 	}
-
-	/* Make sure that we load the icon at its original size, if not higher than IMAGE_SIZE */
-	gint pixel_size = 0;
-
-	if (icon_filename) {
-		gint height;
-		gdk_pixbuf_get_file_info(icon_filename, NULL, &height);
-
-		if (height > ICON_SIZE)
-			pixel_size = ICON_SIZE;
-	}
-
-	gtk_image_set_pixel_size(image, pixel_size);
 
 	if (icon_info != NULL) {
 #if GTK_CHECK_VERSION(3, 8, 0)
