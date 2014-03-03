@@ -63,24 +63,24 @@ refresh_image (GtkImage * image)
 		icon_filename = gtk_icon_info_get_filename(icon_info);
 	}
 
-	if (icon_filename == NULL && !G_IS_BYTES_ICON (icon_names)) {
+	if (icon_filename == NULL && !G_IS_BYTES_ICON(icon_names)) {
 		/* show a broken image if we don't have a filename or image data */
-		gtk_image_set_from_icon_name (image, "image-missing", GTK_ICON_SIZE_LARGE_TOOLBAR);
+		gtk_image_set_from_icon_name(image, "image-missing", GTK_ICON_SIZE_LARGE_TOOLBAR);
 		return;
 	}
 
 	if (icon_info != NULL) {
-		gtk_image_set_from_gicon (image, icon_names, GTK_ICON_SIZE_LARGE_TOOLBAR);
+		gtk_image_set_from_gicon(image, icon_names, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	} else if (icon_filename != NULL) {
-		gtk_image_set_from_icon_name (image, icon_filename, GTK_ICON_SIZE_LARGE_TOOLBAR);
-	} else {
+		gtk_image_set_from_file(image, icon_filename);
+	} else if (G_IS_LOADABLE_ICON(icon_names)) {
 		/* Build a pixbuf if needed */
 		GdkPixbuf * pixbuf = NULL;
 		GError * error = NULL;
-		GInputStream * stream = g_loadable_icon_load (G_LOADABLE_ICON (icon_names), ICON_SIZE, NULL, NULL, &error);
+		GInputStream * stream = g_loadable_icon_load(G_LOADABLE_ICON(icon_names), ICON_SIZE, NULL, NULL, &error);
 
 		if (stream != NULL) {
-			pixbuf = gdk_pixbuf_new_from_stream (stream, NULL, &error);
+			pixbuf = gdk_pixbuf_new_from_stream(stream, NULL, &error);
 			g_input_stream_close (stream, NULL, NULL);
 			g_object_unref (stream);
 
@@ -107,6 +107,19 @@ refresh_image (GtkImage * image)
 			g_error_free (error);
 		}
 	}
+
+	/* Make sure that we load the icon at its original size, if not higher than IMAGE_SIZE */
+	gint pixel_size = 0;
+
+	if (icon_filename) {
+		gint height;
+		gdk_pixbuf_get_file_info(icon_filename, NULL, &height);
+
+		if (height > ICON_SIZE)
+			pixel_size = ICON_SIZE;
+	}
+
+	gtk_image_set_pixel_size(image, pixel_size);
 
 	if (icon_info != NULL) {
 #if GTK_CHECK_VERSION(3, 8, 0)
