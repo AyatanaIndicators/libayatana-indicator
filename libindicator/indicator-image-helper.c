@@ -69,7 +69,7 @@ refresh_image (GtkImage * image)
 		return;
 	}
 
-	if (icon_info != NULL) {
+	if (icon_info != NULL && !G_IS_BYTES_ICON(icon_names)) {
 		GdkPixbuf *pixbuf = gtk_icon_info_load_icon(icon_info, NULL);
 
 		if (gdk_pixbuf_get_height(pixbuf) < ICON_SIZE) {
