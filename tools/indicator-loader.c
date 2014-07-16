@@ -55,6 +55,27 @@ activate_entry (GtkWidget * widget, gpointer user_data)
     }
 }
 
+static void
+scroll_entry (GtkWidget *widget, GdkEventScroll* event, gpointer user_data)
+{
+  gpointer entry;
+
+  g_return_if_fail (INDICATOR_IS_OBJECT(user_data));
+
+  entry = g_object_get_qdata (G_OBJECT(widget), entry_data_quark());
+
+  if (entry == NULL)
+    {
+      g_debug("Scroll on: (null)");
+    }
+  else
+    {
+      g_signal_emit_by_name(INDICATOR_OBJECT(user_data),
+                            INDICATOR_OBJECT_SIGNAL_ENTRY_SCROLLED,
+                            entry, 1, event->direction);
+    }
+}
+
 static GtkWidget*
 create_menu_item (IndicatorObjectEntry * entry)
 {
@@ -105,6 +126,9 @@ entry_added (IndicatorObject      * io,
 
       g_object_set_qdata (G_OBJECT(menu_item), entry_data_quark(), entry);
       g_signal_connect (menu_item, "activate", G_CALLBACK(activate_entry), io);
+
+      gtk_widget_set_events (menu_item, gtk_widget_get_events (menu_item) | GDK_SCROLL_MASK);
+      g_signal_connect (menu_item, "scroll-event", G_CALLBACK(scroll_entry), io);
 
       gtk_menu_shell_append (GTK_MENU_SHELL(user_data), menu_item);
     }
