@@ -63,16 +63,39 @@ scroll_entry (GtkWidget *widget, GdkEventScroll* event, gpointer user_data)
   g_return_if_fail (INDICATOR_IS_OBJECT(user_data));
 
   entry = g_object_get_qdata (G_OBJECT(widget), entry_data_quark());
+  IndicatorScrollDirection direction = G_MAXINT;
+
+  switch (event->direction)
+    {
+      case GDK_SCROLL_UP:
+        direction = INDICATOR_OBJECT_SCROLL_UP;
+        break;
+      case GDK_SCROLL_DOWN:
+        direction = INDICATOR_OBJECT_SCROLL_DOWN;
+        break;
+      case GDK_SCROLL_LEFT:
+        direction = INDICATOR_OBJECT_SCROLL_LEFT;
+        break;
+      case GDK_SCROLL_RIGHT:
+        direction = INDICATOR_OBJECT_SCROLL_RIGHT;
+        break;
+      default:
+        break;
+    }
 
   if (entry == NULL)
     {
       g_debug("Scroll on: (null)");
     }
+  else if (direction == G_MAXINT)
+    {
+      g_debug("Scroll direction not supported");
+    }
   else
     {
       g_signal_emit_by_name(INDICATOR_OBJECT(user_data),
                             INDICATOR_OBJECT_SIGNAL_ENTRY_SCROLLED,
-                            entry, 1, event->direction);
+                            entry, 1, direction);
     }
 }
 
