@@ -194,8 +194,12 @@ indicator_ng_entry_scrolled (IndicatorObject          *io,
 
   if (self->actions && self->scroll_action)
     {
-      if (direction == INDICATOR_OBJECT_SCROLL_DOWN)
-        delta *= -1;
+      if (direction == INDICATOR_OBJECT_SCROLL_DOWN ||
+          direction == INDICATOR_OBJECT_SCROLL_LEFT)
+        {
+          delta *= -1;
+        }
+
       g_action_group_activate_action (self->actions, self->scroll_action,
                                       g_variant_new_int32 (delta));
     }
