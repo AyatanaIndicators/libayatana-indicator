@@ -1,3 +1,10 @@
+libindicator (12.10.2+14.10.20140922-0ubuntu1) utopic; urgency=low
+
+  [ Marco Trevisan (Treviño) ]
+  * IndicatorNG: Reverse the scroll delta on left scroll events
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Mon, 22 Sep 2014 13:41:36 +0000
+
 libindicator (12.10.2+14.04.20140402-0ubuntu1) trusty; urgency=low
 
   [ William Hua ]
