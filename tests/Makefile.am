@@ -1,7 +1,7 @@
 if USE_GTK3
-INDICATOR_LIB = -lindicator3
+INDICATOR_LIB = -layatana-indicator3
 else
-INDICATOR_LIB = -lindicator
+INDICATOR_LIB = -layatana-indicator
 endif
 
 TESTS =
@@ -27,7 +27,7 @@ EXTRA_DIST = \
 	service-manager-connect.service.in \
 	service-version-bad.service.in \
 	service-version-good.service.in \
-	com.canonical.indicator.test.service.in
+	org.ayatana.indicator.test.service.in
 
 #############################
 # Test Loader
@@ -45,7 +45,7 @@ test_loader_CFLAGS = \
 
 test_loader_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	-L$(top_builddir)/libindicator/.libs \
+	-L$(top_builddir)/libayatana-indicator/.libs \
 	$(INDICATOR_LIB)
 
 #############################
@@ -65,7 +65,7 @@ test_desktop_shortcuts_CFLAGS = \
 
 test_desktop_shortcuts_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	-L$(top_builddir)/libindicator/.libs \
+	-L$(top_builddir)/libayatana-indicator/.libs \
 	$(INDICATOR_LIB)
 
 DS_XML_REPORT  = desktop-shortcuts-check-results.xml
@@ -97,7 +97,7 @@ libdummy_indicator_blank_la_CFLAGS = \
 
 libdummy_indicator_blank_la_LIBADD = \
 	$(LIBINDICATOR_LIBS) \
-	-L$(top_builddir)/libindicator/.libs \
+	-L$(top_builddir)/libayatana-indicator/.libs \
 	$(INDICATOR_LIB)
 
 libdummy_indicator_blank_la_LDFLAGS = \
@@ -117,7 +117,7 @@ libdummy_indicator_null_la_CFLAGS = \
 
 libdummy_indicator_null_la_LIBADD = \
 	$(LIBINDICATOR_LIBS) \
-	-L$(top_builddir)/libindicator/.libs \
+	-L$(top_builddir)/libayatana-indicator/.libs \
 	$(INDICATOR_LIB)
 
 libdummy_indicator_null_la_LDFLAGS = \
@@ -137,7 +137,7 @@ libdummy_indicator_signaler_la_CFLAGS = \
 
 libdummy_indicator_signaler_la_LIBADD = \
 	$(LIBINDICATOR_LIBS) \
-	-L$(top_builddir)/libindicator/.libs \
+	-L$(top_builddir)/libayatana-indicator/.libs \
 	$(INDICATOR_LIB)
 
 libdummy_indicator_signaler_la_LDFLAGS = \
@@ -157,7 +157,7 @@ libdummy_indicator_simple_la_CFLAGS = \
 
 libdummy_indicator_simple_la_LIBADD = \
 	$(LIBINDICATOR_LIBS) \
-	-L$(top_builddir)/libindicator/.libs \
+	-L$(top_builddir)/libayatana-indicator/.libs \
 	$(INDICATOR_LIB)
 
 libdummy_indicator_simple_la_LDFLAGS = \
@@ -178,7 +178,7 @@ libdummy_indicator_entry_func_la_CFLAGS = \
 
 libdummy_indicator_entry_func_la_LIBADD = \
 	$(LIBINDICATOR_LIBS) \
-	-L$(top_builddir)/libindicator/.libs \
+	-L$(top_builddir)/libayatana-indicator/.libs \
 	$(INDICATOR_LIB)
 
 libdummy_indicator_entry_func_la_LDFLAGS = \
@@ -198,7 +198,7 @@ libdummy_indicator_visible_la_CFLAGS = \
 
 libdummy_indicator_visible_la_LIBADD = \
 	$(LIBINDICATOR_LIBS) \
-	-L$(top_builddir)/libindicator/.libs \
+	-L$(top_builddir)/libayatana-indicator/.libs \
 	$(INDICATOR_LIB)
 
 libdummy_indicator_visible_la_LDFLAGS = \
@@ -220,7 +220,7 @@ service_shutdown_timeout_CFLAGS = \
 
 service_shutdown_timeout_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	-L$(top_builddir)/libindicator/.libs \
+	-L$(top_builddir)/libayatana-indicator/.libs \
 	$(INDICATOR_LIB)
 
 service-shutdown-timeout-tester: service-shutdown-timeout Makefile
@@ -246,7 +246,7 @@ service_manager_no_connect_CFLAGS = \
 
 service_manager_no_connect_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	-L$(top_builddir)/libindicator/.libs \
+	-L$(top_builddir)/libayatana-indicator/.libs \
 	$(INDICATOR_LIB)
 
 service-manager-no-connect-tester: service-manager-no-connect Makefile.am
@@ -262,10 +262,10 @@ DISTCLEANFILES += service-manager-no-connect-tester
 #############################
 
 session.conf: $(srcdir)/session.conf.in Makefile.am
-	sed -e "s|\@servicedir\@|$(abspath $(builddir))|" $< > $@
+	sed -e "s|\@servicedir\@|$(abs_builddir)|" $< > $@
 
 service-manager-connect.service: $(srcdir)/service-manager-connect.service.in Makefile.am
-	sed -e "s|\@builddir\@|$(abspath $(builddir))|" $< > $@
+	sed -e "s|\@builddir\@|$(abs_builddir)|" $< > $@
 
 check_PROGRAMS += service-manager-connect
 
@@ -278,7 +278,7 @@ service_manager_connect_CFLAGS = \
 
 service_manager_connect_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	-L$(top_builddir)/libindicator/.libs \
+	-L$(top_builddir)/libayatana-indicator/.libs \
 	$(INDICATOR_LIB)
 
 check_PROGRAMS += service-manager-connect-service
@@ -292,7 +292,7 @@ service_manager_connect_service_CFLAGS = \
 
 service_manager_connect_service_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	-L$(top_builddir)/libindicator/.libs \
+	-L$(top_builddir)/libayatana-indicator/.libs \
 	$(INDICATOR_LIB)
 
 service-manager-connect-tester: service-manager-connect service-manager-connect-service session.conf service-manager-connect.service Makefile.am
@@ -308,10 +308,10 @@ DISTCLEANFILES += service-manager-connect-tester session.conf service-manager-co
 #############################
 
 service-version-good.service: $(srcdir)/service-version-good.service.in Makefile.am
-	sed -e "s|\@builddir\@|$(abspath $(builddir))|" $< > $@
+	sed -e "s|\@builddir\@|$(abs_builddir)|" $< > $@
 
 service-version-bad.service: $(srcdir)/service-version-bad.service.in Makefile.am
-	sed -e "s|\@builddir\@|$(abspath $(builddir))|" $< > $@
+	sed -e "s|\@builddir\@|$(abs_builddir)|" $< > $@
 
 check_PROGRAMS += service-version-manager
 
@@ -325,7 +325,7 @@ service_version_manager_CFLAGS = \
 
 service_version_manager_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	-L$(top_builddir)/libindicator/.libs \
+	-L$(top_builddir)/libayatana-indicator/.libs \
 	$(INDICATOR_LIB)
 
 check_PROGRAMS += service-version-bad-service
@@ -340,7 +340,7 @@ service_version_bad_service_CFLAGS = \
 
 service_version_bad_service_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	-L$(top_builddir)/libindicator/.libs \
+	-L$(top_builddir)/libayatana-indicator/.libs \
 	$(INDICATOR_LIB)
 
 check_PROGRAMS += service-version-good-service
@@ -355,7 +355,7 @@ service_version_good_service_CFLAGS = \
 
 service_version_good_service_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	-L$(top_builddir)/libindicator/.libs \
+	-L$(top_builddir)/libayatana-indicator/.libs \
 	$(INDICATOR_LIB)
 
 service-version-tester: service-version-manager service-version-bad-service service-version-good-service session.conf service-version-bad.service service-version-good.service Makefile.am
@@ -382,7 +382,7 @@ service_version_multiwatch_manager_CFLAGS = \
 
 service_version_multiwatch_manager_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	-L$(top_builddir)/libindicator/.libs \
+	-L$(top_builddir)/libayatana-indicator/.libs \
 	$(INDICATOR_LIB)
 
 check_PROGRAMS += service-version-multiwatch-manager-impolite
@@ -397,7 +397,7 @@ service_version_multiwatch_manager_impolite_CFLAGS = \
 
 service_version_multiwatch_manager_impolite_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	-L$(top_builddir)/libindicator/.libs \
+	-L$(top_builddir)/libayatana-indicator/.libs \
 	$(INDICATOR_LIB)
 
 check_PROGRAMS += service-version-multiwatch-service
@@ -412,7 +412,7 @@ service_version_multiwatch_service_CFLAGS = \
 
 service_version_multiwatch_service_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	-L$(top_builddir)/libindicator/.libs \
+	-L$(top_builddir)/libayatana-indicator/.libs \
 	$(INDICATOR_LIB)
 
 service-version-multiwatch-tester: service-version-multiwatch-manager service-version-multiwatch-service service-version-multiwatch-manager-impolite Makefile.am
@@ -438,7 +438,7 @@ service_manager_nostart_connect_CFLAGS = \
 
 service_manager_nostart_connect_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	-L$(top_builddir)/libindicator/.libs \
+	-L$(top_builddir)/libayatana-indicator/.libs \
 	$(INDICATOR_LIB)
 
 service-manager-connect-nostart-tester: service-manager-nostart-connect service-manager-connect-service Makefile.am
@@ -473,8 +473,8 @@ DISTCLEANFILES += $(XML_REPORT) $(HTML_REPORT)
 
 if USE_GTK3
 
-com.canonical.indicator.test.service: com.canonical.indicator.test.service.in Makefile.am
-	sed -e "s|\@builddir\@|$(abspath $(builddir))|" $< > $@
+org.ayatana.indicator.test.service: org.ayatana.indicator.test.service.in Makefile.am
+	sed -e "s|\@builddir\@|$(abs_builddir)|" $< > $@
 
 check_PROGRAMS += test-indicator-ng
 
@@ -489,7 +489,7 @@ test_indicator_ng_CFLAGS = \
 
 test_indicator_ng_LDADD = \
 	$(LIBINDICATOR_LIBS) \
-	-L$(top_builddir)/libindicator/.libs \
+	-L$(top_builddir)/libayatana-indicator/.libs \
 	$(INDICATOR_LIB)
 
 TESTS += test-indicator-ng
@@ -502,8 +502,8 @@ indicator_test_service_SOURCES = indicator-test-service.c
 indicator_test_service_CFLAGS = $(LIBINDICATOR_CFLAGS)
 indicator_test_service_LDADD = $(LIBINDICATOR_LIBS)
 
-EXTRA_indicator_test_service_DEPENDENCIES = com.canonical.indicator.test.service
+EXTRA_indicator_test_service_DEPENDENCIES = org.ayatana.indicator.test.service
 
-DISTCLEANFILES += indicator-test-service com.canonical.indicator.test.service
+DISTCLEANFILES += indicator-test-service org.ayatana.indicator.test.service
 
 endif

@@ -392,7 +392,7 @@ indicator_ng_menu_changed (GMenuModel *menu,
       g_clear_pointer (&self->scroll_action, g_free);
       g_clear_pointer (&self->secondary_action, g_free);
 
-      if (indicator_ng_menu_item_is_of_type (self->menu, 0, "com.canonical.indicator.root"))
+      if (indicator_ng_menu_item_is_of_type (self->menu, 0, "org.ayatana.indicator.root"))
         {
           GMenuModel *popup;
           gchar *action;
@@ -435,7 +435,7 @@ indicator_ng_menu_changed (GMenuModel *menu,
           indicator_ng_update_entry (self);
         }
       else
-        g_warning ("indicator menu item must be of type 'com.canonical.indicator.root'");
+        g_warning ("indicator menu item must be of type 'org.ayatana.indicator.root'");
     }
 }
 

@@ -12,7 +12,7 @@ example:
 
   [Indicator Service]
   Name=indicator-example
-  ObjectPath=/com/canonical/indicator/example
+  ObjectPath=/org/ayatana/indicator/example
 
 It should also contain a hint to where the indicator should appear in the panel:
 
@@ -27,13 +27,13 @@ of those profiles, containing the object path on which the menu is
 exported:
 
   [desktop]
-  ObjectPath=/com/canonical/indicator/example/desktop
+  ObjectPath=/org/ayatana/indicator/example/desktop
 
   [greeter]
-  ObjectPath=/com/canonical/indicator/example/desktop
+  ObjectPath=/org/ayatana/indicator/example/desktop
 
   [phone]
-  ObjectPath=/com/canonical/indicator/example/phone
+  ObjectPath=/org/ayatana/indicator/example/phone
 
 Object paths can be reused for different profiles (the greeter uses the
 same menu as the desktop in the above example).

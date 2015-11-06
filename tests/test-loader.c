@@ -21,7 +21,7 @@ License along with this library. If not, see
 */
 
 #include <gtk/gtk.h>
-#include "libindicator/indicator-object.h"
+#include "libayatana-indicator/indicator-object.h"
 
 #include "dummy-indicator-entry-func.h"
 

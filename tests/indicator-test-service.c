@@ -19,7 +19,7 @@ bus_acquired (GDBusConnection *connection,
   GError *error = NULL;
 
   indicator->actions_export_id = g_dbus_connection_export_action_group (connection,
-                                                                        "/com/canonical/indicator/test",
+                                                                        "/org/ayatana/indicator/test",
                                                                         G_ACTION_GROUP (indicator->actions),
                                                                         &error);
   if (indicator->actions_export_id == 0)
@@ -30,7 +30,7 @@ bus_acquired (GDBusConnection *connection,
     }
 
   indicator->menu_export_id = g_dbus_connection_export_menu_model (connection,
-                                                                   "/com/canonical/indicator/test/desktop",
+                                                                   "/org/ayatana/indicator/test/desktop",
                                                                    G_MENU_MODEL (indicator->menu),
                                                                    &error);
   if (indicator->menu_export_id == 0)
@@ -83,13 +83,13 @@ main (int argc, char **argv)
   submenu = g_menu_new ();
   g_menu_append (submenu, "Show", "indicator.show");
   item = g_menu_item_new (NULL, "indicator._header");
-  g_menu_item_set_attribute (item, "x-canonical-type", "s", "com.canonical.indicator.root");
+  g_menu_item_set_attribute (item, "x-canonical-type", "s", "org.ayatana.indicator.root");
   g_menu_item_set_submenu (item, G_MENU_MODEL (submenu));
   indicator.menu = g_menu_new ();
   g_menu_append_item (indicator.menu, item);
 
   g_bus_own_name (G_BUS_TYPE_SESSION,
-                  "com.canonical.indicator.test",
+                  "org.ayatana.indicator.test",
                   G_BUS_NAME_OWNER_FLAGS_NONE,
                   bus_acquired,
                   NULL,

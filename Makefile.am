@@ -1,22 +1,23 @@
 ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
 
 SUBDIRS = \
-	libindicator \
+	libayatana-indicator \
 	tools
 
-tools: libindicator
+tools: libayatana-indicator
 
 if WANT_TESTS
 SUBDIRS += \
 	tests
 
-tests: libindicator
+tests: libayatana-indicator
 endif
 
 DISTCHECK_CONFIGURE_FLAGS = --disable-deprecations
 
 DISTCLEANFILES = \
-	libindicator-*.tar.gz
+	libayatana-indicator-*.tar.gz
+
 
 dist-hook:
 	@if test -d "$(top_srcdir)/.bzr"; \

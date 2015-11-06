@@ -24,8 +24,8 @@ License along with this library. If not, see
 #include <glib.h>
 #include <glib-object.h>
 
-#include "libindicator/indicator.h"
-#include "libindicator/indicator-object.h"
+#include "libayatana-indicator/indicator.h"
+#include "libayatana-indicator/indicator-object.h"
 
 #define DUMMY_INDICATOR_NULL_TYPE            (dummy_indicator_null_get_type ())
 #define DUMMY_INDICATOR_NULL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), DUMMY_INDICATOR_NULL_TYPE, DummyIndicatorNull))

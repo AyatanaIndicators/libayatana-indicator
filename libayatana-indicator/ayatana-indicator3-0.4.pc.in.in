@@ -14,4 +14,3 @@ Libs: -lindicator3
 Name: libindicator3
 Description: libindicator3.
 Version: @VERSION@
-

@@ -1,8 +1,8 @@
-AC_INIT([libindicator],
-        [12.10.2],
-        [http://bugs.launchpad.net/libindicator],
-        [libindicator],
-        [http://launchpad.net/libindicator])
+AC_INIT([libayatana-indicator],
+        [0.6.0],
+        [https://github.com/ArcticaProject/libayatana-indicator/issues],
+        [libayatana-indicator],
+        [https://github.com/ArcticaProject/libayatana-indicator])
 
 AC_PREREQ([2.64])
 
@@ -20,6 +20,7 @@ AM_SILENT_RULES([yes])]
 # Check for programs
 AC_PROG_CC
 AM_PROG_CC_C_O
+AM_PROG_AR
 
 # Initialize libtool
 LT_PREREQ([2.2])
@@ -45,7 +46,7 @@ AS_IF([test "x$enable_deprecations" = xno],
 GTK_REQUIRED_VERSION=2.18
 GTK3_REQUIRED_VERSION=3.6
 GIO_UNIX_REQUIRED_VERSION=2.37
-IDO_REQUIRED_VERSION=13.10.0
+IDO_REQUIRED_VERSION=0.4.0
 
 AC_ARG_WITH([gtk],
   [AS_HELP_STRING([--with-gtk],
@@ -56,7 +57,7 @@ AS_IF([test "x$with_gtk" = x3],
         [PKG_CHECK_MODULES(LIBINDICATOR,  gtk+-3.0 >= $GTK3_REQUIRED_VERSION
                                           gmodule-2.0
                                           gio-unix-2.0 >= $GIO_UNIX_REQUIRED_VERSION
-                                          libido3-0.1 >= $IDO_REQUIRED_VERSION)
+                                          libayatana-ido3-0.4 >= $IDO_REQUIRED_VERSION)
         ],
       [test "x$with_gtk" = x2],
         [PKG_CHECK_MODULES(LIBINDICATOR,  gtk+-2.0 >= $GTK_REQUIRED_VERSION
@@ -152,9 +153,9 @@ AC_SUBST(COVERAGE_LDFLAGS)
 
 AC_CONFIG_FILES([
 Makefile
-libindicator/Makefile
-libindicator/indicator-0.4.pc.in
-libindicator/indicator3-0.4.pc.in
+libayatana-indicator/Makefile
+libayatana-indicator/ayatana-indicator-0.4.pc.in
+libayatana-indicator/ayatana-indicator3-0.4.pc.in
 tests/Makefile
 tools/Makefile
 ])

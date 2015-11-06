@@ -24,10 +24,10 @@
  */
 
 #include <gtk/gtk.h>
-#include <libido/libido.h>
-#include <libindicator/indicator-object.h>
+#include <libayatana-ido/libayatana-ido.h>
+#include <libayatana-indicator/indicator-object.h>
 #if GTK_CHECK_VERSION (3,0,0)
- #include <libindicator/indicator-ng.h>
+ #include <libayatana-indicator/indicator-ng.h>
 #endif
 
 static GHashTable * entry_to_menu_item = NULL;

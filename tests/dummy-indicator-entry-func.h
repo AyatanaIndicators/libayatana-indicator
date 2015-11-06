@@ -26,8 +26,8 @@ License along with this library. If not, see
 #include <glib.h>
 #include <glib-object.h>
 
-#include "libindicator/indicator.h"
-#include "libindicator/indicator-object.h"
+#include "libayatana-indicator/indicator.h"
+#include "libayatana-indicator/indicator-object.h"
 
 G_BEGIN_DECLS
 

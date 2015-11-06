@@ -1,17 +1,17 @@
 if USE_GTK3
 VER=3
-lib_LTLIBRARIES = libindicator3.la
+lib_LTLIBRARIES = libayatana-indicator3.la
 else
 VER=
-lib_LTLIBRARIES = libindicator.la
+lib_LTLIBRARIES = libayatana-indicator.la
 endif
 
 BUILT_SOURCES = indicator-object-enum-types.h indicator-object-enum-types.c
 CLEANFILES =
 DISTCLEANFILES =
 EXTRA_DIST = \
-	indicator3-0.$(INDICATOR_API_VERSION).pc.in.in \
-	indicator-0.$(INDICATOR_API_VERSION).pc.in.in
+	ayatana-indicator3-0.$(INDICATOR_API_VERSION).pc.in.in \
+	ayatana-indicator-0.$(INDICATOR_API_VERSION).pc.in.in
 
 INDICATOR_ABI_VERSION = 7
 INDICATOR_API_VERSION = 4
@@ -22,11 +22,11 @@ INDICATOR_API_VERSION = 4
 		-e "s|\@indicator_abi_version\@|$(INDICATOR_ABI_VERSION)|" \
 		$< > $@
 
-CLEANFILES += indicator$(VER)-0.$(INDICATOR_API_VERSION).pc
+CLEANFILES += ayatana-indicator$(VER)-0.$(INDICATOR_API_VERSION).pc
 
 include $(top_srcdir)/Makefile.am.marshal
 
-libindicatorincludedir=$(includedir)/libindicator$(VER)-0.$(INDICATOR_API_VERSION)/libindicator
+libayatana_indicatorincludedir=$(includedir)/libayatana-indicator$(VER)-0.$(INDICATOR_API_VERSION)/libayatana-indicator
 
 indicator_headers = \
 	indicator.h \
@@ -40,10 +40,10 @@ if USE_GTK3
 indicator_headers += indicator-ng.h
 endif
 
-libindicatorinclude_HEADERS = \
+libayatana_indicatorinclude_HEADERS = \
 	$(indicator_headers)
 
-libindicator_la_SOURCES = \
+libayatana_indicator_la_SOURCES = \
 	$(indicator_headers) \
 	dbus-shared.h \
 	gen-indicator-service.xml.h \
@@ -58,19 +58,19 @@ libindicator_la_SOURCES = \
 	indicator-service-manager.c
 
 if USE_GTK3
-libindicator_la_SOURCES += indicator-ng.c
+libayatana_indicator_la_SOURCES += indicator-ng.c
 endif
 
-libindicator_la_CFLAGS = \
+libayatana_indicator_la_CFLAGS = \
 	$(LIBINDICATOR_CFLAGS) \
 	$(COVERAGE_CFLAGS) \
-	-DG_LOG_DOMAIN=\"libindicator\" \
+	-DG_LOG_DOMAIN=\"libayatana-indicator\" \
 	-Wall -Werror -Wno-error=deprecated-declarations
 
-libindicator_la_LIBADD = \
+libayatana_indicator_la_LIBADD = \
 	$(LIBINDICATOR_LIBS)
 
-libindicator_la_LDFLAGS = \
+libayatana_indicator_la_LDFLAGS = \
 	$(COVERAGE_LDFLAGS) \
 	-version-info $(INDICATOR_ABI_VERSION):0:0 \
 	-no-undefined \
@@ -80,14 +80,14 @@ libindicator_la_LDFLAGS = \
 # Since we carefully use $(VER) in the right hand side above, we can assign the same values.
 # Only one version of the library is every compiled at the same time, so it is safe to reuse
 # the right hand sides like this.
-libindicator3includedir = $(libindicatorincludedir)
-libindicator3include_HEADERS = $(indicator_headers)
-libindicator3_la_SOURCES = $(libindicator_la_SOURCES)
-libindicator3_la_CFLAGS = $(libindicator_la_CFLAGS)
-libindicator3_la_LIBADD = $(libindicator_la_LIBADD)
-libindicator3_la_LDFLAGS = $(libindicator_la_LDFLAGS)
+libayatana_indicator3includedir = $(libayatana_indicatorincludedir)
+libayatana_indicator3include_HEADERS = $(indicator_headers)
+libayatana_indicator3_la_SOURCES = $(libayatana_indicator_la_SOURCES)
+libayatana_indicator3_la_CFLAGS = $(libayatana_indicator_la_CFLAGS)
+libayatana_indicator3_la_LIBADD = $(libayatana_indicator_la_LIBADD)
+libayatana_indicator3_la_LDFLAGS = $(libayatana_indicator_la_LDFLAGS)
 
-pkgconfig_DATA = indicator$(VER)-0.$(INDICATOR_API_VERSION).pc
+pkgconfig_DATA = ayatana-indicator$(VER)-0.$(INDICATOR_API_VERSION).pc
 pkgconfigdir = $(libdir)/pkgconfig
 
 glib_marshal_list = indicator-object-marshal.list

@@ -36,7 +36,7 @@ test_non_existing (void)
   IndicatorNg *indicator;
   GError *error = NULL;
 
-  indicator = indicator_ng_new (SRCDIR "/com.canonical.does.not.exist.indicator", &error);
+  indicator = indicator_ng_new (SRCDIR "/org.ayatana.does.not.exist.indicator", &error);
   g_assert (indicator == NULL);
   g_assert_error (error, G_FILE_ERROR, G_FILE_ERROR_NOENT);
 
@@ -50,11 +50,11 @@ test_instantiation (void)
   GError *error = NULL;
   GMainLoop *loop;
 
-  indicator = indicator_ng_new (SRCDIR "/com.canonical.indicator.no-such-service", &error);
+  indicator = indicator_ng_new (SRCDIR "/org.ayatana.indicator.no-such-service", &error);
   g_assert (indicator);
   g_assert (error == NULL);
 
-  g_assert_cmpstr (indicator_ng_get_service_file (indicator), ==, SRCDIR "/com.canonical.indicator.no-such-service");
+  g_assert_cmpstr (indicator_ng_get_service_file (indicator), ==, SRCDIR "/org.ayatana.indicator.no-such-service");
   g_assert_cmpstr (indicator_ng_get_profile (indicator), ==, "desktop");
 
   {
@@ -65,7 +65,7 @@ test_instantiation (void)
                              "profile", &profile,
                              NULL);
 
-    g_assert_cmpstr (service_file, ==, SRCDIR "/com.canonical.indicator.no-such-service");
+    g_assert_cmpstr (service_file, ==, SRCDIR "/org.ayatana.indicator.no-such-service");
     g_assert_cmpstr (profile, ==, "desktop");
 
     g_free (service_file);
@@ -89,7 +89,7 @@ test_instantiation_with_profile (void)
   IndicatorNg *indicator;
   GError *error = NULL;
 
-  indicator = indicator_ng_new_for_profile (SRCDIR "/com.canonical.indicator.test", "greeter", &error);
+  indicator = indicator_ng_new_for_profile (SRCDIR "/org.ayatana.indicator.test", "greeter", &error);
   g_assert (indicator);
   g_assert (error == NULL);
 
@@ -133,7 +133,7 @@ test_menu (void)
   GList *entries;
   IndicatorObjectEntry *entry;
 
-  indicator = indicator_ng_new (SRCDIR "/com.canonical.indicator.test", &error);
+  indicator = indicator_ng_new (SRCDIR "/org.ayatana.indicator.test", &error);
   g_assert (indicator);
   g_assert (error == NULL);
 
