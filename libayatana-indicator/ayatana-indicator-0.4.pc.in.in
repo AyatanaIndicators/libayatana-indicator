@@ -4,14 +4,14 @@ libdir=@libdir@
 bindir=@bindir@
 includedir=@includedir@
 
-indicatordir=${exec_prefix}/lib/indicators/@indicator_abi_version@
+indicatordir=${exec_prefix}/lib/ayatana-indicators/@indicator_abi_version@
 iconsdir=@datarootdir@/@PACKAGE@/icons/
 
-Cflags: -I${includedir}/libindicator-0.@indicator_api_version@
+Cflags: -I${includedir}/libayatana-indicator-0.@indicator_api_version@
 Requires: gtk+-2.0
-Libs: -lindicator
+Libs: -layatana-indicator
 
-Name: libindicator
-Description: libindicator.
+Name: libayatana-indicator
+Description: libayatana-indicator.
 Version: @VERSION@
 
