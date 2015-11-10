@@ -1,4 +1,4 @@
-libayatana-indicator (0.6.0) UNRELEASED; urgency=medium
+libayatana-indicator (0.6.0-0) UNRELEASED; urgency=medium
 
   * Fork from Ubuntu's libindicator.
 
