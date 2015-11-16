@@ -358,7 +358,7 @@ indicator_ng_menu_item_is_of_type (GMenuModel  *menu,
   gchar *type;
   gboolean has_type = FALSE;
 
-  if (g_menu_model_get_item_attribute (menu, index, "x-canonical-type", "s", &type))
+  if (g_menu_model_get_item_attribute (menu, index, "x-ayatanaindicator-type", "s", &type))
     {
       has_type = g_str_equal (type, expected_type);
       g_free (type);
@@ -404,14 +404,14 @@ indicator_ng_menu_changed (GMenuModel *menu,
               g_free (action);
             }
 
-          if (g_menu_model_get_item_attribute (self->menu, 0, "x-canonical-scroll-action", "s", &action))
+          if (g_menu_model_get_item_attribute (self->menu, 0, "x-ayatanaindicator-scroll-action", "s", &action))
             {
               if (g_str_has_prefix (action, "indicator."))
                 self->scroll_action = g_strdup (action + strlen ("indicator."));
               g_free (action);
             }
 
-          if (g_menu_model_get_item_attribute (self->menu, 0, "x-canonical-secondary-action", "s", &action))
+          if (g_menu_model_get_item_attribute (self->menu, 0, "x-ayatanaindicator-secondary-action", "s", &action))
             {
               if (g_str_has_prefix (action, "indicator."))
                 self->secondary_action = g_strdup (action + strlen ("indicator."));
