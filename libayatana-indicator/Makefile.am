@@ -68,7 +68,8 @@ libayatana_indicator_la_CFLAGS = \
 	-Wall -Werror -Wno-error=deprecated-declarations
 
 libayatana_indicator_la_LIBADD = \
-	$(LIBINDICATOR_LIBS)
+	$(LIBINDICATOR_LIBS) \
+	$(LIBM)
 
 libayatana_indicator_la_LDFLAGS = \
 	$(COVERAGE_LDFLAGS) \
