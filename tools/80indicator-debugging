@@ -1,7 +1,7 @@
-# These are environment variables that effect the behavior
-# of libindicator's service manager and indicator service
-# objects.  They turn off various robustness features that
-# make debugging difficult and are not recommended for
+# These are environment variables that effect the behavior of
+# libayatana-indicator's service manager and ayatana-indicator
+# service objects.  They turn off various robustness features
+# that make debugging difficult and are not recommended for
 # daily use.  Development use only!
 
 # To use: either copy or symbolicly link this file to the
