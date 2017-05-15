@@ -71,6 +71,9 @@ AM_CONDITIONAL(USE_GTK3, [test "x$with_gtk" = x3])
 LT_LIB_M
 AC_SUBST(LIBM)
 
+SYSTEMD_USERDIR=`$PKG_CONFIG --variable=systemduserunitdir systemd`
+AC_SUBST(SYSTEMD_USERDIR)
+
 ##############################
 # Custom Junk
 ##############################
@@ -153,6 +156,7 @@ AC_SUBST(COVERAGE_LDFLAGS)
 
 AC_CONFIG_FILES([
 Makefile
+data/Makefile
 libayatana-indicator/Makefile
 libayatana-indicator/ayatana-indicator-0.4.pc.in
 libayatana-indicator/ayatana-indicator3-0.4.pc.in

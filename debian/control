@@ -81,3 +81,10 @@ Description: Tools for libayatana-indicator
  Tools useful for developers of applications using indicators.
  .
  This package contains files that are needed to build applications.
+
+Package: ayatana-indicator-common
+Section: libs
+Architecture: all
+Description: libayatana-indicator shared files
+ A package that has files needed to work with the Ayatana Indicators. This
+ includes the systemd ayatana-indicators-pre.target.
