@@ -157,7 +157,8 @@ am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgconfigdir)" \
 	"$(DESTDIR)$(libayatana_indicatorincludedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 am__DEPENDENCIES_1 =
-libayatana_indicator_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
+libayatana_indicator_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am__libayatana_indicator_la_SOURCES_DIST = indicator.h \
 	indicator-desktop-shortcuts.h indicator-image-helper.h \
 	indicator-object.h indicator-service.h \
@@ -192,7 +193,7 @@ libayatana_indicator_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(libayatana_indicator_la_CFLAGS) $(CFLAGS) \
 	$(libayatana_indicator_la_LDFLAGS) $(LDFLAGS) -o $@
 @USE_GTK3_FALSE@am_libayatana_indicator_la_rpath = -rpath $(libdir)
-am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1)
+am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 libayatana_indicator3_la_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am__libayatana_indicator3_la_SOURCES_DIST = indicator.h \
 	indicator-desktop-shortcuts.h indicator-image-helper.h \
@@ -354,6 +355,7 @@ LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
+LT_SYS_LIBRARY_PATH = @LT_SYS_LIBRARY_PATH@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 MANIFEST_TOOL = @MANIFEST_TOOL@
@@ -480,7 +482,8 @@ libayatana_indicator_la_CFLAGS = \
 	-Wall -Werror -Wno-error=deprecated-declarations
 
 libayatana_indicator_la_LIBADD = \
-	$(LIBINDICATOR_LIBS)
+	$(LIBINDICATOR_LIBS) \
+	$(LIBM)
 
 libayatana_indicator_la_LDFLAGS = \
 	$(COVERAGE_LDFLAGS) \

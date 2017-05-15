@@ -2,10 +2,9 @@
 
 PKG_NAME="libindicator"
 
-which gnome-autogen.sh || {
-	echo "You need gnome-common from GNOME SVN"
+which mate-autogen || {
+	echo "You need mate-common from https://git.mate-desktop.org/mate-common."
 	exit 1
 }
 
-USE_GNOME2_MACROS=1 \
-. gnome-autogen.sh
+. mate-autogen
