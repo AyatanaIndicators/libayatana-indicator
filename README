@@ -1,9 +1,10 @@
 The indicator service file format
 =================================
 
-Unity's panel finds out about indicator by looking at indicator service
-files in `/usr/share/unity/indicators`. These files have to have the same
-name as the well-known D-Bus name that the corresponding service owns.
+Modern desktop panels find out about indicator by looking at indicator
+service files in `/usr/share/ayatana/indicators`. These files have to have
+the same name as the well-known D-Bus name that the corresponding service
+owns.
 
 An indicator file is a normal key file (like desktop files).  It must have
 an `[Indicator Service]` section, that must contain the service's name (`Name`)
