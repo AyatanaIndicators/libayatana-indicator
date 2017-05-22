@@ -1,17 +1,110 @@
-Format-Specification: http://svn.debian.org/wsvn/dep/web/deps/dep5.mdwn?op=file&rev=135
-Name: libindicator
-Maintainer: Ted Gould <ted@canonical.com>
-Source: https://launchpad.net/libindicator
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: libayatana-indicator
+Upstream-Contact: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+Source: https://github.com/ArcticaProject/libayatana-indicator
 
-Files: *
-Copyright: 2009-2010 Ted Gould <ted@canonical.com>, Canonical Ltd.
+Files: libayatana-indicator/dbus-shared.h
+ libayatana-indicator/indicator-desktop-shortcuts.c
+ libayatana-indicator/indicator-desktop-shortcuts.h
+ libayatana-indicator/indicator-image-helper.c
+ libayatana-indicator/indicator-image-helper.h
+ libayatana-indicator/indicator-ng.c
+ libayatana-indicator/indicator-ng.h
+ libayatana-indicator/indicator-object.c
+ libayatana-indicator/indicator-object.h
+ libayatana-indicator/indicator-service-manager.c
+ libayatana-indicator/indicator-service-manager.h
+ libayatana-indicator/indicator-service.c
+ libayatana-indicator/indicator-service.h
+ libayatana-indicator/indicator.h
+ tests/dummy-indicator-blank.c
+ tests/dummy-indicator-entry-func.c
+ tests/dummy-indicator-entry-func.h
+ tests/dummy-indicator-null.c
+ tests/dummy-indicator-signaler.c
+ tests/dummy-indicator-simple.c
+ tests/dummy-indicator-visible.c
+ tests/service-manager-connect-service.c
+ tests/service-manager-connect.c
+ tests/service-manager-no-connect.c
+ tests/service-manager-nostart-connect.c
+ tests/service-shutdown-timeout.c
+ tests/service-version-bad-service.c
+ tests/service-version-good-service.c
+ tests/service-version-manager.c
+ tests/service-version-multiwatch-manager-impolite.c
+ tests/service-version-multiwatch-manager.c
+ tests/service-version-multiwatch-service.c
+ tests/service-version-values.h
+ tests/test-desktop-shortcuts.c
+ tests/test-loader.c
+ tools/indicator-loader.c
+ trim-lcov.py
+Copyright: 2009, Canonical Ltd.
+  2010, Canonical Ltd.
+  2012, Canonical Ltd.
+  2013, Canonical Ltd.
 License: GPL-3
+
+Files: AUTHORS
+ ChangeLog
+ Makefile.am
+ Makefile.am.coverage
+ Makefile.am.marshal
+ NEWS.Canonical
+ README
+ autogen.sh
+ configure.ac
+ data/Makefile.am
+ data/ayatana-indicators-pre.target
+ helper/test-loader-build
+ helper/test-loader.c
+ libayatana-indicator/Makefile.am
+ libayatana-indicator/ayatana-indicator-0.4.pc.in.in
+ libayatana-indicator/ayatana-indicator3-0.4.pc.in.in
+ libayatana-indicator/indicator-object-enum-types.c.template
+ libayatana-indicator/indicator-object-enum-types.h.template
+ libayatana-indicator/indicator-object-marshal.list
+ libayatana-indicator/indicator-service.xml
+ m4/gcov.m4
+ tests/Makefile.am
+ tests/indicator-test-service.c
+ tests/org.ayatana.indicator.no-such-service
+ tests/org.ayatana.indicator.test
+ tests/org.ayatana.indicator.test.service.in
+ tests/run-xvfb.sh
+ tests/service-manager-connect.service.in
+ tests/service-version-bad.service.in
+ tests/service-version-good.service.in
+ tests/session.conf.in
+ tests/test-indicator-ng.c
+ tests/test-well-formed.desktop
+ tools/80indicator-debugging
+ tools/Makefile.am
+Copyright: 2010-2013, Canonical Ltd.
+License: GPL-3
+Comment:
+ Assuming same license and copyright holdership as found
+ in other files in this project.
 
 Files: debian/*
-Copyright: 2009-2010 Evgeni Golov <evgeni@debian.org>
-Copyright: 2009-2010 Ted Gould <ted@canonical.com>, Canonical Ltd.
+Copyright: 2010-2013, Canonical Ltd.
+           2015-2017, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 License: GPL-3
 
 License: GPL-3
-On Debian systems, the complete text of the GNU General
- Public License version 3 can be found in `/usr/share/common-licenses/GPL-3'.
+ This program is free software; you can redistribute it and/or modify it
+ under the terms of the GNU General Public License as published by the Free
+ Software Foundation; version 3 of the License.
+ .
+ This program is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ more details.
+ .
+ You should have received a copy of the GNU General Public License along with
+ this program; if not, write to the Free Software Foundation, Inc., 51
+ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ .
+ On Debian systems, the complete text of the GNU General Public License
+ version 3 can be found in `/usr/share/common-licenses/GPL-3'.

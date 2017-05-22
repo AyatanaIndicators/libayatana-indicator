@@ -4,6 +4,7 @@ Priority: optional
 Maintainer: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 Build-Depends: debhelper (>= 9),
                dh-autoreconf,
+               dpkg-dev (>= 1.16.1.1),
                libtool,
                intltool,
                mate-common,
@@ -14,21 +15,21 @@ Build-Depends: debhelper (>= 9),
                libgtk2.0-dev (>= 2.18),
                libgtk-3-dev (>= 2.91.3),
                libayatana-ido3-0.4-dev (>= 0.4.0-0~)
-Standards-Version: 3.9.6
+Standards-Version: 3.9.8
 Homepage: https://github.com/ArcticaProject/libayatana-indicator
 Vcs-Git: git://cgit.arctica-project.org/ayatana/libayatana-indicator.git
 Vcs-Browser: https://cgit.arctica-project.org/ayatana/libayatana-indicator.git/
 
 Package: libayatana-indicator7
-Section: libs
 Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
-Description: panel indicator applet - shared library
- This library contains information to build indicators to go into
- the indicator applet.
+Multi-Arch: same
+Description: panel indicator applet - shared library (GTK-2+ variant)
+ The Ayatana Indicators library contains information to build indicators
+ to go into modern desktops' indicator applets.
  .
- This package contains the library itself.
+ This package contains the library itself (GTK-2+ variant).
 
 Package: libayatana-indicator-dev
 Section: libdevel
@@ -37,23 +38,23 @@ Depends: ${shlibs:Depends},
          ${misc:Depends},
          libgtk2.0-dev (>= 2.12.0),
          libayatana-indicator7 (= ${binary:Version}),
-Description: panel indicator applet - library development files
- This library contains information to build indicators to go into
- the indicator applet.
+Description: panel indicator applet - library development files (GTK-2+)
+ The Ayatana Indicators library contains information to build indicators
+ to go into modern desktops' indicator applets.
  .
- This package contains files that are needed to build applications.
+ This package contains files that are needed to build GTK-2+ applications
+ with Ayatana Indicator support.
 
 Package: libayatana-indicator3-7
-Section: libs
 Architecture: any
-Pre-Depends: multiarch-support
 Depends: ${shlibs:Depends},
          ${misc:Depends},
-Description: panel indicator applet - shared library
- This library contains information to build indicators to go into
- the indicator applet.
+Multi-Arch: same
+Description: panel indicator applet - shared library (GTK-3+ variant)
+ The Ayatana Indicators library contains information to build indicators
+ to go into modern desktops' indicator applets.
  .
- This package contains the library itself.
+ This package contains the library itself (GTK-3+ variant).
 
 Package: libayatana-indicator3-dev
 Section: libdevel
@@ -63,11 +64,12 @@ Depends: ${shlibs:Depends},
          libgtk-3-dev (>= 2.91.3),
          libayatana-indicator3-7 (= ${binary:Version}),
          libayatana-indicator-dev (= ${binary:Version}),
-Description: panel indicator applet - library development files
- This library contains information to build indicators to go into
- the indicator applet.
+Description: panel indicator applet - library development files (GTK-3+)
+ The Ayatana Indicators library contains information to build indicators
+ to go into modern desktops' indicator applets.
  .
- This package contains files that are needed to build applications.
+ This package contains files that are needed to build GTK-3+ applications
+ with Ayatana Indicator support.
 
 Package: libayatana-indicator3-tools
 Section: devel
@@ -75,16 +77,23 @@ Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
          libayatana-indicator3-7 (= ${binary:Version}),
+Multi-Arch: foreign
 Replaces: libayatana-indicator-tools,
 Conflicts: libayatana-indicator-tools,
 Description: Tools for libayatana-indicator
- Tools useful for developers of applications using indicators.
+ The Ayatana Indicators library contains information to build indicators
+ to go into modern desktops' indicator applets.
  .
- This package contains files that are needed to build applications.
+ This package contains tools useful for developers of applications using
+ indicators.
 
 Package: ayatana-indicator-common
-Section: libs
 Architecture: all
+Depends: ${misc:Depends},
+Multi-Arch: foreign
 Description: libayatana-indicator shared files
- A package that has files needed to work with the Ayatana Indicators. This
+ The Ayatana Indicators library contains information to build indicators
+ to go into modern desktops' indicator applets.
+ .
+ This package has files needed to work with the Ayatana Indicators. This
  includes the systemd ayatana-indicators-pre.target.

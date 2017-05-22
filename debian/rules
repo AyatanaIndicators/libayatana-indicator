@@ -2,6 +2,10 @@
 
 FLAVORS = gtk2 gtk3
 
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+DPKG_EXPORT_BUILDFLAGS = 1
+include /usr/share/dpkg/buildflags.mk
+
 COMMON_CONFIGURE_FLAGS = --disable-silent-rules
 
 CONFIGURE_FLAGS_gtk2 = --with-gtk=2

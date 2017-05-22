@@ -1,4 +1,4 @@
-usr/include /usr/
+usr/include
 usr/lib/*/pkgconfig/ayatana-indicator3-0.4.pc
 usr/lib/*/libayatana-indicator3.a
 usr/lib/*/libayatana-indicator3.so
