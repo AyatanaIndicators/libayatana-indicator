@@ -26,6 +26,20 @@ AM_PROG_AR
 LT_PREREQ([2.2])
 LT_INIT
 
+# Upstream's pkg.m4 (since 0.27) offers this now, but define our own
+# compatible version in case the local version of pkgconfig isn't new enough.
+# https://bugs.freedesktop.org/show_bug.cgi?id=48743
+m4_ifdef([PKG_INSTALLDIR], [PKG_INSTALLDIR],
+         [AC_ARG_WITH([pkgconfigdir],
+                      [AS_HELP_STRING([--with-pkgconfigdir],
+                      [install directory for nx-x11.pc pkg-config file])],
+                       [],[with_pkgconfigdir='$(libdir)/pkgconfig'])
+          AC_SUBST([pkgconfigdir], [${with_pkgconfigdir}])])
+
+# Required when PKG_CHECK_MODULES called within an if statement
+PKG_PROG_PKG_CONFIG
+
+
 AC_PATH_PROG([GLIB_MKENUMS], [glib-mkenums])
 AC_PATH_PROG([GLIB_GENMARSHAL], [glib-genmarshal])
 
