@@ -71,9 +71,6 @@ AM_CONDITIONAL(USE_GTK3, [test "x$with_gtk" = x3])
 LT_LIB_M
 AC_SUBST(LIBM)
 
-SYSTEMD_USERDIR=`$PKG_CONFIG --variable=systemduserunitdir systemd`
-AC_SUBST(SYSTEMD_USERDIR)
-
 ##############################
 # Custom Junk
 ##############################
@@ -115,6 +112,19 @@ AC_SUBST(EXPANDED_SYSCONFDIR)
 AC_DEFINE_PATH(PREFIX, "${prefix}", [prefix directory])
 AC_DEFINE_PATH(SYSCONFDIR, "${sysconfdir}", [system configuration dir])
 AC_DEFINE_PATH(LIBDIR, "${libdir}", [system configuration dir])
+
+#########################
+# Check for systemd
+#########################
+PKG_CHECK_MODULES(SYSTEMD,  systemd,
+    [has_systemd=yes],
+    []
+)
+if test "x$has_systemd" = "xyes"; then
+	SYSTEMD_USERDIR=`$PKG_CONFIG --variable=systemduserunitdir systemd`
+	AC_SUBST(SYSTEMD_USERDIR)
+	AC_DEFINE(HAVE_SYSTEMD, 1, [create ayatana-indicators-pre.target for systemd])
+fi
 
 #########################
 # Check if build tests
