@@ -44,7 +44,6 @@ override_dh_install:
 	rm -f debian/tmp/gtk2/usr/lib/systemd/user/ayatana-indicators-pre.target
 	dh_install -plibayatana-indicator7 --fail-missing --sourcedir=debian/tmp/gtk2
 	dh_install -plibayatana-indicator-dev --fail-missing --sourcedir=debian/tmp/gtk2
-	dh_install -plibayatana-indicator-tools --fail-missing --sourcedir=debian/tmp/gtk2
 	dh_install -plibayatana-indicator3-7 --fail-missing --sourcedir=debian/tmp/gtk3
 	dh_install -plibayatana-indicator3-dev --fail-missing --sourcedir=debian/tmp/gtk3
 	dh_install -plibayatana-indicator3-tools --fail-missing --sourcedir=debian/tmp/gtk3
