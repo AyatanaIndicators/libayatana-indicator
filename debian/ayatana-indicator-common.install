@@ -1,1 +1,2 @@
-usr/lib/systemd
+#! /usr/bin/dh-exec
+[linux-any] usr/lib/systemd
