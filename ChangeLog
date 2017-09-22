@@ -1,10 +1,39 @@
-2017-05-22 13:48:53 +0200 Mike Gabriel (392b9d0)
+2017-09-22 10:11:39 +0200 Mike Gabriel (b148ed1)
 
-	* release 0.6.0 (HEAD -> master)
+	* release 0.6.1 (HEAD -> master)
+
+2017-09-22 10:01:32 +0200 Mike Gabriel (df6c2e9)
+
+	* debian/control: Add B-D systemd [linux-any]. (origin/master)
+
+2017-09-22 10:01:13 +0200 Mike Gabriel (7bd1d1d)
+
+	* debian/{control,ayatana-indicators-common}: Leave
+          ayatana-indicators-commin bin:package empty on non-systemd
+          systems.
+
+2017-09-22 09:58:06 +0200 Mike Gabriel (afba9ad)
+
+	* configure.ac: Support pkg-config (<< 0.27).
+
+2017-09-22 09:57:35 +0200 Mike Gabriel (2b5c1b0)
+
+	* autotools: Make systemd dependency optional. This makes
+          libayatana-indicator available on Debian GNU/kFreeBSD and
+          Debian GNU/Hurd.
+
+2017-05-22 15:29:02 +0200 Mike Gabriel (5ff7174)
+
+	* debian/*: Adopt packaging improvements from official Debian
+          package.
+
+2017-05-22 13:48:53 +0200 Mike Gabriel (4fd7ae8)
+
+	* release 0.6.0 (tag: 0.6.0, origin/release-builds, release-builds)
 
 2017-05-22 14:03:19 +0200 Mike Gabriel (c49b409)
 
-	* Add empty NEWS file to prevent FTBFS. (release-builds)
+	* Add empty NEWS file to prevent FTBFS.
 
 2017-05-22 13:47:34 +0200 Mike Gabriel (9029a50)
 
