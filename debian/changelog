@@ -1,6 +1,6 @@
 libayatana-indicator (0.6.1-1) unstable; urgency=medium
 
-  * Upstream-provided Debian package for nx-libs.
+  * Upstream-provided Debian package for libayatana-indicator.
     See upstream ChangeLog for recent changes.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 22 Sep 2017 10:11:39 +0200
