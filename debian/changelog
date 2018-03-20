@@ -1,4 +1,11 @@
-libayatana-indicator (0.6.1-1) unstable; urgency=medium
+libayatana-indicator (0.6.2-0) unstable; urgency=medium
+
+  * Upstream-provided Debian package for libayatana-indicator.
+    See upstream ChangeLog for recent changes.
+
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Tue, 20 Mar 2018 09:37:13 +0000
+
+libayatana-indicator (0.6.1-0) unstable; urgency=medium
 
   * Upstream-provided Debian package for libayatana-indicator.
     See upstream ChangeLog for recent changes.

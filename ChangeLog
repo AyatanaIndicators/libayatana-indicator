@@ -1,10 +1,57 @@
-2017-09-22 10:11:39 +0200 Mike Gabriel (b148ed1)
+2018-03-20 10:40:49 +0100 Mike Gabriel (7f0bed8)
 
-	* release 0.6.1 (HEAD -> master)
+	* release 0.6.2 (HEAD -> master)
+
+2018-03-20 08:54:48 +0000 Mike Gabriel (34b4321)
+
+	* libayatana-indicator/indicator-ng.c: Type cast assignments from
+          g_object_ref_sink(). (origin/master)
+
+2018-03-20 09:12:03 +0100 Mike Gabriel (3b3c265)
+
+	* debian/control: Drop unneeded D (libayatana-indicator3-dev):
+          libayatana-indicator-dev.
+
+2017-10-26 19:16:22 +0200 Mike Gabriel (8de3f59)
+
+	* Makefile.am: Drop distcheck features.
+
+2017-10-22 21:12:38 +0200 Mike Gabriel (cffab72)
+
+	* debian/changelog: Fix source project name in most recent changelog
+          stanza.
+
+2017-09-27 16:01:44 +0200 Mike Gabriel (fb3d8fe)
+
+	* debian/changelog: post-release fix in date strings (2)
+          (origin/release-builds, release-builds)
+
+2017-09-27 11:12:43 +0200 Mike Gabriel (7a2f684)
+
+	* debian/changelog: post-release fix in date strings (for 0.6.0 and
+          0.6.1)
+
+2017-09-23 01:14:17 +0200 Mike Gabriel (4f355a3)
+
+	* post-release fix-up of debian/changelog
+
+2017-09-22 11:14:40 +0200 Mike Gabriel (6233943)
+
+	* debian/rules: Drop dh_install call for bin:pkg
+          -plibayatana-indicator-tools. We don't ship that anymore.
+
+2017-09-22 10:16:08 +0200 Mike Gabriel (7222339)
+
+	* debian/ayatana-indicator-common.install: Set x-bit on file
+          permissions.
+
+2017-09-22 10:11:39 +0200 Mike Gabriel (20640dd)
+
+	* release 0.6.1 (tag: 0.6.1)
 
 2017-09-22 10:01:32 +0200 Mike Gabriel (df6c2e9)
 
-	* debian/control: Add B-D systemd [linux-any]. (origin/master)
+	* debian/control: Add B-D systemd [linux-any].
 
 2017-09-22 10:01:13 +0200 Mike Gabriel (7bd1d1d)
 
@@ -29,7 +76,7 @@
 
 2017-05-22 13:48:53 +0200 Mike Gabriel (4fd7ae8)
 
-	* release 0.6.0 (tag: 0.6.0, origin/release-builds, release-builds)
+	* release 0.6.0 (tag: 0.6.0)
 
 2017-05-22 14:03:19 +0200 Mike Gabriel (c49b409)
 
