@@ -108,14 +108,12 @@ static GDBusInterfaceVTable       interface_table = {
 };
 
 /* THE define */
-G_DEFINE_TYPE (IndicatorService, indicator_service, G_TYPE_OBJECT);
+G_DEFINE_TYPE_WITH_PRIVATE (IndicatorService, indicator_service, G_TYPE_OBJECT);
 
 static void
 indicator_service_class_init (IndicatorServiceClass *klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
-
-	g_type_class_add_private (klass, sizeof (IndicatorServicePrivate));
 
 	object_class->dispose = indicator_service_dispose;
 	object_class->finalize = indicator_service_finalize;
@@ -184,7 +182,7 @@ indicator_service_class_init (IndicatorServiceClass *klass)
 static void
 indicator_service_init (IndicatorService *self)
 {
-	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(self);
+	IndicatorServicePrivate * priv = indicator_service_get_instance_private(self);
 
 	/* Get the private variables in a decent state */
 	priv->name = NULL;
@@ -231,7 +229,8 @@ indicator_service_init (IndicatorService *self)
 static void
 indicator_service_dispose (GObject *object)
 {
-	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(object);
+	IndicatorService * service = INDICATOR_SERVICE(object);
+	IndicatorServicePrivate * priv = indicator_service_get_instance_private(service);
 
 	g_clear_pointer (&priv->watchers, g_hash_table_destroy);
 
@@ -263,7 +262,8 @@ indicator_service_dispose (GObject *object)
 static void
 indicator_service_finalize (GObject *object)
 {
-	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(object);
+	IndicatorService * service = INDICATOR_SERVICE(object);
+	IndicatorServicePrivate * priv = indicator_service_get_instance_private(service);
 
 	g_free (priv->name);
 	g_clear_pointer (&priv->watchers, g_hash_table_destroy);
@@ -280,7 +280,7 @@ set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec 
 	IndicatorService * self = INDICATOR_SERVICE(object);
 	g_return_if_fail(self != NULL);
 
-	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(self);
+	IndicatorServicePrivate * priv = indicator_service_get_instance_private(self);
 	g_return_if_fail(priv != NULL);
 
 	switch (prop_id) {
@@ -318,7 +318,7 @@ get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspe
 	IndicatorService * self = INDICATOR_SERVICE(object);
 	g_return_if_fail(self != NULL);
 
-	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(self);
+	IndicatorServicePrivate * priv = indicator_service_get_instance_private(self);
 	g_return_if_fail(priv != NULL);
 
 	switch (prop_id) {
@@ -357,7 +357,7 @@ bus_get_cb (GObject * object, GAsyncResult * res, gpointer user_data)
 		return;
 	}
 
-	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(user_data);
+	IndicatorServicePrivate * priv = indicator_service_get_instance_private(user_data);
 
 	g_warn_if_fail(priv->bus == NULL);
 	priv->bus = connection;
@@ -439,7 +439,7 @@ try_and_get_name_acquired_cb (GDBusConnection * connection, const gchar * name, 
 	g_return_if_fail(connection != NULL);
 	g_return_if_fail(INDICATOR_IS_SERVICE(user_data));
 
-	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(user_data);
+	IndicatorServicePrivate * priv = indicator_service_get_instance_private(user_data);
 
 	/* Check to see if we already had a timer, if so we want to
 	   extend it a bit. */
@@ -463,7 +463,7 @@ try_and_get_name_lost_cb (GDBusConnection * connection, const gchar * name, gpoi
 	g_return_if_fail(connection != NULL);
 	g_return_if_fail(INDICATOR_IS_SERVICE(user_data));
 
-	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(user_data);
+	IndicatorServicePrivate * priv = indicator_service_get_instance_private(user_data);
 
 	if (!priv->replace_mode) {
 		g_warning("Name request failed.");
@@ -498,7 +498,7 @@ try_and_get_name_lost_cb (GDBusConnection * connection, const gchar * name, gpoi
 static void
 try_and_get_name (IndicatorService * service)
 {
-	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(service);
+	IndicatorServicePrivate * priv = indicator_service_get_instance_private(service);
 	g_return_if_fail(priv->name != NULL);
 
 	g_bus_own_name(G_BUS_TYPE_SESSION,
@@ -519,7 +519,7 @@ static void
 watcher_vanished_cb (GDBusConnection * connection, const gchar * name, gpointer user_data)
 {
 	g_return_if_fail(INDICATOR_IS_SERVICE(user_data));
-	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(user_data);
+	IndicatorServicePrivate * priv = indicator_service_get_instance_private(user_data);
 
 	gpointer finddata = g_hash_table_lookup(priv->watchers, name);
 	if (finddata != NULL) {
@@ -539,7 +539,7 @@ static GVariant *
 bus_watch (IndicatorService * service, const gchar * sender)
 {
 	g_return_val_if_fail(INDICATOR_IS_SERVICE(service), NULL);
-	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(service);
+	IndicatorServicePrivate * priv = indicator_service_get_instance_private(service);
 	
 	if (GPOINTER_TO_UINT(g_hash_table_lookup(priv->watchers, sender)) == 0) {
 		guint watch = g_bus_watch_name_on_connection(priv->bus,
@@ -574,7 +574,7 @@ unwatch_core (IndicatorService * service, const gchar * name)
 	g_return_if_fail(name != NULL);
 	g_return_if_fail(INDICATOR_IS_SERVICE(service));
 
-	IndicatorServicePrivate * priv = INDICATOR_SERVICE_GET_PRIVATE(service);
+	IndicatorServicePrivate * priv = indicator_service_get_instance_private(service);
 
 	/* Remove us from the watcher list here */
 	gpointer watcher_item = g_hash_table_lookup(priv->watchers, name);

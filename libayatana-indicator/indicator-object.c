@@ -74,9 +74,6 @@ struct _IndicatorObjectPrivate {
 	GStrv environments;
 };
 
-#define INDICATOR_OBJECT_GET_PRIVATE(o) (INDICATOR_OBJECT(o)->priv)
-
-
 /* Signals Stuff */
 enum {
 	ENTRY_ADDED,
@@ -118,7 +115,7 @@ static void indicator_object_entry_was_added     (IndicatorObject*, IndicatorObj
 static gint indicator_object_real_get_position   (IndicatorObject*);
 static IndicatorObjectEntryPrivate * entry_get_private (IndicatorObject*, IndicatorObjectEntry*);
 
-G_DEFINE_TYPE (IndicatorObject, indicator_object, G_TYPE_OBJECT);
+G_DEFINE_TYPE_WITH_PRIVATE (IndicatorObject, indicator_object, G_TYPE_OBJECT);
 
 /* Setup the class and put the functions into the
    class structure */
@@ -126,8 +123,6 @@ static void
 indicator_object_class_init (IndicatorObjectClass *klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
-
-	g_type_class_add_private (klass, sizeof (IndicatorObjectPrivate));
 
 	object_class->dispose = indicator_object_dispose;
 	object_class->finalize = indicator_object_finalize;
@@ -304,7 +299,7 @@ indicator_object_class_init (IndicatorObjectClass *klass)
 static void
 indicator_object_init (IndicatorObject *self)
 {
-	IndicatorObjectPrivate * priv = G_TYPE_INSTANCE_GET_PRIVATE (self, INDICATOR_OBJECT_TYPE, IndicatorObjectPrivate);
+	IndicatorObjectPrivate * priv = indicator_object_get_instance_private(self);
 
 	priv->module = NULL;
 
@@ -360,7 +355,9 @@ module_unref (gpointer data)
 static void
 indicator_object_finalize (GObject *object)
 {
-	IndicatorObjectPrivate * priv = INDICATOR_OBJECT_GET_PRIVATE(object);
+
+	IndicatorObject * obj = INDICATOR_OBJECT (object);
+	IndicatorObjectPrivate * priv = indicator_object_get_instance_private(obj);
 
 	if (priv->entry_privates != NULL) {
 		g_hash_table_destroy (priv->entry_privates);
@@ -466,9 +463,11 @@ indicator_object_new_from_file (const gchar * file)
 	}
 
 	/* Now we can track the module */
-	INDICATOR_OBJECT_GET_PRIVATE(object)->module = module;
+	IndicatorObject * obj = INDICATOR_OBJECT(object);
+	IndicatorObjectPrivate * priv = indicator_object_get_instance_private(obj);
+	priv->module = module;
 
-	return INDICATOR_OBJECT(object);
+	return obj;
 
 	/* Error, let's drop the object and return NULL.  Sad when
 	   this happens. */
@@ -487,7 +486,7 @@ unrefandout:
 static GList *
 get_entries_default (IndicatorObject * io)
 {
-	IndicatorObjectPrivate * priv = INDICATOR_OBJECT_GET_PRIVATE(io);
+	IndicatorObjectPrivate * priv = indicator_object_get_instance_private(io);
 
 	if (!priv->gotten_entries) {
 		IndicatorObjectClass * class = INDICATOR_OBJECT_GET_CLASS(io);
@@ -603,7 +602,8 @@ indicator_object_get_entries (IndicatorObject * io)
 	GList * l;
 	GList * ret = NULL;
 	GList * all_entries = get_all_entries (io);
-	const gboolean default_visibility = INDICATOR_OBJECT_GET_PRIVATE(io)->default_visibility;
+	IndicatorObjectPrivate * priv = indicator_object_get_instance_private(io);
+	const gboolean default_visibility = priv->default_visibility;
 
 	for (l=all_entries; l!=NULL; l=l->next)
 	{
@@ -900,7 +900,7 @@ get_property (GObject     * object,
         IndicatorObject * self = INDICATOR_OBJECT(object);
         g_return_if_fail(self != NULL);
 
-        IndicatorObjectPrivate * priv = INDICATOR_OBJECT_GET_PRIVATE(self);
+        IndicatorObjectPrivate * priv = indicator_object_get_instance_private(self);
         g_return_if_fail(priv != NULL);
 
         switch (prop_id) {
@@ -928,7 +928,7 @@ set_property (GObject       * object,
         IndicatorObject * self = INDICATOR_OBJECT(object);
         g_return_if_fail (self != NULL);
 
-        IndicatorObjectPrivate * priv = INDICATOR_OBJECT_GET_PRIVATE(self);
+        IndicatorObjectPrivate * priv = indicator_object_get_instance_private(self);
         g_return_if_fail (priv != NULL);
 
 

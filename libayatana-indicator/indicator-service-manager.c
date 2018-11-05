@@ -87,10 +87,6 @@ enum {
 static GDBusNodeInfo *            node_info = NULL;
 static GDBusInterfaceInfo *       interface_info = NULL;
 
-/* GObject Stuff */
-#define INDICATOR_SERVICE_MANAGER_GET_PRIVATE(o) \
-(G_TYPE_INSTANCE_GET_PRIVATE ((o), INDICATOR_SERVICE_MANAGER_TYPE, IndicatorServiceManagerPrivate))
-
 static void indicator_service_manager_class_init (IndicatorServiceManagerClass *klass);
 static void indicator_service_manager_init       (IndicatorServiceManager *self);
 static void indicator_service_manager_dispose    (GObject *object);
@@ -105,7 +101,7 @@ static void unwatch (GDBusProxy * proxy);
 static void service_proxy_cb (GObject * object, GAsyncResult * res, gpointer user_data);
 static void service_proxy_name_changed (GDBusConnection * connection, const gchar * sender_name, const gchar * object_path, const gchar * interface_name, const gchar * signal_name, GVariant * parameters, gpointer user_data);
 
-G_DEFINE_TYPE (IndicatorServiceManager, indicator_service_manager, G_TYPE_OBJECT);
+G_DEFINE_TYPE_WITH_PRIVATE (IndicatorServiceManager, indicator_service_manager, G_TYPE_OBJECT);
 
 /* Build all of our signals and proxies and tie everything
    all together.  Lovely. */
@@ -113,8 +109,6 @@ static void
 indicator_service_manager_class_init (IndicatorServiceManagerClass *klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
-
-	g_type_class_add_private (klass, sizeof (IndicatorServiceManagerPrivate));
 
 	object_class->dispose = indicator_service_manager_dispose;
 	object_class->finalize = indicator_service_manager_finalize;
@@ -181,7 +175,7 @@ indicator_service_manager_class_init (IndicatorServiceManagerClass *klass)
 static void
 indicator_service_manager_init (IndicatorServiceManager *self)
 {
-	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(self);
+	IndicatorServiceManagerPrivate * priv = indicator_service_manager_get_instance_private(self);
 
 	/* Get the private variables in a decent state */
 	priv->name = NULL;
@@ -204,7 +198,8 @@ indicator_service_manager_init (IndicatorServiceManager *self)
 static void
 indicator_service_manager_dispose (GObject *object)
 {
-	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(object);
+	IndicatorServiceManager * sm = INDICATOR_SERVICE_MANAGER(object);
+	IndicatorServiceManagerPrivate * priv = indicator_service_manager_get_instance_private(sm);
 
 	/* Removing the idle task to restart if it exists. */
 	if (priv->restart_source != 0) {
@@ -263,7 +258,8 @@ indicator_service_manager_dispose (GObject *object)
 static void
 indicator_service_manager_finalize (GObject *object)
 {
-	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(object);
+	IndicatorServiceManager * sm = INDICATOR_SERVICE_MANAGER(object);
+	IndicatorServiceManagerPrivate * priv = indicator_service_manager_get_instance_private(sm);
 
 	if (priv->name != NULL) {
 		g_free(priv->name);
@@ -282,7 +278,7 @@ set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec 
 	IndicatorServiceManager * self = INDICATOR_SERVICE_MANAGER(object);
 	g_return_if_fail(self != NULL);
 
-	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(self);
+	IndicatorServiceManagerPrivate * priv = indicator_service_manager_get_instance_private(self);
 	g_return_if_fail(priv != NULL);
 
 	switch (prop_id) {
@@ -316,7 +312,7 @@ get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspe
 	IndicatorServiceManager * self = INDICATOR_SERVICE_MANAGER(object);
 	g_return_if_fail(self != NULL);
 
-	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(self);
+	IndicatorServiceManagerPrivate * priv = indicator_service_manager_get_instance_private(self);
 	g_return_if_fail(priv != NULL);
 
 	switch (prop_id) {
@@ -363,7 +359,7 @@ static void
 watch_cb (GObject * object, GAsyncResult * res, gpointer user_data)
 {
 	GError * error = NULL;
-	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(user_data);
+	IndicatorServiceManagerPrivate * priv = indicator_service_manager_get_instance_private(user_data);
 
 	GVariant * params = g_dbus_proxy_call_finish(G_DBUS_PROXY(object), res, &error);
 
@@ -421,7 +417,7 @@ watch_cb (GObject * object, GAsyncResult * res, gpointer user_data)
 static void
 start_service (IndicatorServiceManager * service)
 {
-	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(service);
+	IndicatorServiceManagerPrivate * priv = indicator_service_manager_get_instance_private(service);
 
 	g_return_if_fail(priv->name != NULL);
 
@@ -463,7 +459,7 @@ service_proxy_cb (GObject * object, GAsyncResult * res, gpointer user_data)
 
 	GDBusProxy * proxy = g_dbus_proxy_new_for_bus_finish(res, &error);
 
-	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(user_data);
+	IndicatorServiceManagerPrivate * priv = indicator_service_manager_get_instance_private(user_data);
 
 	if (priv->service_proxy_cancel != NULL) {
 		g_object_unref(priv->service_proxy_cancel);
@@ -534,7 +530,7 @@ service_proxy_name_changed (GDBusConnection * connection, const gchar * sender_n
                             gpointer user_data)
 
 {
-	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(user_data);
+	IndicatorServiceManagerPrivate * priv = indicator_service_manager_get_instance_private(user_data);
 
 	const gchar * new_name = NULL;
 	const gchar * prev_name = NULL;
@@ -580,7 +576,7 @@ service_proxy_name_changed (GDBusConnection * connection, const gchar * sender_n
 static gboolean
 start_service_again_cb (gpointer data)
 {
-	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(data);
+	IndicatorServiceManagerPrivate * priv = indicator_service_manager_get_instance_private(data);
 	priv->restart_count++;
 	g_debug("Restarting service '%s' count %d", priv->name, priv->restart_count);
 	start_service(INDICATOR_SERVICE_MANAGER(data));
@@ -595,7 +591,7 @@ start_service_again_cb (gpointer data)
 static void
 start_service_again (IndicatorServiceManager * manager)
 {
-	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(manager);
+	IndicatorServiceManagerPrivate * priv = indicator_service_manager_get_instance_private(manager);
 
 	/* If we've already got a restart source running then
 	   let's not do this again. */
@@ -683,7 +679,7 @@ gboolean
 indicator_service_manager_connected (IndicatorServiceManager * sm)
 {
 	g_return_val_if_fail(INDICATOR_IS_SERVICE_MANAGER(sm), FALSE);
-	IndicatorServiceManagerPrivate * priv = INDICATOR_SERVICE_MANAGER_GET_PRIVATE(sm);
+	IndicatorServiceManagerPrivate * priv = indicator_service_manager_get_instance_private(sm);
 	return priv->connected;
 }
 
