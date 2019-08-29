@@ -537,7 +537,7 @@ get_entries_default (IndicatorObject * io)
 	return g_list_append(NULL, &(priv->entry));
 }
 
-/* returns a list of all IndicatorObjectEntires, visible or not */
+/* returns a list of all IndicatorObjectEntries, visible or not */
 static GList*
 get_all_entries (IndicatorObject * io)
 {

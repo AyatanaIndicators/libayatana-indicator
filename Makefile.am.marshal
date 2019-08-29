@@ -42,4 +42,3 @@ $(marshal_c): $(marshal_h)
 	$(srcdir)/$(glib_marshal_list)) > xgen-mc \
 	&& cp xgen-mc $(marshal_c) \
 	&& rm -f xgen-mc
-
