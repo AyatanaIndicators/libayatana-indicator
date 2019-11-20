@@ -2,6 +2,7 @@ if USE_GTK3
 INDICATOR_LIB = -layatana-indicator3
 else
 INDICATOR_LIB = -layatana-indicator
+GTK_DISABLE_DEPRECATED = -DGTK_DISABLE_DEPRECATED
 endif
 
 TESTS =
@@ -93,6 +94,7 @@ libdummy_indicator_blank_la_SOURCES = \
 
 libdummy_indicator_blank_la_CFLAGS = \
 	-Wall -Werror \
+	$(GTK_DISABLE_DEPRECATED) \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
 
 libdummy_indicator_blank_la_LIBADD = \
@@ -113,6 +115,7 @@ libdummy_indicator_null_la_SOURCES = \
 
 libdummy_indicator_null_la_CFLAGS = \
 	-Wall -Werror \
+	$(GTK_DISABLE_DEPRECATED) \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
 
 libdummy_indicator_null_la_LIBADD = \
@@ -133,6 +136,7 @@ libdummy_indicator_signaler_la_SOURCES = \
 
 libdummy_indicator_signaler_la_CFLAGS = \
 	-Wall -Werror \
+	$(GTK_DISABLE_DEPRECATED) \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
 
 libdummy_indicator_signaler_la_LIBADD = \
@@ -153,6 +157,7 @@ libdummy_indicator_simple_la_SOURCES = \
 
 libdummy_indicator_simple_la_CFLAGS = \
 	-Wall -Werror \
+	$(GTK_DISABLE_DEPRECATED) \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
 
 libdummy_indicator_simple_la_LIBADD = \
@@ -174,6 +179,7 @@ libdummy_indicator_entry_func_la_SOURCES = \
 
 libdummy_indicator_entry_func_la_CFLAGS = \
 	-Wall -Werror \
+	$(GTK_DISABLE_DEPRECATED) \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
 
 libdummy_indicator_entry_func_la_LIBADD = \
@@ -194,6 +200,7 @@ libdummy_indicator_visible_la_SOURCES = \
 
 libdummy_indicator_visible_la_CFLAGS = \
 	-Wall -Werror \
+	$(GTK_DISABLE_DEPRECATED) \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
 
 libdummy_indicator_visible_la_LIBADD = \

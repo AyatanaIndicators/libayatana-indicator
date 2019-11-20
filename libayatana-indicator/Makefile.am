@@ -4,6 +4,7 @@ lib_LTLIBRARIES = libayatana-indicator3.la
 else
 VER=
 lib_LTLIBRARIES = libayatana-indicator.la
+GTK_DISABLE_DEPRECATED = -DGTK_DISABLE_DEPRECATED
 endif
 
 BUILT_SOURCES = indicator-object-enum-types.h indicator-object-enum-types.c
@@ -64,6 +65,7 @@ endif
 libayatana_indicator_la_CFLAGS = \
 	$(LIBINDICATOR_CFLAGS) \
 	$(COVERAGE_CFLAGS) \
+	$(GTK_DISABLE_DEPRECATED) \
 	-DG_LOG_DOMAIN=\"libayatana-indicator\" \
 	-Wall -Werror -Wno-error=deprecated-declarations
 
