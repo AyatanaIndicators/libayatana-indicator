@@ -42,12 +42,20 @@ override_dh_install:
 	find debian/tmp -name libdummy-indicator\* -delete
 	rm -f debian/tmp/gtk2/usr/share/libayatana-indicator/80indicator-debugging
 	rm -f debian/tmp/gtk2/usr/lib/systemd/user/ayatana-indicators-pre.target
-	dh_install -plibayatana-indicator7 --fail-missing --sourcedir=debian/tmp/gtk2
-	dh_install -plibayatana-indicator-dev --fail-missing --sourcedir=debian/tmp/gtk2
-	dh_install -plibayatana-indicator3-7 --fail-missing --sourcedir=debian/tmp/gtk3
-	dh_install -plibayatana-indicator3-dev --fail-missing --sourcedir=debian/tmp/gtk3
-	dh_install -plibayatana-indicator3-tools --fail-missing --sourcedir=debian/tmp/gtk3
-	dh_install -payatana-indicator-common --fail-missing --sourcedir=debian/tmp/gtk3
+	dh_install -plibayatana-indicator7 --sourcedir=debian/tmp/gtk2
+	dh_install -plibayatana-indicator-dev --sourcedir=debian/tmp/gtk2
+	dh_install -plibayatana-indicator3-7 --sourcedir=debian/tmp/gtk3
+	dh_install -plibayatana-indicator3-dev --sourcedir=debian/tmp/gtk3
+	dh_install -plibayatana-indicator3-tools --sourcedir=debian/tmp/gtk3
+	dh_install -payatana-indicator-common --sourcedir=debian/tmp/gtk3
+
+override_dh_missing:
+	dh_missing -plibayatana-indicator7 --sourcedir=debian/tmp/gtk2
+	dh_missing -plibayatana-indicator-dev --sourcedir=debian/tmp/gtk2
+	dh_missing -plibayatana-indicator3-7 --sourcedir=debian/tmp/gtk3
+	dh_missing -plibayatana-indicator3-dev --sourcedir=debian/tmp/gtk3
+	dh_missing -plibayatana-indicator3-tools --sourcedir=debian/tmp/gtk3
+	dh_missing -payatana-indicator-common --sourcedir=debian/tmp/gtk3
 
 override_dh_makeshlibs:
 	dh_makeshlibs -plibayatana-indicator7 -V 'libayatana-indicator7 (>= 0.6.0)'
