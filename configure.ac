@@ -53,6 +53,12 @@ AS_IF([test "x$enable_deprecations" = xno],
   [CFLAGS="$CFLAGS -DG_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGDK_PIXBUF_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -DGSEAL_ENABLE -DGTK_DISABLE_SINGLE_INCLUDES"]
 )
 
+AC_ARG_ENABLE([ido],
+  [AS_HELP_STRING([--enable-ido],
+    [enable indicator widget loader @<:@default=yes@:>@])],
+  [],
+  [enable_ido=yes])
+
 ##############################
 # Dependencies
 ##############################
@@ -62,6 +68,7 @@ GTK3_REQUIRED_VERSION=3.6
 GIO_UNIX_REQUIRED_VERSION=2.37
 IDO_REQUIRED_VERSION=0.4.0
 
+
 AC_ARG_WITH([gtk],
   [AS_HELP_STRING([--with-gtk],
     [Which version of gtk to use @<:@default=3@:>@])],
@@ -70,8 +77,10 @@ AC_ARG_WITH([gtk],
 AS_IF([test "x$with_gtk" = x3],
         [PKG_CHECK_MODULES(LIBINDICATOR,  gtk+-3.0 >= $GTK3_REQUIRED_VERSION
                                           gmodule-2.0
-                                          gio-unix-2.0 >= $GIO_UNIX_REQUIRED_VERSION
-                                          libayatana-ido3-0.4 >= $IDO_REQUIRED_VERSION)
+                                          gio-unix-2.0 >= $GIO_UNIX_REQUIRED_VERSION)
+         AS_IF([test "x$enable_ido" = xyes], [
+           PKG_CHECK_MODULES(LIBINDICATOR_IDO, libayatana-ido3-0.4 >= $IDO_REQUIRED_VERSION)
+         ])
         ],
       [test "x$with_gtk" = x2],
         [PKG_CHECK_MODULES(LIBINDICATOR,  gtk+-2.0 >= $GTK_REQUIRED_VERSION
@@ -80,7 +89,9 @@ AS_IF([test "x$with_gtk" = x3],
         ],
       [AC_MSG_FAILURE([Value for --with-gtk was neither 2 nor 3])]
 )
+
 AM_CONDITIONAL(USE_GTK3, [test "x$with_gtk" = x3])
+AM_CONDITIONAL(USE_IDO, [test "$enable_ido" = "yes"])
 
 LT_LIB_M
 AC_SUBST(LIBM)
@@ -200,6 +211,7 @@ Libindicator Configuration:
 	Prefix:                 $prefix
 	GTK+ Version:           $with_gtk
 	
+	Enable IDO loader:      $enable_ido
 	Enable tests:           $enable_tests
 	Enable debugging:       $enable_debug
 	Coverage reporting:     $use_gcov
