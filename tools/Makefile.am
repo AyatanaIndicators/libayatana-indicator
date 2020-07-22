@@ -1,7 +1,9 @@
+if USE_IDO
 if USE_GTK3
 INDICATOR_LIB = -layatana-indicator3
 libexec_PROGRAMS = ayatana-indicator-loader3
 VER=3
+endif
 endif
 
 
@@ -14,11 +16,13 @@ ayatana_indicator_loader_SOURCES = \
 
 ayatana_indicator_loader_CFLAGS = \
 	-Wall -Werror \
-	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir) \
+	$(LIBINDICATOR_CFLAGS) \
+	$(LIBINDICATOR_IDO_CFLAGS) -I$(top_srcdir) \
 	-DBUILD_DIR="\"$(builddir)\""
 
 ayatana_indicator_loader_LDADD = \
 	$(LIBINDICATOR_LIBS) \
+	$(LIBINDICATOR_IDO_LIBS) \
 	-L$(top_builddir)/libayatana-indicator/.libs \
 	$(INDICATOR_LIB)
 
