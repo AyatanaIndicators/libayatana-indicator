@@ -19,8 +19,10 @@
 
 #include "indicator-ng.h"
 #include "indicator-image-helper.h"
-
+#include "ayatanamenuitemfactory.h"
 #include <string.h>
+
+#define MENU_SECTIONS 20
 
 struct _IndicatorNg
 {
@@ -48,6 +50,7 @@ struct _IndicatorNg
   gchar *accessible_desc;
 
   gint64 last_service_restart;
+    GMenuModel *lMenuSections[MENU_SECTIONS];
 };
 
 static void indicator_ng_initable_iface_init (GInitableIface *initable);
@@ -62,6 +65,7 @@ enum
   N_PROPERTIES
 };
 
+static GQuark m_pActionMuxer = 0;
 static GParamSpec *properties[N_PROPERTIES];
 
 static void
@@ -122,6 +126,15 @@ indicator_ng_free_actions_and_menu (IndicatorNg *self)
 
   if (self->menu)
     {
+        for (guint nMenuSection = 0; nMenuSection < MENU_SECTIONS; nMenuSection++)
+        {
+            if (self->lMenuSections[nMenuSection])
+            {
+                g_object_unref(self->lMenuSections[nMenuSection]);
+                self->lMenuSections[nMenuSection] = NULL;
+            }
+        }
+
       g_signal_handlers_disconnect_by_data (self->menu, self);
       g_clear_object (&self->menu);
     }
@@ -219,11 +232,97 @@ indicator_ng_secondary_activate (IndicatorObject      *io,
     }
 }
 
+static void indicator_ng_menu_section_changed(GMenuModel *pMenuSection, gint nPosition, gint nRemoved, gint nAdded, gpointer pUserData)
+{
+    IndicatorNg *self = pUserData;
+    GMenuModel *pMenuModel = g_menu_model_get_item_link(self->menu, 0, G_MENU_LINK_SUBMENU);
+    guint nCurrMenuItem = 0;
+
+    if (pMenuModel)
+    {
+        gint nSections = g_menu_model_get_n_items(pMenuModel);
+
+        for (gint nSection = 0; nSection < nSections; nSection++)
+        {
+            GMenuModel *pMenuModelSection = g_menu_model_get_item_link(pMenuModel, nSection, G_MENU_LINK_SECTION);
+
+            if (pMenuModelSection)
+            {
+                gint nMenuItems = g_menu_model_get_n_items(pMenuModelSection);
+
+                for (gint nMenuItem = 0; nMenuItem < nMenuItems; nMenuItem++)
+                {
+                    gchar *sType;
+                    gboolean bHasType = g_menu_model_get_item_attribute(pMenuModelSection, nMenuItem, "x-canonical-type", "s", &sType);
+
+                    if (bHasType)
+                    {
+                        GList *lMenuItems = gtk_container_get_children(GTK_CONTAINER(self->entry.menu));
+                        GtkWidget *pMenuItemOld = GTK_WIDGET(g_list_nth_data(lMenuItems, nCurrMenuItem));
+                        const gchar *sName = gtk_widget_get_name(pMenuItemOld);
+
+                        if (!g_str_equal(sName, sType))
+                        {
+                            GActionGroup *pActionGroup = (GActionGroup*)g_object_get_qdata(G_OBJECT(self->entry.menu), m_pActionMuxer);
+                            GMenuItem *pMenuModelItem = g_menu_item_new_from_model(pMenuModelSection, nMenuItem);
+                            GtkMenuItem* pMenuItemNew = NULL;
+
+                            for (GList *pFactory = ayatana_menu_item_factory_get_all(); pFactory != NULL && pMenuItemNew == NULL; pFactory = pFactory->next)
+                            {
+                                pMenuItemNew = ayatana_menu_item_factory_create_menu_item(pFactory->data, sType, pMenuModelItem, pActionGroup);
+                            }
+
+                            gtk_widget_set_name(GTK_WIDGET(pMenuItemNew), sType);
+                            gtk_widget_show(GTK_WIDGET(pMenuItemNew));
+                            gtk_container_remove(GTK_CONTAINER(self->entry.menu), pMenuItemOld);
+                            gtk_menu_shell_insert(GTK_MENU_SHELL(self->entry.menu), GTK_WIDGET(pMenuItemNew), nCurrMenuItem);
+                            g_object_unref(pMenuModelItem);
+                        }
+
+                        g_list_free(lMenuItems);
+                    }
+
+                    nCurrMenuItem++;
+                }
+
+                g_object_unref(pMenuModelSection);
+            }
+
+            nCurrMenuItem++;
+        }
+
+        g_object_unref(pMenuModel);
+    }
+}
+
 static void
 indicator_ng_menu_shown (GtkWidget *widget,
                          gpointer   user_data)
 {
   IndicatorNg *self = user_data;
+
+    if (!self->lMenuSections[0])
+    {
+        self->lMenuSections[0] = g_menu_model_get_item_link(self->menu, 0, G_MENU_LINK_SUBMENU);
+
+        if (self->lMenuSections[0])
+        {
+            gint nSections = g_menu_model_get_n_items(self->lMenuSections[0]);
+
+            for (gint nSection = 0; nSection < nSections; nSection++)
+            {
+                self->lMenuSections[nSection + 1] = g_menu_model_get_item_link(self->lMenuSections[0], nSection, G_MENU_LINK_SECTION);
+
+                if (self->lMenuSections[nSection + 1])
+                {
+                    g_signal_connect(self->lMenuSections[nSection + 1], "items-changed", G_CALLBACK(indicator_ng_menu_section_changed), self);
+                }
+            }
+
+            g_signal_connect(self->lMenuSections[0], "items-changed", G_CALLBACK(indicator_ng_menu_section_changed), self);
+            indicator_ng_menu_section_changed(self->lMenuSections[0], 0, 0, 1, self);
+        }
+    }
 
   if (self->submenu_action)
     g_action_group_change_action_state (self->actions, self->submenu_action,
@@ -423,6 +522,14 @@ indicator_ng_menu_changed (GMenuModel *menu,
               if (g_str_has_prefix (action, "indicator."))
                 self->submenu_action = g_strdup (action + strlen ("indicator."));
               g_free (action);
+            }
+
+            for (guint nMenuSection = 0; nMenuSection < MENU_SECTIONS; nMenuSection++)
+            {
+                if (self->lMenuSections[nMenuSection])
+                {
+                    g_object_unref(self->lMenuSections[nMenuSection]);
+                }
             }
 
           popup = g_menu_model_get_item_link (self->menu, 0, G_MENU_LINK_SUBMENU);
@@ -687,6 +794,13 @@ indicator_ng_initable_iface_init (GInitableIface *initable)
 static void
 indicator_ng_init (IndicatorNg *self)
 {
+    m_pActionMuxer = g_quark_from_static_string ("gtk-widget-action-muxer");
+
+    for (guint nMenuSection = 0; nMenuSection < MENU_SECTIONS; nMenuSection++)
+    {
+        self->lMenuSections[nMenuSection] = NULL;
+    }
+
   self->entry.label = (GtkLabel*)g_object_ref_sink (gtk_label_new (NULL));
   self->entry.image = (GtkImage*)g_object_ref_sink (gtk_image_new ());
 
