@@ -38,7 +38,9 @@ indicator_headers = \
 	indicator-service-manager.h
 
 if USE_GTK3
-indicator_headers += indicator-ng.h
+indicator_headers += \
+	ayatanamenuitemfactory.h \
+	indicator-ng.h
 endif
 
 libayatana_indicatorinclude_HEADERS = \
@@ -59,7 +61,9 @@ libayatana_indicator_la_SOURCES = \
 	indicator-service-manager.c
 
 if USE_GTK3
-libayatana_indicator_la_SOURCES += indicator-ng.c
+libayatana_indicator_la_SOURCES += \
+	ayatanamenuitemfactory.c \
+	indicator-ng.c
 endif
 
 libayatana_indicator_la_CFLAGS = \
