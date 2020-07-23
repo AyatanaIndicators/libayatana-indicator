@@ -1,0 +1,33 @@
+Overview of changes in libayatana-indicator 0.7.0
+
+  - Display IDO widgets/Use own action muxer/Allow IDO CSS styling.
+    Thanks to Robert Tari for working on this awesome improvement /
+    bug fix. This has been long waited for!!!
+  - Make building of `ayatana-indicator-loader3` optional. Thanks
+    to Alexander Schlarb.
+
+Overview of changes in libayatana-indicator 0.6.3
+
+  - **/Makefile.am: Set -DGTK_DISABLE_DEPRECATED for gtk2 builds. Fixes
+    FTBFS against Glib2.0 >= 2.62.
+  - libayatana-indicator/indicator-object.c: Typo fix in comment.
+  - GObject private API/ABI: Get rid of g_type_class_add_private() and
+    use DEFINE_TYPE_WITH_PRIVATE().
+
+Overview of changes in libayatana-indicator 0.6.2
+
+  - libayatana-indicator/indicator-ng.c: Type cast assignments from
+    g_object_ref_sink().
+  - Makefile.am: Drop distcheck features.
+
+Overview of changes in libayatana-indicator 0.6.1
+
+  - configure.ac: Support pkg-config (<< 0.27).
+  - autotools: Make systemd dependency optional. This makes
+    libayatana-indicator available on Debian GNU/kFreeBSD and
+    Debian GNU/Hurd.
+
+Overview of changes in libayatana-indicator 0.6.0
+
+  - Fork libayatana-indicator from Ubuntu's libindicator shared
+    library.

@@ -1,6 +1,32 @@
-2019-11-20 14:20:38 +0100 Mike Gabriel 
+2020-07-23 10:50:04 +0200 Mike Gabriel
 
-	* release 0.6.3 (HEAD -> master, tag: 0.6.3)
+	* release 0.7.0 (HEAD -> master, tag: 0.7.0)
+
+2020-07-22 20:31:48 +0000 Mike Gabriel (e32b9d0)
+
+	* debian/libayatana-indicator3-7.symbols: Add new symbols, already
+          targetting next upstream release.
+
+2020-07-22 20:30:21 +0000 Mike Gabriel (1917f00)
+
+	* libayatana-indicator/Makefile.am: Make sure,
+          ayatanamenuitemfactory.c gets built during GTK-3 builds.
+
+2020-07-22 14:17:17 +0200 Robert Tari (b619354)
+
+	* Display IDO widgets/Use own action muxer/Allow IDO CSS styling
+
+2020-07-22 21:54:24 +0200 Mike Gabriel (c984cc5)
+
+	* Merge branch 'ntninja-master'
+
+2019-12-12 11:53:48 +0100 Alexander Schlarb (c6f93fe)
+
+	* Make building of `ayatana-indicator-loader3` optional
+
+2019-11-20 14:20:38 +0100 Mike Gabriel (faf2784)
+
+	* release 0.6.3 (tag: 0.6.3)
 
 2019-11-20 12:16:43 +0000 Mike Gabriel (a5bc467)
 
