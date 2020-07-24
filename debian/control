@@ -17,8 +17,9 @@ Build-Depends: debhelper (>= 9),
                libgtk-3-dev (>= 2.91.3),
                libayatana-ido3-dev (>= 0.4.0-0~),
                systemd [linux-any],
-Standards-Version: 3.9.8
-Homepage: https://github.com/ArcticaProject/libayatana-indicator
+Standards-Version: 4.5.0
+Rules-Requires-Root: no
+Homepage: https://github.com/AyatanaIndicators/libayatana-indicator
 Vcs-Git: git://cgit.arctica-project.org/ayatana/libayatana-indicator.git
 Vcs-Browser: https://cgit.arctica-project.org/ayatana/libayatana-indicator.git/
 

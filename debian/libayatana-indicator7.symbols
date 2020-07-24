@@ -1,4 +1,5 @@
 libayatana-indicator.so.7 libayatana-indicator7 #MINVER#
+*Build-Depends-Package: libayatana-indicator-dev
  ICON_SIZE@Base 0.6.0
  INDICATOR_NAMES_DATA@Base 0.6.0
  indicator_desktop_shortcuts_get_nicks@Base 0.6.0
