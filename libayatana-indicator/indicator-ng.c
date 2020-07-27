@@ -232,74 +232,116 @@ indicator_ng_secondary_activate (IndicatorObject      *io,
     }
 }
 
-static void indicator_ng_menu_section_changed(GMenuModel *pMenuSection, gint nPosition, gint nRemoved, gint nAdded, gpointer pUserData)
+static void indicator_ng_menu_insert_idos(IndicatorNg *self, GMenuModel *pSection, guint nModelItem, guint nMenuItem, gboolean bNamespace, gchar *sNamespace)
 {
-    IndicatorNg *self = pUserData;
-    GMenuModel *pMenuModel = g_menu_model_get_item_link(self->menu, 0, G_MENU_LINK_SUBMENU);
-    guint nCurrMenuItem = 0;
+    gchar *sType;
+    gboolean bHasType = g_menu_model_get_item_attribute(pSection, nModelItem, "x-canonical-type", "s", &sType);
 
-    if (pMenuModel)
+    if (bHasType)
     {
-        gint nSections = g_menu_model_get_n_items(pMenuModel);
+        GList *lMenuItems = gtk_container_get_children(GTK_CONTAINER(self->entry.menu));
+        GtkWidget *pMenuItemOld = GTK_WIDGET(g_list_nth_data(lMenuItems, nMenuItem));
+        const gchar *sName = gtk_widget_get_name(pMenuItemOld);
 
-        for (gint nSection = 0; nSection < nSections; nSection++)
+        if (!g_str_equal(sName, sType))
         {
-            GMenuModel *pMenuModelSection = g_menu_model_get_item_link(pMenuModel, nSection, G_MENU_LINK_SECTION);
+            GActionGroup *pActionGroup = (GActionGroup*)g_object_get_qdata(G_OBJECT(self->entry.menu), m_pActionMuxer);
+            GMenuItem *pMenuModelItem = g_menu_item_new_from_model(pSection, nModelItem);
+            GtkMenuItem* pMenuItemNew = NULL;
+            gchar *sAction;
 
-            if (pMenuModelSection)
+            if (bNamespace && g_menu_item_get_attribute(pMenuModelItem, G_MENU_ATTRIBUTE_ACTION, "s", &sAction))
             {
-                gint nMenuItems = g_menu_model_get_n_items(pMenuModelSection);
-
-                for (gint nMenuItem = 0; nMenuItem < nMenuItems; nMenuItem++)
-                {
-                    gchar *sType;
-                    gboolean bHasType = g_menu_model_get_item_attribute(pMenuModelSection, nMenuItem, "x-canonical-type", "s", &sType);
-
-                    if (bHasType)
-                    {
-                        GList *lMenuItems = gtk_container_get_children(GTK_CONTAINER(self->entry.menu));
-                        GtkWidget *pMenuItemOld = GTK_WIDGET(g_list_nth_data(lMenuItems, nCurrMenuItem));
-                        const gchar *sName = gtk_widget_get_name(pMenuItemOld);
-
-                        if (!g_str_equal(sName, sType))
-                        {
-                            GActionGroup *pActionGroup = (GActionGroup*)g_object_get_qdata(G_OBJECT(self->entry.menu), m_pActionMuxer);
-                            GMenuItem *pMenuModelItem = g_menu_item_new_from_model(pMenuModelSection, nMenuItem);
-                            GtkMenuItem* pMenuItemNew = NULL;
-
-                            for (GList *pFactory = ayatana_menu_item_factory_get_all(); pFactory != NULL && pMenuItemNew == NULL; pFactory = pFactory->next)
-                            {
-                                pMenuItemNew = ayatana_menu_item_factory_create_menu_item(pFactory->data, sType, pMenuModelItem, pActionGroup);
-                            }
-
-                            gtk_widget_set_name(GTK_WIDGET(pMenuItemNew), sType);
-                            gtk_widget_show(GTK_WIDGET(pMenuItemNew));
-                            gtk_container_remove(GTK_CONTAINER(self->entry.menu), pMenuItemOld);
-                            gtk_menu_shell_insert(GTK_MENU_SHELL(self->entry.menu), GTK_WIDGET(pMenuItemNew), nCurrMenuItem);
-                            g_object_unref(pMenuModelItem);
-                        }
-
-                        g_list_free(lMenuItems);
-                    }
-
-                    nCurrMenuItem++;
-                }
-
-                g_object_unref(pMenuModelSection);
+                gchar *sNamespacedAction = g_strconcat(sNamespace, ".", sAction, NULL);
+                g_menu_item_set_attribute(pMenuModelItem, G_MENU_ATTRIBUTE_ACTION, "s", sNamespacedAction);
+                g_free (sNamespacedAction);
+                g_free (sAction);
             }
 
-            nCurrMenuItem++;
+            for (GList *pFactory = ayatana_menu_item_factory_get_all(); pFactory != NULL && pMenuItemNew == NULL; pFactory = pFactory->next)
+            {
+                pMenuItemNew = ayatana_menu_item_factory_create_menu_item(pFactory->data, sType, pMenuModelItem, pActionGroup);
+            }
+
+            gtk_widget_set_name(GTK_WIDGET(pMenuItemNew), sType);
+            gtk_widget_show(GTK_WIDGET(pMenuItemNew));
+            gtk_container_remove(GTK_CONTAINER(self->entry.menu), pMenuItemOld);
+            gtk_menu_shell_insert(GTK_MENU_SHELL(self->entry.menu), GTK_WIDGET(pMenuItemNew), nMenuItem);
+            g_object_unref(pMenuModelItem);
         }
 
-        g_object_unref(pMenuModel);
+        g_list_free(lMenuItems);
+        g_free(sType);
     }
 }
 
-static void
-indicator_ng_menu_shown (GtkWidget *widget,
-                         gpointer   user_data)
+static void indicator_ng_menu_section_changed(GMenuModel *pMenuSection, gint nPosition, gint nRemoved, gint nAdded, gpointer pUserData)
 {
-  IndicatorNg *self = user_data;
+    IndicatorNg *self = pUserData;
+    GMenuModel *pModel = g_menu_model_get_item_link(self->menu, 0, G_MENU_LINK_SUBMENU);
+    guint nMenuItem = 0;
+
+    if (pModel)
+    {
+        guint nSections = g_menu_model_get_n_items(pModel);
+
+        for (guint nSection = 0; nSection < nSections; nSection++)
+        {
+            GMenuModel *pSection = g_menu_model_get_item_link(pModel, nSection, G_MENU_LINK_SECTION);
+
+            if (pSection)
+            {
+                gchar *sNamespace;
+                gboolean bNamespace = g_menu_model_get_item_attribute(pModel, nSection, G_MENU_ATTRIBUTE_ACTION_NAMESPACE, "s", &sNamespace);
+                guint nSubsections = g_menu_model_get_n_items(pSection);
+
+                for (guint nSubsection = 0; nSubsection < nSubsections; nSubsection++)
+                {
+                    GMenuModel *pSubsection = g_menu_model_get_item_link(pSection, nSubsection, G_MENU_LINK_SECTION);
+
+                    if (pSubsection)
+                    {
+                        guint nItems = g_menu_model_get_n_items(pSubsection);
+
+                        for (guint nItem = 0; nItem < nItems; nItem++)
+                        {
+                            indicator_ng_menu_insert_idos(self, pSubsection, nItem, nMenuItem, bNamespace, sNamespace);
+                            nMenuItem++;
+                        }
+                    }
+
+                    g_object_unref(pSubsection);
+
+                    indicator_ng_menu_insert_idos(self, pSection, nSubsection, nMenuItem, bNamespace, sNamespace);
+
+                    if (!g_str_equal(self->name, "ayatana-indicator-messages"))
+                    {
+                        nMenuItem++;
+                    }
+                }
+
+                if (bNamespace)
+                {
+                    g_free(sNamespace);
+                }
+
+                g_object_unref(pSection);
+            }
+
+            if (!g_str_equal(self->name, "ayatana-indicator-messages"))
+            {
+                nMenuItem++;
+            }
+        }
+
+        g_object_unref(pModel);
+    }
+}
+
+static void indicator_ng_menu_shown(GtkWidget *pWidget, gpointer pUserData)
+{
+    IndicatorNg *self = pUserData;
+    guint nSectionCount = 0;
 
     if (!self->lMenuSections[0])
     {
@@ -307,15 +349,27 @@ indicator_ng_menu_shown (GtkWidget *widget,
 
         if (self->lMenuSections[0])
         {
-            gint nSections = g_menu_model_get_n_items(self->lMenuSections[0]);
+            guint nSections = g_menu_model_get_n_items(self->lMenuSections[0]);
 
             for (gint nSection = 0; nSection < nSections; nSection++)
             {
-                self->lMenuSections[nSection + 1] = g_menu_model_get_item_link(self->lMenuSections[0], nSection, G_MENU_LINK_SECTION);
+                self->lMenuSections[++nSectionCount] = g_menu_model_get_item_link(self->lMenuSections[0], nSection, G_MENU_LINK_SECTION);
 
-                if (self->lMenuSections[nSection + 1])
+                if (self->lMenuSections[nSectionCount])
                 {
-                    g_signal_connect(self->lMenuSections[nSection + 1], "items-changed", G_CALLBACK(indicator_ng_menu_section_changed), self);
+                    g_signal_connect(self->lMenuSections[nSectionCount], "items-changed", G_CALLBACK(indicator_ng_menu_section_changed), self);
+                    guint nSubsections = g_menu_model_get_n_items(self->lMenuSections[nSectionCount]);
+                    guint nParent = nSectionCount;
+
+                    for (guint nSubsection = 0; nSubsection < nSubsections; nSubsection++)
+                    {
+                        self->lMenuSections[++nSectionCount] = g_menu_model_get_item_link(self->lMenuSections[nParent], nSubsection, G_MENU_LINK_SECTION);
+
+                        if (self->lMenuSections[nSectionCount])
+                        {
+                            g_signal_connect(self->lMenuSections[nSectionCount], "items-changed", G_CALLBACK(indicator_ng_menu_section_changed), self);
+                        }
+                    }
                 }
             }
 
@@ -324,9 +378,10 @@ indicator_ng_menu_shown (GtkWidget *widget,
         }
     }
 
-  if (self->submenu_action)
-    g_action_group_change_action_state (self->actions, self->submenu_action,
-                                        g_variant_new_boolean (TRUE));
+    if (self->submenu_action)
+    {
+        g_action_group_change_action_state(self->actions, self->submenu_action, g_variant_new_boolean(TRUE));
+    }
 }
 
 static void
