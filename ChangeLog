@@ -1,6 +1,22 @@
-2020-07-23 10:50:04 +0200 Mike Gabriel
+2020-07-28 21:38:31 +0200 Mike Gabriel
 
-	* release 0.7.0 (HEAD -> master, tag: 0.7.0)
+	* release 0.7.1 (HEAD -> master, tag: 0.7.1)
+
+2020-07-27 23:25:43 +0200 Robert Tari (a7c9a35)
+
+	* Merge pull request #4 from tari01/master
+
+2020-07-27 23:22:14 +0200 Robert Tari (208176b)
+
+	* Display and connect the Indicator Messages widgets
+
+2020-07-24 07:10:44 +0200 Mike Gabriel (9a41af8)
+
+	* debian/*: Update from official Debian packaging.
+
+2020-07-23 10:50:04 +0200 Mike Gabriel (87e85c2)
+
+	* release 0.7.0 (tag: 0.7.0)
 
 2020-07-22 20:31:48 +0000 Mike Gabriel (e32b9d0)
 

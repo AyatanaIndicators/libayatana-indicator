@@ -1,3 +1,7 @@
+Overview of changes in libayatana-indicator 0.7.1
+
+  - Display and connect the Indicator Messages widgets
+
 Overview of changes in libayatana-indicator 0.7.0
 
   - Display IDO widgets/Use own action muxer/Allow IDO CSS styling.
