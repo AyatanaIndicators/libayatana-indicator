@@ -232,8 +232,9 @@ indicator_ng_secondary_activate (IndicatorObject      *io,
     }
 }
 
-static void indicator_ng_menu_insert_idos(IndicatorNg *self, GMenuModel *pSection, guint nModelItem, guint nMenuItem, gboolean bNamespace, gchar *sNamespace)
+static gboolean indicator_ng_menu_insert_idos(IndicatorNg *self, GMenuModel *pSection, guint nModelItem, guint nMenuItem, gboolean bNamespace, gchar *sNamespace)
 {
+    gboolean bChanged = FALSE;
     gchar *sType;
     gboolean bHasType = g_menu_model_get_item_attribute(pSection, nModelItem, "x-canonical-type", "s", &sType);
 
@@ -261,6 +262,7 @@ static void indicator_ng_menu_insert_idos(IndicatorNg *self, GMenuModel *pSectio
             for (GList *pFactory = ayatana_menu_item_factory_get_all(); pFactory != NULL && pMenuItemNew == NULL; pFactory = pFactory->next)
             {
                 pMenuItemNew = ayatana_menu_item_factory_create_menu_item(pFactory->data, sType, pMenuModelItem, pActionGroup);
+                bChanged = TRUE;
             }
 
             gtk_widget_set_name(GTK_WIDGET(pMenuItemNew), sType);
@@ -273,6 +275,42 @@ static void indicator_ng_menu_insert_idos(IndicatorNg *self, GMenuModel *pSectio
         g_list_free(lMenuItems);
         g_free(sType);
     }
+
+    return bChanged;
+}
+
+static void indicator_ng_menu_size_allocate(GtkWidget *pWidget, GtkAllocation *pAllocation, gpointer pUserData)
+{
+    IndicatorNg *self = pUserData;
+    GList *pMenuItem = gtk_container_get_children(GTK_CONTAINER(self->entry.menu));
+    guint nWidth = 0;
+    guint nHeight = 0;
+
+    while (pMenuItem)
+    {
+        gint nWidthNat;
+        gint nHeightNat;
+        gtk_widget_get_preferred_width(pMenuItem->data, NULL, &nWidthNat);
+        gtk_widget_get_preferred_height(pMenuItem->data, NULL, &nHeightNat);
+        nWidth = MAX(nWidth, nWidthNat);
+        nHeight += nHeightNat;
+        GtkBorder cPadding;
+        GtkStyleContext *pContext = gtk_widget_get_style_context(GTK_WIDGET(pMenuItem->data));
+        gtk_style_context_get_padding(pContext, gtk_style_context_get_state(pContext), &cPadding);
+        nWidth += cPadding.left + cPadding.right;
+        pMenuItem = g_list_next(pMenuItem);
+    }
+
+    g_list_free(pMenuItem);
+    GtkBorder cPadding;
+    GtkStyleContext *pContext = gtk_widget_get_style_context(GTK_WIDGET(self->entry.menu));
+    gtk_style_context_get_padding(pContext, gtk_style_context_get_state(pContext), &cPadding);
+    gint nBorderWidth = gtk_container_get_border_width(GTK_CONTAINER(self->entry.menu));
+    nWidth += (2 * nBorderWidth) + cPadding.left + cPadding.right;
+    nHeight += (2 * nBorderWidth) + cPadding.top + cPadding.bottom + 12;
+    GdkWindow *pWindow = gtk_widget_get_parent_window(GTK_WIDGET(self->entry.menu));
+    gdk_window_resize(pWindow, nWidth, nHeight);
+    gtk_menu_reposition(self->entry.menu);
 }
 
 static void indicator_ng_menu_section_changed(GMenuModel *pMenuSection, gint nPosition, gint nRemoved, gint nAdded, gpointer pUserData)
@@ -280,6 +318,7 @@ static void indicator_ng_menu_section_changed(GMenuModel *pMenuSection, gint nPo
     IndicatorNg *self = pUserData;
     GMenuModel *pModel = g_menu_model_get_item_link(self->menu, 0, G_MENU_LINK_SUBMENU);
     guint nMenuItem = 0;
+    gboolean bChanged = FALSE;
 
     if (pModel)
     {
@@ -305,14 +344,14 @@ static void indicator_ng_menu_section_changed(GMenuModel *pMenuSection, gint nPo
 
                         for (guint nItem = 0; nItem < nItems; nItem++)
                         {
-                            indicator_ng_menu_insert_idos(self, pSubsection, nItem, nMenuItem, bNamespace, sNamespace);
+                            bChanged = indicator_ng_menu_insert_idos(self, pSubsection, nItem, nMenuItem, bNamespace, sNamespace) || bChanged;
                             nMenuItem++;
                         }
                     }
 
                     g_object_unref(pSubsection);
 
-                    indicator_ng_menu_insert_idos(self, pSection, nSubsection, nMenuItem, bNamespace, sNamespace);
+                    bChanged = indicator_ng_menu_insert_idos(self, pSection, nSubsection, nMenuItem, bNamespace, sNamespace) || bChanged;
 
                     if (!g_str_equal(self->name, "ayatana-indicator-messages"))
                     {
@@ -335,6 +374,11 @@ static void indicator_ng_menu_section_changed(GMenuModel *pMenuSection, gint nPo
         }
 
         g_object_unref(pModel);
+    }
+
+    if (bChanged)
+    {
+        indicator_ng_menu_size_allocate(NULL, NULL, self);
     }
 }
 
@@ -863,6 +907,7 @@ indicator_ng_init (IndicatorNg *self)
 
   g_signal_connect (self->entry.menu, "show", G_CALLBACK (indicator_ng_menu_shown), self);
   g_signal_connect (self->entry.menu, "hide", G_CALLBACK (indicator_ng_menu_hidden), self);
+  g_signal_connect (self->entry.menu, "size-allocate", G_CALLBACK (indicator_ng_menu_size_allocate), self);
 
   /* work around IndicatorObject's warning that the accessible
    * description is missing. We never set it on construction, but when
