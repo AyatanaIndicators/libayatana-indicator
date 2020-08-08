@@ -78,7 +78,7 @@ main (int argc, char **argv)
   GMainLoop *loop;
 
   indicator.actions = g_simple_action_group_new ();
-  g_simple_action_group_add_entries (indicator.actions, entries, G_N_ELEMENTS (entries), NULL);
+  g_action_map_add_action_entries(G_ACTION_MAP(indicator.actions), entries, G_N_ELEMENTS (entries), NULL);
 
   submenu = g_menu_new ();
   g_menu_append (submenu, "Show", "indicator.show");

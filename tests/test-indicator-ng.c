@@ -1,5 +1,5 @@
 
-#include <libindicator/indicator-ng.h>
+#include <libayatana-indicator/indicator-ng.h>
 
 static void
 indicator_ng_test_func (gconstpointer user_data)

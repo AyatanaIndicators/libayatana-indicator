@@ -1,5 +1,5 @@
 /*
-Test for libindicator
+Test for libayatana-indicator
 
 Copyright 2009 Canonical Ltd.
 
@@ -22,7 +22,7 @@ License along with this library. If not, see
 
 
 #include <glib.h>
-#include "libindicator/indicator-service.h"
+#include "libayatana-indicator/indicator-service.h"
 #include "service-version-values.h"
 
 static GMainLoop * mainloop = NULL;
@@ -32,49 +32,49 @@ static IndicatorService * is = NULL;
 gboolean
 timeout (gpointer data)
 {
-	passed = FALSE;
-	g_debug("Timeout with no shutdown.");
+    passed = FALSE;
+    g_debug("Timeout with no shutdown.");
 
-	if (is != NULL) {
-		g_object_unref(is);
-		is = NULL;
-	}
+    if (is != NULL) {
+        g_object_unref(is);
+        is = NULL;
+    }
 
-	g_main_loop_quit(mainloop);
-	return FALSE;
+    g_main_loop_quit(mainloop);
+    return FALSE;
 }
 
 void
 shutdown (void)
 {
-	g_debug("Shutdown");
-	passed = TRUE;
+    g_debug("Shutdown");
+    passed = TRUE;
 
-	if (is != NULL) {
-		g_object_unref(is);
-		is = NULL;
-	}
+    if (is != NULL) {
+        g_object_unref(is);
+        is = NULL;
+    }
 
-	g_main_loop_quit(mainloop);
-	return;
+    g_main_loop_quit(mainloop);
+    return;
 }
 
 int
 main (int argc, char ** argv)
 {
-	is = indicator_service_new_version("org.ayatana.version.good", SERVICE_VERSION_GOOD);
-	g_signal_connect(G_OBJECT(is), INDICATOR_SERVICE_SIGNAL_SHUTDOWN, shutdown, NULL);
+    is = indicator_service_new_version("org.ayatana.version.good", SERVICE_VERSION_GOOD);
+    g_signal_connect(G_OBJECT(is), INDICATOR_SERVICE_SIGNAL_SHUTDOWN, shutdown, NULL);
 
-	g_timeout_add_seconds(1, timeout, NULL);
+    g_timeout_add_seconds(1, timeout, NULL);
 
-	mainloop = g_main_loop_new(NULL, FALSE);
-	g_main_loop_run(mainloop);
+    mainloop = g_main_loop_new(NULL, FALSE);
+    g_main_loop_run(mainloop);
 
-	g_debug("Quiting");
-	if (passed) {
-		g_debug("Passed");
-		return 0;
-	}
-	g_debug("Failed");
-	return 1;
+    g_debug("Quiting");
+    if (passed) {
+        g_debug("Passed");
+        return 0;
+    }
+    g_debug("Failed");
+    return 1;
 }

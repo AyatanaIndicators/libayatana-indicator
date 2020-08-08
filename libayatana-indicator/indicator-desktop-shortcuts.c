@@ -45,23 +45,19 @@ enum _actions_t {
 	ACTIONS_DESKTOP_SPEC
 };
 
-typedef struct _IndicatorDesktopShortcutsPrivate IndicatorDesktopShortcutsPrivate;
-struct _IndicatorDesktopShortcutsPrivate {
+typedef struct {
 	actions_t actions;
 	GKeyFile * keyfile;
 	gchar * identity;
 	GArray * nicks;
 	gchar * domain;
-};
+} IndicatorDesktopShortcutsPrivate;
 
 enum {
 	PROP_0,
 	PROP_DESKTOP_FILE,
 	PROP_IDENTITY
 };
-
-#define INDICATOR_DESKTOP_SHORTCUTS_GET_PRIVATE(o) \
-		(G_TYPE_INSTANCE_GET_PRIVATE ((o), INDICATOR_TYPE_DESKTOP_SHORTCUTS, IndicatorDesktopShortcutsPrivate))
 
 static void indicator_desktop_shortcuts_class_init (IndicatorDesktopShortcutsClass *klass);
 static void indicator_desktop_shortcuts_init       (IndicatorDesktopShortcuts *self);
@@ -72,7 +68,7 @@ static void get_property (GObject * object, guint prop_id, GValue * value, GPara
 static void parse_keyfile (IndicatorDesktopShortcuts * ids);
 static gboolean should_show (GKeyFile * keyfile, const gchar * group, const gchar * identity, gboolean should_have_target);
 
-G_DEFINE_TYPE (IndicatorDesktopShortcuts, indicator_desktop_shortcuts, G_TYPE_OBJECT);
+G_DEFINE_TYPE_WITH_PRIVATE (IndicatorDesktopShortcuts, indicator_desktop_shortcuts, G_TYPE_OBJECT);
 
 /* Build up the class */
 static void
@@ -122,8 +118,8 @@ indicator_desktop_shortcuts_init (IndicatorDesktopShortcuts *self)
 static void
 indicator_desktop_shortcuts_dispose (GObject *object)
 {
-	IndicatorDesktopShortcuts * desktop_shortcuts = INDICATOR_DESKTOP_SHORTCUTS(object);
-	IndicatorDesktopShortcutsPrivate * priv = indicator_desktop_shortcuts_get_instance_private(desktop_shortcuts);
+	IndicatorDesktopShortcuts * self = INDICATOR_DESKTOP_SHORTCUTS(object);
+	IndicatorDesktopShortcutsPrivate * priv = indicator_desktop_shortcuts_get_instance_private(self);
 
 	if (priv->keyfile) {
 		g_key_file_free(priv->keyfile);
@@ -138,8 +134,8 @@ indicator_desktop_shortcuts_dispose (GObject *object)
 static void
 indicator_desktop_shortcuts_finalize (GObject *object)
 {
-	IndicatorDesktopShortcuts * desktop_shortcuts = INDICATOR_DESKTOP_SHORTCUTS(object);
-	IndicatorDesktopShortcutsPrivate * priv = indicator_desktop_shortcuts_get_instance_private(desktop_shortcuts);
+	IndicatorDesktopShortcuts * self = INDICATOR_DESKTOP_SHORTCUTS(object);
+	IndicatorDesktopShortcutsPrivate * priv = indicator_desktop_shortcuts_get_instance_private(self);
 
 	if (priv->identity != NULL) {
 		g_free(priv->identity);
@@ -170,8 +166,8 @@ static void
 set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec)
 {
 	g_return_if_fail(INDICATOR_IS_DESKTOP_SHORTCUTS(object));
-	IndicatorDesktopShortcuts * desktop_shortcuts = INDICATOR_DESKTOP_SHORTCUTS(object);
-	IndicatorDesktopShortcutsPrivate * priv = indicator_desktop_shortcuts_get_instance_private(desktop_shortcuts);
+	IndicatorDesktopShortcuts * self = INDICATOR_DESKTOP_SHORTCUTS(object);
+	IndicatorDesktopShortcutsPrivate * priv = indicator_desktop_shortcuts_get_instance_private(self);
 
 	switch(prop_id) {
 	case PROP_DESKTOP_FILE: {
@@ -209,7 +205,7 @@ set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec 
 		}
 
 		priv->keyfile = keyfile;
-		parse_keyfile(desktop_shortcuts);
+		parse_keyfile(INDICATOR_DESKTOP_SHORTCUTS(object));
 		break;
 	}
 	case PROP_IDENTITY:
@@ -218,7 +214,7 @@ set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec 
 			return;
 		}
 		priv->identity = g_value_dup_string(value);
-		parse_keyfile(desktop_shortcuts);
+		parse_keyfile(INDICATOR_DESKTOP_SHORTCUTS(object));
 		break;
 	/* *********************** */
 	default:
@@ -234,8 +230,8 @@ static void
 get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec)
 {
 	g_return_if_fail(INDICATOR_IS_DESKTOP_SHORTCUTS(object));
-	IndicatorDesktopShortcuts * desktop_shortcuts = INDICATOR_DESKTOP_SHORTCUTS(object);
-	IndicatorDesktopShortcutsPrivate * priv = indicator_desktop_shortcuts_get_instance_private(desktop_shortcuts);
+	IndicatorDesktopShortcuts * self = INDICATOR_DESKTOP_SHORTCUTS(object);
+	IndicatorDesktopShortcutsPrivate * priv = indicator_desktop_shortcuts_get_instance_private(self);
 
 	switch(prop_id) {
 	case PROP_IDENTITY:
@@ -255,7 +251,8 @@ get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspe
 static void
 parse_keyfile (IndicatorDesktopShortcuts * ids)
 {
-	IndicatorDesktopShortcutsPrivate * priv = indicator_desktop_shortcuts_get_instance_private(ids);
+	IndicatorDesktopShortcuts * self = INDICATOR_DESKTOP_SHORTCUTS(ids);
+	IndicatorDesktopShortcutsPrivate * priv = indicator_desktop_shortcuts_get_instance_private(self);
 
 	if (priv->keyfile == NULL) {
 		return;
@@ -477,7 +474,8 @@ const gchar **
 indicator_desktop_shortcuts_get_nicks (IndicatorDesktopShortcuts * ids)
 {
 	g_return_val_if_fail(INDICATOR_IS_DESKTOP_SHORTCUTS(ids), NULL);
-	IndicatorDesktopShortcutsPrivate * priv = indicator_desktop_shortcuts_get_instance_private(ids);
+	IndicatorDesktopShortcuts * self = INDICATOR_DESKTOP_SHORTCUTS(ids);
+	IndicatorDesktopShortcutsPrivate * priv = indicator_desktop_shortcuts_get_instance_private(self);
 	return (const gchar **)priv->nicks->data;
 }
 
@@ -499,7 +497,8 @@ gchar *
 indicator_desktop_shortcuts_nick_get_name (IndicatorDesktopShortcuts * ids, const gchar * nick)
 {
 	g_return_val_if_fail(INDICATOR_IS_DESKTOP_SHORTCUTS(ids), NULL);
-	IndicatorDesktopShortcutsPrivate * priv = indicator_desktop_shortcuts_get_instance_private(ids);
+	IndicatorDesktopShortcuts * self = INDICATOR_DESKTOP_SHORTCUTS(ids);
+	IndicatorDesktopShortcutsPrivate * priv = indicator_desktop_shortcuts_get_instance_private(self);
 
 	g_return_val_if_fail(priv->actions != ACTIONS_NONE, NULL);
 	g_return_val_if_fail(priv->keyfile != NULL, NULL);
@@ -573,10 +572,10 @@ gboolean
 indicator_desktop_shortcuts_nick_exec_with_context (IndicatorDesktopShortcuts * ids, const gchar * nick, GAppLaunchContext * launch_context)
 {
 	GError * error = NULL;
-	gchar * current_dir = NULL;
 
 	g_return_val_if_fail(INDICATOR_IS_DESKTOP_SHORTCUTS(ids), FALSE);
-	IndicatorDesktopShortcutsPrivate * priv = indicator_desktop_shortcuts_get_instance_private(ids);
+	IndicatorDesktopShortcuts * self = INDICATOR_DESKTOP_SHORTCUTS(ids);
+	IndicatorDesktopShortcutsPrivate * priv = indicator_desktop_shortcuts_get_instance_private(self);
 
 	g_return_val_if_fail(priv->actions != ACTIONS_NONE, FALSE);
 	g_return_val_if_fail(priv->keyfile != NULL, FALSE);
@@ -615,22 +614,6 @@ indicator_desktop_shortcuts_nick_exec_with_context (IndicatorDesktopShortcuts * 
 		return FALSE;
 	}
 
-	/* If possible move to the proper launch path */
-	gchar * path = g_key_file_get_string(priv->keyfile, groupheader,
-	                                     G_KEY_FILE_DESKTOP_KEY_PATH, NULL);
-
-	if (path && *path != '\0') {
-		current_dir = g_get_current_dir();
-
-		if (chdir(path) < 0) {
-			g_warning("Impossible to run action '%s' from path '%s'", nick, path);
-			g_free(current_dir);
-			g_free(groupheader);
-			g_free(path);
-			return FALSE;
-		}
-	}
-
 	/* Grab the name and the exec entries out of our current group */
 	gchar * name = g_key_file_get_locale_string(priv->keyfile,
 	                                            groupheader,
@@ -644,6 +627,8 @@ indicator_desktop_shortcuts_nick_exec_with_context (IndicatorDesktopShortcuts * 
 	                                            NULL,
 	                                            NULL);
 
+	g_free(groupheader);
+
 	GAppInfoCreateFlags flags = G_APP_INFO_CREATE_NONE;
 
 	if (launch_context) {
@@ -651,36 +636,26 @@ indicator_desktop_shortcuts_nick_exec_with_context (IndicatorDesktopShortcuts * 
 	}
 
 	GAppInfo * appinfo = g_app_info_create_from_commandline(exec, name, flags, &error);
-	g_free(groupheader);
-	g_free(path);
-	g_free(name);
-	g_free(exec);
+	g_free(name); g_free(exec);
 
 	if (error != NULL) {
 		g_warning("Unable to build Command line App info: %s", error->message);
-		g_free(current_dir);
 		g_error_free(error);
 		return FALSE;
 	}
 
 	if (appinfo == NULL) {
 		g_warning("Unable to build Command line App info (unknown)");
-		g_free(current_dir);
 		return FALSE;
 	}
 
 	gboolean launched = g_app_info_launch(appinfo, NULL, launch_context, &error);
-
-	if (current_dir && chdir(current_dir) < 0)
-		g_warning("Impossible to switch back to default work dir");
-
 
 	if (error != NULL) {
 		g_warning("Unable to launch file from nick '%s': %s", nick, error->message);
 		g_clear_error(&error);
 	}
 
-	g_free(current_dir);
 	g_object_unref(appinfo);
 
 	return launched;

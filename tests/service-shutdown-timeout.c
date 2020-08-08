@@ -1,5 +1,5 @@
 /*
-Test for libindicator
+Test for libayatana-indicator
 
 Copyright 2009 Canonical Ltd.
 
@@ -22,7 +22,7 @@ License along with this library. If not, see
 
 
 #include <glib.h>
-#include "libindicator/indicator-service.h"
+#include "libayatana-indicator/indicator-service.h"
 
 static GMainLoop * mainloop = NULL;
 static gboolean passed = FALSE;
@@ -30,37 +30,37 @@ static gboolean passed = FALSE;
 gboolean
 timeout (gpointer data)
 {
-	passed = FALSE;
-	g_error("Timeout with no shutdown.");
-	g_main_loop_quit(mainloop);
-	return FALSE;
+    passed = FALSE;
+    g_error("Timeout with no shutdown.");
+    g_main_loop_quit(mainloop);
+    return FALSE;
 }
 
 void
 shutdown (void)
 {
-	g_debug("Shutdown");
-	passed = TRUE;
-	g_main_loop_quit(mainloop);
-	return;
+    g_debug("Shutdown");
+    passed = TRUE;
+    g_main_loop_quit(mainloop);
+    return;
 }
 
 int
 main (int argc, char ** argv)
 {
-	IndicatorService * is = indicator_service_new("my.test.name");
-	g_signal_connect(G_OBJECT(is), INDICATOR_SERVICE_SIGNAL_SHUTDOWN, shutdown, NULL);
+    IndicatorService * is = indicator_service_new("my.test.name");
+    g_signal_connect(G_OBJECT(is), INDICATOR_SERVICE_SIGNAL_SHUTDOWN, shutdown, NULL);
 
-	g_timeout_add_seconds(2, timeout, NULL);
+    g_timeout_add_seconds(2, timeout, NULL);
 
-	mainloop = g_main_loop_new(NULL, FALSE);
-	g_main_loop_run(mainloop);
+    mainloop = g_main_loop_new(NULL, FALSE);
+    g_main_loop_run(mainloop);
 
-	g_debug("Quiting");
-	if (passed) {
-		g_debug("Passed");
-		return 0;
-	}
-	g_debug("Failed");
-	return 1;
+    g_debug("Quiting");
+    if (passed) {
+        g_debug("Passed");
+        return 0;
+    }
+    g_debug("Failed");
+    return 1;
 }
