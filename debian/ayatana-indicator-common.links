@@ -1,0 +1,2 @@
+# Because dh-systemd does not yet support user units, we manually make the Alias link
+/usr/lib/systemd/user/ayatana-indicators.target /usr/lib/systemd/user/ayatana-indicators-pre.target
