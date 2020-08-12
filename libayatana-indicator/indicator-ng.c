@@ -261,7 +261,8 @@ static gboolean indicator_ng_menu_insert_idos(IndicatorNg *self, GMenuModel *pSe
 
             for (GList *pFactory = ayatana_menu_item_factory_get_all(); pFactory != NULL && pMenuItemNew == NULL; pFactory = pFactory->next)
             {
-                pMenuItemNew = ayatana_menu_item_factory_create_menu_item(pFactory->data, sType, pMenuModelItem, pActionGroup);
+                //pMenuItemNew = ayatana_menu_item_factory_create_menu_item(pFactory->data, sType, pMenuModelItem, pActionGroup);
+                pMenuItemNew = GTK_MENU_ITEM(gtk_menu_item_new_with_label(pActionGroup ? "TEST ACTIONGROUP OK" : "TEST ACTIONGROUP FAILED"));
                 bChanged = TRUE;
             }
 
