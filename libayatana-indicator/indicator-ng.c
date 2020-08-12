@@ -313,7 +313,7 @@ static void indicator_ng_menu_size_allocate(GtkWidget *pWidget, GtkAllocation *p
     gtk_menu_reposition(self->entry.menu);
 }
 
-/*static void indicator_ng_menu_section_changed(GMenuModel *pMenuSection, gint nPosition, gint nRemoved, gint nAdded, gpointer pUserData)
+static void indicator_ng_menu_section_changed(GMenuModel *pMenuSection, gint nPosition, gint nRemoved, gint nAdded, gpointer pUserData)
 {
     IndicatorNg *self = pUserData;
     GMenuModel *pModel = g_menu_model_get_item_link(self->menu, 0, G_MENU_LINK_SUBMENU);
@@ -344,14 +344,14 @@ static void indicator_ng_menu_size_allocate(GtkWidget *pWidget, GtkAllocation *p
 
                         for (guint nItem = 0; nItem < nItems; nItem++)
                         {
-                            bChanged = indicator_ng_menu_insert_idos(self, pSubsection, nItem, nMenuItem, bNamespace, sNamespace) || bChanged;
+                            //bChanged = indicator_ng_menu_insert_idos(self, pSubsection, nItem, nMenuItem, bNamespace, sNamespace) || bChanged;
                             nMenuItem++;
                         }
                     }
 
                     g_object_unref(pSubsection);
 
-                    bChanged = indicator_ng_menu_insert_idos(self, pSection, nSubsection, nMenuItem, bNamespace, sNamespace) || bChanged;
+                    //bChanged = indicator_ng_menu_insert_idos(self, pSection, nSubsection, nMenuItem, bNamespace, sNamespace) || bChanged;
 
                     if (!g_str_equal(self->name, "ayatana-indicator-messages"))
                     {
@@ -380,12 +380,12 @@ static void indicator_ng_menu_size_allocate(GtkWidget *pWidget, GtkAllocation *p
     {
         indicator_ng_menu_size_allocate(NULL, NULL, self);
     }
-}*/
+}
 
 static void indicator_ng_menu_shown(GtkWidget *pWidget, gpointer pUserData)
 {
     IndicatorNg *self = pUserData;
-    /*guint nSectionCount = 0;
+    guint nSectionCount = 0;
 
     if (!self->lMenuSections[0])
     {
@@ -420,7 +420,7 @@ static void indicator_ng_menu_shown(GtkWidget *pWidget, gpointer pUserData)
             g_signal_connect(self->lMenuSections[0], "items-changed", G_CALLBACK(indicator_ng_menu_section_changed), self);
             indicator_ng_menu_section_changed(self->lMenuSections[0], 0, 0, 1, self);
         }
-    }*/
+    }
 
     if (self->submenu_action)
     {
