@@ -232,7 +232,7 @@ indicator_ng_secondary_activate (IndicatorObject      *io,
     }
 }
 
-static gboolean indicator_ng_menu_insert_idos(IndicatorNg *self, GMenuModel *pSection, guint nModelItem, guint nMenuItem, gboolean bNamespace, gchar *sNamespace)
+/*static gboolean indicator_ng_menu_insert_idos(IndicatorNg *self, GMenuModel *pSection, guint nModelItem, guint nMenuItem, gboolean bNamespace, gchar *sNamespace)
 {
     gboolean bChanged = FALSE;
     gchar *sType;
@@ -277,7 +277,7 @@ static gboolean indicator_ng_menu_insert_idos(IndicatorNg *self, GMenuModel *pSe
     }
 
     return bChanged;
-}
+}*/
 
 static void indicator_ng_menu_size_allocate(GtkWidget *pWidget, GtkAllocation *pAllocation, gpointer pUserData)
 {
@@ -313,7 +313,7 @@ static void indicator_ng_menu_size_allocate(GtkWidget *pWidget, GtkAllocation *p
     gtk_menu_reposition(self->entry.menu);
 }
 
-static void indicator_ng_menu_section_changed(GMenuModel *pMenuSection, gint nPosition, gint nRemoved, gint nAdded, gpointer pUserData)
+/*static void indicator_ng_menu_section_changed(GMenuModel *pMenuSection, gint nPosition, gint nRemoved, gint nAdded, gpointer pUserData)
 {
     IndicatorNg *self = pUserData;
     GMenuModel *pModel = g_menu_model_get_item_link(self->menu, 0, G_MENU_LINK_SUBMENU);
@@ -380,12 +380,12 @@ static void indicator_ng_menu_section_changed(GMenuModel *pMenuSection, gint nPo
     {
         indicator_ng_menu_size_allocate(NULL, NULL, self);
     }
-}
+}*/
 
 static void indicator_ng_menu_shown(GtkWidget *pWidget, gpointer pUserData)
 {
     IndicatorNg *self = pUserData;
-    guint nSectionCount = 0;
+    /*guint nSectionCount = 0;
 
     if (!self->lMenuSections[0])
     {
@@ -420,7 +420,7 @@ static void indicator_ng_menu_shown(GtkWidget *pWidget, gpointer pUserData)
             g_signal_connect(self->lMenuSections[0], "items-changed", G_CALLBACK(indicator_ng_menu_section_changed), self);
             indicator_ng_menu_section_changed(self->lMenuSections[0], 0, 0, 1, self);
         }
-    }
+    }*/
 
     if (self->submenu_action)
     {
