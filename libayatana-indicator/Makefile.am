@@ -39,7 +39,6 @@ indicator_headers = \
 
 if USE_GTK3
 indicator_headers += \
-	ayatanamenuitemfactory.h \
 	indicator-ng.h
 endif
 
@@ -62,12 +61,12 @@ libayatana_indicator_la_SOURCES = \
 
 if USE_GTK3
 libayatana_indicator_la_SOURCES += \
-	ayatanamenuitemfactory.c \
 	indicator-ng.c
 endif
 
 libayatana_indicator_la_CFLAGS = \
 	$(LIBINDICATOR_CFLAGS) \
+	$(LIBINDICATOR_IDO_CFLAGS) \
 	$(COVERAGE_CFLAGS) \
 	$(GTK_DISABLE_DEPRECATED) \
 	-DG_LOG_DOMAIN=\"libayatana-indicator\" \
@@ -75,6 +74,7 @@ libayatana_indicator_la_CFLAGS = \
 
 libayatana_indicator_la_LIBADD = \
 	$(LIBINDICATOR_LIBS) \
+	$(LIBINDICATOR_IDO_LIBS) \
 	$(LIBM)
 
 libayatana_indicator_la_LDFLAGS = \

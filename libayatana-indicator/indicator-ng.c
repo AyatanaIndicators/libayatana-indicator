@@ -19,7 +19,7 @@
 
 #include "indicator-ng.h"
 #include "indicator-image-helper.h"
-#include "ayatanamenuitemfactory.h"
+#include <libayatana-ido/ayatanamenuitemfactory.h>
 #include <string.h>
 
 #define MENU_SECTIONS 20
