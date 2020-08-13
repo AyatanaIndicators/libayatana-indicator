@@ -265,6 +265,11 @@ static gboolean indicator_ng_menu_insert_idos(IndicatorNg *self, GMenuModel *pSe
                 bChanged = TRUE;
             }
 
+            if (pMenuItemNew == NULL)
+            {
+                pMenuItemNew = GTK_MENU_ITEM(gtk_menu_item_new_with_label("Failed to create IDO object"));
+            }
+
             gtk_widget_set_name(GTK_WIDGET(pMenuItemNew), sType);
             gtk_widget_show(GTK_WIDGET(pMenuItemNew));
             gtk_container_remove(GTK_CONTAINER(self->entry.menu), pMenuItemOld);
