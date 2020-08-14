@@ -2,9 +2,9 @@ libayatana-indicator3.so.7 libayatana-indicator3-7 #MINVER#
 *Build-Depends-Package: libayatana-indicator3-dev
  ICON_SIZE@Base 0.6.0
  INDICATOR_NAMES_DATA@Base 0.6.0
-#MISSING: 0.7.2-0# ayatana_menu_item_factory_create_menu_item@Base 0.7.0
-#MISSING: 0.7.2-0# ayatana_menu_item_factory_get_all@Base 0.7.0
-#MISSING: 0.7.2-0# ayatana_menu_item_factory_get_type@Base 0.7.0
+#MISSING: 0.8.0# ayatana_menu_item_factory_create_menu_item@Base 0.7.0
+#MISSING: 0.8.0# ayatana_menu_item_factory_get_all@Base 0.7.0
+#MISSING: 0.8.0# ayatana_menu_item_factory_get_type@Base 0.7.0
  indicator_desktop_shortcuts_get_nicks@Base 0.6.0
  indicator_desktop_shortcuts_get_type@Base 0.6.0
  indicator_desktop_shortcuts_new@Base 0.6.0

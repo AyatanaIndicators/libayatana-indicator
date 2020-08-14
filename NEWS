@@ -1,3 +1,22 @@
+Overview of changes in libayatana-indicator 0.8.0
+
+  - This release breaks compatibility with all system indicators before
+    0.8.0 (for power indicator: before 2.1.0).
+  - configure.ac: Bump IDO_REQUIRED_VERSION to 0.8.0.
+  - Fix width of menu panes.
+  - Use ayatanamenuitemfactory.(c|h) from ayatana-ido. Reduce code duplications.
+    This also fixes renderer freezes in Ubuntu 20.04 (likely other versions
+    of Ubuntu, too).
+  - libayatana-indicator/indicator-ng.c: Try to prevent cascading failure if
+    IDO creation fails.
+  - Rename Ayatana Indicators specific x-canonical-* attributes to
+    x-ayatana-* (esp. x-ayatana-type). This makes Ayatana Indicators
+    work on Ubuntu.
+  - Use ayatana-indicators.target as the systemd lifecycle unit, not
+    ayatana-indicators-pre.target.
+  - Fix tests and deprecations.
+  - libayatana-indicator/indicator-ng.c: Resize open menus as items change.
+
 Overview of changes in libayatana-indicator 0.7.1
 
   - Display and connect the Indicator Messages widgets

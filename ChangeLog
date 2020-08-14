@@ -1,6 +1,82 @@
-2020-07-28 21:38:31 +0200 Mike Gabriel
+2020-08-14 21:10:25 +0200 Mike Gabriel
 
-	* release 0.7.1 (HEAD -> master, tag: 0.7.1)
+	* release 0.8.0 (HEAD -> master, tag: 0.8.0)
+
+2020-08-14 21:02:22 +0200 Mike Gabriel (d87433d)
+
+	* debian/control: Let ayatana-indicator-common break system
+          indicators before 0.8.0 (except power indicator, that one
+          before 2.1.0).
+
+2020-08-14 20:45:28 +0200 Mike Gabriel (758b74d)
+
+	* debian/control: Update versioned B-D on libayatana-ido3-dev to
+          0.8.0-0~.
+
+2020-08-14 20:44:50 +0200 Mike Gabriel (5afd8bf)
+
+	* configure.ac: Bump IDO_REQUIRED_VERSION to 0.8.0.
+
+2020-08-14 12:59:22 +0200 Robert Tari (0a798f3)
+
+	* Fix width of menu panes.
+
+2020-08-13 22:46:39 +0200 Robert Tari (e9902ad)
+
+	* Merge branch 'sunweaver-pr/ayatanamenuitemfactory-from-ido'
+          Attributes GH PR #15:
+          https://github.com/AyatanaIndicators/libayatana-indicator/pull/15
+
+2020-08-13 22:26:50 +0200 Mike Gabriel (e34f12e)
+
+	* Use ayatanamenuitemfactory.(c|h) from ayatana-ido. Reduce code
+          duplications.
+
+2020-08-13 13:13:30 +0200 Mike Gabriel (573e40f)
+
+	* Merge branch 'tari01-pr/ido-insertion-error-handling'
+
+2020-08-13 11:08:52 +0200 Robert Tari (f0ee1df)
+
+	* Try to prevent cascading failure if IDO creation fails
+
+2020-08-11 14:09:24 +0200 Mike Gabriel (27f00a5)
+
+	* Merge branch 'tari01-pr/replace-x-canonical-attributes'
+
+2020-08-11 11:08:49 +0200 Robert Tari (004ae04)
+
+	* Replace x-canonical attributes
+
+2020-08-10 08:48:08 +0200 Mike Gabriel (f57637e)
+
+	* debian/ayatana-indicator-common.links: Add FIXME/reminder to drop
+          manual symlinking of systemd user service file once DH
+          compat level is raised to a level above 12.
+
+2020-08-10 08:45:41 +0200 Mike Gabriel (985f492)
+
+	* Merge branch 'ubports-fix-systemd'
+
+2020-08-09 21:56:14 +0200 Marius Gripsgard (42358cc)
+
+	* Use indicators.target as the systemd lifecycle unit
+
+2020-08-08 10:05:24 +0200 Robert Tari (7ceee62)
+
+	* Fix tests and deprecations (fixes #1)
+
+2020-07-31 00:26:05 +0200 Robert Tari (a5b1374)
+
+	* Merge pull request #5 from tari01/master
+
+2020-07-31 00:18:18 +0200 Robert Tari (e528ee8)
+
+	* Resize open menus as items change
+
+2020-07-28 21:38:31 +0200 Mike Gabriel (74cfb21)
+
+	* release 0.7.1 (tag: 0.7.1)
 
 2020-07-27 23:25:43 +0200 Robert Tari (a7c9a35)
 
