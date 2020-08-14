@@ -311,8 +311,10 @@ static void indicator_ng_menu_size_allocate(GtkWidget *pWidget, GtkAllocation *p
     GtkStyleContext *pContext = gtk_widget_get_style_context(GTK_WIDGET(self->entry.menu));
     gtk_style_context_get_padding(pContext, gtk_style_context_get_state(pContext), &cPadding);
     gint nBorderWidth = gtk_container_get_border_width(GTK_CONTAINER(self->entry.menu));
-    nWidth += (2 * nBorderWidth) + cPadding.left + cPadding.right;
-    nHeight += (2 * nBorderWidth) + cPadding.top + cPadding.bottom + 12;
+    gint nIconWidth;
+    gtk_icon_size_lookup(GTK_ICON_SIZE_MENU, &nIconWidth, NULL);
+    nWidth += (2 * nBorderWidth) + cPadding.left + cPadding.right + (nIconWidth * 3) / 2;
+    nHeight += (2 * nBorderWidth) + cPadding.top + cPadding.bottom + (nIconWidth * 3) / 4;
     GdkWindow *pWindow = gtk_widget_get_parent_window(GTK_WIDGET(self->entry.menu));
     gdk_window_resize(pWindow, nWidth, nHeight);
     gtk_menu_reposition(self->entry.menu);
