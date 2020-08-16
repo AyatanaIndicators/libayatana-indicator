@@ -349,6 +349,17 @@ static void indicator_ng_menu_section_changed(GMenuModel *pMenuSection, gint nPo
                     {
                         guint nItems = g_menu_model_get_n_items(pSubsection);
 
+                        // Skip the subsection separator (if there is one)
+                        GList *lMenuItems = gtk_container_get_children(GTK_CONTAINER(self->entry.menu));
+                        GtkWidget *pMenuItem = GTK_WIDGET(g_list_nth_data(lMenuItems, nMenuItem));
+
+                        if (GTK_IS_SEPARATOR_MENU_ITEM(pMenuItem))
+                        {
+                            nMenuItem++;
+                        }
+
+                        g_list_free(lMenuItems);
+
                         for (guint nItem = 0; nItem < nItems; nItem++)
                         {
                             bChanged = indicator_ng_menu_insert_idos(self, pSubsection, nItem, nMenuItem, bNamespace, sNamespace) || bChanged;
