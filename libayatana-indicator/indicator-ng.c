@@ -290,9 +290,15 @@ static void indicator_ng_menu_size_allocate(GtkWidget *pWidget, GtkAllocation *p
     GList *pMenuItem = gtk_container_get_children(GTK_CONTAINER(self->entry.menu));
     guint nWidth = 0;
     guint nHeight = 0;
+    GdkWindow *pWindowBin = NULL;
 
     while (pMenuItem)
     {
+        if (!pWindowBin)
+        {
+            pWindowBin = gtk_widget_get_parent_window(pMenuItem->data);
+        }
+
         gint nWidthNat;
         gint nHeightNat;
         gtk_widget_get_preferred_width(pMenuItem->data, NULL, &nWidthNat);
@@ -315,8 +321,22 @@ static void indicator_ng_menu_size_allocate(GtkWidget *pWidget, GtkAllocation *p
     gtk_icon_size_lookup(GTK_ICON_SIZE_MENU, &nIconWidth, NULL);
     nWidth += (2 * nBorderWidth) + cPadding.left + cPadding.right + (nIconWidth * 3) / 2;
     nHeight += (2 * nBorderWidth) + cPadding.top + cPadding.bottom + (nIconWidth * 3) / 4;
+
+    GdkRectangle cRectangle = {0};
+    GdkDisplay *pDisplay = gdk_display_get_default();
+    GdkMonitor *pMonitor = gdk_display_get_primary_monitor(pDisplay);
+    gdk_monitor_get_workarea(pMonitor, &cRectangle);
+
+    if (nHeight <= cRectangle.height)
+    {
+        gdk_window_move_resize(pWindowBin, 0, 0, nWidth, nHeight);
+    }
+
+    nHeight = MIN(nHeight, cRectangle.height);
+
     GdkWindow *pWindow = gtk_widget_get_parent_window(GTK_WIDGET(self->entry.menu));
     gdk_window_resize(pWindow, nWidth, nHeight);
+
     gtk_menu_reposition(self->entry.menu);
 }
 
