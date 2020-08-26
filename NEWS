@@ -1,3 +1,12 @@
+Overview of changes in libayatana-indicator 0.8.1
+
+  - Enable menu scrolling + reset offset on popup. Resolves
+    display problems with Indicator Messges consumers that
+    provide a too-long list of unread messages (so that the
+    scrolling kicks in in the indicator's menu).
+  - Fix IDO insertion index in Indicator Messages with multiple
+    clients.
+
 Overview of changes in libayatana-indicator 0.8.0
 
   - This release breaks compatibility with all system indicators before

@@ -1,6 +1,26 @@
-2020-08-14 21:10:25 +0200 Mike Gabriel
+2020-08-26 09:33:53 +0200 Mike Gabriel
 
-	* release 0.8.0 (HEAD -> master, tag: 0.8.0)
+	* release 0.8.1 (HEAD -> master, tag: 0.8.1)
+
+2020-08-26 09:21:27 +0200 Mike Gabriel (7ad3a78)
+
+	* Merge branch 'tari01-pr/fix-menu-scrolling'
+
+2020-08-25 17:49:48 +0200 Robert Tari (6de1c02)
+
+	* Enable menu scrolling + reset offset on popup
+
+2020-08-17 10:08:51 +0200 Mike Gabriel (cb4cf54)
+
+	* Merge branch 'tari01-pr/multiple-messaging-clients'
+
+2020-08-16 14:55:23 +0200 Robert Tari (b6fd2c1)
+
+	* Fix IDO insertion index in Indicator Messages with multiple clients
+
+2020-08-14 21:10:25 +0200 Mike Gabriel (8beffb3)
+
+	* release 0.8.0 (tag: 0.8.0)
 
 2020-08-14 21:02:22 +0200 Mike Gabriel (d87433d)
 
