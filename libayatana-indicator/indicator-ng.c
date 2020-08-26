@@ -967,6 +967,12 @@ indicator_ng_init (IndicatorNg *self)
   g_signal_connect (self->entry.menu, "hide", G_CALLBACK (indicator_ng_menu_hidden), self);
   g_signal_connect (self->entry.menu, "size-allocate", G_CALLBACK (indicator_ng_menu_size_allocate), self);
 
+    GtkCssProvider *pCssProvider = gtk_css_provider_new();
+    GtkStyleContext *pStyleContext = gtk_widget_get_style_context(GTK_WIDGET(self->entry.menu));
+    gtk_style_context_add_provider(pStyleContext, GTK_STYLE_PROVIDER(pCssProvider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+    gtk_css_provider_load_from_data(pCssProvider, "menu > arrow{min-height: 0; padding: 0; margin: 0;}", -1, NULL);
+    g_object_unref(pCssProvider);
+
   /* work around IndicatorObject's warning that the accessible
    * description is missing. We never set it on construction, but when
    * the menu model has arrived on the bus.
