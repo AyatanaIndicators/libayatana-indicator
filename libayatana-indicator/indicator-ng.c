@@ -354,12 +354,13 @@ static void indicator_ng_menu_section_changed(GMenuModel *pMenuSection, gint nPo
         for (guint nSection = 0; nSection < nSections; nSection++)
         {
             GMenuModel *pSection = g_menu_model_get_item_link(pModel, nSection, G_MENU_LINK_SECTION);
+            guint nSubsections = 0;
 
             if (pSection)
             {
                 gchar *sNamespace;
                 gboolean bNamespace = g_menu_model_get_item_attribute(pModel, nSection, G_MENU_ATTRIBUTE_ACTION_NAMESPACE, "s", &sNamespace);
-                guint nSubsections = g_menu_model_get_n_items(pSection);
+                nSubsections = g_menu_model_get_n_items(pSection);
 
                 for (guint nSubsection = 0; nSubsection < nSubsections; nSubsection++)
                 {
@@ -405,7 +406,7 @@ static void indicator_ng_menu_section_changed(GMenuModel *pMenuSection, gint nPo
                 g_object_unref(pSection);
             }
 
-            if (!g_str_equal(self->name, "ayatana-indicator-messages"))
+            if (pSection && nSubsections)
             {
                 nMenuItem++;
             }
