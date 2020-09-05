@@ -528,7 +528,8 @@ static void indicator_ng_set_label(IndicatorNg *self, const gchar *label)
     {
         if (self->entry.label)
         {
-            gtk_widget_hide(GTK_WIDGET (self->entry.label));
+            // Hiding the label also hides the image - set the label instead of gtk_widget_hide
+            gtk_label_set_label(GTK_LABEL (self->entry.label), NULL);
         }
 
         return;
