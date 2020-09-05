@@ -524,19 +524,36 @@ indicator_ng_set_icon_from_variant (IndicatorNg *self,
 
 static void indicator_ng_set_label(IndicatorNg *self, const gchar *label)
 {
-    if (label == NULL || *label == '\0')
+    if (!self->entry.label)
     {
-        if (self->entry.label)
-        {
-            // Hiding the label also hides the image - set the label instead of gtk_widget_hide
-            gtk_label_set_label(GTK_LABEL (self->entry.label), NULL);
-        }
-
         return;
     }
 
-    gtk_label_set_label(GTK_LABEL (self->entry.label), label);
-    gtk_widget_show(GTK_WIDGET (self->entry.label));
+    const gchar *sLabel = label;
+    guint nSpacing = 3;
+    guint nPadding = 6;
+
+    if (label == NULL || *label == '\0' || !self->entry.image || !gtk_widget_get_visible(GTK_WIDGET(self->entry.image)))
+    {
+        nSpacing = 0;
+        nPadding = 0;
+    }
+
+    GtkWidget *pParent = gtk_widget_get_parent(GTK_WIDGET(self->entry.label));
+    GtkCssProvider *pCssProvider = gtk_css_provider_new();
+    GtkStyleContext *pStyleContext = gtk_widget_get_style_context(GTK_WIDGET(self->entry.label));
+    gtk_style_context_add_provider(pStyleContext, GTK_STYLE_PROVIDER(pCssProvider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+    gchar *sCss = g_strdup_printf("label{padding-left: %ipx;}", nPadding);
+    gtk_css_provider_load_from_data(pCssProvider, sCss, -1, NULL);
+    g_free(sCss);
+    g_object_unref(pCssProvider);
+    gtk_box_set_spacing(GTK_BOX(pParent), nSpacing);
+    gtk_label_set_label(GTK_LABEL (self->entry.label), sLabel);
+
+    if (label)
+    {
+        gtk_widget_show(GTK_WIDGET (self->entry.label));
+    }
 }
 
 static void
