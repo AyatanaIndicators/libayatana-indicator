@@ -528,14 +528,14 @@ static void indicator_ng_set_label(IndicatorNg *self, const gchar *label)
     {
         if (self->entry.label)
         {
-            gtk_label_set_label(GTK_LABEL (self->entry.label), NULL);
+            gtk_widget_hide(GTK_WIDGET (self->entry.label));
         }
 
         return;
     }
 
-    gtk_label_set_label (GTK_LABEL (self->entry.label), label);
-    gtk_widget_show (GTK_WIDGET (self->entry.label));
+    gtk_label_set_label(GTK_LABEL (self->entry.label), label);
+    gtk_widget_show(GTK_WIDGET (self->entry.label));
 }
 
 static void
