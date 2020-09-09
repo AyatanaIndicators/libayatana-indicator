@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 # Copyright 2013 Canonical Ltd.
 #
@@ -54,7 +55,10 @@ for line in sys.stdin:
 
     # Source file
     if keyword == 'SF':
-        source = file(rest).readlines()
+
+        with open(rest, 'r') as pFile:
+
+            source = pFile.readlines()
 
     # Branch coverage data
     elif keyword == 'BRDA':
@@ -66,4 +70,4 @@ for line in sys.stdin:
         if check_suppress(line_suppress, source, rest):
             continue
 
-    print line
+    print(line)
