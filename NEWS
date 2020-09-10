@@ -1,3 +1,11 @@
+Overview of changes in libayatana-indicator 0.8.2
+
+  - Workaround for themes with scrolling arrows on the
+    menu borders: disable menu arrows.
+  - indicator-ng.c: Fix padding and spacing for hidden indicator item labels.
+  - Fix duplicate location in the datetime indicator (and
+    potentially other duplicated menu item flaws).
+
 Overview of changes in libayatana-indicator 0.8.1
 
   - Enable menu scrolling + reset offset on popup. Resolves
