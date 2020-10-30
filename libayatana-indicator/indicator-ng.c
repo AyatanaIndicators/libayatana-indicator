@@ -971,6 +971,12 @@ indicator_ng_init (IndicatorNg *self)
     GtkStyleContext *pStyleContext = gtk_widget_get_style_context(GTK_WIDGET(self->entry.menu));
     gtk_style_context_add_provider(pStyleContext, GTK_STYLE_PROVIDER(pCssProvider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
     gtk_css_provider_load_from_data(pCssProvider, "menu > arrow{min-height: 0; padding: 0; margin: 0;}", -1, NULL);
+
+    GtkWidget *pWindow = gtk_widget_get_parent(GTK_WIDGET(self->entry.menu));
+    pStyleContext = gtk_widget_get_style_context(pWindow);
+    gtk_style_context_add_provider(pStyleContext, GTK_STYLE_PROVIDER(pCssProvider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+    gtk_css_provider_load_from_data(pCssProvider, "window > decoration {box-shadow: 0 1px 2px rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.13);}", -1, NULL);
+
     g_object_unref(pCssProvider);
 
   /* work around IndicatorObject's warning that the accessible
