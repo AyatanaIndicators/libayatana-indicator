@@ -1,6 +1,18 @@
-2020-09-10 21:28:25 +0200 Mike Gabriel
+2020-11-09 20:27:33 +0100 Mike Gabriel
 
-	* release 0.8.2 (HEAD -> master, tag: 0.8.2)
+	* release 0.8.3 (HEAD -> master, tag: 0.8.3)
+
+2020-10-30 14:36:45 +0100 Mike Gabriel (2806da07)
+
+	* Merge branch 'tari01-pr/fix-menu-resizing'
+
+2020-10-30 13:11:08 +0100 Robert Tari (f5663d0b)
+
+	* indicator-ng.c: Fix menu resizing for all themes
+
+2020-09-10 21:28:25 +0200 Mike Gabriel (afa8c6af)
+
+	* release 0.8.2 (tag: 0.8.2)
 
 2020-09-10 21:03:01 +0200 Mike Gabriel (cce52a7e)
 
