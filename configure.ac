@@ -15,7 +15,7 @@ AM_INIT_AUTOMAKE([1.11 -Wall tar-pax])
 
 AM_MAINTAINER_MODE([enable])
 
-AM_SILENT_RULES([yes])]
+AM_SILENT_RULES([yes])
 
 # Check for programs
 AC_PROG_CC
