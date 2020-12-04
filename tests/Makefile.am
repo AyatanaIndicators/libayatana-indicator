@@ -499,8 +499,20 @@ test_indicator_ng_LDADD = \
 	-L$(top_builddir)/libayatana-indicator/.libs \
 	$(INDICATOR_LIB)
 
-TESTS += test-indicator-ng
-DISTCLEANFILES += test-indicator-ng
+
+test-indicator-ng-dbus-runner: test-indicator-ng Makefile.am
+	@echo "#!/bin/sh" > $@
+	@echo $(DBUS_RUNNER) --task ./test-indicator-ng >> $@
+	@chmod +x $@
+
+test-indicator-ng-tester: test-indicator-ng-dbus-runner Makefile.am
+	@echo "#!/bin/bash" > $@
+	@echo $(XVFB_RUN) >> $@
+	@echo gtester -k --verbose -o=$(XML_REPORT) ./test-indicator-ng-dbus-runner >> $@
+	@chmod +x $@
+
+TESTS += test-indicator-ng-tester
+DISTCLEANFILES += test-indicator-ng-tester test-indicator-ng-dbus-runner test-indicator-ng
 
 # Mock indicator service
 check_PROGRAMS += indicator-test-service
