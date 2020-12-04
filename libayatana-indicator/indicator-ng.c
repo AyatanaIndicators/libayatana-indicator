@@ -547,7 +547,10 @@ static void indicator_ng_set_label(IndicatorNg *self, const gchar *label)
     gtk_css_provider_load_from_data(pCssProvider, sCss, -1, NULL);
     g_free(sCss);
     g_object_unref(pCssProvider);
-    gtk_box_set_spacing(GTK_BOX(pParent), nSpacing);
+    if (GTK_IS_BOX(pParent))
+    {
+        gtk_box_set_spacing(GTK_BOX(pParent), nSpacing);
+    }
     gtk_label_set_label(GTK_LABEL (self->entry.label), sLabel);
 
     if (label)
