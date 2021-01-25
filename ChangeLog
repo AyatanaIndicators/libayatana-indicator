@@ -1,6 +1,72 @@
-2020-11-09 20:27:33 +0100 Mike Gabriel
+2021-01-25 17:11:13 +0100 Mike Gabriel
 
-	* release 0.8.3 (HEAD -> master, tag: 0.8.3)
+	* release 0.8.4 (HEAD -> master, tag: 0.8.4)
+
+2021-01-25 17:05:29 +0100 Mike Gabriel (d0abfc5c)
+
+	* Makefile.am: Set DISTCHECK_CONFIGURE_FLAGS.
+
+2021-01-25 17:05:09 +0100 Mike Gabriel (dec55b81)
+
+	* debian/*: Update from official Debian packaging.
+
+2020-12-04 11:36:43 +0100 Robert Tari (6935c683)
+
+	* Merge branch 'sunweaver-pr/debian-build-with-unit-tests'
+
+2020-12-04 10:32:25 +0100 Mike Gabriel (03219183)
+
+	* configure.ac: Drop superfluous square bracket (typo fix).
+
+2020-12-04 10:29:39 +0100 Mike Gabriel (d6b4c6b8)
+
+	* tests/Makefile.am: Wrap test-indicator-ng around Xvfb and
+          dbus-runner.
+
+2020-12-04 10:28:55 +0100 Mike Gabriel (29f118a4)
+
+	* libayatana-indicator/indicator-ng.c: Only run gtk_box_set_spacing()
+          if object to operate on is a GTK_BOX.
+
+2020-12-04 11:29:47 +0100 Robert Tari (fbb8dbe1)
+
+	* Merge branch 'sunweaver-pr/fix-typo-in-configure-ac'
+
+2020-12-04 10:29:39 +0100 Mike Gabriel (fb1450e9)
+
+	* tests/Makefile.am: Wrap test-indicator-ng around Xvfb and
+          dbus-runner.
+
+2020-12-04 10:28:55 +0100 Mike Gabriel (cbf345ed)
+
+	* libayatana-indicator/indicator-ng.c: Only run gtk_box_set_spacing()
+          if object to operate on is a GTK_BOX.
+
+2020-12-04 11:22:11 +0100 Robert Tari (1f54cb3f)
+
+	* Merge branch 'sunweaver-pr/fix-test-indicator-ng'
+
+2020-12-04 10:33:48 +0100 Mike Gabriel (fb9db8a6)
+
+	* debian/rules: Enable unit tests after build.
+
+2020-12-04 10:32:25 +0100 Mike Gabriel (6eab8445)
+
+	* configure.ac: Drop superfluous square bracket (typo fix).
+
+2020-12-04 10:29:39 +0100 Mike Gabriel (1a62e1e5)
+
+	* tests/Makefile.am: Wrap test-indicator-ng around Xvfb and
+          dbus-runner.
+
+2020-12-04 10:28:55 +0100 Mike Gabriel (770efbcc)
+
+	* libayatana-indicator/indicator-ng.c: Only run gtk_box_set_spacing()
+          if object to operate on is a GTK_BOX.
+
+2020-11-09 20:27:33 +0100 Mike Gabriel (4489b124)
+
+	* release 0.8.3 (tag: 0.8.3)
 
 2020-10-30 14:36:45 +0100 Mike Gabriel (2806da07)
 

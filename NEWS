@@ -1,3 +1,10 @@
+Overview of changes in libayatana-indicator 0.8.4
+
+  - libayatana-indicator/indicator-ng.c: Only run gtk_box_set_spacing()
+    if object to operate on is a GTK_BOX.
+  - Fix unit tests during package build. (Properly wrap around Xvfb
+    and dbus-wrapper).
+
 Overview of changes in libayatana-indicator 0.8.3
 
   - indicator-ng: Fix menu resizing for all themes.
