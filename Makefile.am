@@ -14,6 +14,8 @@ SUBDIRS += \
 tests: libayatana-indicator
 endif
 
+DISTCHECK_CONFIGURE_FLAGS = --disable-deprecations --disable-silent-rules --with-gtk=3
+
 DISTCLEANFILES = \
 	libayatana-indicator-*.tar.gz
 
