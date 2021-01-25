@@ -70,3 +70,6 @@ override_dh_auto_clean:
 	dh_auto_clean
 	rm -Rf builddir/
 	rm -Rf build-aux/
+
+get-orig-source:
+	uscan --noconf --force-download --rename --download-current-version --destdir=..

@@ -3,9 +3,7 @@ Upstream-Name: libayatana-indicator
 Upstream-Contact: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 Source: https://github.com/AyatanaIndicators/libayatana-indicator
 
-Files: libayatana-indicator/ayatanamenuitemfactory.c
- libayatana-indicator/ayatanamenuitemfactory.h
- libayatana-indicator/dbus-shared.h
+Files: libayatana-indicator/dbus-shared.h
  libayatana-indicator/indicator-desktop-shortcuts.c
  libayatana-indicator/indicator-desktop-shortcuts.h
  libayatana-indicator/indicator-image-helper.c
@@ -59,7 +57,7 @@ Files: AUTHORS
  autogen.sh
  configure.ac
  data/Makefile.am
- data/ayatana-indicators-pre.target
+ data/ayatana-indicators.target
  helper/test-loader-build
  helper/test-loader.c
  libayatana-indicator/Makefile.am
