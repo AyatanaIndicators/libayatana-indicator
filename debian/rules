@@ -35,7 +35,7 @@ dobuild-%:
 override_dh_auto_test: $(FLAVORS:%=dotest-%)
 
 dotest-%:
-	dh_auto_test --builddirectory=builddir/$*
+	dh_auto_test --no-parallel --builddirectory=builddir/$*
 
 override_dh_auto_install: $(FLAVORS:%=doinstall-%)
 
