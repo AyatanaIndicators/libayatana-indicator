@@ -40,7 +40,7 @@ test_loader_SOURCES = \
 	test-loader.c
 
 test_loader_CFLAGS = \
-	-Wall -Werror \
+	-Wall \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir) \
 	-DBUILD_DIR="\"$(builddir)\""
 
@@ -59,7 +59,7 @@ test_desktop_shortcuts_SOURCES = \
 	test-desktop-shortcuts.c
 
 test_desktop_shortcuts_CFLAGS = \
-	-Wall -Werror \
+	-Wall \
 	-DSRCDIR="\"$(srcdir)\"" \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir) \
 	-DBUILD_DIR="\"$(abs_builddir)\""
@@ -93,7 +93,7 @@ libdummy_indicator_blank_la_SOURCES = \
 	dummy-indicator-blank.c
 
 libdummy_indicator_blank_la_CFLAGS = \
-	-Wall -Werror \
+	-Wall \
 	$(GTK_DISABLE_DEPRECATED) \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
 
@@ -114,7 +114,7 @@ libdummy_indicator_null_la_SOURCES = \
 	dummy-indicator-null.c
 
 libdummy_indicator_null_la_CFLAGS = \
-	-Wall -Werror \
+	-Wall \
 	$(GTK_DISABLE_DEPRECATED) \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
 
@@ -135,7 +135,7 @@ libdummy_indicator_signaler_la_SOURCES = \
 	dummy-indicator-signaler.c
 
 libdummy_indicator_signaler_la_CFLAGS = \
-	-Wall -Werror \
+	-Wall \
 	$(GTK_DISABLE_DEPRECATED) \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
 
@@ -156,7 +156,7 @@ libdummy_indicator_simple_la_SOURCES = \
 	dummy-indicator-simple.c
 
 libdummy_indicator_simple_la_CFLAGS = \
-	-Wall -Werror \
+	-Wall \
 	$(GTK_DISABLE_DEPRECATED) \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
 
@@ -178,7 +178,7 @@ libdummy_indicator_entry_func_la_SOURCES = \
 	dummy-indicator-entry-func.h
 
 libdummy_indicator_entry_func_la_CFLAGS = \
-	-Wall -Werror \
+	-Wall \
 	$(GTK_DISABLE_DEPRECATED) \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
 
@@ -199,7 +199,7 @@ libdummy_indicator_visible_la_SOURCES = \
 	dummy-indicator-visible.c
 
 libdummy_indicator_visible_la_CFLAGS = \
-	-Wall -Werror \
+	-Wall \
 	$(GTK_DISABLE_DEPRECATED) \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
 
@@ -222,7 +222,7 @@ service_shutdown_timeout_SOURCES = \
 	service-shutdown-timeout.c
 
 service_shutdown_timeout_CFLAGS = \
-	-Wall -Werror \
+	-Wall \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
 
 service_shutdown_timeout_LDADD = \
@@ -248,7 +248,7 @@ service_manager_no_connect_SOURCES = \
 	service-manager-no-connect.c
 
 service_manager_no_connect_CFLAGS = \
-	-Wall -Werror \
+	-Wall \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
 
 service_manager_no_connect_LDADD = \
@@ -280,7 +280,7 @@ service_manager_connect_SOURCES = \
 	service-manager-connect.c
 
 service_manager_connect_CFLAGS = \
-	-Wall -Werror \
+	-Wall \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
 
 service_manager_connect_LDADD = \
@@ -294,7 +294,7 @@ service_manager_connect_service_SOURCES = \
 	service-manager-connect-service.c
 
 service_manager_connect_service_CFLAGS = \
-	-Wall -Werror \
+	-Wall \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
 
 service_manager_connect_service_LDADD = \
@@ -327,7 +327,7 @@ service_version_manager_SOURCES = \
 	service-version-manager.c
 
 service_version_manager_CFLAGS = \
-	-Wall -Werror \
+	-Wall \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
 
 service_version_manager_LDADD = \
@@ -342,7 +342,7 @@ service_version_bad_service_SOURCES = \
 	service-version-bad-service.c
 
 service_version_bad_service_CFLAGS = \
-	-Wall -Werror \
+	-Wall \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
 
 service_version_bad_service_LDADD = \
@@ -357,7 +357,7 @@ service_version_good_service_SOURCES = \
 	service-version-good-service.c
 
 service_version_good_service_CFLAGS = \
-	-Wall -Werror \
+	-Wall \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
 
 service_version_good_service_LDADD = \
@@ -384,7 +384,7 @@ service_version_multiwatch_manager_SOURCES = \
 	service-version-multiwatch-manager.c
 
 service_version_multiwatch_manager_CFLAGS = \
-	-Wall -Werror \
+	-Wall \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
 
 service_version_multiwatch_manager_LDADD = \
@@ -399,7 +399,7 @@ service_version_multiwatch_manager_impolite_SOURCES = \
 	service-version-multiwatch-manager-impolite.c
 
 service_version_multiwatch_manager_impolite_CFLAGS = \
-	-Wall -Werror \
+	-Wall \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
 
 service_version_multiwatch_manager_impolite_LDADD = \
@@ -414,7 +414,7 @@ service_version_multiwatch_service_SOURCES = \
 	service-version-multiwatch-service.c
 
 service_version_multiwatch_service_CFLAGS = \
-	-Wall -Werror \
+	-Wall \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
 
 service_version_multiwatch_service_LDADD = \
@@ -440,7 +440,7 @@ service_manager_nostart_connect_SOURCES = \
 	service-manager-nostart-connect.c
 
 service_manager_nostart_connect_CFLAGS = \
-	-Wall -Werror \
+	-Wall \
 	$(LIBINDICATOR_CFLAGS) -I$(top_srcdir)
 
 service_manager_nostart_connect_LDADD = \
