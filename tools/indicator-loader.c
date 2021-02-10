@@ -25,7 +25,7 @@
 
 #include <gtk/gtk.h>
 #include <libayatana-ido/libayatana-ido.h>
-#include "src//indicator-object.h"
+#include "src/indicator-object.h"
 #if GTK_CHECK_VERSION (3,0,0)
  #include "src/indicator-ng.h"
 #endif
