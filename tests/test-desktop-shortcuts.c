@@ -21,7 +21,7 @@ License along with this library. If not, see
 */
 
 #include <gtk/gtk.h>
-#include "libayatana-indicator/indicator-desktop-shortcuts.h"
+#include "src/indicator-desktop-shortcuts.h"
 
 /* Basic object creation and destruction.  Stop big
    f*** ups here. */

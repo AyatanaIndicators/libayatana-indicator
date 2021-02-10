@@ -26,8 +26,8 @@ License along with this library. If not, see
 #include <glib.h>
 #include <glib-object.h>
 
-#include "libayatana-indicator/indicator.h"
-#include "libayatana-indicator/indicator-object.h"
+#include "src/indicator.h"
+#include "src/indicator-object.h"
 
 G_BEGIN_DECLS
 
@@ -42,15 +42,15 @@ typedef struct _DummyIndicatorEntryFunc      DummyIndicatorEntryFunc;
 typedef struct _DummyIndicatorEntryFuncClass DummyIndicatorEntryFuncClass;
 
 struct _DummyIndicatorEntryFuncClass {
-	IndicatorObjectClass parent_class;
+    IndicatorObjectClass parent_class;
 };
 
 struct _DummyIndicatorEntryFunc {
-	IndicatorObject parent;
+    IndicatorObject parent;
 
-	gboolean entry_activate_called;
-	gboolean entry_activate_window_called;
-	gboolean entry_close_called;
+    gboolean entry_activate_called;
+    gboolean entry_activate_window_called;
+    gboolean entry_close_called;
 };
 
 #endif /* __DUMMY_INDICATOR_ENTRY_FUNC__ */

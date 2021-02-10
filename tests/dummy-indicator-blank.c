@@ -21,7 +21,7 @@ License along with this library. If not, see
 */
 
 
-#include "libayatana-indicator/indicator.h"
+#include "src/indicator.h"
 
 INDICATOR_SET_VERSION
 

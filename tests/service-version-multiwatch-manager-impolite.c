@@ -22,7 +22,7 @@ License along with this library. If not, see
 
 
 #include <glib.h>
-#include "libayatana-indicator/indicator-service-manager.h"
+#include "src/indicator-service-manager.h"
 #include "service-version-values.h"
 
 static GMainLoop * mainloop = NULL;

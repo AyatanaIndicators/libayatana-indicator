@@ -2,7 +2,7 @@ ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
 
 SUBDIRS = \
 	data \
-	libayatana-indicator \
+	src \
 	tools
 
 tools: libayatana-indicator

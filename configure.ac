@@ -146,17 +146,17 @@ PKG_CHECK_MODULES(SYSTEMD,  systemd,
     []
 )
 if test "x$has_systemd" = "xyes"; then
-	SYSTEMD_USERDIR=`$PKG_CONFIG --variable=systemduserunitdir systemd`
-	AC_SUBST(SYSTEMD_USERDIR)
-	AC_DEFINE(HAVE_SYSTEMD, 1, [create ayatana-indicators-pre.target for systemd])
+    SYSTEMD_USERDIR=`$PKG_CONFIG --variable=systemduserunitdir systemd`
+    AC_SUBST(SYSTEMD_USERDIR)
+    AC_DEFINE(HAVE_SYSTEMD, 1, [create ayatana-indicators-pre.target for systemd])
 fi
 
 #########################
 # Check if build tests
 #########################
 AC_ARG_ENABLE([tests],
-	AC_HELP_STRING([--disable-tests], [disable tests]),,
-	[enable_tests=yes])
+    AC_HELP_STRING([--disable-tests], [disable tests]),,
+    [enable_tests=yes])
 AM_CONDITIONAL([WANT_TESTS], [test "x$enable_tests" != "xno"])
 
 #########################
@@ -167,8 +167,8 @@ AC_ARG_ENABLE([debug],
               [enable_debug=no])
 
 if test "x$enable_debug" = "xyes"; then
-	CFLAGS="-g $CFLAGS"
-	AC_DEFINE(ENABLE_DEBUG, 1, [build with extra debug information])
+    CFLAGS="-g $CFLAGS"
+    AC_DEFINE(ENABLE_DEBUG, 1, [build with extra debug information])
 fi
 
 AM_CONDITIONAL(ENABLE_DEBUG, test "$enable_debug" = "yes")
@@ -192,9 +192,9 @@ AC_SUBST(COVERAGE_LDFLAGS)
 AC_CONFIG_FILES([
 Makefile
 data/Makefile
-libayatana-indicator/Makefile
-libayatana-indicator/ayatana-indicator-0.4.pc.in
-libayatana-indicator/ayatana-indicator3-0.4.pc.in
+src/Makefile
+src/ayatana-indicator-0.4.pc.in
+src/ayatana-indicator3-0.4.pc.in
 tests/Makefile
 tools/Makefile
 ])
@@ -208,11 +208,11 @@ AC_MSG_NOTICE([
 
 Libindicator Configuration:
 
-	Prefix:                 $prefix
-	GTK+ Version:           $with_gtk
-	
-	Enable IDO loader:      $enable_ido
-	Enable tests:           $enable_tests
-	Enable debugging:       $enable_debug
-	Coverage reporting:     $use_gcov
+    Prefix:                 $prefix
+    GTK+ Version:           $with_gtk
+
+    Enable IDO loader:      $enable_ido
+    Enable tests:           $enable_tests
+    Enable debugging:       $enable_debug
+    Coverage reporting:     $use_gcov
 ])
