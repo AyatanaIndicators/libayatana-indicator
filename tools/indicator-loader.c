@@ -3,11 +3,13 @@
  * and during development of them.
  *
  * Copyright 2009 Canonical Ltd.
+ * Copyright 2021 AyatanaIndicators
  *
  * Authors:
  *   Ted Gould <ted@canonical.com>
  *   Lars Uebernickel <lars.uebernickel@canonical.com>
  *   Charles Kerr <charles.kerr@canonical.com>
+ *   Robert Tari <robert@tari.in>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

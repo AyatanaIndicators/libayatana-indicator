@@ -2,9 +2,11 @@
 Test for libayatana-indicator
 
 Copyright 2009 Canonical Ltd.
+Copyright 2021 AyatanaIndicators
 
 Authors:
     Ted Gould <ted@canonical.com>
+    Robert Tari <robert@tari.in>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
