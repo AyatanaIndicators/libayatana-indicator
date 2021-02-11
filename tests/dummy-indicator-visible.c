@@ -23,8 +23,8 @@ License along with this library. If not, see
 #include <glib.h>
 #include <glib-object.h>
 
-#include "src/indicator.h"
-#include "src/indicator-object.h"
+#include "indicator.h"
+#include "indicator-object.h"
 
 #define DUMMY_INDICATOR_VISIBLE_TYPE            (dummy_indicator_visible_get_type ())
 #define DUMMY_INDICATOR_VISIBLE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), DUMMY_INDICATOR_VISIBLE_TYPE, DummyIndicatorVisible))

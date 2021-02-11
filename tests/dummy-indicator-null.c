@@ -24,8 +24,8 @@ License along with this library. If not, see
 #include <glib.h>
 #include <glib-object.h>
 
-#include "src/indicator.h"
-#include "src/indicator-object.h"
+#include "indicator.h"
+#include "indicator-object.h"
 
 #define DUMMY_INDICATOR_NULL_TYPE            (dummy_indicator_null_get_type ())
 #define DUMMY_INDICATOR_NULL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), DUMMY_INDICATOR_NULL_TYPE, DummyIndicatorNull))

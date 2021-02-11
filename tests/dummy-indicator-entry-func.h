@@ -26,8 +26,8 @@ License along with this library. If not, see
 #include <glib.h>
 #include <glib-object.h>
 
-#include "src/indicator.h"
-#include "src/indicator-object.h"
+#include "indicator.h"
+#include "indicator-object.h"
 
 G_BEGIN_DECLS
 

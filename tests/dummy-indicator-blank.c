@@ -21,7 +21,7 @@ License along with this library. If not, see
 */
 
 
-#include "src/indicator.h"
+#include "indicator.h"
 
 INDICATOR_SET_VERSION
 

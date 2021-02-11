@@ -21,7 +21,7 @@ License along with this library. If not, see
 */
 
 #include <gtk/gtk.h>
-#include "src/indicator-object.h"
+#include "indicator-object.h"
 
 #include "dummy-indicator-entry-func.h"
 
@@ -47,7 +47,7 @@ entry_func_swap (IndicatorObject * io)
 void
 test_loader_entry_func_window (void)
 {
-    IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/.libs/libdummy-indicator-entry-func.so");
+    IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/libdummy-indicator-entry-func.so");
     g_assert(object != NULL);
 
     DummyIndicatorEntryFunc * entryfunc = (DummyIndicatorEntryFunc *)(object);
@@ -72,7 +72,7 @@ test_loader_entry_func_window (void)
 void
 test_loader_entry_funcs (void)
 {
-    IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/.libs/libdummy-indicator-entry-func.so");
+    IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/libdummy-indicator-entry-func.so");
     g_assert(object != NULL);
 
     DummyIndicatorEntryFunc * entryfunc = (DummyIndicatorEntryFunc *)(object);
@@ -115,7 +115,7 @@ entry_move_cb (IndicatorObject * io, IndicatorObjectEntry * entry, gint old, gin
 void
 test_loader_filename_dummy_signaler (void)
 {
-    IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/.libs/libdummy-indicator-signaler.so");
+    IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/libdummy-indicator-signaler.so");
     g_assert(object != NULL);
 
     IndicatorObjectEntry *added_entry, *moved_entry, *removed_entry;
@@ -180,7 +180,7 @@ void
 test_loader_filename_dummy_visible (void)
 {
     const GQuark is_hidden_quark = g_quark_from_static_string ("is-hidden");
-    IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/.libs/libdummy-indicator-visible.so");
+    IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/libdummy-indicator-visible.so");
     g_assert(object != NULL);
 
     // create our local parent widgetry
@@ -245,7 +245,7 @@ test_loader_filename_dummy_visible (void)
 void
 test_loader_filename_dummy_simple_location (void)
 {
-    IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/.libs/libdummy-indicator-simple.so");
+    IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/libdummy-indicator-simple.so");
     g_assert(object != NULL);
 
     GList * entries = indicator_object_get_entries(object);
@@ -266,7 +266,7 @@ test_loader_filename_dummy_simple_location (void)
 void
 test_loader_filename_dummy_simple_accessors (void)
 {
-    IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/.libs/libdummy-indicator-simple.so");
+    IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/libdummy-indicator-simple.so");
     g_assert(object != NULL);
 
     g_assert(indicator_object_get_entries(object) != NULL);
@@ -279,7 +279,7 @@ test_loader_filename_dummy_simple_accessors (void)
 void
 test_loader_filename_dummy_simple (void)
 {
-    IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/.libs/libdummy-indicator-simple.so");
+    IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/libdummy-indicator-simple.so");
     g_assert(object != NULL);
 
     gboolean unreffed = FALSE;
@@ -294,7 +294,7 @@ test_loader_filename_dummy_simple (void)
 void
 test_loader_filename_dummy_blank (void)
 {
-    IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/.libs/libdummy-indicator-blank.so");
+    IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/libdummy-indicator-blank.so");
     g_assert(object == NULL);
     return;
 }
@@ -302,7 +302,7 @@ test_loader_filename_dummy_blank (void)
 void
 test_loader_filename_dummy_null (void)
 {
-    IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/.libs/libdummy-indicator-null.so");
+    IndicatorObject * object = indicator_object_new_from_file(BUILD_DIR "/libdummy-indicator-null.so");
     g_assert(object != NULL);
     g_assert(indicator_object_get_entries(object) == NULL);
     g_object_unref(G_OBJECT(object));

@@ -1,5 +1,5 @@
 
-#include "src/indicator-ng.h"
+#include "indicator-ng.h"
 
 static void
 indicator_ng_test_func (gconstpointer user_data)

@@ -22,7 +22,7 @@ License along with this library. If not, see
 
 
 #include <glib.h>
-#include "src/indicator-service-manager.h"
+#include "indicator-service-manager.h"
 
 static GMainLoop * mainloop = NULL;
 static gboolean passed = FALSE;
