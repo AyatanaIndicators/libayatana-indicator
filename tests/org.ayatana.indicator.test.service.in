@@ -1,3 +1,3 @@
 [D-BUS Service]
 Name=org.ayatana.indicator.test
-Exec=@builddir@/indicator-test-service
+Exec=@CMAKE_CURRENT_BINARY_DIR@/indicator-test-service
