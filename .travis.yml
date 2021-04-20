@@ -29,7 +29,8 @@ script:
   - ./docker-build --name ${DISTRO} --verbose --config .build.yml --build scripts --build autotools
 
 env:
-  - DISTRO="archlinux:latest"
+# temp disable of archlinux builds, see https://gitlab.archlinux.org/archlinux/archlinux-docker/-/issues/56
+#  - DISTRO="archlinux:latest"
   - DISTRO="debian:testing"
   - DISTRO="ubuntu:rolling"
 
