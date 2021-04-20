@@ -303,7 +303,7 @@ static void indicator_ng_menu_size_allocate(__attribute__((unused)) GtkWidget *p
         gint nHeightNat;
         gtk_widget_get_preferred_width(pMenuItem->data, NULL, &nWidthNat);
         gtk_widget_get_preferred_height(pMenuItem->data, NULL, &nHeightNat);
-        nWidth = MAX(nWidth, nWidthNat);
+        nWidth = MAX((gint)nWidth, nWidthNat);
         nHeight += nHeightNat;
         GtkBorder cPadding;
         GtkStyleContext *pContext = gtk_widget_get_style_context(GTK_WIDGET(pMenuItem->data));
@@ -327,12 +327,12 @@ static void indicator_ng_menu_size_allocate(__attribute__((unused)) GtkWidget *p
     GdkMonitor *pMonitor = gdk_display_get_primary_monitor(pDisplay);
     gdk_monitor_get_workarea(pMonitor, &cRectangle);
 
-    if (nHeight <= cRectangle.height)
+    if ((gint)nHeight <= cRectangle.height)
     {
         gdk_window_move_resize(pWindowBin, 0, 0, nWidth, nHeight);
     }
 
-    nHeight = MIN(nHeight, cRectangle.height);
+    nHeight = MIN((gint)nHeight, cRectangle.height);
 
     GdkWindow *pWindow = gtk_widget_get_parent_window(GTK_WIDGET(self->entry.menu));
     gdk_window_resize(pWindow, nWidth, nHeight);
@@ -434,7 +434,7 @@ static void indicator_ng_menu_shown(__attribute__((unused)) GtkWidget *pWidget, 
         {
             guint nSections = g_menu_model_get_n_items(self->lMenuSections[0]);
 
-            for (gint nSection = 0; nSection < nSections; nSection++)
+            for (guint nSection = 0; nSection < nSections; nSection++)
             {
                 self->lMenuSections[++nSectionCount] = g_menu_model_get_item_link(self->lMenuSections[0], nSection, G_MENU_LINK_SECTION);
 
