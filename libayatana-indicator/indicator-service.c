@@ -289,7 +289,6 @@ set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec 
 		if (G_VALUE_HOLDS_STRING(value)) {
 			if (priv->name != NULL) {
 				g_error("Name can not be set twice!");
-				return;
 			}
 			priv->name = g_value_dup_string(value);
 			try_and_get_name(self);
@@ -354,7 +353,6 @@ bus_get_cb (__attribute__((unused)) GObject * object, GAsyncResult * res, gpoint
 		g_warning("Unable to get a connection to the session DBus: %s", error->message);
 		g_error_free(error);
 		exit (0);
-		return;
 	}
 
 	IndicatorServicePrivate * priv = indicator_service_get_instance_private(user_data);
@@ -377,8 +375,6 @@ bus_get_cb (__attribute__((unused)) GObject * object, GAsyncResult * res, gpoint
 	                                                            &error);
 	if (error != NULL) {
 		g_error("Unable to register the object to DBus: %s", error->message);
-		g_error_free(error);
-		return;
 	}
 
 	return;

@@ -286,7 +286,6 @@ set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec 
 	case PROP_NAME:
 		if (priv->name != NULL) {
 			g_error("Name can not be set twice!");
-			return;
 		}
 		priv->name = g_value_dup_string(value);
 		start_service(self);
