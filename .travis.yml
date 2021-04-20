@@ -33,6 +33,7 @@ env:
 #  - DISTRO="archlinux:latest"
   - DISTRO="debian:testing"
   - DISTRO="ubuntu:rolling"
+  - DISTRO="ubuntu:focal"
 
 jobs:
   exclude:
