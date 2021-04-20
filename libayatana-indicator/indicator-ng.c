@@ -199,7 +199,7 @@ indicator_ng_get_position (IndicatorObject *io)
 
 static void
 indicator_ng_entry_scrolled (IndicatorObject          *io,
-                             IndicatorObjectEntry     *entry,
+                             __attribute__((unused)) IndicatorObjectEntry     *entry,
                              gint                      delta,
                              IndicatorScrollDirection  direction)
 {
@@ -220,9 +220,9 @@ indicator_ng_entry_scrolled (IndicatorObject          *io,
 
 void
 indicator_ng_secondary_activate (IndicatorObject      *io,
-                                 IndicatorObjectEntry *entry,
-                                 guint                 timestamp,
-                                 gpointer              user_data)
+                                 __attribute__((unused)) IndicatorObjectEntry *entry,
+                                 __attribute__((unused)) guint                 timestamp,
+                                 __attribute__((unused)) gpointer              user_data)
 {
   IndicatorNg *self = INDICATOR_NG (io);
 
@@ -284,7 +284,7 @@ static gboolean indicator_ng_menu_insert_idos(IndicatorNg *self, GMenuModel *pSe
     return bChanged;
 }
 
-static void indicator_ng_menu_size_allocate(GtkWidget *pWidget, GtkAllocation *pAllocation, gpointer pUserData)
+static void indicator_ng_menu_size_allocate(__attribute__((unused)) GtkWidget *pWidget, __attribute__((unused)) GtkAllocation *pAllocation, gpointer pUserData)
 {
     IndicatorNg *self = pUserData;
     GList *pMenuItem = gtk_container_get_children(GTK_CONTAINER(self->entry.menu));
@@ -340,7 +340,7 @@ static void indicator_ng_menu_size_allocate(GtkWidget *pWidget, GtkAllocation *p
     gtk_menu_reposition(self->entry.menu);
 }
 
-static void indicator_ng_menu_section_changed(GMenuModel *pMenuSection, gint nPosition, gint nRemoved, gint nAdded, gpointer pUserData)
+static void indicator_ng_menu_section_changed(__attribute__((unused)) GMenuModel *pMenuSection, __attribute__((unused)) gint nPosition, __attribute__((unused)) gint nRemoved, __attribute__((unused)) gint nAdded, gpointer pUserData)
 {
     IndicatorNg *self = pUserData;
     GMenuModel *pModel = g_menu_model_get_item_link(self->menu, 0, G_MENU_LINK_SUBMENU);
@@ -421,7 +421,7 @@ static void indicator_ng_menu_section_changed(GMenuModel *pMenuSection, gint nPo
     }
 }
 
-static void indicator_ng_menu_shown(GtkWidget *pWidget, gpointer pUserData)
+static void indicator_ng_menu_shown(__attribute__((unused)) GtkWidget *pWidget, gpointer pUserData)
 {
     IndicatorNg *self = pUserData;
     guint nSectionCount = 0;
@@ -468,7 +468,7 @@ static void indicator_ng_menu_shown(GtkWidget *pWidget, gpointer pUserData)
 }
 
 static void
-indicator_ng_menu_hidden (GtkWidget *widget,
+indicator_ng_menu_hidden (__attribute__((unused)) GtkWidget *widget,
                           gpointer   user_data)
 {
   IndicatorNg *self = user_data;
@@ -627,7 +627,7 @@ indicator_ng_menu_item_is_of_type (GMenuModel  *menu,
 }
 
 static void
-indicator_ng_menu_changed (GMenuModel *menu,
+indicator_ng_menu_changed (__attribute__((unused)) GMenuModel *menu,
                            gint        position,
                            gint        removed,
                            gint        added,
@@ -708,7 +708,7 @@ indicator_ng_menu_changed (GMenuModel *menu,
 
 static void
 indicator_ng_service_appeared (GDBusConnection *connection,
-                               const gchar     *name,
+                               __attribute__((unused)) const gchar     *name,
                                const gchar     *name_owner,
                                gpointer         user_data)
 {
@@ -775,8 +775,8 @@ indicator_ng_service_started (GObject      *source_object,
 }
 
 static void
-indicator_ng_service_vanished (GDBusConnection *connection,
-                               const gchar     *name,
+indicator_ng_service_vanished (__attribute__((unused)) GDBusConnection *connection,
+                               __attribute__((unused)) const gchar     *name,
                                gpointer         user_data)
 {
   IndicatorNg *self = user_data;
@@ -877,7 +877,7 @@ indicator_ng_load_from_keyfile (IndicatorNg  *self,
 
 static gboolean
 indicator_ng_initable_init (GInitable     *initable,
-                            GCancellable  *cancellable,
+                            __attribute__((unused)) GCancellable  *cancellable,
                             GError       **error)
 {
   IndicatorNg *self = INDICATOR_NG (initable);
