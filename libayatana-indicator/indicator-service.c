@@ -102,9 +102,9 @@ static void bus_method_call (GDBusConnection * connection, const gchar * sender,
 static GDBusNodeInfo *            node_info = NULL;
 static GDBusInterfaceInfo *       interface_info = NULL;
 static GDBusInterfaceVTable       interface_table = {
-	method_call:	bus_method_call,
-	get_property:	NULL, /* No properties */
-	set_property:	NULL  /* No properties */
+	.method_call  = bus_method_call,
+	.get_property = NULL, /* No properties */
+	.set_property = NULL  /* No properties */
 };
 
 /* THE define */
