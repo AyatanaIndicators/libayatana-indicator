@@ -99,5 +99,4 @@ after_scripts:
   -         make check
   -         cat tests/test-suite.log
   -     fi
-  -     make distcheck
   - fi
