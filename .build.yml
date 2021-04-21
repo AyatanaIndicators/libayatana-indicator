@@ -15,7 +15,6 @@ requires:
     - glib2
     - ayatana-ido
     - mate-common
-    - xvfb
 
   debian:
     # Useful URL: https://salsa.debian.org/debian-ayatana-team/libayatana-indicator
@@ -29,13 +28,12 @@ requires:
     - intltool
     - mate-common
     - gtk-doc-tools
-    - dbus-test-runner
-    - xvfb
     - libglib2.0-dev
     - libgtk2.0-dev
     - libgtk-3-dev
     - libayatana-ido3-dev
     - systemd
+    - dbus-test-runner
     - xauth
     - xvfb
 
@@ -49,15 +47,11 @@ requires:
     - intltool
     - mate-common
     - gtk-doc-tools
-    - dbus-test-runner
-    - xvfb
     - libglib2.0-dev
     - libgtk2.0-dev
     - libgtk-3-dev
     - libayatana-ido3-dev
     - systemd
-    - xauth
-    - xvfb
 
 variables:
   - 'CHECKERS="
