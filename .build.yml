@@ -97,6 +97,7 @@ after_scripts:
   - if [ ${BUILD_TYPE} == "scripts" ];then
   -     if [ ${DISTRO_NAME} == "debian" ];then
   -         make check
+  -         cat tests/test-suite.log
   -     fi
   -     make distcheck
   - fi
