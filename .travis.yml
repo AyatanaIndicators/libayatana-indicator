@@ -26,7 +26,7 @@ install:
   - ./docker-build --name ${DISTRO} --config .build.yml --install
 
 script:
-  - ./docker-build --name ${DISTRO} --verbose --config .build.yml --build scripts --build autotools
+  - ./docker-build --name ${DISTRO} --verbose --config .build.yml --build scripts
 
 env:
 # temp disable of archlinux builds, see https://gitlab.archlinux.org/archlinux/archlinux-docker/-/issues/56
