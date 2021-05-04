@@ -11,10 +11,13 @@ requires:
     - startup-notification
     - which
     - pacman
+    - mate-common
     - gtk3
     - glib2
-    - ayatana-ido
-    - mate-common
+#   - ayatana-ido
+    - gobject-introspection
+    - gtk-doc
+    - vala
 
   debian:
     # Useful URL: https://salsa.debian.org/debian-ayatana-team/libayatana-indicator
@@ -23,15 +26,22 @@ requires:
     - clang-tools
     - cppcheck
     - git
-    - at-spi2-core
     - libtool
-    - intltool
+    - cmake
+    - cmake-extras
     - mate-common
+    - at-spi2-core
+    - intltool
     - gtk-doc-tools
     - libglib2.0-dev
     - libgtk2.0-dev
     - libgtk-3-dev
-    - libayatana-ido3-dev
+#   - libayatana-ido3-dev
+    - gobject-introspection
+    - libgirepository1.0-dev
+    - libx11-dev
+    - libxi-dev
+    - valac
     - systemd
     - dbus-test-runner
     - xauth
@@ -42,15 +52,22 @@ requires:
     - clang
     - clang-tools
     - git
-    - at-spi2-core
     - libtool
-    - intltool
+    - cmake
+    - cmake-extras
     - mate-common
+    - at-spi2-core
+    - intltool
     - gtk-doc-tools
     - libglib2.0-dev
     - libgtk2.0-dev
     - libgtk-3-dev
-    - libayatana-ido3-dev
+#   - libayatana-ido3-dev
+    - gobject-introspection
+    - libgirepository1.0-dev
+    - libx11-dev
+    - libxi-dev
+    - valac
     - systemd
 
 variables:
@@ -70,6 +87,16 @@ variables:
     -enable-checker alpha.unix.cstring.OutOfBounds
     -enable-checker alpha.core.FixedAddr
     -enable-checker security.insecureAPI.strcpy"'
+
+before_scripts:
+  - cd ${START_DIR}
+  - if [ ! -d ayatana-ido-build ]; then
+  -     git clone --depth 1  https://github.com/AyatanaIndicators/ayatana-ido.git ayatana-ido-build
+  - fi
+  - cd ayatana-ido-build
+  - cmake . -DCMAKE_INSTALL_PREFIX=/usr
+  - make
+  - make install
 
 build_scripts:
   - if [ ${DISTRO_NAME} == "debian" ];then
