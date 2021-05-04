@@ -70,7 +70,7 @@ libayatana_indicator_la_CFLAGS = \
 	$(COVERAGE_CFLAGS) \
 	$(GTK_DISABLE_DEPRECATED) \
 	-DG_LOG_DOMAIN=\"libayatana-indicator\" \
-	-Wall -Werror -Wno-error=deprecated-declarations
+	-Wall -Wno-error=deprecated-declarations
 
 libayatana_indicator_la_LIBADD = \
 	$(LIBINDICATOR_LIBS) \

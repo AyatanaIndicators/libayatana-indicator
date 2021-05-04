@@ -160,9 +160,9 @@ entry_added (IndicatorObject      * io,
 }
 
 static void 
-entry_removed (IndicatorObject      * io,
+entry_removed (__attribute__((unused)) IndicatorObject      * io,
                IndicatorObjectEntry * entry,
-               gpointer               user_data)
+               __attribute__((unused)) gpointer               user_data)
 {
   GtkWidget * w;
 
@@ -173,10 +173,10 @@ entry_removed (IndicatorObject      * io,
 }
 
 static void
-menu_show (IndicatorObject      * io,
+menu_show (__attribute__((unused)) IndicatorObject      * io,
            IndicatorObjectEntry * entry,
-           guint                  timestamp,
-           gpointer               user_data)
+           __attribute__((unused)) guint                  timestamp,
+           __attribute__((unused)) gpointer               user_data)
 {
   const char * text;
 

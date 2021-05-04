@@ -148,7 +148,7 @@ indicator_desktop_shortcuts_finalize (GObject *object)
 	}
 
 	if (priv->nicks != NULL) {
-		gint i;
+		guint i;
 		for (i = 0; i < priv->nicks->len; i++) {
 			gchar * nick = g_array_index(priv->nicks, gchar *, i);
 			g_free(nick);
@@ -307,7 +307,7 @@ parse_keyfile (IndicatorDesktopShortcuts * ids)
 	}
 
 	/* Okay, we've got everything we need.  Let's get it on! */
-	gint i;
+	gsize i;
 	gsize num_nicks = 0;
 	gchar ** nicks = g_key_file_get_string_list(priv->keyfile, G_KEY_FILE_DESKTOP_GROUP, list_name, &num_nicks, NULL);
 
@@ -352,7 +352,7 @@ should_show (GKeyFile * keyfile, const gchar * group, const gchar * identity, gb
 	if (should_have_target && g_key_file_has_key(keyfile, group, OLD_ENVIRON_KEY, NULL)) {
 		/* If we've got this key, we're going to return here and not
 		   process the deprecated keys. */
-		gint j;
+		gsize j;
 		gsize num_env = 0;
 		gchar ** envs = g_key_file_get_string_list(keyfile, group, OLD_ENVIRON_KEY, &num_env, NULL);
 
@@ -375,7 +375,7 @@ should_show (GKeyFile * keyfile, const gchar * group, const gchar * identity, gb
 	/* If there is a list of OnlyShowIn entries we need to check
 	   to see if we're in that list.  If not, we drop this nick */
 	if (g_key_file_has_key(keyfile, group, G_KEY_FILE_DESKTOP_KEY_ONLY_SHOW_IN, NULL)) {
-		gint j;
+		gsize j;
 		gsize num_only = 0;
 		gchar ** onlies = g_key_file_get_string_list(keyfile, group, G_KEY_FILE_DESKTOP_KEY_ONLY_SHOW_IN, &num_only, NULL);
 
@@ -397,7 +397,7 @@ should_show (GKeyFile * keyfile, const gchar * group, const gchar * identity, gb
 	/* If there is a NotShowIn entry we need to make sure that we're
 	   not in that list.  If we are, we need to drop out. */
 	if (g_key_file_has_key(keyfile, group, G_KEY_FILE_DESKTOP_KEY_NOT_SHOW_IN, NULL)) {
-		gint j;
+		gsize j;
 		gsize num_not = 0;
 		gchar ** nots = g_key_file_get_string_list(keyfile, group, G_KEY_FILE_DESKTOP_KEY_NOT_SHOW_IN, &num_not, NULL);
 

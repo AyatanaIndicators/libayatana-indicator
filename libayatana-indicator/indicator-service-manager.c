@@ -286,7 +286,6 @@ set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec 
 	case PROP_NAME:
 		if (priv->name != NULL) {
 			g_error("Name can not be set twice!");
-			return;
 		}
 		priv->name = g_value_dup_string(value);
 		start_service(self);
@@ -450,7 +449,7 @@ start_service (IndicatorServiceManager * service)
    could include starting the service.  Sometime it'll fail and
    we'll try to start that dang service again! */
 static void
-service_proxy_cb (GObject * object, GAsyncResult * res, gpointer user_data)
+service_proxy_cb (__attribute__((unused)) GObject * object, GAsyncResult * res, gpointer user_data)
 {
 	GError * error = NULL;
 
@@ -524,9 +523,12 @@ service_proxy_cb (GObject * object, GAsyncResult * res, gpointer user_data)
    usually means the service died.  We're dropping the proxy
    and recreating it so that it'll restart the service. */
 static void
-service_proxy_name_changed (GDBusConnection * connection, const gchar * sender_name,
-                            const gchar * object_path, const gchar * interface_name,
-                            const gchar * signal_name, GVariant * parameters,
+service_proxy_name_changed (__attribute__((unused)) GDBusConnection * connection,
+                            __attribute__((unused)) const gchar * sender_name,
+                            __attribute__((unused)) const gchar * object_path,
+                            __attribute__((unused)) const gchar * interface_name,
+                            __attribute__((unused)) const gchar * signal_name,
+                            GVariant * parameters,
                             gpointer user_data)
 
 {
@@ -695,7 +697,7 @@ indicator_service_manager_connected (IndicatorServiceManager * sm)
 	NOTE: Not yet implemented.
 */
 void
-indicator_service_manager_set_refresh (IndicatorServiceManager * sm, guint time_in_ms)
+indicator_service_manager_set_refresh (__attribute__((unused)) IndicatorServiceManager * sm, __attribute__((unused)) guint time_in_ms)
 {
 
 	return;

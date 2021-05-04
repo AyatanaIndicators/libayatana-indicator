@@ -136,7 +136,7 @@ refresh_image (GtkImage * image)
 /* Handles the theme changed signal to refresh the icon to make
    sure that it changes appropriately */
 static void
-theme_changed_cb (GtkIconTheme * theme, gpointer user_data)
+theme_changed_cb (__attribute__((unused)) GtkIconTheme * theme, gpointer user_data)
 {
 	GtkImage * image = GTK_IMAGE(user_data);
 	refresh_image(image);
@@ -146,7 +146,7 @@ theme_changed_cb (GtkIconTheme * theme, gpointer user_data)
 /* Removes the signal on the theme that was calling update on this
    image. */
 static void
-image_destroyed_cb (GtkImage * image, gpointer user_data)
+image_destroyed_cb (GtkImage * image, __attribute__((unused)) gpointer user_data)
 {
 	g_signal_handlers_disconnect_by_func(gtk_icon_theme_get_default(), theme_changed_cb, image);
 	return;
@@ -155,7 +155,7 @@ image_destroyed_cb (GtkImage * image, gpointer user_data)
 /* Catch the style changing on the image to make sure
    we've got the latest. */
 static void
-image_style_change_cb (GtkImage * image, GtkStyle * previous_style, gpointer user_data)
+image_style_change_cb (GtkImage * image, __attribute__((unused)) GtkStyle * previous_style, __attribute__((unused)) gpointer user_data)
 {
 	refresh_image(image);
 	return;

@@ -102,9 +102,9 @@ static void bus_method_call (GDBusConnection * connection, const gchar * sender,
 static GDBusNodeInfo *            node_info = NULL;
 static GDBusInterfaceInfo *       interface_info = NULL;
 static GDBusInterfaceVTable       interface_table = {
-	method_call:	bus_method_call,
-	get_property:	NULL, /* No properties */
-	set_property:	NULL  /* No properties */
+	.method_call  = bus_method_call,
+	.get_property = NULL, /* No properties */
+	.set_property = NULL  /* No properties */
 };
 
 /* THE define */
@@ -289,7 +289,6 @@ set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec 
 		if (G_VALUE_HOLDS_STRING(value)) {
 			if (priv->name != NULL) {
 				g_error("Name can not be set twice!");
-				return;
 			}
 			priv->name = g_value_dup_string(value);
 			try_and_get_name(self);
@@ -345,7 +344,7 @@ get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspe
 
 /* Callback for getting our connection to DBus */
 static void
-bus_get_cb (GObject * object, GAsyncResult * res, gpointer user_data)
+bus_get_cb (__attribute__((unused)) GObject * object, GAsyncResult * res, gpointer user_data)
 {
 	GError * error = NULL;
 	GDBusConnection * connection = g_bus_get_finish(res, &error);
@@ -354,7 +353,6 @@ bus_get_cb (GObject * object, GAsyncResult * res, gpointer user_data)
 		g_warning("Unable to get a connection to the session DBus: %s", error->message);
 		g_error_free(error);
 		exit (0);
-		return;
 	}
 
 	IndicatorServicePrivate * priv = indicator_service_get_instance_private(user_data);
@@ -377,8 +375,6 @@ bus_get_cb (GObject * object, GAsyncResult * res, gpointer user_data)
 	                                                            &error);
 	if (error != NULL) {
 		g_error("Unable to register the object to DBus: %s", error->message);
-		g_error_free(error);
-		return;
 	}
 
 	return;
@@ -387,7 +383,7 @@ bus_get_cb (GObject * object, GAsyncResult * res, gpointer user_data)
 /* A method has been called from our dbus inteface.  Figure out what it
    is and dispatch it. */
 static void
-bus_method_call (GDBusConnection * connection, const gchar * sender, const gchar * path, const gchar * interface, const gchar * method, GVariant * params, GDBusMethodInvocation * invocation, gpointer user_data) 
+bus_method_call (__attribute__((unused)) GDBusConnection * connection, const gchar * sender, __attribute__((unused)) const gchar * path, __attribute__((unused)) const gchar * interface, const gchar * method, __attribute__((unused)) GVariant * params, GDBusMethodInvocation * invocation, gpointer user_data)
 {
 	IndicatorService * service = INDICATOR_SERVICE(user_data);
 	GVariant * retval = NULL;
@@ -434,7 +430,7 @@ timeout_no_watchers (gpointer data)
    found and we've got it.  Now start the timer to see if anyone
    cares about us. */
 static void
-try_and_get_name_acquired_cb (GDBusConnection * connection, const gchar * name, gpointer user_data)
+try_and_get_name_acquired_cb (GDBusConnection * connection, __attribute__((unused)) const gchar * name, gpointer user_data)
 {
 	g_return_if_fail(connection != NULL);
 	g_return_if_fail(INDICATOR_IS_SERVICE(user_data));
@@ -516,7 +512,7 @@ try_and_get_name (IndicatorService * service)
 /* When the watcher vanishes we don't really care about it
    anymore. */
 static void
-watcher_vanished_cb (GDBusConnection * connection, const gchar * name, gpointer user_data)
+watcher_vanished_cb (__attribute__((unused)) GDBusConnection * connection, const gchar * name, gpointer user_data)
 {
 	g_return_if_fail(INDICATOR_IS_SERVICE(user_data));
 	IndicatorServicePrivate * priv = indicator_service_get_instance_private(user_data);
