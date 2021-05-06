@@ -103,9 +103,20 @@ build_scripts:
   -     export CFLAGS+=" -Wsign-compare -Wunused-parameter"
   -     cppcheck --enable=warning,style,performance,portability,information,missingInclude .
   - fi
-
-  - NOCONFIGURE=1 ./autogen.sh
-  - scan-build $CHECKERS ./configure --prefix=/usr --enable-gtk-doc --enable-compile-warnings=maximum --enable-tests
+  -
+  - if [ -e ./autogen.sh ]; then
+  -     NOCONFIGURE=1 ./autogen.sh
+  -     scan-build $CHECKERS ./configure --prefix=/usr --enable-gtk-doc --enable-compile-warnings=maximum
+  - elif [ -e ./CMakeLists.txt ]; then
+  -     if [ ${DISTRO_NAME} == "debian" ];then
+  -         scan-build $CHECKERS cmake . -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_VERBOSE_MAKEFILE=ON -DENABLE_TESTS=ON
+  -     else
+  -         scan-build $CHECKERS cmake . -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_VERBOSE_MAKEFILE=ON
+  -     fi
+  - else
+  -     exit 1
+  - fi
+  -
   - if [ $CPU_COUNT -gt 1 ]; then
   -     if [ ${DISTRO_NAME} == "debian" ];then
   -         scan-build $CHECKERS --keep-cc --use-cc=clang --use-c++=clang++ -o html-report make -j $CPU_COUNT
@@ -122,8 +133,13 @@ build_scripts:
 
 after_scripts:
   - if [ ${BUILD_TYPE} == "scripts" ];then
+  -     XVFB_RUN="$(which xvfb-run || true)"
   -     if [ ${DISTRO_NAME} == "debian" ];then
-  -         make check
-  -         cat tests/test-suite.log
+  -         if [ -e ./autogen.sh ]; then
+  -             ${XVFB_RUN} make check
+  -             cat tests/test-suite.log
+  -         elif [ -e ./CMakeLists.txt ]; then
+  -             ${XVFB_RUN} env CTEST_OUTPUT_ON_FAILURE=1 make test
+  -         fi
   -     fi
   - fi
