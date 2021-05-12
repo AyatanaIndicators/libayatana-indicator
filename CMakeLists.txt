@@ -79,11 +79,11 @@ endif()
 
 add_subdirectory(src)
 add_subdirectory(data)
+add_subdirectory(tools)
 
 if(ENABLE_TESTS)
     include(CTest)
     enable_testing()
-    add_subdirectory(tools)
     add_subdirectory(tests)
 
     if (ENABLE_COVERAGE)
