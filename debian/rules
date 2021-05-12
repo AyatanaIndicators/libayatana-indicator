@@ -6,10 +6,10 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 DPKG_EXPORT_BUILDFLAGS = 1
 include /usr/share/dpkg/buildflags.mk
 
-COMMON_CONFIGURE_FLAGS = --disable-silent-rules
+COMMON_CONFIGURE_FLAGS =
 
-CONFIGURE_FLAGS_gtk2 = --with-gtk=2
-CONFIGURE_FLAGS_gtk3 = --with-gtk=3
+CONFIGURE_FLAGS_gtk2 = -DFLAVOUR_GTK2=ON -DFLAVOUR_GTK3=OFF
+CONFIGURE_FLAGS_gtk3 = -DFLAVOUR_GTK3=ON -DFLAVOUR_GTK2=OFF
 
 LDFLAGS += -Wl,-z,defs -Wl,--as-needed
 
@@ -17,10 +17,7 @@ export G_MESSAGES_DEBUG = all
 export DPKG_GENSYMBOLS_CHECK_LEVEL = 4
 
 %:
-	dh $@ --with autoreconf
-
-override_dh_autoreconf:
-	NOCONFIGURE=1 dh_autoreconf ./autogen.sh
+	dh $@
 
 override_dh_auto_configure: $(FLAVORS:%=doconfigure-%)
 
