@@ -17,10 +17,43 @@ endif()
 
 # Check for prerequisites
 
-set(DEPS glib-2.0>=2.58 gtk+-3.0>=3.24 libayatana-ido3-0.4>=0.8.2)
+option(FLAVOUR_GTK2 "Build against GTK+-2.0" OFF)
+option(FLAVOUR_GTK3 "Build against GTK+-3.0" ON)
+
+if (FLAVOUR_GTK2)
+    set (FLAVOUR_GTK3 OFF)
+endif()
+if (FLAVOUR_GTK3)
+    set (FLAVOUR_GTK2 OFF)
+endif()
+
+if (FLAVOUR_GTK3)
+    set(DEPS
+        glib-2.0>=2.37
+        gtk+-3.0>=3.24
+        gmodule-2.0
+        gio-unix-2.0
+        libayatana-ido3-0.4>=0.8.2
+    )
+endif()
+if (FLAVOUR_GTK2)
+    set(DEPS
+        glib-2.0>=2.37
+        gtk+-2.0>=2.18
+        gmodule-2.0
+        gio-unix-2.0
+    )
+endif()
 
 find_package (PkgConfig REQUIRED)
 pkg_check_modules(PROJECT_DEPS REQUIRED ${DEPS})
+
+include(CheckLibraryExists)
+
+CHECK_LIBRARY_EXISTS(m sin "" HAVE_LIB_M)
+if (HAVE_LIB_M)
+    set(EXTRA_LIBS ${EXTRA_LIBS} m)
+endif (HAVE_LIB_M)
 
 # Set global variables
 

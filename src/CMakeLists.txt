@@ -21,21 +21,32 @@ set(HEADERS
     indicator-object.h
     indicator-service.h
     indicator-service-manager.h
-    indicator-ng.h
 )
+
+if (FLAVOUR_GTK3)
+    set(HEADERS
+        ${HEADERS}
+        indicator-ng.h
+    )
+endif()
 
 set(SOURCES
     gen-indicator-service.xml.c
     indicator-desktop-shortcuts.c
     indicator-image-helper.c
-    indicator-ng.c
     indicator-object.c
     indicator-object-enum-types.c
     indicator-object-marshal.c
     indicator-service.c
     indicator-service-manager.c
-
 )
+
+if (FLAVOUR_GTK3)
+    set(SOURCES
+        ${SOURCES}
+        indicator-ng.c
+    )
+endif()
 
 # indicator-object-enum-types.h
 
@@ -111,17 +122,26 @@ string(PREPEND GEN_INDICATOR_SERVICE_XML_C "const char * _indicator_service = \n
 string(APPEND GEN_INDICATOR_SERVICE_XML_C "\;")
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/gen-indicator-service.xml.c" ${GEN_INDICATOR_SERVICE_XML_C})
 
-# libayatana-indicator3.so
+
+if (FLAVOUR_GTK3)
+    # libayatana-indicator3.so
+    set (ayatana_indicator_gtkver "ayatana-indicator3")
+else()
+    # libayatana-indicator.so
+    set (ayatana_indicator_gtkver "ayatana-indicator")
+endif()
+
+# libayatana-indicator{,3}.so
 
 set_source_files_properties(${SOURCES} PROPERTIES COMPILE_FLAGS ${COMPILE_FLAGS})
-add_library("ayatana-indicator3" SHARED ${SOURCES})
-set_target_properties("ayatana-indicator3" PROPERTIES VERSION 7.0.0 SOVERSION 7)
-target_compile_definitions("ayatana-indicator3" PUBLIC DG_LOG_DOMAIN="libayatana-indicator")
-target_include_directories("ayatana-indicator3" PUBLIC ${PROJECT_DEPS_INCLUDE_DIRS})
-target_include_directories("ayatana-indicator3" PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories("ayatana-indicator3" PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
-target_link_libraries("ayatana-indicator3" ${PROJECT_DEPS_LIBRARIES})
-add_dependencies("ayatana-indicator3" "src-generated")
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/libayatana-indicator3.so" DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/libayatana-indicator3.so.7" DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/libayatana-indicator3.so.7.0.0" DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
+add_library("${ayatana_indicator_gtkver}" SHARED ${SOURCES})
+set_target_properties("${ayatana_indicator_gtkver}" PROPERTIES VERSION ${ABI_VERSION}.0.0 SOVERSION ${ABI_VERSION})
+target_compile_definitions("${ayatana_indicator_gtkver}" PUBLIC DG_LOG_DOMAIN="libayatana-indicator")
+target_include_directories("${ayatana_indicator_gtkver}" PUBLIC ${PROJECT_DEPS_INCLUDE_DIRS})
+target_include_directories("${ayatana_indicator_gtkver}" PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories("${ayatana_indicator_gtkver}" PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+target_link_libraries("${ayatana_indicator_gtkver}" ${PROJECT_DEPS_LIBRARIES} ${EXTRA_LIBS})
+add_dependencies("${ayatana_indicator_gtkver}" "src-generated")
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/lib${ayatana_indicator_gtkver}.so" DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/lib${ayatana_indicator_gtkver}.so.${ABI_VERSION}" DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/lib${ayatana_indicator_gtkver}.so.${ABI_VERSION}.0.0" DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
