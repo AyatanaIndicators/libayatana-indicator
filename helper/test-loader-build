@@ -1,3 +1,0 @@
-#!/bin/bash
-
-gcc `pkg-config --cflags --libs gtk+-2.0` -I../libindicator/ test-loader.c ../libindicator/indicator-image-helper.c -o test-loader

@@ -23,7 +23,7 @@ ayatana_indicator_loader_CFLAGS = \
 ayatana_indicator_loader_LDADD = \
 	$(LIBINDICATOR_LIBS) \
 	$(LIBINDICATOR_IDO_LIBS) \
-	-L$(top_builddir)/libayatana-indicator/.libs \
+	-L$(top_builddir)/src/.libs \
 	$(INDICATOR_LIB)
 
 # We duplicate these here because Automake won't let us use $(VER) on the left hand side.

@@ -3,11 +3,13 @@
  * and during development of them.
  *
  * Copyright 2009 Canonical Ltd.
+ * Copyright 2021 AyatanaIndicators
  *
  * Authors:
  *   Ted Gould <ted@canonical.com>
  *   Lars Uebernickel <lars.uebernickel@canonical.com>
  *   Charles Kerr <charles.kerr@canonical.com>
+ *   Robert Tari <robert@tari.in>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,7 +19,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License version 3.0 for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this library. If not, see
  * <http://www.gnu.org/licenses/>.
@@ -25,9 +27,9 @@
 
 #include <gtk/gtk.h>
 #include <libayatana-ido/libayatana-ido.h>
-#include <libayatana-indicator/indicator-object.h>
+#include "indicator-object.h"
 #if GTK_CHECK_VERSION (3,0,0)
- #include <libayatana-indicator/indicator-ng.h>
+ #include "indicator-ng.h"
 #endif
 
 static GHashTable * entry_to_menu_item = NULL;
@@ -159,7 +161,7 @@ entry_added (IndicatorObject      * io,
   gtk_widget_show (menu_item);
 }
 
-static void 
+static void
 entry_removed (__attribute__((unused)) IndicatorObject      * io,
                IndicatorObjectEntry * entry,
                __attribute__((unused)) gpointer               user_data)
