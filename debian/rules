@@ -29,10 +29,9 @@ override_dh_auto_build: $(FLAVORS:%=dobuild-%)
 dobuild-%:
 	dh_auto_build --builddirectory=builddir/$*
 
-override_dh_auto_test: $(FLAVORS:%=dotest-%)
-
-dotest-%:
-	dh_auto_test --no-parallel --builddirectory=builddir/$*
+override_dh_auto_test:
+	xvfb-run -a dh_auto_test --no-parallel --builddirectory=builddir/gtk2
+	xvfb-run -a dh_auto_test --no-parallel --builddirectory=builddir/gtk3
 
 override_dh_auto_install: $(FLAVORS:%=doinstall-%)
 
