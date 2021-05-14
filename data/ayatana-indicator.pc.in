@@ -1,0 +1,15 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=${exec_prefix}/@CMAKE_INSTALL_LIBDIR@
+bindir=${exec_prefix}/@CMAKE_INSTALL_BINDIR@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+indicatordir=${exec_prefix}/lib/ayatana-indicators/@ABI_VERSION@/
+iconsdir=${prefix}/@CMAKE_INSTALL_DATADIR@/@PROJECT_NAME@/icons/
+
+Cflags: -I${includedir}/libayatana-indicator-0.@API_VERSION@
+Requires: gtk+-2.0
+Libs: -layatana-indicator
+
+Name: libayatana-indicator
+Description: libayatana-indicator.
+Version: @PROJECT_VERSION@

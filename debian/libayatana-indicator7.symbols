@@ -2,6 +2,11 @@ libayatana-indicator.so.7 libayatana-indicator7 #MINVER#
 *Build-Depends-Package: libayatana-indicator-dev
  ICON_SIZE@Base 0.6.0
  INDICATOR_NAMES_DATA@Base 0.6.0
+ _indicator_object_marshal_VOID__POINTER_BOOLEAN@Base 0.8.5
+ _indicator_object_marshal_VOID__POINTER_UINT@Base 0.8.5
+ _indicator_object_marshal_VOID__POINTER_UINT_ENUM@Base 0.8.5
+ _indicator_object_marshal_VOID__POINTER_UINT_UINT@Base 0.8.5
+ _indicator_service@Base 0.8.5
  indicator_desktop_shortcuts_get_nicks@Base 0.6.0
  indicator_desktop_shortcuts_get_type@Base 0.6.0
  indicator_desktop_shortcuts_new@Base 0.6.0
