@@ -23,7 +23,7 @@ set(HEADERS
     indicator-service-manager.h
 )
 
-if (FLAVOUR_GTK3)
+if (FLAVOUR_GTK3 AND ENABLE_IDO)
     set(HEADERS
         ${HEADERS}
         indicator-ng.h
@@ -41,7 +41,7 @@ set(SOURCES
     indicator-service-manager.c
 )
 
-if (FLAVOUR_GTK3)
+if (FLAVOUR_GTK3 AND ENABLE_IDO)
     set(SOURCES
         ${SOURCES}
         indicator-ng.c

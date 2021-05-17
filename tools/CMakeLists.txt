@@ -1,4 +1,4 @@
-if (FLAVOUR_GTK3)
+if (FLAVOUR_GTK3 AND ENABLE_IDO)
     # ayatana-indicator-loader3
 
     set_source_files_properties(indicator-loader.c PROPERTIES COMPILE_FLAGS ${COMPILE_FLAGS})

@@ -197,7 +197,7 @@ add_custom_command(
 )
 add_test("test-desktop-shortcuts-tester" "test-desktop-shortcuts-tester")
 
-if (FLAVOUR_GTK3)
+if (FLAVOUR_GTK3 AND ENABLE_IDO)
   # test-indicator-ng
   add_test_executable_by_name(test-indicator-ng)
 
@@ -234,7 +234,7 @@ if (FLAVOUR_GTK3)
       chmod +x "${CMAKE_CURRENT_BINARY_DIR}/test-indicator-ng-tester"
   )
   add_test("test-indicator-ng-tester" "test-indicator-ng-tester")
-endif(FLAVOUR_GTK3)
+endif(FLAVOUR_GTK3 AND ENABLE_IDO)
 
 # test-loader
 add_test_executable_by_name(test-loader)
@@ -273,7 +273,7 @@ set (ALL_TESTERS
      "loader-tester"
 )
 
-if (FLAVOUR_GTK3)
+if (FLAVOUR_GTK3 AND ENABLE_IDO)
   set (ALL_TESTERS
        ${ALL_TESTERS}
        "test-indicator-ng-tester"

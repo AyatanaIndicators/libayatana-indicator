@@ -7,7 +7,7 @@ indicatordir=${exec_prefix}/lib/ayatana-indicators3/@ABI_VERSION@/
 iconsdir=${prefix}/@CMAKE_INSTALL_DATADIR@/@PROJECT_NAME@/icons/
 
 Cflags: -I${includedir}/libayatana-indicator3-0.@API_VERSION@
-Requires: gtk+-3.0 libayatana-ido3-0.4
+Requires: gtk+-3.0
 Libs: -layatana-indicator3
 
 Name: libayatana-indicator3
