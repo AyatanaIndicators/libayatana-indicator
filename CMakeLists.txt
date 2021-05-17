@@ -122,4 +122,7 @@ endif()
 # Display config info
 
 message(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
+message(STATUS "GTK+-3.0 build: ${FLAVOUR_GTK3}")
+message(STATUS "GTK+-2.0 build: ${FLAVOUR_GTK2}")
+message(STATUS "IDO enabled: ${ENABLE_IDO}")
 message(STATUS "Unit tests: ${ENABLE_TESTS}")
