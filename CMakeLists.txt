@@ -20,28 +20,27 @@ endif()
 option(FLAVOUR_GTK2 "Build against GTK+-2.0" OFF)
 option(FLAVOUR_GTK3 "Build against GTK+-3.0" ON)
 
+option(ENABLE_IDO "Enable IDO specific code" ON)
+
 if (FLAVOUR_GTK2)
     set (FLAVOUR_GTK3 OFF)
+    set (ENABLE_IDO OFF)
 endif()
 if (FLAVOUR_GTK3)
     set (FLAVOUR_GTK2 OFF)
 endif()
 
-if (FLAVOUR_GTK3)
+set(DEPS
+    glib-2.0>=2.37
+    gtk+-3.0>=3.24
+    gmodule-2.0
+    gio-unix-2.0
+)
+
+if (FLAVOUR_GTK3 AND ENABLE_IDO)
     set(DEPS
-        glib-2.0>=2.37
-        gtk+-3.0>=3.24
-        gmodule-2.0
-        gio-unix-2.0
+        ${DEPS}
         libayatana-ido3-0.4>=0.8.2
-    )
-endif()
-if (FLAVOUR_GTK2)
-    set(DEPS
-        glib-2.0>=2.37
-        gtk+-2.0>=2.18
-        gmodule-2.0
-        gio-unix-2.0
     )
 endif()
 
@@ -97,7 +96,7 @@ set (COVERAGE_TEST_EXECUTABLES
      "test-loader"
 )
 
-if(FLAVOUR_GTK3)
+if(FLAVOUR_GTK3 AND ENABLE_IDO)
   set (COVERAGE_TEST_EXECUTABLES
        ${COVERAGE_TEST_EXECUTABLES}
        "test-indicator-ng"
@@ -123,4 +122,7 @@ endif()
 # Display config info
 
 message(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
+message(STATUS "GTK+-3.0 build: ${FLAVOUR_GTK3}")
+message(STATUS "GTK+-2.0 build: ${FLAVOUR_GTK2}")
+message(STATUS "IDO enabled: ${ENABLE_IDO}")
 message(STATUS "Unit tests: ${ENABLE_TESTS}")
