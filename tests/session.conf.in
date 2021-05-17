@@ -9,7 +9,7 @@
 
   <listen>unix:tmpdir=/tmp</listen>
 
-  <servicedir>@servicedir@</servicedir>
+  <servicedir>@CMAKE_CURRENT_BINARY_DIR@</servicedir>
 
   <policy context="default">
     <!-- Allow everything to be sent -->
@@ -28,9 +28,9 @@
   <limit name="max_incoming_bytes">1000000000</limit>
   <limit name="max_outgoing_bytes">1000000000</limit>
   <limit name="max_message_size">1000000000</limit>
-  <limit name="service_start_timeout">120000</limit>  
+  <limit name="service_start_timeout">120000</limit>
   <limit name="auth_timeout">240000</limit>
-  <limit name="max_completed_connections">100000</limit>  
+  <limit name="max_completed_connections">100000</limit>
   <limit name="max_incomplete_connections">10000</limit>
   <limit name="max_connections_per_user">100000</limit>
   <limit name="max_pending_service_starts">10000</limit>

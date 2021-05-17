@@ -81,6 +81,29 @@ add_subdirectory(src)
 add_subdirectory(data)
 add_subdirectory(tools)
 
+set (COVERAGE_TEST_EXECUTABLES
+     "service-manager-connect"
+     "service-manager-connect-service"
+     "service-manager-no-connect"
+     "service-manager-nostart-connect"
+     "service-shutdown-timeout"
+     "service-version-bad-service"
+     "service-version-good-service"
+     "service-version-manager"
+     "service-version-multiwatch-manager"
+     "service-version-multiwatch-manager-impolite"
+     "service-version-multiwatch-service"
+     "test-desktop-shortcuts"
+     "test-loader"
+)
+
+if(FLAVOUR_GTK3)
+  set (COVERAGE_TEST_EXECUTABLES
+       ${COVERAGE_TEST_EXECUTABLES}
+       "test-indicator-ng"
+  )
+endif()
+
 if(ENABLE_TESTS)
     include(CTest)
     enable_testing()
@@ -90,7 +113,7 @@ if(ENABLE_TESTS)
         find_package(CoverageReport)
         ENABLE_COVERAGE_REPORT(
             TARGETS "ayatana-indicator3"
-            TESTS "test-desktop-shortcuts" "test-indicator-ng" "test-loader"
+            TESTS ${COVERAGE_TEST_EXECUTABLES}
             FILTER /usr/include ${CMAKE_BINARY_DIR}/*
         )
     endif()
