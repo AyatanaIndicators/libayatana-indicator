@@ -39,7 +39,7 @@ service files in `/usr/share/ayatana/indicators`. These files need to have
 the same name as the well-known D-Bus name that the corresponding service
 owns.
 
-An indicator file is a normal key file (like desktop files). It must have
+An indicator file is a normal key file (like a `.desktop` file). It must have
 an `[Indicator Service]` section, that must contain the service's name (`Name`)
 and the object path at which its action group is found (`ObjectPath`). For
 example:
