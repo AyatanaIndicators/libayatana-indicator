@@ -67,6 +67,7 @@ Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
          libgtk-3-dev (>= 2.91.3),
+         libayatana-ido3-dev (>= 0.8.0),
          libayatana-indicator3-7 (= ${binary:Version}),
 Description: panel indicator applet - library development files (GTK-3+)
  The Ayatana Indicators library contains information to build indicators
