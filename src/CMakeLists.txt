@@ -6,13 +6,13 @@
 # indicator-service.h
 # indicator.h
 
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/indicator-desktop-shortcuts.h" DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/libayatana-indicator3-0.4/libayatana-indicator")
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/indicator-image-helper.h" DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/libayatana-indicator3-0.4/libayatana-indicator")
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/indicator-ng.h" DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/libayatana-indicator3-0.4/libayatana-indicator")
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/indicator-object.h" DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/libayatana-indicator3-0.4/libayatana-indicator")
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/indicator-service-manager.h" DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/libayatana-indicator3-0.4/libayatana-indicator")
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/indicator-service.h" DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/libayatana-indicator3-0.4/libayatana-indicator")
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/indicator.h" DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/libayatana-indicator3-0.4/libayatana-indicator")
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/indicator-desktop-shortcuts.h" DESTINATION "${CMAKE_INSTALL_FULL_INCLUDEDIR}/libayatana-indicator3-0.4/libayatana-indicator")
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/indicator-image-helper.h" DESTINATION "${CMAKE_INSTALL_FULL_INCLUDEDIR}/libayatana-indicator3-0.4/libayatana-indicator")
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/indicator-ng.h" DESTINATION "${CMAKE_INSTALL_FULL_INCLUDEDIR}/libayatana-indicator3-0.4/libayatana-indicator")
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/indicator-object.h" DESTINATION "${CMAKE_INSTALL_FULL_INCLUDEDIR}/libayatana-indicator3-0.4/libayatana-indicator")
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/indicator-service-manager.h" DESTINATION "${CMAKE_INSTALL_FULL_INCLUDEDIR}/libayatana-indicator3-0.4/libayatana-indicator")
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/indicator-service.h" DESTINATION "${CMAKE_INSTALL_FULL_INCLUDEDIR}/libayatana-indicator3-0.4/libayatana-indicator")
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/indicator.h" DESTINATION "${CMAKE_INSTALL_FULL_INCLUDEDIR}/libayatana-indicator3-0.4/libayatana-indicator")
 
 set(HEADERS
     indicator.h
@@ -142,6 +142,6 @@ target_include_directories("${ayatana_indicator_gtkver}" PUBLIC ${CMAKE_CURRENT_
 target_include_directories("${ayatana_indicator_gtkver}" PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries("${ayatana_indicator_gtkver}" ${PROJECT_DEPS_LIBRARIES} ${EXTRA_LIBS})
 add_dependencies("${ayatana_indicator_gtkver}" "src-generated")
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/lib${ayatana_indicator_gtkver}.so" DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/lib${ayatana_indicator_gtkver}.so.${ABI_VERSION}" DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/lib${ayatana_indicator_gtkver}.so.${ABI_VERSION}.0.0" DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/lib${ayatana_indicator_gtkver}.so" DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}")
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/lib${ayatana_indicator_gtkver}.so.${ABI_VERSION}" DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}")
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/lib${ayatana_indicator_gtkver}.so.${ABI_VERSION}.0.0" DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}")
