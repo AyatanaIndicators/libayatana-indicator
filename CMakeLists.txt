@@ -19,7 +19,7 @@ endif()
 
 option(FLAVOUR_GTK2 "Build against GTK+-2.0" OFF)
 option(FLAVOUR_GTK3 "Build against GTK+-3.0" ON)
-
+option(ENABLE_LOADER "Build Ayatana Indicator Loader" ON)
 option(ENABLE_IDO "Enable IDO specific code" ON)
 
 if (FLAVOUR_GTK2)
@@ -78,7 +78,12 @@ endif()
 
 add_subdirectory(src)
 add_subdirectory(data)
-add_subdirectory(tools)
+
+if (ENABLE_LOADER)
+
+    add_subdirectory(tools)
+
+endif()
 
 set (COVERAGE_TEST_EXECUTABLES
      "service-manager-connect"
@@ -124,5 +129,6 @@ endif()
 message(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
 message(STATUS "GTK+-3.0 build: ${FLAVOUR_GTK3}")
 message(STATUS "GTK+-2.0 build: ${FLAVOUR_GTK2}")
+message(STATUS "Loader enabled ${ENABLE_LOADER}")
 message(STATUS "IDO enabled: ${ENABLE_IDO}")
 message(STATUS "Unit tests: ${ENABLE_TESTS}")
