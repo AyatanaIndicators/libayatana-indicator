@@ -20,7 +20,7 @@ if (FLAVOUR_GTK3)
 
     if (${SYSTEMD_FOUND})
         if (${SYSTEMD_VERSION} VERSION_LESS 247)
-            set(SYSTEMD_USER_UNIT_DIR "${CMAKE_INSTALL_FULL_LIBDIR}/systemd/user")
+            set(SYSTEMD_USER_UNIT_DIR "${CMAKE_INSTALL_PREFIX}/lib/systemd/user")
         else()
             pkg_get_variable(SYSTEMD_USER_UNIT_DIR systemd systemd_user_unit_dir)
         endif()
