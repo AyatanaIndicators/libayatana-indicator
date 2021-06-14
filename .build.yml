@@ -42,7 +42,6 @@ requires:
     - libx11-dev
     - libxi-dev
     - valac
-    - systemd
     - dbus-test-runner
     - xauth
     - xvfb
@@ -68,7 +67,6 @@ requires:
     - libx11-dev
     - libxi-dev
     - valac
-    - systemd
 
 variables:
   - 'CHECKERS="
