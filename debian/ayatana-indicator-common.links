@@ -1,3 +1,0 @@
-# Because dh-systemd does not yet support user units, we manually make the Alias link
-# FIXME: drop this once we bump DH compat level to 12 or higher
-/usr/lib/systemd/user/ayatana-indicators.target /usr/lib/systemd/user/ayatana-indicators-pre.target
