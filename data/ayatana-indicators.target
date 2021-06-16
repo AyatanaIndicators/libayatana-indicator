@@ -1,7 +1,0 @@
-[Unit]
-Description=Target representing the lifecycle of the Ayatana Indicators. Each indicator should be bound to it in its individual service file.
-PartOf=graphical-session.target
-
-[Install]
-# Old name for this target, kept for compatibility
-Alias=ayatana-indicators-pre.target
