@@ -47,7 +47,6 @@ override_dh_install:
 	dh_install -plibayatana-indicator3-7 --sourcedir=debian/tmp/gtk3
 	dh_install -plibayatana-indicator3-dev --sourcedir=debian/tmp/gtk3
 	dh_install -plibayatana-indicator3-tools --sourcedir=debian/tmp/gtk3
-	dh_install -payatana-indicator-common --sourcedir=debian/tmp/gtk3
 
 override_dh_missing:
 	dh_missing -plibayatana-indicator7 --sourcedir=debian/tmp/gtk2
@@ -55,7 +54,6 @@ override_dh_missing:
 	dh_missing -plibayatana-indicator3-7 --sourcedir=debian/tmp/gtk3
 	dh_missing -plibayatana-indicator3-dev --sourcedir=debian/tmp/gtk3
 	dh_missing -plibayatana-indicator3-tools --sourcedir=debian/tmp/gtk3
-	dh_missing -payatana-indicator-common --sourcedir=debian/tmp/gtk3
 
 override_dh_makeshlibs:
 	dh_makeshlibs -plibayatana-indicator7 -V 'libayatana-indicator7 (>= 0.6.0)'
