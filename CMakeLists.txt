@@ -5,14 +5,22 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     SET(CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "..." FORCE)
 endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 
+# Options
+
 option(ENABLE_TESTS "Enable all tests and checks" OFF)
 option(ENABLE_COVERAGE "Enable coverage reports (includes enabling all tests and checks)" OFF)
+option(ENABLE_WERROR "Treat all build warnings as errors" OFF)
 
 if(ENABLE_COVERAGE)
     set(ENABLE_TESTS ON)
     set(CMAKE_BUILD_TYPE "Coverage")
 else()
     set(CMAKE_BUILD_TYPE "Release")
+endif()
+
+if(ENABLE_WERROR)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
 endif()
 
 # Check for prerequisites
@@ -132,3 +140,4 @@ message(STATUS "GTK+-2.0 build: ${FLAVOUR_GTK2}")
 message(STATUS "Loader enabled ${ENABLE_LOADER}")
 message(STATUS "IDO enabled: ${ENABLE_IDO}")
 message(STATUS "Unit tests: ${ENABLE_TESTS}")
+message(STATUS "Build with -Werror: ${ENABLE_WERROR}")
