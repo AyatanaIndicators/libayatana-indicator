@@ -1,4 +1,4 @@
-# libayatana-indicator - Ayatana Indicators Shared Library  [![Build Status](https://travis-ci.com/AyatanaIndicators/libayatana-indicator.svg)](https://travis-ci.com/AyatanaIndicators/libayatana-indicator)
+# libayatana-indicator - Ayatana Indicators Shared Library  [![Build Status](https://api.travis-ci.com/AyatanaIndicators/libayatana-indicator.svg)](https://travis-ci.com/github/AyatanaIndicators/libayatana-indicator)
 
 ## About Ayatana Indicators
 
