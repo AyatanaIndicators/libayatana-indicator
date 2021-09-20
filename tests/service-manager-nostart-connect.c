@@ -2,7 +2,7 @@
 Test for libayatana-indicator
 
 Copyright 2009 Canonical Ltd.
-Copyright 2021 AyatanaIndicators
+Copyright 2021 Robert Tari
 
 Authors:
     Ted Gould <ted@canonical.com>
