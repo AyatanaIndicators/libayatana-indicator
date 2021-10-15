@@ -79,13 +79,15 @@ refresh_image (GtkImage * image)
 		}
 		g_object_unref (pixbuf);
 	} else if (icon_filename != NULL) {
-		gtk_image_set_from_file(image, icon_filename);
-
-		gint height;
-		gdk_pixbuf_get_file_info(icon_filename, NULL, &height);
-
-		if (height > ICON_SIZE) {
-			gtk_image_set_pixel_size(image, ICON_SIZE);
+		GError* error = NULL;
+		GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file_at_scale(icon_filename, ICON_SIZE, ICON_SIZE, TRUE, &error);
+		if (pixbuf != NULL) {
+			/* Put the pixbuf on the image */
+			gtk_image_set_from_pixbuf(image, pixbuf);
+			g_object_unref(G_OBJECT(pixbuf));
+		} else {
+			g_error_free(error);
+			gtk_image_set_from_icon_name(image, "image-missing", ICON_SIZE);
 		}
 	} else if (G_IS_LOADABLE_ICON(icon_names)) {
 		/* Build a pixbuf if needed */
