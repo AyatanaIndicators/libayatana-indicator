@@ -87,6 +87,9 @@ variables:
     -enable-checker security.insecureAPI.strcpy"'
 
 before_scripts:
+  - apt-get update
+  - apt-get -y install git
+  - apt-get -y install build-essential libssl-dev libnghttp2-dev nghttp2
   - cd ${START_DIR}
   - if [ ! -d ayatana-ido-build ]; then
   -     git clone --depth 1  https://github.com/AyatanaIndicators/ayatana-ido.git ayatana-ido-build
