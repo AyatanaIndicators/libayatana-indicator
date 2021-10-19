@@ -1,3 +1,3 @@
-usr/include
+usr/include/libayatana-indicator-0.4/
 usr/lib/*/pkgconfig/ayatana-indicator-0.4.pc
 usr/lib/*/libayatana-indicator.so
