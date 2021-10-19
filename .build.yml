@@ -88,8 +88,10 @@ variables:
 
 before_scripts:
   - apt-get update
-  - apt-get -y install git
-  - apt-get -y install build-essential libssl-dev libnghttp2-dev nghttp2
+  - apt-get install gnutls-bin
+  - gnutls-cli --priority "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.2" github.com || true
+  - gnutls-cli --priority "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.1" github.com || true
+  - gnutls-cli --priority "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.0" github.com || true
   - cd ${START_DIR}
   - if [ ! -d ayatana-ido-build ]; then
   -     git clone --depth 1  https://github.com/AyatanaIndicators/ayatana-ido.git ayatana-ido-build

@@ -17,11 +17,6 @@ addons:
       - python3-setuptools
 
 before_install:
-  - sudo add-apt-repository -y ppa:git-core/ppa
-  - sudo apt-get update
-  - sudo apt-get -y install git
-  - sudo apt-get -y install build-essential libssl-dev libnghttp2-dev nghttp2
-
   # let's use the MATE project's docker build script...
   - curl -Ls -o docker-build https://github.com/AyatanaIndicators/ayatana-dev-scripts/raw/main/travis/docker-build
   - chmod +x docker-build
