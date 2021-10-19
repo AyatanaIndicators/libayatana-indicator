@@ -6,13 +6,21 @@
 # indicator-service.h
 # indicator.h
 
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/indicator-desktop-shortcuts.h" DESTINATION "${CMAKE_INSTALL_FULL_INCLUDEDIR}/libayatana-indicator3-0.4/libayatana-indicator")
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/indicator-image-helper.h" DESTINATION "${CMAKE_INSTALL_FULL_INCLUDEDIR}/libayatana-indicator3-0.4/libayatana-indicator")
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/indicator-ng.h" DESTINATION "${CMAKE_INSTALL_FULL_INCLUDEDIR}/libayatana-indicator3-0.4/libayatana-indicator")
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/indicator-object.h" DESTINATION "${CMAKE_INSTALL_FULL_INCLUDEDIR}/libayatana-indicator3-0.4/libayatana-indicator")
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/indicator-service-manager.h" DESTINATION "${CMAKE_INSTALL_FULL_INCLUDEDIR}/libayatana-indicator3-0.4/libayatana-indicator")
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/indicator-service.h" DESTINATION "${CMAKE_INSTALL_FULL_INCLUDEDIR}/libayatana-indicator3-0.4/libayatana-indicator")
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/indicator.h" DESTINATION "${CMAKE_INSTALL_FULL_INCLUDEDIR}/libayatana-indicator3-0.4/libayatana-indicator")
+if (FLAVOUR_GTK3)
+    # libayatana-indicator3.so
+    set (ayatana_indicator_gtkver "ayatana-indicator3")
+else()
+    # libayatana-indicator.so
+    set (ayatana_indicator_gtkver "ayatana-indicator")
+endif()
+
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/indicator-desktop-shortcuts.h" DESTINATION "${CMAKE_INSTALL_FULL_INCLUDEDIR}/lib${ayatana_indicator_gtkver}-0.${API_VERSION}/libayatana-indicator")
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/indicator-image-helper.h" DESTINATION "${CMAKE_INSTALL_FULL_INCLUDEDIR}/lib${ayatana_indicator_gtkver}-0.${API_VERSION}/libayatana-indicator")
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/indicator-ng.h" DESTINATION "${CMAKE_INSTALL_FULL_INCLUDEDIR}/lib${ayatana_indicator_gtkver}-0.${API_VERSION}/libayatana-indicator")
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/indicator-object.h" DESTINATION "${CMAKE_INSTALL_FULL_INCLUDEDIR}/lib${ayatana_indicator_gtkver}-0.${API_VERSION}/libayatana-indicator")
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/indicator-service-manager.h" DESTINATION "${CMAKE_INSTALL_FULL_INCLUDEDIR}/lib${ayatana_indicator_gtkver}-0.${API_VERSION}/libayatana-indicator")
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/indicator-service.h" DESTINATION "${CMAKE_INSTALL_FULL_INCLUDEDIR}/lib${ayatana_indicator_gtkver}-0.${API_VERSION}/libayatana-indicator")
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/indicator.h" DESTINATION "${CMAKE_INSTALL_FULL_INCLUDEDIR}/lib${ayatana_indicator_gtkver}-0.${API_VERSION}/libayatana-indicator")
 
 set(HEADERS
     indicator.h
@@ -122,14 +130,6 @@ string(PREPEND GEN_INDICATOR_SERVICE_XML_C "const char * _indicator_service = \n
 string(APPEND GEN_INDICATOR_SERVICE_XML_C "\;")
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/gen-indicator-service.xml.c" ${GEN_INDICATOR_SERVICE_XML_C})
 
-
-if (FLAVOUR_GTK3)
-    # libayatana-indicator3.so
-    set (ayatana_indicator_gtkver "ayatana-indicator3")
-else()
-    # libayatana-indicator.so
-    set (ayatana_indicator_gtkver "ayatana-indicator")
-endif()
 
 # libayatana-indicator{,3}.so
 
