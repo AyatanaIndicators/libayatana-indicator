@@ -95,6 +95,7 @@ before_scripts:
   - cmake . -DCMAKE_INSTALL_PREFIX=/usr
   - make
   - make install
+  - GIT_CURL_VERBOSE=1 git clone --depth 1  https://github.com/AyatanaIndicators/ayatana-ido.git ayatana-ido-test
 
 build_scripts:
   - if [ ${DISTRO_NAME} == "debian" ];then
