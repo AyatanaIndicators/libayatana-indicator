@@ -87,14 +87,9 @@ variables:
     -enable-checker security.insecureAPI.strcpy"'
 
 before_scripts:
-  - apt-get update
-  - apt-get install gnutls-bin
-  - gnutls-cli --priority "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.2" github.com || true
-  - gnutls-cli --priority "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.1" github.com || true
-  - gnutls-cli --priority "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.0" github.com || true
   - cd ${START_DIR}
   - if [ ! -d ayatana-ido-build ]; then
-  -     git clone --depth 1  https://github.com/AyatanaIndicators/ayatana-ido.git ayatana-ido-build
+  -     GIT_CURL_VERBOSE=1 GIT_TRACE=1 git clone --depth 1  https://github.com/AyatanaIndicators/ayatana-ido.git ayatana-ido-build
   - fi
   - cd ayatana-ido-build
   - cmake . -DCMAKE_INSTALL_PREFIX=/usr
