@@ -40,10 +40,21 @@ endif()
 
 set(DEPS
     glib-2.0>=2.37
-    gtk+-3.0>=3.24
     gmodule-2.0
     gio-unix-2.0
 )
+if (FLAVOUR_GTK3)
+    set(DEPS
+	${DEPS}
+	gtk+-3.0>=3.24
+    )
+endif()
+if (FLAVOUR_GTK2)
+    set(DEPS
+	${DEPS}
+	gtk+-2.0>=2.18
+    )
+endif()
 
 if (FLAVOUR_GTK3 AND ENABLE_IDO)
     set(DEPS
