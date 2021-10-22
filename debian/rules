@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 
-FLAVORS = gtk2 gtk3
+FLAVOURS = gtk2 gtk3
 
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 DPKG_EXPORT_BUILDFLAGS = 1
@@ -19,12 +19,12 @@ export DPKG_GENSYMBOLS_CHECK_LEVEL = 4
 %:
 	dh $@
 
-override_dh_auto_configure: $(FLAVORS:%=doconfigure-%)
+override_dh_auto_configure: $(FLAVOURS:%=doconfigure-%)
 
 doconfigure-%:
 	DH_VERBOSE=1 dh_auto_configure --builddirectory=builddir/$* -- $(COMMON_CONFIGURE_FLAGS) $(CONFIGURE_FLAGS_$*)
 
-override_dh_auto_build: $(FLAVORS:%=dobuild-%)
+override_dh_auto_build: $(FLAVOURS:%=dobuild-%)
 
 dobuild-%:
 	dh_auto_build --builddirectory=builddir/$*
@@ -33,7 +33,7 @@ override_dh_auto_test:
 	xvfb-run -a dh_auto_test --no-parallel --builddirectory=builddir/gtk2
 	xvfb-run -a dh_auto_test --no-parallel --builddirectory=builddir/gtk3
 
-override_dh_auto_install: $(FLAVORS:%=doinstall-%)
+override_dh_auto_install: $(FLAVOURS:%=doinstall-%)
 
 doinstall-%:
 	dh_auto_install --builddirectory=builddir/$* --destdir=debian/tmp/$*
