@@ -11,7 +11,8 @@ requires:
     - startup-notification
     - which
     - pacman
-    - mate-common
+    - cmake
+    - cmake-extras
     - gtk3
     - glib2
 #   - ayatana-ido
@@ -21,7 +22,6 @@ requires:
 
   debian:
     # Useful URL: https://salsa.debian.org/debian-ayatana-team/libayatana-indicator
-    - autopoint
     - clang
     - clang-tools
     - cppcheck
@@ -29,7 +29,6 @@ requires:
     - libtool
     - cmake
     - cmake-extras
-    - mate-common
     - at-spi2-core
     - intltool
     - gtk-doc-tools
@@ -47,14 +46,12 @@ requires:
     - xvfb
 
   ubuntu:
-    - autopoint
     - clang
     - clang-tools
     - git
     - libtool
     - cmake
     - cmake-extras
-    - mate-common
     - at-spi2-core
     - intltool
     - gtk-doc-tools
