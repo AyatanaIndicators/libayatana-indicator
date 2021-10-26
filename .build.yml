@@ -92,6 +92,8 @@ before_scripts:
   - cmake . -DCMAKE_INSTALL_PREFIX=/usr
   - make
   - make install
+  - cd -
+  - rm -Rf ayatana-ido-build/
 
 build_scripts:
   - if [ ${DISTRO_NAME} == "debian" ];then
