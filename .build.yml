@@ -11,7 +11,8 @@ requires:
     - startup-notification
     - which
     - pacman
-    - mate-common
+    - cmake
+    - cmake-extras
     - gtk3
     - glib2
 #   - ayatana-ido
@@ -21,7 +22,6 @@ requires:
 
   debian:
     # Useful URL: https://salsa.debian.org/debian-ayatana-team/libayatana-indicator
-    - autopoint
     - clang
     - clang-tools
     - cppcheck
@@ -29,7 +29,6 @@ requires:
     - libtool
     - cmake
     - cmake-extras
-    - mate-common
     - at-spi2-core
     - intltool
     - gtk-doc-tools
@@ -47,14 +46,12 @@ requires:
     - xvfb
 
   ubuntu:
-    - autopoint
     - clang
     - clang-tools
     - git
     - libtool
     - cmake
     - cmake-extras
-    - mate-common
     - at-spi2-core
     - intltool
     - gtk-doc-tools
@@ -95,6 +92,8 @@ before_scripts:
   - cmake . -DCMAKE_INSTALL_PREFIX=/usr
   - make
   - make install
+  - cd -
+  - rm -Rf ayatana-ido-build/
 
 build_scripts:
   - if [ ${DISTRO_NAME} == "debian" ];then
@@ -170,19 +169,15 @@ build_scripts:
   -     scan-build $CHECKERS --keep-cc -o html-report make
   - fi
   - cd ../
-
-after_scripts:
-  - if [ ${BUILD_TYPE} == "scripts" ];then
-  -     XVFB_RUN="$(which xvfb-run || true)"
-  -     if [ ${DISTRO_NAME} == "debian" ];then
-  -         cd build-gtk3/
-  -         ${XVFB_RUN} env CTEST_OUTPUT_ON_FAILURE=1 make test
-  -         cd ../
-  -         cd build-gtk3-no-IDO/
-  -         ${XVFB_RUN} env CTEST_OUTPUT_ON_FAILURE=1 make test
-  -         cd ../
-  -         cd build-gtk2/
-  -         ${XVFB_RUN} env CTEST_OUTPUT_ON_FAILURE=1 make test
-  -         cd ../
-  -     fi
+  -
+  - if [ ${DISTRO_NAME} == "debian" ];then
+  -     cd build-gtk3/
+  -     ${XVFB_RUN} env CTEST_OUTPUT_ON_FAILURE=1 make test
+  -     cd ../
+  -     cd build-gtk3-no-IDO/
+  -     ${XVFB_RUN} env CTEST_OUTPUT_ON_FAILURE=1 make test
+  -     cd ../
+  -     cd build-gtk2/
+  -     ${XVFB_RUN} env CTEST_OUTPUT_ON_FAILURE=1 make test
+  -     cd ../
   - fi
