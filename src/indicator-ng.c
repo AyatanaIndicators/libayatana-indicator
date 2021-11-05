@@ -1,5 +1,6 @@
 /*
  * Copyright 2013 Canonical Ltd.
+ * Copyright 2021 Robert tari
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 3, as published
@@ -15,6 +16,7 @@
  *
  * Authors:
  *     Lars Uebernickel <lars.uebernickel@canonical.com>
+ *     Robert Tari <robert@tari.in>
  */
 
 #include "indicator-ng.h"
@@ -244,7 +246,7 @@ static gboolean indicator_ng_menu_insert_idos(IndicatorNg *self, GMenuModel *pSe
         GtkWidget *pMenuItemOld = GTK_WIDGET(g_list_nth_data(lMenuItems, nMenuItem));
         const gchar *sName = gtk_widget_get_name(pMenuItemOld);
 
-        if (!g_str_equal(sName, sType))
+        if (sName != NULL && !g_str_equal(sName, sType))
         {
             GActionGroup *pActionGroup = (GActionGroup*)g_object_get_qdata(G_OBJECT(self->entry.menu), m_pActionMuxer);
             GMenuItem *pMenuModelItem = g_menu_item_new_from_model(pSection, nModelItem);
