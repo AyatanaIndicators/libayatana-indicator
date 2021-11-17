@@ -1,3 +1,17 @@
+Overview of changes in libayatana-indicator 0.9.0
+
+  - src/indicator-ng.c: Make sure old menu item name is not NULL before
+    comparison. (Thanks to Andrej Shadura).
+  - Scale icons when loading from filename. (Thanks to Dani Llewellyn).
+  - data/: Drop ayatana-indicators.target (moved to libayatana-common).
+  - Update/add documentation.
+  - Rename library source folder to src/.
+  - tools/indicator-loader.c: Silence unused parameter warnings/errors
+    for various functions.
+  - Fix compiler warnings.
+  - Add Travis CI configuration.
+  - CMake port. Bye bye autotools.
+
 Overview of changes in libayatana-indicator 0.8.4
 
   - libayatana-indicator/indicator-ng.c: Only run gtk_box_set_spacing()

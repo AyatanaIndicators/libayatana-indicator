@@ -1,38 +1,45 @@
- Allan LeSage
- Aurelien Gateau
- Automatic PS uploader
- Charles Kerr
- CI bot
- Cody Russell
- Colin Watson
- Daniel d'Andrada
- Didier Roche
- Eitan Isaacson
- Evgeni Golov
- György Balló
- Hernando Torque
- Iain Lane
- Javier Jardón
- Jonathan Riddell
- Karl
- Ken VanDine
- Lars Uebernickel
- Łukasz 'sil2100' Zemczak
- Luke Yelavich
- Marco Trevisan (Treviño)
- Martin Pitt
- Mathieu Trudel-Lapierre
- Michael Terry
- Mike Gabriel
- Mikkel Kamstrup Erlandsen
- Neil Jagdish Patel
- Robert Ancell
- Robert Carr
- Robert Collins
- seb128
- Sebastien Bacher
- Steve Langasek
- Ted Gould
- Timo Jyrinki
- unknown
- William Hua
+Alexander Schlarb <alexander@ninetailed.ninja>
+Allan LeSage <allanlesage@gmail.com>
+Aurelien Gateau <aurelien.gateau@canonical.com>
+Charles Kerr <charles.kerr@canonical.com>
+Cody Russell <crussell@canonical.com>
+Colin Watson <cjwatson@canonical.com>
+Daniel d'Andrada <daniel.dandrada@canonical.com>
+Dani Llewellyn <diddledani@ubuntu.com>
+Didier Roche <didier.roche@canonical.com>
+Didier Roche <didrocks@ubuntu.com>
+Eitan Isaacson <eitan@ascender.com>
+Evgeni Golov <evgeni@debian.org>
+György Balló <ballogy@freestart.hu>
+Hernando Torque <sirius@sonnenkinder.org>
+Iain Lane <iain.lane@canonical.com>
+Iain Lane <iain@orangesquash.org.uk>
+Javier Jardón <javier.jardon@codethink.co.uk>
+Jonathan Riddell <jriddell@canonical.com>
+Karl <karl@karl-desktop>
+Ken VanDine <ken.vandine@canonical.com>
+Lars Uebernickel <lars.uebernickel@canonical.com>
+Łukasz 'sil2100' Zemczak <lukasz.zemczak@canonical.com>
+Luke Yelavich <luke.yelavich@canonical.com>
+Marco Trevisan (Treviño) <mail@3v1n0.net>
+Marius Gripsgard <marius@ubports.com>
+Martin Pitt <martin.pitt@canonical.com>
+Mathieu Trudel-Lapierre <mathieu-tl@ubuntu.com>
+Michael Terry <michael.terry@canonical.com>
+Michael Terry <mike@mterry.name>
+Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+Mikkel Kamstrup Erlandsen <mikkel.kamstrup@gmail.com>
+Neil Jagdish Patel <neil.patel@canonical.com>
+Robert Ancell <robert.ancell@canonical.com>
+Robert Carr <racarr@ender>
+Robert Collins <robertc@robertcollins.net>
+Robert Tari <robert@tari.in>
+seb128 <seb128@seb128-desktop>
+Sebastien Bacher <seb128@ubuntu.com>
+Steve Langasek <steve.langasek@canonical.com>
+Ted Gould <ted@canonical.com>
+Ted Gould <ted@gould.cx>
+Ted Gould <ted@ubuntu.com>
+Timo Jyrinki <timo.jyrinki@canonical.com>
+unknown <robert.ancell@canonical.com>
+William Hua <william.hua@canonical.com>
