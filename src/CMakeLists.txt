@@ -140,6 +140,7 @@ target_compile_definitions("${ayatana_indicator_gtkver}" PUBLIC DG_LOG_DOMAIN="l
 target_include_directories("${ayatana_indicator_gtkver}" PUBLIC ${PROJECT_DEPS_INCLUDE_DIRS})
 target_include_directories("${ayatana_indicator_gtkver}" PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories("${ayatana_indicator_gtkver}" PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+target_link_options("${ayatana_indicator_gtkver}" PRIVATE "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/indicator.symbols")
 target_link_libraries("${ayatana_indicator_gtkver}" ${PROJECT_DEPS_LIBRARIES} ${EXTRA_LIBS})
 add_dependencies("${ayatana_indicator_gtkver}" "src-generated")
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/lib${ayatana_indicator_gtkver}.so" DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}")

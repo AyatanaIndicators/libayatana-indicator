@@ -1,0 +1,6 @@
+{
+    global: indicator_*;
+            INDICATOR_*;
+            ICON_SIZE*;
+    local:  _indicator_*;
+};
