@@ -83,7 +83,7 @@ endif (HAVE_LIB_M)
 include(GNUInstallDirs)
 set(ABI_VERSION "7")
 set(API_VERSION "4")
-set(PROJECT_VERSION "0.9.0")
+set(PROJECT_VERSION "0.9.1")
 set(PROJECT_NAME "libayatana-indicator")
 
 # Make everything

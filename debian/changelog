@@ -1,9 +1,9 @@
-libayatana-indicator (0.9.0.90-0) UNRELEASED; urgency=medium
+libayatana-indicator (0.9.1-0) unstable; urgency=medium
 
-  * Raise upstream version of DEB builds, due to wrong
-    package revision in 0.9.0 release.
+  * Upstream-provided Debian package for libayatana-indicator.
+    See upstream ChangeLog for recent changes.
 
- -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 17 Nov 2021 14:18:39 +0100
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Thu, 17 Feb 2022 21:36:58 +0100
 
 libayatana-indicator (0.9.0-0) unstable; urgency=medium
 

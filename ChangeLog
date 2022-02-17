@@ -1,6 +1,35 @@
+2022-02-17 Mike Gabriel
+
+        * release 0.9.1 (HEAD -> main, tag: 0.9.1)
+        * Merge branch 'tari01-pr/cleanup-compile-flags' (4231e8b)
+
+2022-02-17 Robert Tari
+
+        * .build.yml: Drop extra compilation flags (cf542e4)
+        * Clean up compilation flags (4b442de)
+
+2022-02-08 Robert Tari
+
+        * .travis.yml: Run CI builds on Travis CI's Ubuntu focal base system
+          (47244a9)
+
+2021-11-18 Robert Tari
+
+        * Merge branch 'sunweaver-pr/dont-export-private-symbols' (7c5e41b)
+
+2021-11-18 Mike Gabriel
+
+        * debian/libayatana-indicator*-7.symbols: Drop private symbols again.
+          (ceb487f)
+        * src/{CMakeLists.txt,indicator.symbols}: Don't export private
+          symbols. Immitate symbol exports as previously done with
+          libtool. (7cfded8)
+
 2021-11-17 Mike Gabriel
 
-        * release 0.9.0 (HEAD -> main, tag: 0.9.0)
+        * d/changelog: Raise upstream version of DEB builds, due to wrong
+          package revision in 0.9.0 release. (659cc9c)
+        * release 0.9.0 (6a16c6f) (tag: 0.9.0)
 
 2021-11-10 Mike Gabriel
 

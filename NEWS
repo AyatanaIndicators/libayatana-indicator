@@ -1,3 +1,9 @@
+Overview of changes in libayatana-indicator 0.9.1
+
+  - Clean up compilation flags.
+  - src/{CMakeLists.txt,indicator.symbols}: Don't export private symbols.
+    Immitate symbol exports as previously done with libtool.
+
 Overview of changes in libayatana-indicator 0.9.0
 
   - src/indicator-ng.c: Make sure old menu item name is not NULL before
