@@ -133,7 +133,6 @@ file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/gen-indicator-service.xml.c" ${GEN_INDIC
 
 # libayatana-indicator{,3}.so
 
-set_source_files_properties(${SOURCES} PROPERTIES COMPILE_FLAGS ${COMPILE_FLAGS})
 add_library("${ayatana_indicator_gtkver}" SHARED ${SOURCES})
 set_target_properties("${ayatana_indicator_gtkver}" PROPERTIES VERSION ${ABI_VERSION}.0.0 SOVERSION ${ABI_VERSION})
 target_compile_definitions("${ayatana_indicator_gtkver}" PUBLIC DG_LOG_DOMAIN="libayatana-indicator")

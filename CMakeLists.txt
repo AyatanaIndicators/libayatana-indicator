@@ -19,8 +19,13 @@ else()
 endif()
 
 if(ENABLE_WERROR)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
+    add_definitions("-Werror")
+endif()
+
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    add_definitions("-Weverything")
+else()
+    add_definitions("-Wall")
 endif()
 
 # Check for prerequisites
@@ -45,14 +50,14 @@ set(DEPS
 )
 if (FLAVOUR_GTK3)
     set(DEPS
-	${DEPS}
-	gtk+-3.0>=3.24
+    ${DEPS}
+    gtk+-3.0>=3.24
     )
 endif()
 if (FLAVOUR_GTK2)
     set(DEPS
-	${DEPS}
-	gtk+-2.0>=2.18
+    ${DEPS}
+    gtk+-2.0>=2.18
     )
 endif()
 
@@ -80,18 +85,6 @@ set(ABI_VERSION "7")
 set(API_VERSION "4")
 set(PROJECT_VERSION "0.9.0")
 set(PROJECT_NAME "libayatana-indicator")
-
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-
-    set(COMPILE_FLAGS "${COMPILE_FLAGS} -Weverything")
-    set(COMPILE_FLAGS "${COMPILE_FLAGS} -Wno-c++98-compat -Wno-padded")
-    set(COMPILE_FLAGS "${COMPILE_FLAGS} -Wno-documentation")
-
-else()
-
-    set(COMPILE_FLAGS "${COMPILE_FLAGS} -Wall")
-
-endif()
 
 # Make everything
 
