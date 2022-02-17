@@ -10,7 +10,6 @@ find_program(DBUS_TEST_RUNNER dbus-test-runner)
 
 function(add_test_library_by_name name)
   set (TEST_LIBRARY_NAME ${name})
-  set_source_files_properties(${TEST_LIBRARY_NAME}.c PROPERTIES COMPILE_FLAGS ${COMPILE_FLAGS})
   add_library("${TEST_LIBRARY_NAME}" SHARED ${TEST_LIBRARY_NAME}.c)
   target_include_directories("${TEST_LIBRARY_NAME}" PUBLIC ${PROJECT_DEPS_INCLUDE_DIRS})
   target_include_directories("${TEST_LIBRARY_NAME}" PUBLIC "${CMAKE_SOURCE_DIR}/src")
@@ -21,7 +20,6 @@ endfunction()
 
 function(add_test_executable_by_name name)
   set (TEST_EXECUTABLE_NAME ${name})
-  set_source_files_properties(${TEST_EXECUTABLE_NAME}.c PROPERTIES COMPILE_FLAGS ${COMPILE_FLAGS})
   add_executable("${TEST_EXECUTABLE_NAME}" ${TEST_EXECUTABLE_NAME}.c)
   target_compile_definitions("${TEST_EXECUTABLE_NAME}" PUBLIC BUILD_DIR="${CMAKE_CURRENT_BINARY_DIR}")
   target_compile_definitions("${TEST_EXECUTABLE_NAME}" PUBLIC SRCDIR="${CMAKE_CURRENT_SOURCE_DIR}")
@@ -257,7 +255,6 @@ add_custom_command(
 add_test("loader-tester" "loader-tester")
 
 # indicator-test-service
-set_source_files_properties(indicator-test-service.c PROPERTIES COMPILE_FLAGS ${COMPILE_FLAGS})
 add_executable("indicator-test-service" indicator-test-service.c)
 target_include_directories("indicator-test-service" PUBLIC ${PROJECT_DEPS_INCLUDE_DIRS})
 target_link_libraries("indicator-test-service" ${PROJECT_DEPS_LIBRARIES})
