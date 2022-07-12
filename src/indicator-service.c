@@ -3,9 +3,11 @@ An object used to provide a simple interface for a service
 to query version and manage whether it's running.
 
 Copyright 2009 Canonical Ltd.
+Copyright 2022 Robert tari
 
 Authors:
     Ted Gould <ted@canonical.com>
+    Robert Tari <robert@tari.in>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -24,8 +26,6 @@ License along with this library. If not, see
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-
-#include <stdlib.h> /* exit() */
 
 #include <gio/gio.h>
 
@@ -349,10 +349,9 @@ bus_get_cb (__attribute__((unused)) GObject * object, GAsyncResult * res, gpoint
     GError * error = NULL;
     GDBusConnection * connection = g_bus_get_finish(res, &error);
 
-    if (error != NULL) {
-        g_warning("Unable to get a connection to the session DBus: %s", error->message);
-        g_error_free(error);
-        exit (0);
+    if (error != NULL)
+    {
+        g_error("Unable to get a connection to the session DBus: %s", error->message);
     }
 
     IndicatorServicePrivate * priv = indicator_service_get_instance_private(user_data);
