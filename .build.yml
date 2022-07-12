@@ -103,9 +103,9 @@ build_scripts:
   - mkdir build-gtk3/
   - cd build-gtk3/
   - if [ ${DISTRO_NAME} == "debian" ];then
-  -     scan-build $CHECKERS cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_VERBOSE_MAKEFILE=ON -DENABLE_TESTS=ON -DFLAVOUR_GTK3=ON
+  -     scan-build $CHECKERS cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_VERBOSE_MAKEFILE=ON -DENABLE_TESTS=ON -DFLAVOUR_GTK3=ON -DENABLE_WERROR=ON
   - else
-  -     scan-build $CHECKERS cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_VERBOSE_MAKEFILE=ON -DFLAVOUR_GTK3=ON
+  -     scan-build $CHECKERS cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_VERBOSE_MAKEFILE=ON -DFLAVOUR_GTK3=ON -DENABLE_WERROR=ON
   - fi
   -
   - if [ $CPU_COUNT -gt 1 ]; then
@@ -126,9 +126,9 @@ build_scripts:
   - mkdir build-gtk3-no-IDO/
   - cd build-gtk3-no-IDO/
   - if [ ${DISTRO_NAME} == "debian" ];then
-  -     scan-build $CHECKERS cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_VERBOSE_MAKEFILE=ON -DENABLE_TESTS=ON -DFLAVOUR_GTK3=ON -DENABLE_IDO=OFF
+  -     scan-build $CHECKERS cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_VERBOSE_MAKEFILE=ON -DENABLE_TESTS=ON -DFLAVOUR_GTK3=ON -DENABLE_IDO=OFF -DENABLE_WERROR=ON
   - else
-  -     scan-build $CHECKERS cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_VERBOSE_MAKEFILE=ON -DFLAVOUR_GTK3=ON -DENABLE_IDO=OFF
+  -     scan-build $CHECKERS cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_VERBOSE_MAKEFILE=ON -DFLAVOUR_GTK3=ON -DENABLE_IDO=OFF -DENABLE_WERROR=ON
   - fi
   -
   - if [ $CPU_COUNT -gt 1 ]; then
