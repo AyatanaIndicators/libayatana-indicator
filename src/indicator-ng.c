@@ -1,6 +1,6 @@
 /*
  * Copyright 2013 Canonical Ltd.
- * Copyright 2021 Robert tari
+ * Copyright 2021-2022 Robert Tari
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 3, as published
@@ -41,7 +41,7 @@ struct _IndicatorNg
   gchar *secondary_action;
   gchar *submenu_action;
   gint position;
-
+  gchar *sTooltip;
   guint name_watch_id;
 
   GDBusConnection *session_bus;
@@ -423,10 +423,25 @@ static void indicator_ng_menu_section_changed(__attribute__((unused)) GMenuModel
     }
 }
 
+static void indicator_ng_set_tooltip(IndicatorNg *self, gchar *sTooltip)
+{
+    if (self->entry.label != NULL)
+    {
+        gtk_widget_set_tooltip_text(GTK_WIDGET(self->entry.label), sTooltip);
+    }
+
+    if (self->entry.image != NULL)
+    {
+        gtk_widget_set_tooltip_text(GTK_WIDGET(self->entry.image), sTooltip);
+    }
+}
+
 static void indicator_ng_menu_shown(__attribute__((unused)) GtkWidget *pWidget, gpointer pUserData)
 {
     IndicatorNg *self = pUserData;
     guint nSectionCount = 0;
+
+    indicator_ng_set_tooltip(self, NULL);
 
     if (!self->lMenuSections[0])
     {
@@ -478,6 +493,8 @@ indicator_ng_menu_hidden (__attribute__((unused)) GtkWidget *widget,
   if (self->submenu_action)
     g_action_group_change_action_state (self->actions, self->submenu_action,
                                         g_variant_new_boolean (FALSE));
+
+  indicator_ng_set_tooltip(self, self->sTooltip);
 }
 
 static void
@@ -596,6 +613,7 @@ indicator_ng_update_entry (IndicatorNg *self)
       g_variant_lookup (state, "icon", "*", &icon);
       g_variant_lookup (state, "accessible-desc", "&s", &accessible_desc);
       g_variant_lookup (state, "visible", "b", &visible);
+      g_variant_lookup (state, "tooltip", "&s", &self->sTooltip);
     }
   else
     g_warning ("the action of the indicator menu item must have state with type (sssb) or a{sv}");
@@ -603,6 +621,7 @@ indicator_ng_update_entry (IndicatorNg *self)
   indicator_ng_set_label (self, label);
   indicator_ng_set_icon_from_variant (self, icon);
   indicator_ng_set_accessible_desc (self, accessible_desc);
+  indicator_ng_set_tooltip (self, self->sTooltip);
   indicator_object_set_visible (INDICATOR_OBJECT (self), visible);
 
   if (icon)
@@ -956,6 +975,7 @@ indicator_ng_initable_iface_init (GInitableIface *initable)
 static void
 indicator_ng_init (IndicatorNg *self)
 {
+    self->sTooltip = NULL;
     m_pActionMuxer = g_quark_from_static_string ("gtk-widget-action-muxer");
 
     for (guint nMenuSection = 0; nMenuSection < MENU_SECTIONS; nMenuSection++)
