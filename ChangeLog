@@ -1,6 +1,36 @@
+2022-09-15 Mike Gabriel
+
+        * release 0.9.2 (HEAD -> main, tag: 0.9.2)
+
+2022-07-15 Mike Gabriel
+
+        * Merge branch 'tari01-pr/add-tooltips' (ad8abda)
+
+2022-07-13 Robert Tari
+
+        * src/indicator-ng.c: Add tooltip support (c065f45)
+
+2022-07-15 Mike Gabriel
+
+        * Merge branch 'tari01-pr/enable-werror' (4f306dd)
+
+2022-07-13 Robert Tari
+
+        * .build.yml: Build the GTK3 flavour with -Werror (a7b1463)
+
+2022-07-15 Mike Gabriel
+
+        * Merge branch 'tari01-pr/crash-on-session-error' (88a19ee)
+
+2022-07-13 Robert Tari
+
+        * src/indicator-service.c: Make failure to connect to the session
+          DBus fatal (3db4f03)
+        * Whitespace fix (755ee95)
+
 2022-02-17 Mike Gabriel
 
-        * release 0.9.1 (HEAD -> main, tag: 0.9.1)
+        * release 0.9.1 (80dae40) (tag: 0.9.1)
         * Merge branch 'tari01-pr/cleanup-compile-flags' (4231e8b)
 
 2022-02-17 Robert Tari

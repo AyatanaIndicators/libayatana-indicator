@@ -1,3 +1,9 @@
+Overview of changes in libayatana-indicator 0.9.2
+
+  - Add tooltip support.
+  - src/indicator-service.c: Make failure to connect to the session DBus
+    fatal.
+
 Overview of changes in libayatana-indicator 0.9.1
 
   - Clean up compilation flags.
