@@ -43,7 +43,7 @@ struct _IndicatorNg
   gint position;
   gchar *sTooltip;
   guint name_watch_id;
-
+  gboolean bMenuShown;
   GDBusConnection *session_bus;
   GActionGroup *actions;
   GMenuModel *menu;
@@ -440,6 +440,7 @@ static void indicator_ng_menu_shown(__attribute__((unused)) GtkWidget *pWidget, 
 {
     IndicatorNg *self = pUserData;
     guint nSectionCount = 0;
+    self->bMenuShown = TRUE;
 
     indicator_ng_set_tooltip(self, NULL);
 
@@ -489,6 +490,7 @@ indicator_ng_menu_hidden (__attribute__((unused)) GtkWidget *widget,
                           gpointer   user_data)
 {
   IndicatorNg *self = user_data;
+  self->bMenuShown = FALSE;
 
   if (self->submenu_action)
     g_action_group_change_action_state (self->actions, self->submenu_action,
@@ -621,7 +623,7 @@ indicator_ng_update_entry (IndicatorNg *self)
   indicator_ng_set_label (self, label);
   indicator_ng_set_icon_from_variant (self, icon);
   indicator_ng_set_accessible_desc (self, accessible_desc);
-  indicator_ng_set_tooltip (self, self->sTooltip);
+  indicator_ng_set_tooltip (self, self->bMenuShown ? NULL : self->sTooltip);
   indicator_object_set_visible (INDICATOR_OBJECT (self), visible);
 
   if (icon)
@@ -976,6 +978,7 @@ static void
 indicator_ng_init (IndicatorNg *self)
 {
     self->sTooltip = NULL;
+    self->bMenuShown = FALSE;
     m_pActionMuxer = g_quark_from_static_string ("gtk-widget-action-muxer");
 
     for (guint nMenuSection = 0; nMenuSection < MENU_SECTIONS; nMenuSection++)
