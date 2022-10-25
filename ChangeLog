@@ -1,6 +1,19 @@
+2022-10-26 Mike Gabriel
+
+        * release 0.9.3 (HEAD -> main, tag: 0.9.3)
+
+2022-10-08 Mike Gabriel
+
+        * Merge branch 'tari01-pr/fix-tooltip' (bf432c5)
+
+2022-10-04 Robert Tari
+
+        * src/indicator-ng.c: Do not show tooltip on labels while the menu is
+          open (3ae6943)
+
 2022-09-15 Mike Gabriel
 
-        * release 0.9.2 (HEAD -> main, tag: 0.9.2)
+        * release 0.9.2 (d9ca686) (tag: 0.9.2)
 
 2022-07-15 Mike Gabriel
 

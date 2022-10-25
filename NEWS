@@ -1,3 +1,8 @@
+Overview of changes in libayatana-indicator 0.9.3
+
+  - src/indicator-ng.c: Do not show tooltip on labels while the menu is
+    open.
+
 Overview of changes in libayatana-indicator 0.9.2
 
   - Add tooltip support.
