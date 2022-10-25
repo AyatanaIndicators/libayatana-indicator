@@ -3,7 +3,7 @@ An object used to provide a simple interface for a service
 to query version and manage whether it's running.
 
 Copyright 2009 Canonical Ltd.
-Copyright 2022 Robert tari
+Copyright 2022 Robert Tari
 
 Authors:
     Ted Gould <ted@canonical.com>
