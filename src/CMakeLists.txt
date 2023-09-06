@@ -142,6 +142,4 @@ target_include_directories("${ayatana_indicator_gtkver}" PUBLIC ${CMAKE_CURRENT_
 target_link_options("${ayatana_indicator_gtkver}" PRIVATE "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/indicator.symbols")
 target_link_libraries("${ayatana_indicator_gtkver}" ${PROJECT_DEPS_LIBRARIES} ${EXTRA_LIBS})
 add_dependencies("${ayatana_indicator_gtkver}" "src-generated")
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/lib${ayatana_indicator_gtkver}.so" DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}")
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/lib${ayatana_indicator_gtkver}.so.${ABI_VERSION}" DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}")
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/lib${ayatana_indicator_gtkver}.so.${ABI_VERSION}.0.0" DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}")
+install(TARGETS "${ayatana_indicator_gtkver}" LIBRARY DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}")
