@@ -1,3 +1,8 @@
+Overview of changes in libayatana-indicator 0.9.4
+
+  - src/indicator-service.c: Fix Robert's lastname in license header.
+  - cmake: Install library as library.
+
 Overview of changes in libayatana-indicator 0.9.3
 
   - src/indicator-ng.c: Do not show tooltip on labels while the menu is

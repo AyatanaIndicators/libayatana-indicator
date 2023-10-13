@@ -1,6 +1,20 @@
+2023-10-13 Mike Gabriel
+
+        * release 0.9.4 (HEAD -> main, tag: 0.9.4)
+
+2023-09-06 Robert Tari
+
+        * Merge branch 'tyll-executable_so' (0d5eaeb)
+
+2023-09-05 Till Maas
+
+        * cmake: Install library as library (05e4368)
+
 2022-10-26 Mike Gabriel
 
-        * release 0.9.3 (HEAD -> main, tag: 0.9.3)
+        * src/indicator-service.c: Fix Robert's lastname in license header.
+          (bae7a9c)
+        * release 0.9.3 (a62e8ca) (tag: 0.9.3)
 
 2022-10-08 Mike Gabriel
 
