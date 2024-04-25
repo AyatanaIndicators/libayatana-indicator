@@ -8,7 +8,7 @@ iconsdir=@CMAKE_INSTALL_FULL_DATADIR@/@PROJECT_NAME@/icons/
 
 Cflags: -I${includedir}/libayatana-indicator-0.@API_VERSION@
 Requires: gtk+-2.0
-Libs: -layatana-indicator
+Libs: -L${libdir} -layatana-indicator
 
 Name: libayatana-indicator
 Description: libayatana-indicator.
