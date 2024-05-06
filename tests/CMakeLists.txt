@@ -185,7 +185,7 @@ add_custom_command(
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     VERBATIM
     COMMAND
-    echo "#!/bin/bash" > "${CMAKE_CURRENT_BINARY_DIR}/test-desktop-shortcuts-tester"
+    echo "#!/bin/sh" > "${CMAKE_CURRENT_BINARY_DIR}/test-desktop-shortcuts-tester"
     COMMAND
     echo ". ${CMAKE_CURRENT_SOURCE_DIR}/run-xvfb.sh" >> "${CMAKE_CURRENT_BINARY_DIR}/test-desktop-shortcuts-tester"
     COMMAND
@@ -223,7 +223,7 @@ if (FLAVOUR_GTK3 AND ENABLE_IDO)
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       VERBATIM
       COMMAND
-      echo "#!/bin/bash" > "${CMAKE_CURRENT_BINARY_DIR}/test-indicator-ng-tester"
+      echo "#!/bin/sh" > "${CMAKE_CURRENT_BINARY_DIR}/test-indicator-ng-tester"
       COMMAND
       echo ". ${CMAKE_CURRENT_SOURCE_DIR}/run-xvfb.sh" >> "${CMAKE_CURRENT_BINARY_DIR}/test-indicator-ng-tester"
       COMMAND
@@ -244,7 +244,7 @@ add_custom_command(
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     VERBATIM
     COMMAND
-    echo "#!/bin/bash" > "${CMAKE_CURRENT_BINARY_DIR}/loader-tester"
+    echo "#!/bin/sh" > "${CMAKE_CURRENT_BINARY_DIR}/loader-tester"
     COMMAND
     echo ". ${CMAKE_CURRENT_SOURCE_DIR}/run-xvfb.sh" >> "${CMAKE_CURRENT_BINARY_DIR}/loader-tester"
     COMMAND
