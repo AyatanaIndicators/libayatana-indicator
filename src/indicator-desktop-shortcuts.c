@@ -25,7 +25,6 @@ License along with this library. If not, see
 #include "config.h"
 #endif
 
-#include <gio/gdesktopappinfo.h>
 #include "indicator-desktop-shortcuts.h"
 
 #define ACTIONS_KEY               "Actions"
