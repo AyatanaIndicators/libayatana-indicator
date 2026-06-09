@@ -30,7 +30,7 @@ area and the [UBports](https://ubports.com) project is a core contributor
 to the Ayatana Indicators project.
 
 For further info, please visit:
-https://ayatana-indicators.org
+https://ayatanaindicators.github.io
 
 ## About this Software Component
 
