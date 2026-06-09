@@ -142,6 +142,6 @@ target_include_directories("${ayatana_indicator_gtkver}" PUBLIC ${CMAKE_CURRENT_
 if(NOT APPLE)
     target_link_options("${ayatana_indicator_gtkver}" PRIVATE "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/indicator.symbols")
 endif()
-target_link_libraries("${ayatana_indicator_gtkver}" ${PROJECT_DEPS_LIBRARIES} ${EXTRA_LIBS})
+target_link_libraries("${ayatana_indicator_gtkver}" ${PROJECT_DEPS_LINK_LIBRARIES} ${EXTRA_LIBS})
 add_dependencies("${ayatana_indicator_gtkver}" "src-generated")
 install(TARGETS "${ayatana_indicator_gtkver}" LIBRARY DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}")
