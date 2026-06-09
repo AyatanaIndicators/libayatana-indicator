@@ -174,11 +174,13 @@ test_menu (void)
 int
 main (int argc, char **argv)
 {
-  /* gvfs, dconf, and appmenu-gtk leak GDbusConnections, which confuses
+  /* gvfs, dconf, appmenu-gtk, atk-bridge and gdk-wayland leak GDbusConnections, which confuses
    * g_test_dbus_down.  Make sure we're not using any of those.
    */
   g_setenv ("GIO_USE_VFS", "local", TRUE);
   g_setenv ("GSETTINGS_BACKEND", "memory", TRUE);
+  g_setenv ("NO_AT_BRIDGE", "1", TRUE);
+  g_setenv ("GDK_BACKEND", "x11", TRUE);
   g_unsetenv ("UBUNTU_MENUPROXY");
 
   g_test_init (&argc, &argv, NULL);
