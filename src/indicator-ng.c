@@ -53,6 +53,7 @@ struct _IndicatorNg
 
   gint64 last_service_restart;
     GMenuModel *lMenuSections[MENU_SECTIONS];
+  GtkCssProvider *label_css_provider;
 };
 
 static void indicator_ng_initable_iface_init (GInitableIface *initable);
@@ -157,6 +158,7 @@ indicator_ng_dispose (GObject *object)
 
   indicator_ng_free_actions_and_menu (self);
 
+  g_clear_object (&self->label_css_provider);
   g_clear_object (&self->entry.label);
   g_clear_object (&self->entry.image);
   g_clear_object (&self->entry.menu);
@@ -561,13 +563,14 @@ static void indicator_ng_set_label(IndicatorNg *self, const gchar *label)
     }
 
     GtkWidget *pParent = gtk_widget_get_parent(GTK_WIDGET(self->entry.label));
-    GtkCssProvider *pCssProvider = gtk_css_provider_new();
-    GtkStyleContext *pStyleContext = gtk_widget_get_style_context(GTK_WIDGET(self->entry.label));
-    gtk_style_context_add_provider(pStyleContext, GTK_STYLE_PROVIDER(pCssProvider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+    if (self->label_css_provider == NULL) {
+        self->label_css_provider = gtk_css_provider_new();
+        GtkStyleContext *pStyleContext = gtk_widget_get_style_context(GTK_WIDGET(self->entry.label));
+        gtk_style_context_add_provider(pStyleContext, GTK_STYLE_PROVIDER(self->label_css_provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+    }
     gchar *sCss = g_strdup_printf("label{padding-left: %ipx;}", nPadding);
-    gtk_css_provider_load_from_data(pCssProvider, sCss, -1, NULL);
+    gtk_css_provider_load_from_data(self->label_css_provider, sCss, -1, NULL);
     g_free(sCss);
-    g_object_unref(pCssProvider);
     if (GTK_IS_BOX(pParent))
     {
         gtk_box_set_spacing(GTK_BOX(pParent), nSpacing);

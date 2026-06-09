@@ -195,6 +195,26 @@ add_custom_command(
 )
 add_test("test-desktop-shortcuts-tester" "test-desktop-shortcuts-tester")
 
+# test-css-provider-leak
+add_test_executable_by_name(test-css-provider-leak)
+
+# test-css-provider-leak-tester
+add_custom_command(
+    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/test-css-provider-leak-tester"
+    DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/test-css-provider-leak"
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    VERBATIM
+    COMMAND
+    echo "#!/bin/sh" > "${CMAKE_CURRENT_BINARY_DIR}/test-css-provider-leak-tester"
+    COMMAND
+    echo ". ${CMAKE_CURRENT_SOURCE_DIR}/run-xvfb.sh" >> "${CMAKE_CURRENT_BINARY_DIR}/test-css-provider-leak-tester"
+    COMMAND
+    echo "gtester -k --verbose -o=${CMAKE_CURRENT_BINARY_DIR}/loader-check-results.xml ${CMAKE_CURRENT_BINARY_DIR}/test-css-provider-leak" >> "${CMAKE_CURRENT_BINARY_DIR}/test-css-provider-leak-tester"
+    COMMAND
+    chmod +x "${CMAKE_CURRENT_BINARY_DIR}/test-css-provider-leak-tester"
+)
+add_test("test-css-provider-leak-tester" "test-css-provider-leak-tester")
+
 if (FLAVOUR_GTK3 AND ENABLE_IDO)
   # test-indicator-ng
   add_test_executable_by_name(test-indicator-ng)
@@ -267,6 +287,7 @@ set (ALL_TESTERS
      "service-version-tester"
      "service-version-multiwatch-tester"
      "test-desktop-shortcuts-tester"
+     "test-css-provider-leak-tester"
      "loader-tester"
 )
 
