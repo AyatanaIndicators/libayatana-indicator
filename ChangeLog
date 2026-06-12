@@ -1,6 +1,75 @@
+2026-06-12 Mike Gabriel
+
+        * Release 0.9.5 (HEAD -> main, tag: 0.9.5)
+
+2026-06-10 Mike Gabriel
+
+        * Merge branch 'thestr4ng3r-gdesktopappinfo' (4587086)
+
+2025-05-09 Florian Märkl
+
+        * Remove unnecessary gio/gdesktopappinfo.h include (f22e86c)
+
+2026-06-09 Mike Gabriel
+
+        * Merge branch 'thestr4ng3r-pkgconfig' (7093307)
+
+2025-05-09 Florian Märkl
+
+        * Fix linking against libs in non-standard paths (80c8c7c)
+
+2026-06-09 Mike Gabriel
+
+        * Merge branch 'smheidrich-fix-broken-readme-link' (6be6bff)
+
+2025-05-29 Shahriar Heidrich
+
+        * Fix broken homepage link in README (3162487)
+
+2026-06-09 Mike Gabriel
+
+        * Merge branch 'aleasto-failing-gtk-tests' (013054c)
+
+2025-10-06 Alessandro Astone
+
+        * tests: Avoid more GDBusConnection leaks (95ca978)
+
+2026-06-09 Mike Gabriel
+
+        * Merge branch 'platypii-fix/css-provider-memory-leak' (dac009d)
+
+2026-04-13 Kenny Daniel
+
+        * src/indicator-ng.c: Fix GtkCssProvider memory leak in
+          indicator_ng_set_label (8880ce6)
+
+2024-07-03 Mike Gabriel
+
+        * Merge branch 'triallax-bash-tests' (08c5540)
+
+2024-05-06 triallax
+
+        * Use /bin/sh instead of /bin/bash for tests (804fe3c)
+
+2024-07-03 Mike Gabriel
+
+        * Merge branch 'barracuda156-apple' (0be5f03)
+
+2024-06-17 Sergey Fedorov
+
+        * Fix build on macOS (8b4fc71)
+
+2024-04-25 Mike Gabriel
+
+        * Merge branch '0-wiz-0-main' (fded0d3)
+
+2024-04-22 Thomas Klausner
+
+        * Add missing -L argument to pkg-config .pc files. (63593be)
+
 2023-10-13 Mike Gabriel
 
-        * release 0.9.4 (HEAD -> main, tag: 0.9.4)
+        * release 0.9.4 (611bb38) (tag: 0.9.4)
 
 2023-09-06 Robert Tari
 

@@ -1,3 +1,15 @@
+Overview of changes in libayatana-indicator 0.9.5
+
+  - Remove unnecessary gio/gdesktopappinfo.h include.
+  - Fix linking against libs in non-standard paths.
+  - Fix broken homepage link in README.
+  - tests: Avoid more GDBusConnection leaks.
+  - src/indicator-ng.c: Fix GtkCssProvider memory leak in
+    indicator_ng_set_label.
+  - Use /bin/sh instead of /bin/bash for tests.
+  - Fix build on macOS.
+  - Add missing -L argument to pkg-config .pc files.
+
 Overview of changes in libayatana-indicator 0.9.4
 
   - src/indicator-service.c: Fix Robert's lastname in license header.
